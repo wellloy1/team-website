@@ -1,0 +1,16 @@
+:host {
+	display: block;
+	padding: 0px;
+	height: 100%;
+}
+
+vaadin-grid .prod-imgs-cont {
+	display: flex; 
+	flex-direction: row; 
+	flex-wrap: wrap;
+}
+
+.prod-imgs-cont teamatical-ui-image {
+	height:276px;
+	width: 207px;
+}

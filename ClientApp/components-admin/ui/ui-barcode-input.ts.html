@@ -1,0 +1,233 @@
+<paper-input 
+  id="newbarcode" 
+  name="barcode" 
+  class="barcode-input" 
+  type="string" 
+  label$="[[label]]" 
+  disabled$="[[disabled]]" 
+  tabindex$="[[tabindex]]"
+  value="{{barcodeTxt}}"
+  on-value-changed="onInputChanged"
+  on-keydown="_barcodeEnter">
+  
+    <paper-icon-button slot="suffix"
+      tabindex="-1" 
+      class="add-btn" 
+      disabled$="[[_disabledEnter]]" 
+      icon="admin-icons:arrow-downward" 
+      on-tap="_barcodeTap">
+    </paper-icon-button>
+
+    <dom-if if="[[showHelpBtn]]">
+      <template>
+        <paper-icon-button slot="suffix"
+          tabindex="-1" 
+          class="help-btn" 
+          disabled$="[[_disabledHelp]]" 
+          icon="admin-icons:help-outline" 
+          on-tap="_showBarcodeDetailsTap">
+        </paper-icon-button>
+      </template>
+    </dom-if>
+
+</paper-input>
+
+
+<div class="barcode-container">
+  <div class="table">
+    <dom-repeat items="[[scannedBarcodes]]" as="bari">
+      <template>
+        <div class="row vcenter">
+          <div class="col">
+            <span class="barcode">[[bari.barcode]]</span>
+          </div>
+        </div>
+      </template>
+    </dom-repeat>
+  </div>
+</div>
+
+
+
+
+
+
+<tmladmin-ui-dialog id="dialoghelp" disabled$="[[dialoghelp.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button 
+			class="close-dialog-small-btn" 
+			icon="admin-icons:close"
+			dialog-dismiss>
+		</paper-icon-button>
+
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialoghelp.loading]]"
+				hidden$="[[!dialoghelp.loading]]">
+			</paper-progress>
+		</div>
+
+    <h2>
+			[[dialoghelp.title]]
+			#: [[dialoghelp.Barcode]] 
+		</h2>
+
+    <dom-if if="[[dialoghelp.Invalid]]">
+      <template>
+        <h3 class="invalid">
+          [[_formatInvalid(dialoghelp.Invalid, dialoghelp.InvalidMessage, 'admin-ws-shipping-item-invalid')]]
+        </h3>
+      </template>
+    </dom-if>
+
+	</div>
+
+	<div slot="body">
+
+    <dom-if if="[[!dialoghelp.Invalid]]">
+      <template>
+        
+        <div class="table width100">
+          <div class="row">
+            <div class="w15">Manufacture Order</div>
+            <div>
+              <span class="copy-tap" on-tap="_copyTap">[[dialoghelp.ManufactureOrderID]]</span>
+              <!-- <a href="[[_href(dialoghelp.ManufactureOrderID)]]">
+                <iron-icon icon="open-in-new" class="open-in-here"></iron-icon>
+              </a> -->
+            </div>
+          </div>
+          <div class="row">
+            <div class="w15">Manufacture Order Batch</div>
+            <div>
+              <span class="copy-tap" on-tap="_copyTap">[[dialoghelp.Batch]]</span>
+            </div>
+          </div>
+          <div class="row">
+            <div>Production Order</div>
+            <div>
+              <span class="copy-tap" on-tap="_copyTap">[[dialoghelp.OrderProductionID]]</span>
+            </div>
+          </div>
+          <div class="row">
+            <div>Production Order Item</div>
+            <div>
+              <span class="copy-tap" on-tap="_copyTap">[[dialoghelp.OrderProductionItemID]]</span>
+            </div>
+          </div>
+          <div class="row">
+            <div>Production Order Dublicate Index</div>
+            <div>
+              <span>[[dialoghelp.OrderProductionDublicateIndex]]</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>Manufacturer Product</div>
+            <div>
+              <span class="copy-tap" on-tap="_copyTap">[[dialoghelp.ProductManufacturerID]]</span>
+            </div>
+          </div>
+          <div class="row">
+            <div>Custom Store</div>
+            <div>
+              <span class="copy-tap" on-tap="_copyTap">[[dialoghelp.ProductConfiguration.StoreID]]</span>
+              <!-- <a href="[[_hrefAdminStore(dialoghelp.ProductConfiguration.StoreID)]]">
+                <iron-icon icon="open-in-new" class="open-in-here"></iron-icon>
+              </a> -->
+            </div>
+          </div>
+          <div class="row">
+            <div>Marketing Product</div>
+            <div>
+              <span class="copy-tap" on-tap="_copyTap">[[dialoghelp.ProductConfiguration.Product.ProductID]]</span>
+              <!-- <a href="[[_hrefAdminProduct(dialoghelp.ProductConfiguration.Product.ProductID)]]">
+                <iron-icon icon="open-in-new" class="open-in-here"></iron-icon>
+              </a> -->
+            </div>
+          </div>
+        </div>
+    
+        <tmladmin-production-sewing-item 
+          responsive-images
+          entry="[[dialoghelp]]"
+          visible="true" 
+          website-url="[[websiteUrl]]" 
+          scroll-target="[[scrollTarget]]"
+          action-disabled="[[dialoghelp.loading]]"
+          on-tmladmin-production-sewing-item-tap="onItemTap">
+        </tmladmin-production-sewing-item>
+
+        <!-- 
+        "QaImageUrls": [
+          "https://wwwdev.teamatical.com/api/v1.0/image/getsz?i0x=UxkwezHFAL7nLWzJaXhdSGalEtfNztfwjxfDNEMwDpB1wUeNFlpL88TAdbjfWpvYrwtbjlEpxeJaaieUhx5EpLSr8iiNsOEgRA7nN2VwjTY"
+        ],
+
+        {
+    "Barcode": "7IAXX",
+    "ImageUrls": [
+        "https://wwwdev.teamatical.com/api/v1.0/image/gets?i0x=6rSBYT5WuaKAD9FvRZ64XqHWXhch1RoBnGCjzulO9lvOTxsC4vxe1cxUfuJ2y8YpQ7SVqE_wf10F0Z4IYkC9.Q&p0x=vcO38R.UfZ94wKTLdkAajkXQq7QN2TUETTgyAR99Rhk",
+        "https://wwwdev.teamatical.com/api/v1.0/image/gets?i0x=6rSBYT5WuaKAD9FvRZ64XqHWXhch1RoBnGCjzulO9lvOTxsC4vxe1cxUfuJ2y8YpQ7SVqE_wf10F0Z4IYkC9.Q&p0x=YYU6fu36Zutl53cwUsQlaEZzWGZsi3kVumh.qQ0.BJk"
+    ],
+    "QaImageUrls": [
+        "https://wwwdev.teamatical.com/api/v1.0/image/getsz?i0x=UxkwezHFAL7nLWzJaXhdSGalEtfNztfwjxfDNEMwDpB1wUeNFlpL88TAdbjfWpvYrwtbjlEpxeJaaieUhx5EpLSr8iiNsOEgRA7nN2VwjTY"
+    ],
+    "ProductConfiguration": {
+        "Product": {
+            "ProductID": "DBNWNLFU0L543EOW2HSJQ3B1HNA",
+            "AccessoryVariantsName": "variant"
+        },
+        "ProductViews": [
+            {
+                "ViewId": "0",
+                "Selected": true,
+                "ImageUrl": "https://wwwdev.teamatical.com/api/v1.0/image/gets?i0x=6rSBYT5WuaKAD9FvRZ64XqHWXhch1RoBnGCjzulO9lvOTxsC4vxe1cxUfuJ2y8YpQ7SVqE_wf10F0Z4IYkC9.Q&p0x=vcO38R.UfZ94wKTLdkAajkXQq7QN2TUETTgyAR99Rhk",
+                "ImageUrl3DFrames": "https://wwwdev.teamatical.com/api/v1.0/image/gets?i0x=6rSBYT5WuaKAD9FvRZ64XqHWXhch1RoBnGCjzulO9lvOTxsC4vxe1cxUfuJ2y8YpQ7SVqE_wf10F0Z4IYkC9.Q&p0x=l8.hXpBB.RXi1vP.DWitN_sVoaiThtWFNW37L498Lay1.bqzFJ_XzVEDLHMnRY18"
+            }
+        ],
+        "ProductConfigurationID": "d~WS3569",
+        "ProductPointOfViewCount": 16,
+        "ProductPointOfView": 15,
+        "StoreID": "d~EJ9320"
+    },
+    "Product": {
+        "SKU": "HK2003A",
+        "ManufactureProductInternalID": "3A",
+        "Type": "hockey jersey",
+        "Size": "3XL"
+    },
+    "Sandbox": true,
+    "OrderID": "d~KR9244",
+    "Batch": "C42",
+    "ManufactureOrderID": "d~LS1697",
+    "OrderProductionID": "LQJMSTW5FYAZRUOWRFFD1SNIOFE",
+    "OrderProductionItemID": "JAJNZZPXUMVS3AGT2RJVWT1MRVB",
+    "ProductManufacturerID": "1E5ZNA5GGJH0SEHKS4XNMA0XGCF",
+    "OrderProductionDublicateIndex": 5
+}
+        -->
+
+        <div>
+          <div class="image-product-grid snapshots">
+            <dom-repeat items="[[dialoghelp.QaImageUrls]]" as="imgi">
+              <template>
+                <teamatical-ui-image src="[[imgi]]" alt="[[imgi]]" lazy-load lazy-observe=[[lazyObserve]]>
+                </teamatical-ui-image>
+              </template>
+            </dom-repeat>
+          </div>
+        </div>
+
+
+      </template>
+    </dom-if>
+
+    
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			[[localize('admin-dlg-close')]]
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>
+

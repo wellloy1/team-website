@@ -1,0 +1,66 @@
+:host {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: calc(50% - 220px);
+    right: calc(50% - 220px);
+    width: 440px;
+    padding: 12px;
+    background-color: var(--app-primary-color);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    color: white;
+    visibility: hidden;
+    text-align: center;
+    will-change: transform;
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0);
+    transition-property: visibility, -webkit-transform, opacity;
+    transition-property: visibility, transform, opacity;
+    transition-duration: 0.2s;
+    z-index: 2; 
+}
+
+::slotted(.link.btn) {
+    cursor: pointer;
+    font-weight: bold;
+    background-color: var(--app-primary-color);
+    text-transform: uppercase;
+    
+    display: inline-block;
+    transition: .2s transform ease-in-out;
+    transform: none;
+    will-change: transform;
+}
+::slotted(.link.btn:hover) {
+    transform: scale(1.05);
+    will-change: transform;
+}
+
+::slotted(.link) {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+:host([opened]) {
+    visibility: visible;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+
+@media (max-width: 767px) {
+    :host {
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: auto;
+        -webkit-transform: translate3d(0, 100%, 0);
+        transform: translate3d(0, 100%, 0);
+
+        -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, .2);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, .2);
+
+        /* to be over responsive buttons */
+        z-index: 3; 
+    }
+}

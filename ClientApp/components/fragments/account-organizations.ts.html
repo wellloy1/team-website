@@ -1,0 +1,141 @@
+<!-- <iron-media-query query="max-width: 767px" query-matches="{{mini}}"></iron-media-query> -->
+
+<teamatical-organizations-data 
+  id="organizations-data" 
+  organizations="{{organizations}}" 
+  num-items="{{numItems}}"
+  query-params="{{queryParams}}"
+  searching-progress="{{searchingProgress}}"
+  user-info="{{userInfo}}" 
+  website-url="[[websiteUrl]]"
+  loading="{{loading}}" 
+  failure="{{failure}}"
+  visible="[[visible]]" 
+  saving="{{saving}}">
+</teamatical-organizations-data>
+
+<teamatical-ui-loader hidden$="[[_isNotConn]]"></teamatical-ui-loader>
+
+<div hidden$="[[_isNoOrganizations]]">
+  <div class="subsection" visible>
+    <header>
+      <h1>[[localize('organizations-title')]]</h1>
+      <span>
+        (
+        <span>[[_numItems]][[_numItemsApproximately]]</span>
+        <span hidden="[[!_single]]">[[localize('organizations-qty-item')]]</span>
+        <span hidden="[[!_many]]">[[localize('organizations-qty-items')]]</span>
+        )
+      </span>
+    </header>
+
+    <div id="add-button-container">
+      <paper-spinner-lite 
+        id="search-progress"
+        active="[[searchingProgress]]">
+      </paper-spinner-lite>
+    </div>
+
+    <paper-input 
+      id="search"
+      name="search"
+      type="text"
+      label="[[localize('organizations-search-input')]]" 
+      aria-label$="[[localize('organizations-search-input')]]"
+      placeholder="[[localize('organizations-search-placeholder')]]"
+      value="{{organizations.search::input}}"
+      required
+      autocomplete="search"
+      error-message="[[localize('organizations-search-invalid')]]">
+    </paper-input>
+
+    <p class="empty-list" hidden$="[[_hasSearchedItems]]">
+      [[localize('organizations-search-empty')]]
+    </p>
+    
+    <div
+      id="list" 
+      class="organization-list" 
+      hidden$="[[!_hasSearchedItems]]"
+      draggable="false">
+
+      <iron-list 
+        id="gridList"
+        items="{{organizations.items}}" 
+        as="organizationi"
+        scroll-target="document"
+        default-physical-count="40">
+          <template>
+            <div 
+              class="organization drag-item" 
+              archive$="[[_bool(organizationi.isarchive)]]">
+
+              <div class="organization-header">
+                
+                <div class="line-horizonal">
+                  <paper-icon-button 
+                    icon="[[_orgIcon(organizationi.OrganizationID)]]" 
+                    disabled="[[actionNotAllowed]]">
+                  </paper-icon-button>
+
+                  <paper-icon-button 
+                    icon="label" 
+                    aria-label$="[[localize('organizations-isdefault-aria-label')]]"
+                    tooltip$="[[localize('organizations-hint-isdefault')]]" tooltip-flow="up" tooltip-flow-horiz="right"
+                    hidden="[[!organizationi.IsDefault]]" 
+                    disabled="[[actionNotAllowed]]">
+                  </paper-icon-button>
+              
+                  <paper-icon-button 
+                    icon="label-outline" 
+                    aria-label$="[[localize('organizations-makedefault-aria-label')]]"
+                    tooltip$="[[localize('organizations-hint-makedefault')]]" tooltip-flow="up" tooltip-flow-horiz="right"
+                    hidden="[[organizationi.IsDefault]]" 
+                    disabled="[[actionNotAllowed]]"
+                    on-tap="_onMakeAsDefault">
+                  </paper-icon-button>
+
+                  <h3>
+                    [[organizationi.OrganizationName]] ([[_formatDomain(organizationi.RedirectUrl)]])
+                    - [[localize('organizations-title-created')]] [[_formatDate(organizationi.Created)]]
+                  </h3>
+                </div>
+              </div>
+              
+              <div class="organization-footer">
+              </div>
+            </div>
+          </template>
+      </iron-list>
+
+    </div>
+
+    <footer class="progress-container">
+      <paper-spinner-lite 
+        id="loadMoreProgress"
+        class="progress-centered"
+        active="[[_loadMoreProgress(loading, loadingMore)]]">
+      </paper-spinner-lite>
+      
+      <teamatical-ui-button 
+        id="loadMoreBtn"
+        hidden$="[[organizations.plast]]"
+        class="hidden-animated slow"
+        hidden-animated$="[[_loadMoreProgress(loading, loadingMore)]]"
+        disabled$="[[loading]]"
+        on-tap="_loadMore">
+        [[localize('organizations-load-more-btn')]]
+      </teamatical-ui-button>
+
+      <div class="end-list" hidden$="[[!_hasNoMoreItems]]">[[localize('organizations-list-end')]]</div>
+    </footer>
+
+  </div>
+</div>
+
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

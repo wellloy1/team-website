@@ -1,0 +1,43 @@
+:host {
+	display: block;
+	padding: 0px;
+	height: 100%;
+}
+
+h4 {
+	margin-block-end: 0em;
+}
+
+paper-button {
+	--paper-button: {
+		padding: 0.5em 0.37em;
+	};
+}
+paper-button.accept-for-manufactoring {
+	--paper-button: {
+		background: var(--paper-green-600);
+		color: white;
+	};
+}
+paper-button.cancel {
+	--paper-button: {
+		background: var(--paper-red-600);
+		color: white;
+	};
+}
+
+paper-icon-button.remove-btn {
+	color: var(--paper-red-600);
+}
+
+tmladmin-ui-search-input#newuser,
+paper-input#newadmin {
+	max-width: 340px;
+}
+
+.horiz-container {
+	align-items: flex-end;
+}
+.horiz-container > paper-spinner-lite {
+	padding: 16px;
+}

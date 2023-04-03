@@ -1,0 +1,121 @@
+:host {
+    display: block;
+    /* --teamatical-tooltip-color: #333;
+    --teamatical-tooltip-text-color: #fff;
+    --teamatical-tooltip-boxshadow-color: rgba(0, 0, 0, 0.35); */
+}
+
+.barcode-input {
+	width:320px;
+    z-index: 1;
+	/* position: absolute; */
+}
+
+
+
+.barcode {
+    font-size: 1em;
+    font-weight: 600;
+    @apply --app-font-monospace;
+}
+
+.barcode-container {
+    z-index: 1;
+    position: absolute;
+    /* background: #333; */
+    background: linear-gradient( rgba(0, 0, 0, 0.8) 50%, rgba(100, 100, 100, 1) 100% );
+    color: #fff;
+    border-radius: 8px;
+}
+
+
+
+
+
+
+#dialoghelp {
+	--tmladmin-ui-dialog-container: {
+	    background: linear-gradient(45deg, #f06, blue);
+	};
+}
+#dialoghelp div[slot="body"] {
+	overflow: auto;
+}
+#dialoghelp .dialog-loading {
+	display: block;
+    position: absolute;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+
+
+
+.image-product-grid {
+    padding: 0;
+    min-width: 21px; 
+    flex-shrink: 1;
+    display: flex;
+    flex-flow: wrap;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .image-product-grid.left {
+    justify-content: flex-start;
+  }
+  
+  teamatical-ui-image-multiview-3d 
+  { 
+      width: 576px; height: 768px;
+  }
+  .image-product-grid.clickable teamatical-ui-image {
+    cursor: pointer;
+  }
+  
+  .image-product-grid teamatical-ui-image {
+    width: 240px;
+    height: 320px;
+    align-self: flex-start;
+  
+    --teamatical-ui-image-img: {
+      border-radius: 6px;
+    };
+  }
+  .order-stocks-item .image-product-grid teamatical-ui-image {
+      width: 60px;
+      height: 80px;
+  
+  }
+  
+  .image-product-grid teamatical-ui-image::before {
+    content: ""; 
+    padding-top: 133%;
+  }
+  
+  .image-product-grid.snapshots teamatical-ui-image {
+      width: 320px;
+      height: 240px;
+      margin: 8px;
+      align-self: flex-start;
+  
+      --teamatical-ui-image-img: {
+          border-radius: 6px;
+      };
+  }
+
+
+
+  
+
+
+
+
+tmladmin-production-sewing-item {
+	text-align: center;
+}
+
+tmladmin-production-sewing-item teamatical-ui-image {
+	height: 560px;
+}

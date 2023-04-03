@@ -1,0 +1,332 @@
+<!-- <iron-media-query query="max-width: 767px" query-matches="{{mini}}"></iron-media-query> -->
+
+<teamatical-stores-data 
+  id="stores-data" 
+  stores="{{stores}}" 
+  num-items="{{numItems}}"
+  query-params="{{queryParams}}"
+  searching-progress="{{searchingProgress}}"
+  user-info="{{userInfo}}" 
+  website-url="[[websiteUrl]]"
+  loading="{{loading}}" 
+  failure="{{failure}}"
+  visible="[[visible]]" 
+  saving="{{saving}}">
+</teamatical-stores-data>
+
+<teamatical-ui-loader hidden$="[[_isNotConn]]"></teamatical-ui-loader>
+
+<div hidden$="[[_isNoStores]]">
+  <div class="subsection" visible>
+    <header>
+      <h1>[[_accountTitle(userInfo.orgName, 'stores-title', visible)]]</h1>
+      <span>
+        (
+        <span>[[_numItems]][[_numItemsApproximately]]</span>
+        <span hidden="[[!_single]]">[[localize('stores-qty-item')]]</span>
+        <span hidden="[[!_many]]">[[localize('stores-qty-items')]]</span>
+        )
+      </span>
+    </header>
+
+    <div id="add-button-container">
+      <paper-fab 
+        id="add-button" 
+        aria-label="add"
+        icon="add" 
+        disabled="[[actionNotAllowed]]"
+        mini
+        on-tap="_onAddTap">
+      </paper-fab>
+
+      <paper-spinner-lite 
+        id="search-progress"
+        active="[[searchingProgress]]">
+      </paper-spinner-lite>
+
+    </div>
+
+    <paper-input 
+      id="search"
+      name="search"
+      type="text"
+      label="[[localize('stores-search-input')]]" 
+      aria-label$="[[localize('stores-search-input')]]"
+      placeholder="[[localize('stores-search-placeholder')]]"
+      value="{{stores.search::input}}"
+      required
+      autocomplete="search"
+      error-message="[[localize('stores-search-invalid')]]">
+    </paper-input>
+
+    <p class="empty-list" hidden$="[[_hasSearchedItems]]">
+      [[localize('stores-search-empty')]]
+    </p>
+    
+    <div
+      id="list" 
+      class="store-list" 
+      hidden$="[[!_hasSearchedItems]]"
+      draggable="false">
+
+      <iron-list 
+        id="gridList"
+        items="{{stores.items}}" 
+        as="storei"
+        scroll-target="document"
+        default-physical-count="40">
+          <template>
+            <div 
+              class="store drag-item" 
+              archive$="[[_bool(storei.isarchive)]]">
+
+              <div class="store-header">
+                
+                <div class="line-horizonal">
+                  <paper-icon-button 
+                    icon="label" 
+                    aria-label$="[[localize('stores-isdefault-aria-label')]]"
+                    tooltip$="[[localize('stores-hint-isdefault')]]" tooltip-flow="right"
+                    hidden="[[!storei.isdefault]]" 
+                    disabled="[[actionNotAllowed]]">
+                  </paper-icon-button>
+              
+                  <paper-icon-button 
+                    icon="label-outline" 
+                    aria-label$="[[localize('stores-makedefault-aria-label')]]"
+                    tooltip$="[[localize('stores-hint-makedefault')]]" tooltip-flow="right"
+                    hidden="[[storei.isdefault]]" 
+                    disabled="[[actionNotAllowed]]"
+                    on-tap="_onMakeAsDefault">
+                  </paper-icon-button>
+
+                  <iron-icon
+                    hidden$="[[!storei.hidecustomize]]" 
+                    icon="lock" 
+                    tooltip$="[[localize('store-customizelock-hint')]]"
+                    class="customize-lock">
+                  </iron-icon>
+
+                  <h3>
+                    [[storei.title]]
+                    #:&nbsp;<span class="copy-tap" on-tap="_copyTap">[[storei.sid]]</span>
+                    <a href="[[_hrefStore(storei.sid)]]"><iron-icon icon="open-in-new" class="open-in-here"></iron-icon></a>
+                  </h3>
+
+                  <paper-icon-button 
+                    hidden="[[_isvirtual(storei.sid)]]"
+                    disabled$="[[actionNotAllowed]]" 
+                    class="admins-icon hidden-animated" 
+                    cake="1w2" 
+                    aria-label$="[[localize('store-admins-aria-label')]]" 
+                    icon="icons:supervisor-account" 
+                    tooltip$="[[localize('store-admins-hint')]]" tooltip-flow="down"
+                    on-tap="_adminsList">
+                  </paper-icon-button>
+
+                  <paper-icon-button 
+                    class="archive-button" 
+                    icon="icons:archive" 
+                    hidden$="[[_isarch(storei.isarchive, storei.sid)]]"
+                    disabled="[[actionNotAllowed]]"
+                    tooltip$="[[localize('stores-archive-label', 'item', storei.title)]]" tooltip-flow="left"
+                    aria-label$="[[localize('stores-archive-label', 'item', storei.title)]]" 
+                    on-tap="_archiveItem">
+                  </paper-icon-button>
+
+                  <paper-icon-button 
+                    class="archive-button" 
+                    icon="icons:unarchive" 
+                    hidden$="[[_isnotarch(storei.isarchive, storei.sid)]]"
+                    disabled="[[actionNotAllowed]]"
+                    tooltip$="[[localize('stores-unarchive-label', 'item', storei.title)]]" tooltip-flow="left"
+                    aria-label$="[[localize('stores-unarchive-label', 'item', storei.title)]]" 
+                    on-tap="_unarchiveItem">
+                  </paper-icon-button>
+
+                </div>
+                <ul hidden="[[_isvirtual(storei.sid)]]">
+                  <li>[[localize('stores-title-created')]] [[_formatDate(storei.created)]]</li>
+                  <li>[[localize('stores-title-itemscount')]] [[storei.itemscount]]</li>
+                  <li hidden$="[[!storei.isgroup]]">
+                    <span no-wrap>[[localize('stores-title-groupshipdeadline')]]</span>
+                    <span tooltip$="[[localize('groupshipping-date-title')]]">
+                      <teamatical-ui-date-time 
+                        hour="numeric" minute="numeric" second="numeric" 
+                        datetime-obj="[[storei.groupdeadline]]">
+                      </teamatical-ui-date-time>
+                      &nbsp;
+                    </span>
+                    <span no-wrap class="g-count">[[localize('store-groupshippingcount-title', 'count', storei.shipping.OrderCount)]]</span>
+                  </li>
+                  <li hidden$="[[!storei.shipping.DeliveryDetailsOnly]]">
+                    <span no-wrap>[[localize('stores-title-deliverydetails')]]</span>
+                    <span>[[storei.shipping.DeliveryDetails]]</span>
+                  </li>
+                </ul>
+
+				        <h4 hidden$="[[!storei.isgroup]]">[[localize('stores-title-shipaddress')]]</h4>
+                <div hidden$="[[!storei.isgroup]]" class="table order-details-shipment">
+                  <!--  shipaddress -->
+                  <div class="row">
+                    <div>
+                      [[localize('order-title-firstname')]]
+                    </div>
+                    <div>
+                      [[storei.shipping.ShipFirstName]]
+                    </div>
+                  </div>
+                
+                  <div class="row">
+                    <div>
+                      [[localize('order-title-lastname')]]
+                    </div>
+                    <div>
+                      [[storei.shipping.ShipLastName]]
+                    </div>
+                  </div>
+                
+                
+                  <div class="row" hidden$="[[!storei.shipping.ShipCompany]]">
+                    <div>
+                      [[localize('order-title-company')]]
+                    </div>
+                    <div>
+                      [[storei.shipping.ShipCompany]]
+                    </div>
+                  </div>
+                
+                  <div class="row" hidden$="[[!storei.shipping.ShipTaxID]]">
+                    <div>
+                      [[localize('order-title-tax')]]
+                    </div>
+                    <div>
+                      [[storei.shipping.ShipTaxID]]
+                    </div>
+                  </div>
+                
+                  <div class="row" hidden$="[[!storei.shipping.ShipEORI]]">
+                    <div>
+                      [[localize('order-title-eori')]]
+                    </div>
+                    <div>
+                      [[storei.shipping.ShipEORI]]
+                    </div>
+                  </div>
+                
+                
+                  <div class="row">
+                    <div>
+                      [[localize('order-title-address')]]
+                    </div>
+                    <div>
+                      [[storei.shipping.ShipAddress]]
+                    </div>
+                  </div>
+                
+                  <div class="row" hidden$="[[!storei.shipping.ShipAddress2]]">
+                    <div>
+                      [[localize('order-title-address2')]]
+                    </div>
+                    <div>
+                      [[storei.shipping.ShipAddress2]]
+                    </div>
+                  </div>
+                
+                  <div class="row" hidden$="[[!storei.shipping.ShipAddress3]]">
+                    <div>
+                      [[localize('order-title-address3')]]
+                    </div>
+                    <div>
+                      [[storei.shipping.ShipAddress3]]
+                    </div>
+                  </div>
+                
+                  <div class="row">
+                    <div>
+                      [[localize('order-title-city')]]
+                    </div>
+                    <div>
+                      [[storei.shipping.ShipCity]]
+                    </div>
+                  </div>
+                
+                  <div class="row">
+                    <div>
+                      [[localizeByCountry('order-title-state', storei.shipping.ShipCountry.ID)]]
+                    </div>
+                    <div>
+                      [[storei.shipping.ShipState]]
+                    </div>
+                  </div>
+                
+                  <div class="row">
+                    <div>
+                      [[localizeByCountry('order-title-zip', storei.shipping.ShipCountry.ID)]]
+                    </div>
+                    <div>
+                      [[storei.shipping.ShipZip]]
+                    </div>
+                  </div>
+                
+                  <div class="row">
+                    <div>
+                      [[localize('order-title-country')]]
+                    </div>
+                    <div>
+                      [[storei.shipping.ShipCountry.title]]
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="store-footer">
+                <teamatical-ui-button 
+                  class="configure-btn" 
+                  href="[[_hrefStore(storei.sid)]]">
+                  [[localize('stores-btn-edit')]]
+                </teamatical-ui-button>
+
+                <teamatical-ui-button 
+                  class="groupshipping-btn" 
+                  hidden$="[[!storei.hasgroupshippings]]"
+                  href="[[_hrefAccountStoreGroups(storei.sid)]]">
+                  [[localize('stores-btn-group')]]
+                </teamatical-ui-button>
+
+              </div>
+            </div>
+          </template>
+      </iron-list>
+
+    </div>
+
+    <footer class="progress-container">
+      <paper-spinner-lite 
+        id="loadMoreProgress"
+        class="progress-centered"
+        active="[[_loadMoreProgress(loading, loadingMore)]]">
+      </paper-spinner-lite>
+      
+      <teamatical-ui-button 
+        id="loadMoreBtn"
+        hidden$="[[stores.plast]]"
+        class="hidden-animated slow"
+        hidden-animated$="[[_loadMoreProgress(loading, loadingMore)]]"
+        disabled$="[[loading]]"
+        on-tap="_loadMore">
+        [[localize('stores-load-more-btn')]]
+      </teamatical-ui-button>
+
+      <div class="end-list" hidden$="[[!_hasNoMoreItems]]">[[localize('stores-list-end')]]</div>
+    </footer>
+
+  </div>
+</div>
+
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

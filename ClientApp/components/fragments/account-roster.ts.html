@@ -1,0 +1,270 @@
+<app-route route="{{route}}" pattern="/:rid" data="{{routeData}}"></app-route>
+
+<teamatical-roster-data 
+  id="roster-data" 
+  rid="[[routeData.rid]]"
+  roster="{{roster}}" 
+  searching-progress="{{searchingProgress}}"
+  num-items="{{numItems}}"
+  query-params="{{queryParams}}"
+  loading="{{loading}}" 
+  failure="{{failure}}"
+  user-info="{{userInfo}}" 
+  visible="[[visible]]" 
+  website-url="[[websiteUrl]]"
+  saving="{{saving}}">
+</teamatical-roster-data>
+
+<teamatical-ui-loader hidden$="[[_isNotConn]]"></teamatical-ui-loader>
+
+        
+
+<div hidden$="[[_isNoRoster]]">
+  <header>
+    <h1>
+      [[_rosterItemTitle(roster.RosterID, roster.RosterTitle)]]
+      <paper-icon-button 
+          class="clean-button" 
+          icon="communication:clear-all" 
+          tooltip$="[[localize('roster-list-clear')]]" tooltip-flow="down" tooltip-flow-horiz="left"
+          aria-label$="[[localize('roster-list-clear')]]" 
+          on-tap="_clearRosterTap">
+      </paper-icon-button>
+
+      <paper-icon-button 
+          class="export-button" 
+          icon="icons:cloud-download" 
+          disabled$="[[_disabledExportBtn]]"
+          tooltip$="[[localize('roster-list-export')]]" tooltip-flow="down" tooltip-flow-horiz="left"
+          aria-label$="[[localize('roster-list-export')]]" 
+          on-tap="_exportRosterTap">
+      </paper-icon-button>
+    </h1>
+    <!-- <span>
+      (
+      <span>[[_numItems]][[_numItemsApproximately]]</span>
+      <span hidden="[[!_single]]">[[localize('roster-qty-item')]]</span>
+      <span hidden="[[!_many]]">[[localize('roster-qty-items')]]</span>
+      )
+    </span> -->
+  </header>
+
+  <div id="search-progress-container">
+    <paper-spinner-lite 
+      id="search-progress"
+      active="[[searchingProgress]]">
+    </paper-spinner-lite>
+  </div>
+
+  <paper-input
+    id="title"
+    class="detail-input"
+    name="RosterTitle"
+    type="text"
+    label="[[localize('roster-title-input')]]" 
+    aria-label$="[[localize('roster-title-input')]]"
+    placeholder="[[localize('roster-title-placeholder')]]"
+    value="{{roster.RosterTitle::input}}"
+    required
+    on-value-changed="onInputChanged"
+    error-message="[[roster.notvalid.RosterTitle]]"
+    invalid="[[_asBool(roster.notvalid.RosterTitle)]]"
+    autocomplete="search">
+  </paper-input>
+
+
+  <iron-list id="list-virtual" class="roster-list" items="{{roster.Items}}" as="playeri" scroll-target="document" default-physical-count="40">
+    <template>
+      <div class="table">
+        <div class="row vtop" style="width: 100%;">
+          <div class="vcenter">
+            [[_formatN(index)]]
+          </div>
+          <div class="w25">
+            <paper-input name="PlayerName" type="text" label="[[localize('roster-item-playername')]]"
+              value="{{playeri.PlayerName::input}}" required 
+              on-value-changed="onInputChanged"
+              on-focus="onInputFocus" on-blur="onInputBlur"
+              error-message="[[playeri.notvalid.PlayerName]]" invalid="[[_asBool(playeri.notvalid.PlayerName)]]"
+              autocomplete="PlayerName">
+            </paper-input>
+          </div>
+          <div class="w25">
+            <paper-input name="PlayerNumber" type="text" label="[[localize('roster-item-playernumber')]]"
+              value="{{playeri.PlayerNumber::input}}" required 
+              on-value-changed="onInputChanged"
+              on-focus="onInputFocus" on-blur="onInputBlur"
+              error-message="[[playeri.notvalid.PlayerNumber]]" invalid="[[_asBool(playeri.notvalid.PlayerNumber)]]"
+              autocomplete="PlayerNumber">
+            </paper-input>
+          </div>
+          <div class="w25">
+            <paper-input name="PlayerYear" type="text" label="[[localize('roster-item-playeryear')]]"
+              value="{{playeri.PlayerYear::input}}" required 
+              on-value-changed="onInputChanged"
+              on-focus="onInputFocus" on-blur="onInputBlur"
+              error-message="[[playeri.notvalid.PlayerYear]]" invalid="[[_asBool(playeri.notvalid.PlayerYear)]]"
+              autocomplete="PlayerYear">
+            </paper-input>
+          </div>
+          <div class="w10">
+            <teamatical-ui-select name="PlayerCaptain" class="captain-select" hidden$="[[notCaptain]]" no-caption-off 
+              caption-text="[[localize('roster-item-captain')]]" 
+              options="[[roster.PlayerCaptainOptions]]" 
+              text-property="Name"
+              value-property="ID" 
+              value="{{playeri.PlayerCaptain}}" 
+              on-value-changed="onInputChanged"
+              on-focus="onInputFocus" on-blur="onInputBlur"
+              error-message="[[playeri.notvalid.PlayerCaptain]]" 
+              invalid="[[_asBool(playeri.notvalid.PlayerCaptain)]]">
+            </teamatical-ui-select>
+          </div>
+          <div class="w10">
+            <div class$="size-selector-container sizes-[[playeri.Sizes.length]]">
+              <dom-repeat items="[[playeri.Sizes]]" as="sizei">
+                <template>
+                  <teamatical-ui-select name="Value" class="size-select" 
+                    recent$="[[sizei.Selected]]"
+                    caption-text="[[_sizeCaption(sizei.SizeCategoryName, sizei.Selected)]]"
+                    options="[[_sizeCategoriesSelected(roster.SizeCategories, index)]]" text-property="title"
+                    value-property="id" value="{{sizei.Value}}" 
+                    on-value-changed="onInputChanged"
+                    on-focus="onInputFocus" on-blur="onInputBlur"
+                    error-message="[[sizei.notvalid.Value]]" invalid="[[_asBool(sizei.notvalid.Value)]]">
+                  </teamatical-ui-select>
+                </template>
+              </dom-repeat>
+            </div>
+          </div>
+          <div class="w5 right vcenter">
+            <div class="buttons-container">
+              <paper-icon-button class="delete-button" icon="close" disabled="[[actionNotAllowed]]"
+                tooltip$="[[localize('roster-list-remove-label')]]" tooltip-flow="up" tooltip-flow-horiz="left"
+                aria-label$="[[localize('roster-list-remove-label')]]" on-tap="_removePlayerTap">
+              </paper-icon-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+  </iron-list>
+
+  <div class="roster-add-line roster-list">
+    <div class="table" style="width: 100%;">
+      <div class="row vcenter" style="width: 100%;">
+        <div>
+          &nbsp;&nbsp;
+        </div>
+        <div class="w25">
+          <paper-input id="newPlayerName" name="PlayerName" type="text" label="[[localize('roster-item-playername')]]"
+            value="{{playernew.PlayerName::input}}" required on-value-changed="onInputChangedNew"
+            on-focus="onInputFocus" on-blur="onInputBlur"
+            maxlength="150"
+            error-message="[[playernew.notvalid.PlayerName]]" invalid="[[_asBool(playernew.notvalid.PlayerName)]]"
+            autocomplete="PlayerName">
+          </paper-input>
+        </div>
+        <div class="w25">
+          <paper-input name="PlayerNumber" type="text" label="[[localize('roster-item-playernumber')]]"
+            value="{{playernew.PlayerNumber::input}}" required on-value-changed="onInputChangedNew"
+            on-focus="onInputFocus" on-blur="onInputBlur"
+            error-message="[[playernew.notvalid.PlayerNumber]]" invalid="[[_asBool(playernew.notvalid.PlayerNumber)]]"
+            maxlength="150"
+            autocomplete="PlayerNumber">
+          </paper-input>
+        </div>
+        <div class="w25">
+          <paper-input name="PlayerYear" type="text" label="[[localize('roster-item-playeryear')]]"
+            value="{{playernew.PlayerYear::input}}" required on-value-changed="onInputChangedNew"
+            on-focus="onInputFocus" on-blur="onInputBlur"
+            error-message="[[playernew.notvalid.PlayerYear]]" invalid="[[_asBool(playernew.notvalid.PlayerYear)]]"
+            maxlength="150"
+            autocomplete="PlayerYear">
+          </paper-input>
+        </div>
+        <div class="w10">
+          <teamatical-ui-select name="PlayerCaptain" class="captain-select" hidden$="[[notCaptain]]" no-caption-off caption-text="[[localize('roster-item-captain')]]" 
+            options="[[roster.PlayerCaptainOptions]]"
+            text-property="Name" value-property="ID" 
+            value="{{playernew.PlayerCaptain}}" 
+            on-focus="onInputFocus" on-blur="onInputBlur"
+            error-message="[[playernew.notvalid.PlayerCaptain]]" invalid="[[_asBool(playernew.notvalid.PlayerCaptain)]]" on-value-changed="onInputChangedNew">
+          </teamatical-ui-select>
+        </div>
+        <div class="w10">
+          <div class$="size-selector-container sizes-[[playernew.Sizes.length]]">
+            <dom-repeat items="[[playernew.Sizes]]" as="sizei">
+              <template>
+                  <teamatical-ui-select name="Value" class="size-select" 
+                    recent$="[[sizei.Selected]]"
+                    caption-text="[[_sizeCaption(sizei.SizeCategoryName, sizei.Selected)]]"
+                    options="[[_sizeCategoriesSelected(roster.SizeCategories, index)]]" 
+                    text-property="title" value-property="id"
+                    value="{{sizei.Value}}" 
+                    error-message="[[sizei.notvalid.Value]]" 
+                    on-focus="onInputFocus" on-blur="onInputBlur"
+                    invalid="[[_asBool(sizei.notvalid.Value)]]" on-value-changed="onInputChangedNew"> 
+                  </teamatical-ui-select>
+              </template>
+            </dom-repeat>
+          </div>
+        </div>
+        <div class="w5 right vcenter">
+          <div class="buttons-container">
+            <paper-icon-button slot="suffix" class="add-btn" icon="add-circle-outline" sid$="[[item.StoreID]]"
+              aria-label="add"
+              tooltip$="[[localize('roster-list-add-label')]]" tooltip-flow="up" tooltip-flow-horiz="left"
+              on-tap="_addNewTap">
+            </paper-icon-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  <div class="roster-import" hidden$="[[_isNoImport]]">
+    <h2>[[localize('roster-import-uploader-section')]]</h2>
+    <teamatical-ui-csv-import 
+      id="csv-import" 
+      website-url="[[websiteUrl]]"
+      visible="[[visible]]"
+      items="{{importedItems}}"
+      mapping="{{importedMapping}}"
+      mapping-keys="[[importedMappingKeys]]">
+    </teamatical-ui-csv-import>
+  </div>
+
+  <div class="roster-footer">
+    <teamatical-ui-button disabled$="[[_disabled]]" on-tap="_backTap">
+      [[localize('roster-back-btn')]]
+    </teamatical-ui-button>
+
+    <teamatical-ui-button disabled$="[[_disabledImportUploaderBtn]]" on-tap="_importTap">
+      [[localize('roster-import-btn')]]
+    </teamatical-ui-button>
+    
+
+    <teamatical-ui-button 
+      disabled$="[[_disabled]]" 
+      on-tap="_saveTap">
+      [[localize('roster-save-btn')]]
+    </teamatical-ui-button>
+
+    <teamatical-ui-button 
+      responsive 
+      responsive-hide 
+      disabled$="[[_disabled]]" 
+      on-tap="_saveTap">
+      [[localize('roster-save-btn')]]
+    </teamatical-ui-button>
+  </div>
+
+</div>
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

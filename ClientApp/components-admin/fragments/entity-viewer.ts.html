@@ -1,0 +1,154 @@
+<app-localstorage-document key="admin-entity-viewer-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+			</div>
+		</div>
+
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="EntityViewer" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="300px" flex-grow="0" resizable="true" id="ItemType">
+				<template class="header">
+					ItemType
+					<vaadin-grid-filter class="hidden" aria-label="ItemType" path="ItemType" value="[[_filterItemType]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="ItemTypeCombo" style="width: 280px;" value="{{_filterItemType}}"></vaadin-combo-box>
+				</template>
+				<template>[[item.ItemType]]</template>
+				<template class="footer-off">ItemType</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="380px" resizable="true" id="ID">
+				<template class="header">
+					ID					
+					<vaadin-grid-filter aria-label="ID" path="ID" value="[[_filterID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<paper-icon-button slot="suffix" class="copy-json-btn"
+						aria-label="show-json-btn"
+						icon="admin-icons:json-doc"
+						on-tap="showDetailsTap">
+					</paper-icon-button>
+					<paper-icon-button slot="suffix" class="copy-json-btn"
+						aria-label="copy-json-btn"
+						icon="icons:content-copy"
+						on-tap="copyJsonDetailsTap">
+					</paper-icon-button>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.id]]</span>
+				</template>
+				<template class="footer-off">ID</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="220px" flex-grow="0" resizable="true" id="TimeStamp">
+				<template class="header">
+					<vaadin-grid-sorter path="TimeStamp">TimeStamp</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="TimeStamp" aria-placeholder="TimeStamp" path="TimeStamp" value="[[_filterTimeStamp]]"></vaadin-grid-filter>
+				</template>
+				<template>[[_formatDate(item.TimeStamp)]]</template>
+				<template class="footer-off">TimeStamp</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" flex-grow="0" resizable="true" id="ETag">
+				<template class="header">
+					ETag
+				</template>
+				<template>[[item.ETag]]</template>
+				<template class="footer-off">ETag</template>
+			</vaadin-grid-column>
+
+		</vaadin-grid>
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				fixed
+				localstorage-key="admin-entity-viewer-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+	</div>
+</div>
+
+
+
+
+<tmladmin-ui-dialog id="dialogdetails" disabled$="[[dialogdetails.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button 
+			class="close-dialog-small-btn" 
+			icon="admin-icons:close"
+			dialog-dismiss>
+		</paper-icon-button>		
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogdetails.loading]]"
+				hidden$="[[!dialogdetails.loading]]">
+			</paper-progress>
+		</div>
+		<div class="dialog-title">
+			<h3 style="margin-right: auto;">[[dialogdetails.title]]</h3>
+
+			<paper-icon-button slot="suffix" class="copy-json-btn" style="margin: -7px 12px;"
+				aria-label="copy-json-btn"
+				icon="icons:content-copy"
+				on-tap="copyJsonDetailsTap">
+			</paper-icon-button>
+			<paper-toggle-button checked="{{viewasjson}}">JSON Viewer</paper-toggle-button>
+		</div>
+	</div>
+
+	<div slot="body">
+		<div class="details-cell white">
+			<pre hidden$="[[viewasjson]]">[[dialogdetails.Details]]</pre>
+			<json-viewer hidden$="[[!viewasjson]]" json="[[dialogdetails.Details]]"></json-viewer>
+		</div>
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			Close
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>

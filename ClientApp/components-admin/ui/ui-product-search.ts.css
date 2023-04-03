@@ -1,0 +1,69 @@
+.button {
+    --paper-fab-background: var(--paper-grey-50);
+    --paper-fab-keyboard-focus-background: var(--paper-grey-100);
+    --paper-fab-disabled-background: var(--paper-grey-200);
+    --paper-fab-iron-icon: {
+      fill: var(--disabled-text-color);
+    };
+
+    @apply --tmladmin-ui-product-search-btn;
+}
+
+.filters-container {
+    @apply --layout-horizontal;
+	/* @apply --layout-end-justified; */
+}
+
+/* .filter-input {
+
+} */
+
+paper-spinner-lite.thick {
+    width: 32px;
+    height: 32px;
+}
+
+.filter-and {
+    font-size: 2em;
+    padding: 32px;
+}
+
+:host([failure]) .button {
+    --paper-fab-iron-icon: {
+      fill: var(--paper-red-600);
+    };
+}
+
+.search-dialog {
+	--tmladmin-ui-dialog-container: {
+        background: rgba(10, 10, 10, 0.3);
+        /* background-color: linear-gradient(45deg, #f06, blue); */
+	};
+}
+.search-dialog div[slot="body"] {
+	overflow: auto;
+}
+/* .search-dialog .dialog-loading-container {
+	position: relative;
+} */
+.search-dialog .dialog-loading {
+	display: block;
+    position: absolute;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+
+
+
+
+tmladmin-production-sewing-item {
+	/* text-align: center; */
+    font-size: 0.5em;
+}
+
+/* tmladmin-production-sewing-item teamatical-ui-image {
+	height: 560px;
+} */

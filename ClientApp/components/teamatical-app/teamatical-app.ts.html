@@ -1,0 +1,308 @@
+<iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
+<app-location route="{{route}}" query-params="{{queryParams}}"></app-location>
+<app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
+<app-localstorage-document key="teamatical-app" data="{{localStorage}}"></app-localstorage-document>
+
+<teamatical-user-data id="user-data" user-info="{{userInfo}}" query-params="{{queryParams}}" selected-page="[[page]]" website-url="[[websiteUrl]]" home-url="[[_homeUrl]]" env="[[env]]" offline="[[offline]]"
+    auth-domain="[[authDomain]]"
+    auth-audience="[[authAudience]]"
+    auth-scope="[[authScope]]"
+    page-progress="[[userDataProgress]]"
+    auth0-loaded="{{auth0Loaded}}"
+    auth-saving="{{pageSavings.userDataAuth0}}">
+</teamatical-user-data>
+<teamatical-analytics id="ga" website-url="[[websiteUrl]]" user-info="[[userInfo]]" env="[[env]]"></teamatical-analytics>
+<teamatical-open-graph id="og" page="[[page]]"></teamatical-open-graph>
+<teamatical-category-data id="category-data" version="{{version}}" categories="{{categories}}" route="[[route]]" category-name="-" user-info="{{userInfo}}" query-params="{{queryParams}}" website-url="[[websiteUrl]]"></teamatical-category-data>
+<teamatical-colors-data id="colors-data" colors-palette="{{colorsPalette}}" user-info="{{userInfo}}" website-url="[[websiteUrl]]"></teamatical-colors-data>
+<teamatical-cart-data id="cart" cart-details="{{cartDetails}}" cart="{{cart}}" num-items="{{numItems}}" currency="{{currency}}" route="[[route]]" selected-page="[[page]]" loading="{{pageUpdating.cart}}" failure="{{_pageCartFailure}}" visible="{{_pageCartVisible}}" user-info="{{userInfo}}" website-url="[[websiteUrl]]"></teamatical-cart-data>
+
+<div class="print-header">
+    <iron-icon icon="teamatical:logo" alt="teamatical:logo"></iron-icon>
+</div>
+
+<span class="dev tabs">DEV</span>
+
+<app-header id="header"
+            role="navigation"
+            effects="waterfall"
+            reveals
+            disabled$="[[savingProgress]]">
+            
+    <app-toolbar>
+        <div class="left-bar-item">
+            <a class="back-btn" on-tap="_backTap" aria-label$="[[localize('app-title-goback')]]" tabindex="-1" rel="noreferrer nofollow">
+                <paper-icon-button icon="arrow-back" aria-label$="[[localize('app-title-goback')]]" tooltip$="[[localize('app-title-goback-tooltip')]]" tooltip-flow="down" tooltip-flow-horiz="right"></paper-icon-button>
+            </a>
+        </div>
+
+        <div class="logo" cobrand$="[[_customlogoCobrand(cobrand)]]" main-title>
+            <a href="[[_homeUrl]]" tabindex="-1" aria-label$="[[localize('app-title-home', 'title', TITLE_UPPER)]]">
+                <iron-icon class$="[[_customlogoClass('icon-logo-cobrand', cobrand, env)]]" icon="teamatical-app:cobrand" alt="[[_concat('teamatical-app:cobrand-', cobrand)]]"></iron-icon>
+                <iron-icon class$="[[_customlogoClass('icon-logo-cobrand-mini', cobrand, env)]]" icon="teamatical-app:cobrand-mini" alt="[[_concat('teamatical-app:cobrand-', cobrand, '-mini')]]"></iron-icon>
+                <iron-icon class="icon-logo" icon="teamatical:logo" alt="teamatical:logo"></iron-icon>
+                <iron-icon class="icon-logo-mini" icon="teamatical:logo-mini" alt="teamatical:logo-mini"></iron-icon>
+                <!-- <span class="dev logo">DEV</span> -->
+            </a>
+        </div>
+
+
+        <div class="cart-btn-container">
+            <a href="[[_cartUrl]]" tabindex="-1">
+                <paper-icon-button icon="shopping-cart" aria-label$="[[_computeShoppingCartAreaLabel(numItems)]]" tooltip$="[[localize('app-title-cart-tooltip')]]" tooltip-flow="down"></paper-icon-button>
+            </a>
+            <div class="cart-badge hidden-animated" aria-hidden="true" hidden-animated$="[[!numItems]]">[[_formatNumItems(numItems)]]</div>
+        </div>
+        
+        <div class="btns-container">
+
+            <a href="[[searchUrl]]" tabindex="-1" on-tap="_searchTap">
+                <paper-icon-button 
+                    class="search-btn" 
+                    icon="search" 
+                    tooltip$="[[localize('app-title-search-tooltip')]]" tooltip-flow="down"
+                    aria-label="Search">
+                </paper-icon-button>
+            </a>
+
+            <teamatical-ui-account-button
+                user-info="{{userInfo}}">
+            </teamatical-ui-account-button>
+            
+            <a tabindex="-1" rel="noreferrer nofollow">
+                <paper-icon-button 
+                    class="menu-btn"
+                    icon="menu"
+                    aria-label$="[[localize('menu-aria-label')]]"
+                    on-tap="_toggleDrawerTap">
+                </paper-icon-button>
+            </a>
+        </div>
+    </app-toolbar>
+
+    <div id="tabContainer" sticky$="[[shouldShowTabs]]" hidden$="[[!shouldShowTabs]]">
+        <paper-spinner-lite class="loading-catalog-progress" active="[[loadingTabs]]">
+        </paper-spinner-lite>
+
+        <dom-if if="[[_shouldRenderTabs]]">
+            <template>
+                <dom-repeat items="[[tabList]]" as="tablsti">
+                    <template>
+                        <teamatical-tabs selected="[[pageTab]]" 
+                            attr-for-selected="name" 
+                            hidden$="[[!_allowTab(tablsti.id, tabListID)]]" 
+                            on-iron-select="_onTabsItemSelect" 
+                            disabled$="[[loadingTabs]]">
+                            <dom-repeat items="[[tablsti.value]]" as="tabi">
+                                <template>
+                                    <teamatical-tab name="[[tabi.id]]">
+                                        <dom-if if="[[!_isaction(tabi.id)]]">
+                                            <template>
+                                                <a href$="[[tabi.href]]" rel$="[[tabi.rel]]" target$="[[tabi.target]]">
+                                                    [[tabi.title]]
+                                                    <dom-if if="[[tabi.external]]">
+                                                        <template>
+                                                            <iron-icon icon="open-in-new" class="open-in-new"></iron-icon>
+                                                        </template>
+                                                    </dom-if>
+                                                </a>
+                                            </template>
+                                        </dom-if>
+                                        <dom-if if="[[_isaction(tabi.id)]]">
+                                            <template>
+                                                <span on-tap="_onTabsTap">[[tabi.title]]</span>
+                                            </template>
+                                        </dom-if>
+                                    </teamatical-tab>
+                                </template>
+                            </dom-repeat>
+                        </teamatical-tabs>
+                    </template>
+                </dom-repeat>
+            </template>
+        </dom-if>
+    </div>
+</app-header>
+
+<dom-if if="[[_shouldRenderDrawer]]">
+    <template>
+        <app-drawer opened="{{drawerOpened}}" align="end" swipe-open="[[allowDrawerSwipe]]" track-history tabindex="0">
+            <div class="drawer-list-container">
+                <paper-listbox role="navigation" class="drawer-list" attr-for-selected="value" selected="{{pageTab}}" disabled$="[[loadingDrawer]]">
+                    <dom-repeat items="[[drawerList]]" as="tabi">
+                        <template>
+                            <dom-if if="[[tabi.istitle]]">
+                                <template>
+                                    <paper-item disabled>
+                                        <h3>[[tabi.title]]</h3>
+                                    </paper-item>
+                                </template>
+                            </dom-if>
+                            <dom-if if="[[!tabi.istitle]]">
+                                <template>
+                                    <paper-item value$="[[tabi.id]]" href$="[[tabi.href]]" rel$="[[tabi.rel]]" on-tap="_onDrawerItemTap">
+                                        [[tabi.title]]
+                                        <dom-if if="[[tabi.external]]">
+                                            <template>
+                                                <iron-icon icon="open-in-new" class="open-in-new"></iron-icon>
+                                            </template>
+                                        </dom-if>
+                                    </paper-item>
+                                </template>
+                            </dom-if>
+                        </template>
+                    </dom-repeat>
+                </paper-listbox>
+            </div>
+            <paper-spinner-lite 
+                class="loading-catalog-progress"
+                active="[[loadingDrawer]]">
+            </paper-spinner-lite>
+        </app-drawer>
+    </template>
+</dom-if>
+
+<paper-progress 
+                indeterminate
+                class="importprogress"
+                aria-label="import-progress"
+                hidden$="[[_hideProgress]]">
+</paper-progress>
+
+<footer id="app-footer">
+    <div class="website-links">
+        <div class="footer-logo">
+            <a href="[[_homeUrl]]" tabindex="-1" aria-label$="[[localize('app-title-home', 'title', TITLE_UPPER)]]" hidden$="[[poweredby]]">
+                <iron-icon class="teamatical-logo-footer" icon="teamatical:logo-footer" alt="teamatical:logo-footer"></iron-icon>
+            </a>
+            <teamatical-ui-locale-switcher 
+                is-app
+                locale-default="[[localeDefault]]"
+                country="[[orgCountry]]"
+                query-lang="[[queryParams.lang]]"
+                loading="{{pageSavings.localeSwitcher}}">
+            </teamatical-ui-locale-switcher>
+        </div>
+        <div class="links">
+            <div class="left">
+                <a href="/help/placingorder">[[localize('app-footer-placingorder')]]</a>
+                <a href="/help/delivery">[[localize('app-footer-delivery')]]</a>
+                <a href="/help/tracking">[[localize('app-footer-tracking')]]</a>
+            </div>
+            <div class="right">
+                <a href="/help/home" hidden$="[[nocatalogMode]]" hidden2$="[[poweredby]]">[[localize('app-footer-help')]]</a>
+                <a href="/account">[[localize('app-footer-account')]]</a>
+                <a href="/feedback?id=suggestion">[[localize('app-footer-feedback')]]</a>
+            </div>
+        </div>
+    </div>
+    <div class="separator"></div>
+
+    <span class="poweredby hidden" showen-inline$="[[poweredby]]">[[localize('app-footer-poweredby')]]</span>
+    <div class="socials-links">
+        <div class="socials">
+            <div hidden$="[[poweredby]]">
+                <!-- <paper-icon-button href="#" class="social-icon" icon="brand:twitter" aria-label$="[[localize('social-aria-label-twitter')]]"></paper-icon-button> -->
+                <a href="https://www.facebook.com/teamatical.info/" tabindex="-1" target="_blank" rel="noreferrer nofollow">
+                    <paper-icon-button class="social-icon" icon="brand:facebook" aria-label$="[[localize('social-aria-label-facebook')]]">
+                </paper-icon-button></a>
+                <!-- <paper-icon-button href="#" class="social-icon" icon="brand:instagram" aria-label$="[[localize('social-aria-label-instagram')]]"></paper-icon-button> -->
+                <a href="https://www.youtube.com/channel/UCd8NfMiPAUy4sGpFwCBDYUg/videos" tabindex="-1" target="_blank" rel="noreferrer nofollow">
+                    <paper-icon-button class="social-icon" icon="brand:youtube"
+                        aria-label$="[[localize('social-aria-label-youtube')]]">
+                </paper-icon-button></a>
+                <!-- <paper-icon-button href="#" class="social-icon" icon="brand:google" aria-label$="[[localize('social-aria-label-google')]]"></paper-icon-button> -->
+            </div>
+        </div>
+        <div class="privacy">
+            <a href="#" tabindex="-1" class="version">v[[version]]</a>
+            <a href="/termsofuse">[[localize('app-footer-termsofuse')]]</a>
+            <a href="/privacypolicy">[[localize('app-footer-privacypolicy')]]</a>
+        </div>
+    </div>
+</footer>
+
+<paper-spinner-lite 
+    class="pageprogress"
+    active="[[pageLoadingDelayed]]">
+</paper-spinner-lite>
+
+<!-- fallback-selection="h404" -->
+<iron-pages id="pages" role="main" selected="[[page]]" attr-for-selected="name" selected-attribute="visible">
+    <teamatical-home name="home" submenu="{{pageMenus.home}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home>
+    <teamatical-home-default name="home-default" submenu="{{pageMenus.homeDefault}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home-default>
+    
+    <dom-if if="[[_subdomain('lcahl', orgSubdomain)]]"><template><teamatical-home-lcahl name="home-lcahl" submenu="{{pageMenus.homeLcahl}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home-lcahl></template></dom-if>
+    <dom-if if="[[_subdomain('candgsalesinc', orgSubdomain)]]"><template><teamatical-home-candgsalesinc name="home-candgsalesinc" submenu="{{pageMenus.homeCandgsalesinc}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home-candgsalesinc></template></dom-if>
+    <dom-if if="[[_subdomain('candjdesignllc', orgSubdomain)]]"><template><teamatical-home-candjdesignllc name="home-candjdesignllc" submenu="{{pageMenus.homeCandjdesignllc}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home-candjdesignllc></template></dom-if>
+    <dom-if if="[[_subdomain('bda', orgSubdomain)]]"><template><teamatical-home-bda name="home-bda" submenu="{{pageMenus.homeBda}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home-bda></template></dom-if>
+    <dom-if if="[[_subdomain('decathlon-th', orgSubdomain)]]"><template><teamatical-home-decathlon-th name="home-decathlon-th" submenu="{{pageMenus.homeDecathlonTh}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home-decathlon-th></template></dom-if>
+    <dom-if if="[[_subdomain('decathlon-fr', orgSubdomain)]]"><template><teamatical-home-decathlon-fr name="home-decathlon-fr" submenu="{{pageMenus.homeDecathlonFr}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home-decathlon-fr></template></dom-if>
+    <dom-if if="[[_subdomain('snapraise', orgSubdomain)]]"><template><teamatical-home-snapraise name="home-snapraise" submenu="{{pageMenus.homeSnapraise}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home-snapraise></template></dom-if>
+    <dom-if if="[[_subdomain('fashiontv', orgSubdomain)]]"><template><teamatical-home-fashiontv name="home-fashiontv" submenu="{{pageMenus.homeFashiontv}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home-fashiontv></template></dom-if>
+    <dom-if if="[[_subdomain('douglassportswear', orgSubdomain)]]"><template><teamatical-home-douglassportswear name="home-douglassportswear" submenu="{{pageMenus.homeDouglassportswear}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home-douglassportswear></template></dom-if>
+    <dom-if if="[[_subdomain('deploy', orgSubdomain)]]"><template><teamatical-home-deploy name="home-deploy" submenu="{{pageMenus.homeDeploy}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home-deploy></template></dom-if>
+    <dom-if if="[[_subdomain('tailgreeter', orgSubdomain)]]"><template><teamatical-home-tailgreeter name="home-tailgreeter" submenu="{{pageMenus.homeTailgreeter}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home-tailgreeter></template></dom-if>
+    <dom-if if="[[_subdomain('purewear', orgSubdomain)]]"><template><teamatical-home-purewear name="home-purewear" submenu="{{pageMenus.homePurewear}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home-purewear></template></dom-if>
+    <dom-if if="[[_subdomain('fanatics', orgSubdomain)]]"><template><teamatical-home-fanatics name="home-fanatics" submenu="{{pageMenus.homeFanatics}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home-fanatics></template></dom-if>
+    <dom-if if="[[_subdomain('sportsium', orgSubdomain)]]"><template><teamatical-home-sportsium name="home-sportsium" submenu="{{pageMenus.homeSportsium}}" categories="[[categories]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-home-sportsium></template></dom-if>
+
+    
+    <teamatical-list name="list" submenu="{{pageMenus.list}}" categories="{{categoriesList}}" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" loading="{{pageUpdating.list}}" website-url="[[websiteUrl]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]"></teamatical-list>
+    <teamatical-team name="team" submenu="{{pageMenus.team}}" categories="[[categories]]" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" colors-palette="{{colorsPalette}}" loading="{{pageUpdating.team}}" saving="{{pageSavings.team}}" website-url="[[websiteUrl]]" user-info="{{userInfo}}"></teamatical-team>
+    <teamatical-store name="store" submenu="{{pageMenus.store}}" categories="[[categories]]" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" loading="{{pageUpdating.store}}" saving="{{pageSavings.store}}" website-url="[[websiteUrl]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]" editing="{{pageModes.store}}" app-title-default="[[appTitleDefault]]"></teamatical-store>
+    <teamatical-detail name="detail" submenu="{{pageMenus.detail}}" categories="[[categories]]" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" cart-details="[[cartDetails]]" colors-palette="{{colorsPalette}}" user-info="{{userInfo}}" small-screen="[[smallScreen]]" loading="{{pageUpdating.detail}}" website-url="[[websiteUrl]]" app-title-default="[[appTitleDefault]]" saving="{{pageSavings.detail}}" iszoom-mobile="{{iszoomMobile}}"></teamatical-detail>
+    <teamatical-customize name="customize" submenu="{{pageMenus.customize}}" categories="[[categories]]" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" colors-palette="{{colorsPalette}}" user-info="{{userInfo}}" loading="{{pageUpdating.customize}}" saving="{{pageSavings.customize}}" website-url="[[websiteUrl]]"></teamatical-customize>
+    <teamatical-cart name="cart" submenu="{{pageMenus.cart}}" categories="[[categories]]" route="{{subroute}}" offline="[[offline]]" cart="[[cart]]" num-items="[[numItems]]" currency="[[currency]]" user-info="{{userInfo}}" failure="{{_pageCartFailure}}" visible="{{_pageCartVisible}}" loading="{{pageUpdating.cart}}" website-url="[[websiteUrl]]" has-items="{{pageModes.cart}}"></teamatical-cart>
+    <teamatical-checkout name="checkout" submenu="{{pageMenus.checkout}}" categories="[[categories]]" route="{{subroute}}"  query-params="{{queryParams}}" offline="[[offline]]" cart="[[cart]]" user-info="{{userInfo}}" loading="{{pageUpdating.checkout}}" saving="{{pageSavings.checkout}}" website-url="[[websiteUrl]]" stripe-loaded="[[paymentLoaded]]" api-gateway="[[apiGateway]]" api-pubkey="[[apiPubkey]]" org-country="[[orgCountry]]" org-subdomain="[[orgSubdomain]]" org-connected-id="[[orgConnectedId]]" post-data="[[postData]]"></teamatical-checkout>
+    <teamatical-cart-roster-preview name="cart-roster-preview" submenu="{{pageMenus.cartRosterPreview}}" categories="[[categories]]" route="{{subroute}}" query-params="{{queryParams}}" user-info="{{userInfo}}" offline="[[offline]]" loading="{{pageUpdating.cartRosterPreview}}" website-url="[[websiteUrl]]" should-show-tabs="[[shouldShowTabs]]"></teamatical-cart-roster-preview>
+    <teamatical-custom-design-request name="custom-design-request" submenu="{{pageMenus.customDesignRequest}}" categories="[[categories]]" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" colors-palette="{{colorsPalette}}" user-info="{{userInfo}}" loading="{{pageUpdating.customDesignRequest}}" website-url="[[websiteUrl]]" saving="{{pageSavings.customDesignRequest}}"></teamatical-custom-design-request>
+    <teamatical-store-list name="store-list" submenu="{{pageMenus.storeList}}" categories="[[categories]]" route="{{subroute}}" offline="[[offline]]" loading="{{pageUpdating.storeList}}" saving="{{pageSavings.storeList}}" website-url="[[websiteUrl]]" user-info="{{userInfo}}" should-show-tabs="[[shouldShowTabs]]"></teamatical-store-list>
+    <teamatical-kits name="kits" submenu="{{pageMenus.kits}}" categories="[[categories]]" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" loading="{{pageUpdating.kits}}" website-url="[[websiteUrl]]" images-path="[[imagesPath]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]"></teamatical-kits>
+
+
+    <teamatical-signin name="signin" submenu="{{pageMenus.signin}}" categories="[[categories]]" user-info="{{userInfo}}" offline="[[offline]]" website-url="[[websiteUrl]]" home-url="[[_homeUrl]]" auth0-loaded="[[auth0Loaded]]" auth0-progress="[[pageSavings.userDataAuth0]]"></teamatical-signin>
+    <teamatical-signout name="signout" submenu="{{pageMenus.signout}}" categories="[[categories]]" user-info="{{userInfo}}" offline="[[offline]]" website-url="[[websiteUrl]]" home-url="[[_homeUrl]]" auth0-loaded="[[auth0Loaded]]" auth0-progress="[[pageSavings.userDataAuth0]]"></teamatical-signout>
+
+    <teamatical-account name="account" submenu="{{pageMenus.account}}" route="{{subroute}}" query-params="{{queryParams}}" user-info="{{userInfo}}" offline="[[offline]]" loading="{{pageUpdating.account}}" website-url="[[websiteUrl]]" should-show-tabs="[[shouldShowTabs]]"></teamatical-account>
+    <teamatical-account-stores name="account-stores" submenu="{{pageMenus.accountStores}}" route="{{subroute}}" offline="[[offline]]" loading="{{pageUpdating.accountStores}}" saving="{{pageSavings.accountStores}}" website-url="[[websiteUrl]]" user-info="{{userInfo}}" should-show-tabs="[[shouldShowTabs]]"></teamatical-account-stores>
+    <teamatical-account-organizations name="account-organizations" submenu="{{pageMenus.accountOrganizations}}" route="{{subroute}}" offline="[[offline]]" loading="{{pageUpdating.accountOrganizations}}" saving="{{pageSavings.accountOrganizations}}" website-url="[[websiteUrl]]" user-info="{{userInfo}}" should-show-tabs="[[shouldShowTabs]]"></teamatical-account-organizations>
+    <teamatical-account-store-group name="account-store-group" submenu="{{pageMenus.accountStoreGroup}}" route="{{subroute}}" query-params="{{queryParams}}" user-info="{{userInfo}}" offline="[[offline]]" loading="{{pageUpdating.accountStoreGroup}}" saving="{{pageSavings.accountStoreGroup}}" website-url="[[websiteUrl]]" should-show-tabs="[[shouldShowTabs]]"></teamatical-account-store-group>
+    <teamatical-account-store-groups name="account-store-groups" submenu="{{pageMenus.accountStoreGroups}}" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" loading="{{pageUpdating.accountStoreGroups}}" saving="{{pageSavings.accountStoreGroups}}" website-url="[[websiteUrl]]" user-info="{{userInfo}}" should-show-tabs="[[shouldShowTabs]]"></teamatical-account-store-groups>
+    <teamatical-account-store-admins name="account-store-admins" submenu="{{pageMenus.accountStoreAdmins}}" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" loading="{{pageUpdating.accountStoreAdmins}}" saving="{{pageSavings.accountStoreAdmins}}" website-url="[[websiteUrl]]" user-info="{{userInfo}}" should-show-tabs="[[shouldShowTabs]]"></teamatical-account-store-admins>
+    <teamatical-account-purchase-order name="account-purchase-order" submenu="{{pageMenus.accountPurchaseOrder}}" route="{{subroute}}" query-params="{{queryParams}}" user-info="{{userInfo}}" offline="[[offline]]" loading="{{pageUpdating.accountPurchaseOrder}}" saving="{{pageSavings.accountPurchaseOrder}}" website-url="[[websiteUrl]]" should-show-tabs="[[shouldShowTabs]]"></teamatical-account-purchase-order>
+    <teamatical-account-purchase-orders name="account-purchase-orders" submenu="{{pageMenus.accountPurchaseOrders}}" route="{{subroute}}" offline="[[offline]]" loading="{{pageUpdating.accountPurchaseOrders}}" saving="{{pageSavings.accountPurchaseOrders}}" website-url="[[websiteUrl]]" user-info="{{userInfo}}" should-show-tabs="[[shouldShowTabs]]"></teamatical-account-purchase-orders>
+    <teamatical-account-purchase-invoice name="account-purchase-invoice" submenu="{{pageMenus.accountPurchaseInvoice}}" route="{{subroute}}" query-params="{{queryParams}}" user-info="{{userInfo}}" offline="[[offline]]" loading="{{pageUpdating.accountPurchaseInvoice}}" saving="{{pageSavings.accountPurchaseInvoice}}" website-url="[[websiteUrl]]" should-show-tabs="[[shouldShowTabs]]"></teamatical-account-purchase-invoice>
+    <teamatical-account-products name="account-products" submenu="{{pageMenus.accountProducts}}" route="{{subroute}}" query-params="{{queryParams}}" user-info="{{userInfo}}" offline="[[offline]]" loading="{{pageUpdating.accountProducts}}" website-url="[[websiteUrl]]" should-show-tabs="[[shouldShowTabs]]"></teamatical-account-products>
+    <teamatical-account-roster name="account-roster" submenu="{{pageMenus.accountRoster}}" route="{{subroute}}" query-params="{{queryParams}}" user-info="{{userInfo}}" offline="[[offline]]" loading="{{pageUpdating.accountRoster}}" saving="{{pageSavings.accountRoster}}" website-url="[[websiteUrl]]" should-show-tabs="[[shouldShowTabs]]"></teamatical-account-roster>
+    <teamatical-account-rosters name="account-rosters" submenu="{{pageMenus.accountRosters}}" route="{{subroute}}" offline="[[offline]]" loading="{{pageUpdating.accountRosters}}" saving="{{pageSavings.accountRosters}}" website-url="[[websiteUrl]]" user-info="{{userInfo}}" should-show-tabs="[[shouldShowTabs]]"></teamatical-account-rosters>
+    <teamatical-account-order-roster name="account-order-roster" submenu="{{pageMenus.accountOrderRoster}}" route="{{subroute}}" query-params="{{queryParams}}" user-info="{{userInfo}}" offline="[[offline]]" loading="{{pageUpdating.accountOrderRoster}}" website-url="[[websiteUrl]]" should-show-tabs="[[shouldShowTabs]]"></teamatical-account-order-roster>
+
+    
+    <teamatical-privacypolicy name="privacypolicy" submenu="{{pageMenus.privacypolicy}}" categories="[[categories]]" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" loading="{{pageUpdating.privacypolicy}}" user-info="{{userInfo}}"></teamatical-privacypolicy>
+    <teamatical-termsofuse name="termsofuse" submenu="{{pageMenus.termsofuse}}" categories="[[categories]]" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" user-info="{{userInfo}}"></teamatical-termsofuse>
+    <teamatical-feedback name="feedback" submenu="{{pageMenus.feedback}}" categories="[[categories]]" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" loading="{{pageUpdating.feedback}}" user-info="{{userInfo}}"></teamatical-feedback>
+    <teamatical-designplugin name="designplugin" submenu="{{pageMenus.designplugin}}" categories="[[categories]]" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" user-info="{{userInfo}}" images-path="[[imagesPath]]"></teamatical-designplugin>
+    <teamatical-help name="help" submenu="{{pageMenus.help}}" categories="[[categories]]" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" loading="{{pageUpdating.help}}" user-info="{{userInfo}}" website-url="[[websiteUrl]]" small-screen="[[smallScreen]]"></teamatical-help>
+    <teamatical-placingorder name="placingorder" submenu="{{pageMenus.placingorder}}" categories="[[categories]]" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" loading="{{pageUpdating.placingorder}}" user-info="{{userInfo}}"></teamatical-placingorder>
+    <teamatical-deliveryoptions name="deliveryoptions" submenu="{{pageMenus.deliveryoptions}}" categories="[[categories]]" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" loading="{{pageUpdating.deliveryoptions}}" user-info="{{userInfo}}"></teamatical-deliveryoptions>
+    <teamatical-trackingpackage name="trackingpackage" submenu="{{pageMenus.trackingpackage}}" categories="[[categories]]" route="{{subroute}}" query-params="{{queryParams}}" offline="[[offline]]" loading="{{pageUpdating.trackingpackage}}" user-info="{{userInfo}}"></teamatical-trackingpackage>
+
+    <dom-if if="[[_page('admin', page)]]"><template><teamatical-admin name="admin" user-info="{{userInfo}}" offline="[[offline]]" website-url="[[websiteUrl]]"></teamatical-admin></template></dom-if>
+
+    <teamatical-h503 name="h503" offline="[[offline]]" website-url="[[websiteUrl]]"></teamatical-h503>
+    <teamatical-h404 name="h404" offline="[[offline]]" website-url="[[websiteUrl]]" loading="[[!_hideProgress]]"></teamatical-h404>
+</iron-pages>
+
+
+<teamatical-ui-button-scrollup 
+    id="scrollup"
+    class="hidden-animated"
+    hidden$="[[_uiButtonScrollupHide(iszoomMobile)]]">
+</teamatical-ui-button-scrollup>
+
+<paper-spinner-lite id="savingprogress"
+                    active="[[savingProgress]]">
+</paper-spinner-lite>
+
+<div class="announcer" aria-live="assertive">[[_a11yLabel]]</div>

@@ -1,0 +1,275 @@
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="sewing"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+
+<div class="maindiv horiz">
+	<div class="order-container sticky">
+		<div class="order">
+			<!-- Sewing -->
+			<div class="order-sewing" hidden$="[[!order]]">
+				<div class="sticky-container">
+					<h2>
+						<paper-icon-button 
+							class="refresh-btn" 
+							icon="admin-icons:refresh"
+							title="[[localize('admin-ws-refresh')]]" 
+							disabled="[[loadingAny]]"
+							on-tap="_reloadTap">
+						</paper-icon-button>
+
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+
+						[[localize('admin-ws-sewing-title')]]
+					</h2>
+
+					<paper-progress 
+						id="progress" 
+						indeterminate 
+						class="" 
+						disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+				
+				<div class="main">
+					<paper-input id="newbarcode" label="[[localize('admin-ws-sewing-barcode-label')]]" name="barcode" class="barcode-input" type="string" disabled="[[loadingAny]]" on-value-changed="onInputChanged"
+						on-keydown="_barcodeEnter">
+						<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+						<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:arrow-downward" on-tap="_barcodeTap">
+						</paper-icon-button>
+					</paper-input>
+
+					
+					<dom-if if="[[order.Invalid]]">
+						<template>
+							<h3 class="invalid">
+								[[localize('admin-ws-sewing-item-invalid')]]
+							</h3>
+						</template>
+					</dom-if>
+
+
+					<dom-if if="[[order]]">
+						<template>
+								<!-- <h1>
+									#[[order.BatchID]] - [[localize('admin-ws-sewing-item-fabric')]] [[order.FabricName]] - [[order.ManufactureOrderID]]
+								</h1>
+
+								<h4>
+									[[order.PDFFileTitle]] - [[localize('admin-ws-sewing-item-filename')]] [[order.PDFFileName]]
+								</h4> -->
+
+								<!-- <dom-repeat items="[[order.ImageUrls]]" as="urli">
+									<template>
+										<teamatical-ui-image 
+											src="[[urli]]" 
+											alt="img" 
+											title$="[[index]]"
+											lazy-load 
+											lazy-observe=[[lazyObserve]]>
+										</teamatical-ui-image>
+									</template>
+								</dom-repeat> -->
+
+								<tmladmin-production-sewing-item 
+									class="hidden"
+									responsive-images
+									showen$="[[_asBool(order.ImageUrls)]]"
+									entry="[[order]]" 
+									visible="true"
+									website-url="[[websiteUrl]]" 
+									scroll-target="[[scrollTarget]]" 
+									action-disabled="[[loadingAny]]">
+								</tmladmin-production-sewing-item>
+								
+						</template>
+					</dom-if>
+
+					
+
+					<dom-if if="[[order.Parts.length]]">
+						<template>
+							<div class="order-parts-list">
+								<h4>[[localize('admin-ws-sewing-parts-title')]] ([[order.SewingPartsCount]]) </h4>
+
+
+								<dom-repeat items="[[order.Parts]]" as="parti">
+									<template>
+										<div class="order-part-item">
+											<teamatical-ui-image 
+												class="clickable" 
+												on-tap="onProductPartImageTap"
+												src="[[parti.ImageUrl]]" 
+												alt="[[parti.PartName]]" 
+												lazy-load 
+												lazy-observe=[[lazyObserve]]
+												title$="[[parti.PartName]]">
+											</teamatical-ui-image>
+
+											<dom-if if="[[_asBool(parti.ImageUrlBack)]]">
+												<template>
+													<teamatical-ui-image 
+														class="clickable back"
+														on-tap="onProductPartImageBackTap"
+														src="[[parti.ImageUrlBack]]" 
+														alt="[[parti.PartName]] Sendwich Back" 
+														lazy-load 
+														lazy-observe=[[lazyObserve]] 
+														title$="[[parti.PartName]] Sendwich Back">
+													</teamatical-ui-image>
+												</template>
+											</dom-if>
+
+											<div>
+												<!-- [[localize('admin-ws-sewing-part-partname')]]  -->
+												[[parti.PartName]]
+											</div>
+											<div>
+												<!-- [[localize('admin-ws-sewing-part-fabric')]] -->
+												[[parti.Fabric]]
+											</div>
+											<!-- <div class="vertical-barcode">
+												<span class="pdf-barcode">*[[parti.Barcode]]*</span><br />
+												[[parti.Barcode]]
+											</div> -->
+										</div>
+									</template>
+
+								</dom-repeat>
+							</div>
+						</template>
+					</dom-if>
+
+
+					<dom-if if="[[order.ManufacturingDescriptionList.length]]">
+						<template>
+							<div class="order-step-list">
+								<h4>[[localize('admin-ws-sewing-instuctions-title')]]</h4>
+
+								<div class="table width100">
+									<div class="header">
+										<div>
+											[[localize('admin-ws-sewing-instuctions-step')]]
+										</div>
+										<div>
+											[[localize('admin-ws-sewing-instuctions-desc-en')]]
+										</div>
+										<div>
+											[[localize('admin-ws-sewing-instuctions-desc-th')]]
+										</div>
+										<div>
+											[[localize('admin-ws-sewing-instuctions-desc-my')]]
+										</div>
+										<div>
+											[[localize('admin-ws-sewing-instuctions-machinetype')]]
+										</div>
+										<div>
+											[[localize('admin-ws-sewing-instuctions-stitchiso')]]
+										</div>
+										<div>
+											[[localize('admin-ws-sewing-instuctions-stitchimg')]]
+										</div>
+									</div>
+								
+									<dom-repeat items="[[order.ManufacturingDescriptionList]]" as="stepi">
+										<template>
+											<div class="row vcenter" removed$="[[stepi.removing]]" is-disabled$="[[stepi.Disabled]]"
+												is-bounding$="[[stepi.Bounding]]">
+												<div>
+													[[stepi.Step]]
+												</div>
+												<div>
+													[[stepi.DescriptionEN]]
+												</div>
+												<div>
+													[[stepi.DescriptionTH]]
+												</div>
+												<div>
+													[[stepi.DescriptionMY]]
+												</div>
+												<div>
+													[[stepi.MachineType]]
+												</div>
+												<div>
+													[[stepi.StitchISO]]
+												</div>
+												<div>
+													<teamatical-ui-image src="[[stepi.StitchImg]]" alt="[[stepi.StitchISO]]" lazy-load lazy-observe=[[lazyObserve]]
+														title$="[[stepi.PartName]]">
+													</teamatical-ui-image>
+												</div>
+											</div>
+										</template>
+									</dom-repeat>
+								</div>
+							</div>
+						</template>
+					</dom-if>
+
+				</div>
+
+			</div>
+
+			<div class="order-buttons">
+				<div class="spinner">
+					<!-- <paper-button 
+						class="order-download-btn" 
+						raised 
+						mo-id$="[[order.ManufactureOrderID]]" 
+						batch-id$="[[order.BatchID]]" 
+						pdf-id$="[[order.PDFFileName]]"
+						disabled="[[disabledDownload]]"
+						on-tap="_onDownloadTap">
+						[[localize('admin-ws-sewing-btn-download')]]
+					</paper-button> -->
+					<paper-spinner-lite class="thick"></paper-spinner-lite>
+				</div>
+
+			</div>
+
+
+		</div>
+	</div>
+</div>
+
+
+<!-- 
+CAUTION: due android app passes barcode via JS callback - window.Teamatical.onBarcode
+-->
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="sewing"
+	website-url="[[websiteUrl]]"
+	barcode-scanner
+	loading="{{loadingWS}}"
+	hidden$="[[tabletMode]]"
+	visible="[[_scannerUIVisible(visible, tabletMode)]]">
+</teamatical-ui-scanner-printer-settings>
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>
+
+
+
+<paper-dialog id="dialogzoom" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<paper-dialog-scrollable>
+		<teamatical-ui-image style="width: 576px; height: 768px; margin: 0 auto;" src="[[zoomimgi.ImageUrl]]"
+			alt="[[zoomimgi.PartName]]" lazy-load lazy-observe=[[lazyObserve]]>
+		</teamatical-ui-image>
+	</paper-dialog-scrollable>
+</paper-dialog>
+
+
+<paper-dialog id="dialogzoomback" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<paper-dialog-scrollable>
+		<teamatical-ui-image style="width: 576px; height: 768px;" src="[[zoomimgi.ImageUrlBack]]"
+			alt="[[zoomimgi.PartName]]" lazy-load lazy-observe=[[lazyObserve]]>
+		</teamatical-ui-image>
+	</paper-dialog-scrollable>
+</paper-dialog>

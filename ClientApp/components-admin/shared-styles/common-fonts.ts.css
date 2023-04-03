@@ -1,0 +1,37 @@
+@font-face {
+  font-family: "3Of9Barcode";
+  src: url("/data/fonts/3OF9NEW.eot"); /* IE9 Compat Modes */
+  src: url("/data/fonts/3OF9NEW.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+       url("/data/fonts/3OF9NEW.woff2") format("woff2"), /* Modern Browsers */
+       url("/data/fonts/3OF9NEW.woff") format("woff"), /* Modern Browsers */
+       url("/data/fonts/3OF9NEW.otf") format("opentype"), /* Open Type Font */
+       url("/data/fonts/3OF9NEW.ttf") format("truetype"), /* Safari, Android, iOS */
+       url("/data/fonts/3OF9NEW.svg") format("svg"); /* Legacy iOS */
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* @font-face {
+  font-family: 'citydbolregular';
+  src: url('/data/fonts/citydbol-webfont.eot');
+  src: url('/data/fonts/citydbol-webfont.eot?#iefix') format('embedded-opentype'),
+       url('/data/fonts/citydbol-webfont.woff2') format('woff2'),
+       url('/data/fonts/citydbol-webfont.woff') format('woff'),
+       url('/data/fonts/citydbol-webfont.ttf') format('truetype'),
+       url('/data/fonts/citydbol-webfont.svg#webfont') format('svg');
+  font-weight: normal;
+  font-style: normal;
+} */
+
+@font-face {
+    font-family: 'Fabrica';
+    src: url('/data/fonts/Fabrica.eot');
+    src: url('/data/fonts/Fabrica.eot?#iefix') format('embedded-opentype'),
+        url('/data/fonts/Fabrica.woff2') format('woff2'),
+        url('/data/fonts/Fabrica.woff') format('woff'),
+        url('/data/fonts/Fabrica.ttf') format('truetype'),
+        url('/data/fonts/Fabrica.svg#Fabrica') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+

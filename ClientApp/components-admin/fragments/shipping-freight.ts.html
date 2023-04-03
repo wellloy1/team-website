@@ -1,0 +1,602 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Shipping Freight #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.ID]]</span>
+					/ [[_formatDate(order.Created)]]
+					<!-- <br/>
+					<span class="barcode-as-text">
+						Barcode: [[order.Barcode]]
+					</span>
+					<span class="barcode">
+						*[[order.Barcode]]*
+					</span> -->
+
+					<dom-if if="[[order.QrCodeSvg]]">
+						<template>
+							<teamatical-ui-image-svg class="qr-code" svg-src="[[order.QrCodeSvg]]"></teamatical-ui-image-svg>
+						</template>
+					</dom-if>
+
+					<span class="hidden" showen$="[[order.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> TEST
+					</span>
+
+					|&nbsp;
+					<span class="hide-on-print" hidden$="[[!userInfo.isAdmin]]">
+						[[localize('admin-manufacturer-title')]]
+						<span class="copy-tap" on-tap="_copyTap" copy-content$="[[order.ManufacturerID]]">[[order.ManufacturerName]]</span>
+						<a href="[[_urlViewManufacturer(order.ManufacturerID)]]">
+							<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+					</span>
+
+				</h3>
+
+
+				<div class="buttons">
+					<paper-button 
+						class="order-save-freight-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveTap">
+						Save Freight
+					</paper-button>
+				
+					<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm Freight to Save</h2>
+						<paper-dialog-scrollable>
+							Freight #: [[order.ID]] is going to be saved...are you sure?
+							<!-- <paper-textarea label="Refund reason" value="{{dialogcancel_reason}}"></paper-textarea> -->
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss>Close</paper-button>
+							<paper-button dialog-confirm autofocus class="order-save-freight-btn"  on-tap="saveConfirmTap">Save Freight</paper-button>
+						</div>
+					</paper-dialog>
+
+					<paper-button class="order-markundepartured-btn hidden"
+						disabled$="[[loadingAny]]"
+						showen-flex$="[[order.Departured]]"
+						raised
+						on-tap="markUndeparturedTap">
+						Mark as Undepartured
+					</paper-button>
+
+					<paper-button class="order-markdepartured-btn hidden"
+						disabled$="[[loadingAny]]"
+						showen-flex$="[[!order.Departured]]"
+						raised
+						on-tap="markDeparturedTap">
+						Mark as Departured
+					</paper-button>
+
+					<div class="spinner">
+						<paper-button class="order-buildreport-btn" raised disabled="[[loadingAny]]" on-tap="_onBuildReportTap">
+							[[localize('admin-ws-freights-buildreport-btn')]]
+						</paper-button>
+						<paper-spinner-lite class="thick"></paper-spinner-lite>
+					</div>
+
+					<div class="spinner">
+						<paper-button class="order-buildairfreight-btn" raised disabled="[[loadingAny]]" on-tap="_onBuildAirFreightManifestTap">
+							Build Air Freight Manifest
+						</paper-button>
+						<paper-spinner-lite class="thick"></paper-spinner-lite>
+					</div>
+
+					<div class="spinner">
+						<paper-button class="order-buildshipinvoice-btn" raised disabled="[[_dis_buildshipinvoice_btn(loadingAny, order.CanBuildShipInvoice)]]" on-tap="_onBuildShipInvoiceTap">
+							[[localize('admin-ws-freights-buildshipinvoice-btn')]]
+						</paper-button>
+						<paper-spinner-lite class="thick"></paper-spinner-lite>
+					</div>
+
+					
+					<div class="order-dangersection-btn">
+						<paper-button class="order-dispose-btn hidden"
+							disabled$="[[loading]]"
+							showen-flex$="[[order.IsDisposable]]"
+							raised
+							on-tap="disposeTap">
+							Dispose Freight
+						</paper-button>
+
+						<paper-dialog id="dialogdispose" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+							<h2>Dispose Сontainer Confirmation</h2>
+							<paper-dialog-scrollable>
+								Dispose freight...are you sure?
+								<paper-textarea 
+									label="Dispose Freight reason" 
+									style="min-height: 150px;"
+									value="{{dialogdispose.reason}}"
+									on-value-changed="onInputChanged" 
+									name="dialogdispose.DisposeReason"
+									error-message="[[dialogdispose.notvalid.DisposeReason]]"
+									invalid="[[_asBool(dialogdispose.notvalid.DisposeReason)]]"></paper-textarea>
+							</paper-dialog-scrollable>
+							<div class="buttons">
+								<paper-button dialog-dismiss>Close</paper-button>
+								<paper-button dialog-confirm autofocus class="order-dispose-btn" on-tap="disposeConfirmTap">Dispose Freight</paper-button>
+							</div>
+						</paper-dialog>
+					</div>					
+				</div>
+				
+				
+				<div class="order-inputs">
+					<h4>
+						Details:
+					</h4>
+
+					<paper-checkbox disabled checked="{{order.IsDisposed}}" readonly>
+						Is Disposed (read-only)
+					</paper-checkbox>
+
+					<div class="horiz-2">
+						<div class="preview-img-left-content">
+							<div class="small-inputs">
+								<vaadin-date-time-picker 
+									label="[[localize('admin-ws-freights-DepartureDate')]]" 
+									value="[[_convertISODateTime2(order.DepartureDateTime)]]" 
+									readonly
+									error-message="[[order.notvalid.DepartureDateTime]]" 
+									invalid="[[_asBool(order.notvalid.DepartureDateTime)]]" 
+									step="1800" 
+									time-placeholder="hh:mm">
+								</vaadin-date-time-picker>
+	
+								<vaadin-date-time-picker 
+									label="[[localize('admin-ws-freights-Departured')]]" 
+									value="[[_convertISODateTime2(order.Departured)]]" 
+									readonly
+									error-message="[[order.notvalid.Departured]]" 
+									invalid="[[_asBool(order.notvalid.Departured)]]" 
+									step="1800" 
+									time-placeholder="hh:mm">
+								</vaadin-date-time-picker>
+
+								<paper-input 
+									class="small-inputs-mock" 
+									label="..." 
+									type="string" 
+									disabled>
+								</paper-input>
+							</div>
+	
+							<div class="small-inputs">
+								<div class="selection carrier-selection">
+									<tmladmin-ui-dropdown-menu 
+										vertical-align="top" 
+										horizontal-align="left"
+										id-property="id"
+										title-property="title"
+										label$="[[localize('admin-ws-freights-carrier-select')]]" 
+										disabled$="[[loadingAny]]" 
+										value="{{order.Carrier}}"
+										value-list="[[order.CarriersList]]"
+										on-value-changed="onInputChanged"
+										error-message="[[order.notvalid.Carrier]]"
+										invalid="[[_asBool(order.notvalid.Carrier)]]">
+									</tmladmin-ui-dropdown-menu>
+								</div>
+								<paper-input 
+									label="Track Number" 
+									type="string" 
+									value="{{order.TrackNumber}}"
+									name="TrackNumber"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.TrackNumber]]" 
+									invalid="[[_asBool(order.notvalid.TrackNumber)]]">
+								</paper-input>	
+								
+								<paper-input 
+									class="small-inputs-mock" 
+									label="..." 
+									type="string" 
+									disabled>
+								</paper-input>
+							</div>
+	
+							<div class="small-inputs">
+								<paper-input 
+									label="Invoice Number (read-only)" 
+									type="string" 
+									readonly
+									value="[[order.InvoiceNumber]]"
+									name="InvoiceNumber"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.InvoiceNumber]]" 
+									invalid="[[_asBool(order.notvalid.InvoiceNumber)]]">
+								</paper-input>
+
+								<paper-input 
+									label="Invoice Organization Name (read-only)" 
+									type="string" 
+									readonly
+									value="[[order.InvoiceOrganizationName]]"
+									name="InvoiceOrganizationName"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.InvoiceOrganizationName]]" 
+									invalid="[[_asBool(order.notvalid.InvoiceOrganizationName)]]">
+								</paper-input>
+
+								<paper-input 
+									label="Shipping Hub (read-only)" 
+									type="string" 
+									readonly
+									value="[[order.Terminal]]"
+									name="Terminal"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.Terminal]]" 
+									invalid="[[_asBool(order.notvalid.Terminal)]]">
+								</paper-input>
+	
+								<paper-input 
+									label="Freight Name (read-only)" 
+									type="string" 
+									readonly
+									value="[[order.Name]]"
+									name="Name"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.Name]]" 
+									invalid="[[_asBool(order.notvalid.Name)]]">
+								</paper-input>
+	
+								<paper-input 
+									label="Weight (read-only) [kg]" 
+									type="string" 
+									readonly
+									value="[[_formatWeightW(order.WeightGrams, 'kg')]]"
+									name="WeightGrams"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.WeightGrams]]" 
+									invalid="[[_asBool(order.notvalid.WeightGrams)]]">
+								</paper-input>
+								
+								<!-- shipping charges -->
+								<paper-input 
+									label="Ship Charges (read-only)" 
+									type="string" 
+									readonly
+									value="[[_priceObjectV(order.ShipCharges)]]"
+									name="ShipCharges"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.ShipCharges]]" 
+									invalid="[[_asBool(order.notvalid.ShipCharges)]]">
+								</paper-input>
+
+								<paper-input 
+									label="Ship Charges Local (read-only)" 
+									type="string" 
+									readonly
+									value="[[_priceObjectV(order.ShipChargesLocal)]]"
+									name="ShipChargesLocal"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.ShipChargesLocal]]" 
+									invalid="[[_asBool(order.notvalid.ShipChargesLocal)]]">
+								</paper-input>
+
+								<div class="currency-selection">
+									<paper-input 
+										label="[[_shipChargesRealTitle(' Ship Charges Real ({subunit})', order.ShipChargesRealCurrency.id)]]" 
+										type="string" 
+										value="{{order.ShipChargesReal::input}}" 
+										on-value-changed="onInputChanged" 
+										error-message="[[order.notvalid.ShipChargesReal]]"
+										invalid="[[_asBool(order.notvalid.ShipChargesReal)]]">
+										<!-- <paper-icon-button slot="suffix" style="pointer-events: none;" class="calc-btn" icon="admin-image:assistant-1">
+										</paper-icon-button> -->
+									</paper-input>
+									<tmladmin-ui-dropdown-menu 
+										vertical-align="top" 
+										horizontal-align="left"
+										id-property="id"
+										title-property="title"
+										label="Currency"
+										disabled$="[[loadingAny]]" 
+										value="{{order.ShipChargesRealCurrency}}"
+										value-list="[[order.Currencies]]"
+										on-value-changed="onInputChanged"
+										error-message="[[order.notvalid.ShipChargesRealCurrency]]"
+										invalid="[[_asBool(order.notvalid.ShipChargesRealCurrency)]]">
+									</tmladmin-ui-dropdown-menu>
+								</div>								
+
+								<paper-input 
+									class="small-inputs-mock" 
+									label="..." 
+									type="string" 
+									disabled>
+								</paper-input>
+							</div>
+
+							
+						</div>
+					</div>
+
+					<h4>
+						Address:
+					</h4>
+
+					<div class="small-inputs">
+						<paper-input label="[[localize('order-title-firstname')]]" type="string" value="{{order.ShipFirstName}}" readonly
+								 name="ShipFirstName" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipFirstName]]"
+								 invalid="[[_asBool(order.notvalid.ShipFirstName)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-lastname')]]" type="string" value="{{order.ShipLastName}}" readonly
+									name="ShipLastName" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipLastName]]"
+									invalid="[[_asBool(order.notvalid.ShipLastName)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-address')]]" type="string" value="{{order.ShipAddress}}" readonly
+									name="ShipAddress" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipAddress]]"
+									invalid="[[_asBool(order.notvalid.ShipAddress)]]">
+						</paper-input>
+
+						<!-- <paper-input label="[[localize('order-title-address2')]]" type="string" value="{{order.ShipAddress2}}" readonly
+									name="ShipAddress2" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipAddress2]]"
+									invalid="[[_asBool(order.notvalid.ShipAddress2)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-address3')]]" type="string" value="{{order.ShipAddress3}}" readonly
+									name="ShipAddress3" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipAddress3]]"
+									invalid="[[_asBool(order.notvalid.ShipAddress3)]]">
+						</paper-input> -->
+
+						<paper-input label="[[localize('order-title-city')]]" type="string" value="{{order.ShipCity}}" name="ShipCity" readonly
+									on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipCity]]"
+									invalid="[[_asBool(order.notvalid.ShipCity)]]">
+						</paper-input>
+
+						<paper-input label="[[localizeByCountry('order-title-state', order.ShipCountryCode)]]" type="string" value="{{order.ShipState}}" readonly
+									name="ShipState" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipState]]"
+									invalid="[[_asBool(order.notvalid.ShipState)]]">
+						</paper-input>
+
+						<paper-input label="[[localizeByCountry('order-title-zip', order.ShipCountryCode)]]" readonly
+									type="string" value="{{order.ShipZip}}" name="ShipZip"
+									on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipZip]]"
+									invalid="[[_asBool(order.notvalid.ShipZip)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-country')]]" type="string" value="{{order.ShipCountry}}" readonly
+									name="ShipCountry" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipCountry]]"
+									invalid="[[_asBool(order.notvalid.ShipCountry)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-company')]]" type="string" value="{{order.ShipCompany}}" readonly
+									name="ShipCompany" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipCompany]]"
+									invalid="[[_asBool(order.notvalid.ShipCompany)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-email')]]" type="string" value="{{order.AccountEmail}}" name="AccountEmail" readonly
+								 on-value-changed="onInputChanged" error-message="[[order.notvalid.AccountEmail]]"
+								 invalid="[[_asBool(order.notvalid.AccountEmail)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-phone')]]" type="string" value="{{order.AccountPhone}}" readonly 
+									name="AccountPhone" on-value-changed="onInputChanged" error-message="[[order.notvalid.AccountPhone]]"
+									invalid="[[_asBool(order.notvalid.AccountPhone)]]">
+						</paper-input>
+
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+
+				</div>
+
+
+
+			</div>
+
+			<tmladmin-ui-changes-history
+				class="order-history"
+				title="Shipping Freight History"
+				items="[[order.History]]">
+			</tmladmin-ui-changes-history>
+
+
+			<div class="containter-list hidden" showen-block$="[[_asBool(order)]]">
+				<h4>
+					<!-- [[localize('admin-ws-freights-frieght-containers-title')]] -->
+				</h4>
+				<div class="containter-list-items">
+					<dom-if if="[[_asBool(order.LabelImageUrls)]]">
+						<template>
+							<div class="containter-list-item as-freight">
+								<div class="title-container">
+									[[localize('admin-ws-freights-title2')]] #: 
+									<span class="copy-tap" on-tap="_copyTap">[[order.ID]]</span>
+								</div>
+								<div class="created-container">
+									([[localize('admin-ws-freights-created-title')]]: 
+									[[_formatDate(order.Created)]])
+								</div>
+
+								<div class="gap-container">
+									<dom-if if="[[order.LabelImageUrls]]">
+										<template>
+											<div class="shipping-labels">
+												<dom-repeat items="[[order.LabelImageUrls]]" as="urli" index-as="urlinx">
+													<template>
+														<div class="preview-img">
+															<img src="[[urli]]" alt="[[order.FreightID]] - [[_formatIndex(urlinx)]]" />
+														</div>
+													</template>
+												</dom-repeat>
+											</div>
+										</template>
+									</dom-if>
+								</div>
+							</div>
+						</template>
+					</dom-if>
+
+
+					<dom-repeat items="[[order.Containers]]" as="containeri">
+						<template>
+							<div class="containter-list-item">
+								<div class="title-container">
+									Container #: 
+									<span class="copy-tap" on-tap="_copyTap">[[containeri.ID]]</span>
+									<a href="[[_urlViewShippingContainer(containeri.ID)]]">
+										<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+									</a>
+								</div>
+								<div class="created-container">
+									([[localize('admin-ws-freights-created-title')]]: [[_formatDate(containeri.Created)]])
+								</div>
+
+								<div class="gap-container">
+
+									<dom-repeat items="[[containeri.DepartureWarningList]]" as="deparwarni">
+										<template>
+											<p class="note-alt margin warning" warning-key$="[[deparwarni.WarningKey]]">
+												[[deparwarni.WarningMessage]]
+												<dom-if if="[[_asBool(deparwarni.WarningImage)]]">
+													<template>
+														<paper-icon-button class="show-container-label-btn" 
+															icon="admin-icons:tab" 
+															on-tap="showContainerLabelTap">
+														</paper-icon-button>
+													</template>
+												</dom-if>
+											</p>
+										</template>
+									</dom-repeat>
+
+
+									<div class="table">
+										<div class="header">
+											<div class="centered">
+												[[localize('admin-ws-freights-container-weight')]]
+											</div>
+											<div class="centered">
+												[[localize('admin-ws-freights-container-packages')]]
+											</div>
+											<div class="centered">
+												[[localize('admin-ws-freights-container-carton')]]
+											</div>
+										</div>
+						
+										<div class="row vcenter">
+											<!-- [[_formatDate(containeri.Created)]] -->
+											<div class="centered">
+												[[_formatWeightW(containeri.WeightGrams, 'kg')]]
+											</div>
+											<div class="centered">
+												[[containeri.PackagesCount]]
+											</div>
+											<div class="centered">
+												[[containeri.Carton.title]]
+											</div>
+										</div>
+									</div>
+									
+									<div class="shipping-labels">
+										<dom-if if="[[containeri.ShippingLabelImageUrl]]">
+											<template>
+												<div class="preview-img">
+													<!-- air freight -->
+													<img src="[[containeri.ShippingLabelImageUrl]]" alt="[[containeri.ID]]" />
+												</div>
+											</template>
+										</dom-if>
+										<dom-if if="[[containeri.ShippingDepartureLabelImageUrl]]">
+											<template>
+												<div class="preview-img">
+													<img src="[[containeri.ShippingDepartureLabelImageUrl]]" alt="[[containeri.ID]]" />
+												</div>
+											</template>
+										</dom-if>
+									</div>
+
+									<div class="table">
+										<div class="row vbottom">
+											<div class="right">
+												[[localize('admin-ws-freights-container-tracknumber')]]
+											</div>
+											<div class="centered">
+												<paper-input 
+													label="[[localize('admin-ws-freights-container-tracknumber')]]" 
+													type="string" 
+													value="{{containeri.TrackNumber}}"
+													name="TrackNumber"
+													on-value-changed="onInputChanged"
+													error-message="[[containeri.notvalid.TrackNumber]]" 
+													invalid="[[_asBool(containeri.notvalid.TrackNumber)]]">
+												</paper-input>
+											</div>
+										</div>
+										<div class="row">
+											<div class="right">
+												[[localize('admin-ws-freights-container-serialrefindex')]]
+											</div>
+											<div class="centered">
+												[[containeri.SerialReferenceIndex]]
+											</div>
+										</div>
+										<div class="row vcenter">
+											<div class="right">
+												[[localize('admin-ws-freights-container-SSCC')]]
+											</div>
+											<div class="centered">
+												[[containeri.SSCC]]
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</template>
+					</dom-repeat>
+				</div>
+				<div class="noitems hidden" showen-block$="[[!LenMore(order.Containers)]]">
+					[[localize('admin-list-noitems')]]
+				</div>
+
+				<paper-dialog id="dialog_containerlabel" class="dialog_containerlabel" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+					<h2>[[containerlabel.Title]]</h2>
+					<paper-dialog-scrollable>
+						<teamatical-ui-image 
+							style="width: 576px; height: 768px; margin: 0 auto;" 
+							src="[[containerlabel.ImageUrl]]"
+							alt="[[containerlabel.Alt]]"
+							lazy-load lazy-observe=[[lazyObserve]]>
+						</teamatical-ui-image>
+					</paper-dialog-scrollable>
+					<div class="buttons">
+						<paper-button dialog-dismiss autofocus>Close</paper-button>
+					</div>
+				</paper-dialog>
+			</div>
+
+		</div>
+	</div>
+</div>

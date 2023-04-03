@@ -1,0 +1,441 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('admin-flag-unsaved')]]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					<span class="delivered hidden" showen-inline$="[[_asBool(order.IsRecieved)]]">Delivered</span>
+
+					Shipping Container #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.ID]]</span>
+					/ [[_formatDate(order.Created)]]
+					- Freight #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.FreightID]]</span>
+					<a href="[[_urlViewShippingFreight(order.FreightID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+
+					
+					<!-- <br/>
+					<span class="barcode-as-text">
+						Barcode: [[order.Barcode]]
+					</span>
+					<span class="barcode">
+						*[[order.Barcode]]*
+					</span> -->
+
+					<dom-if if="[[order.QrCodeSvg]]">
+						<template>
+							<teamatical-ui-image-svg class="qr-code" svg-src="[[order.QrCodeSvg]]"></teamatical-ui-image-svg>
+						</template>
+					</dom-if>
+
+					<span class="hidden" showen$="[[order.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> TEST
+					</span>
+
+					|&nbsp;
+					<span class="hide-on-print" hidden$="[[!userInfo.isAdmin]]">
+						[[localize('admin-manufacturer-title')]]
+						<span class="copy-tap" on-tap="_copyTap" copy-content$="[[order.ManufacturerID]]">[[order.ManufacturerName]]</span>
+						<a href="[[_urlViewManufacturer(order.ManufacturerID)]]">
+							<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+					</span>
+
+
+				</h3>
+
+
+				<div class="buttons">
+					<paper-button 
+						class="order-save-container-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveShippingContainerTap">
+						Save Container
+					</paper-button>
+				
+					<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm Container to Save</h2>
+						<paper-dialog-scrollable>
+							Container #: [[order.ID]] is going to be saved...are you sure?
+							<!-- <paper-textarea label="Refund reason" value="{{dialogcancel_reason}}"></paper-textarea> -->
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss>Close</paper-button>
+							<paper-button dialog-confirm autofocus class="order-save-container-btn"  on-tap="saveShippingContainerConfirmTap">Save Container</paper-button>
+						</div>
+					</paper-dialog>
+
+
+					<div class="order-dangersection-btn">
+						<paper-button class="order-dispose-btn hidden"
+							disabled$="[[loading]]"
+							showen-block$="[[order.IsDisposable]]"
+							raised
+							on-tap="disposeTap">
+							Dispose Container
+						</paper-button>
+
+						<paper-dialog id="dialogdispose" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+							<h2>Dispose Сontainer Confirmation</h2>
+							<paper-dialog-scrollable>
+								Dispose container...are you sure?
+								<paper-textarea 
+									label="Dispose Container reason" 
+									style="min-height: 150px;"
+									value="{{dialogdispose.reason}}"
+									on-value-changed="onInputChanged" 
+									name="dialogdispose.DisposeReason"
+									error-message="[[dialogdispose.notvalid.DisposeReason]]"
+									invalid="[[_asBool(dialogdispose.notvalid.DisposeReason)]]"></paper-textarea>
+							</paper-dialog-scrollable>
+							<div class="buttons">
+								<paper-button dialog-dismiss>Close</paper-button>
+								<paper-button dialog-confirm autofocus class="order-dispose-btn" on-tap="disposeConfirmTap">Dispose Container</paper-button>
+							</div>
+						</paper-dialog>
+					</div>					
+				</div>
+				
+				
+				<div class="order-inputs">
+					<h4>
+						Details:
+
+						<span class="delivered hidden" showen-inline$="[[_asBool(order.IsRecieved)]]">Delivered</span>
+					</h4>
+
+					
+					<paper-checkbox disabled checked="{{order.IsDisposed}}">
+						Is Disposed (read-only)
+					</paper-checkbox>
+
+					<div class="horiz-2">
+						<div class="small-inputs">
+							<paper-input 
+								label="Track Number (read-only)" 
+								type="string" 
+								readonly
+								value="{{order.TrackNumber}}"
+								name="TrackNumber"
+								on-value-changed="onInputChanged"
+								error-message="[[order.notvalid.TrackNumber]]" 
+								invalid="[[_asBool(order.notvalid.TrackNumber)]]">
+							</paper-input>
+
+							<!-- readonly -->
+							<div class="selection carton-selection">
+								<tmladmin-ui-dropdown-menu 
+									vertical-align="top" 
+									horizontal-align="left"
+									id-property="id"
+									title-property="title"
+									label="[[localize('admin-carton-select')]]"
+									readonly
+									disabled$="[[_dis_Carton(loadingAny, order.CanSetCarton)]]" 
+									value="{{order.Carton}}"
+									value-list="[[_orderCartonList(order.Carton)]]"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.Carton]]"
+									invalid="[[_asBool(order.notvalid.Carton)]]">
+								</tmladmin-ui-dropdown-menu>
+							</div>
+
+							<paper-input 
+								label="Freight Name (read-only)" 
+								type="string" 
+								readonly
+								value="[[order.Freight.Name]]"
+								name="Freight.Name"
+								on-value-changed="onInputChanged"
+								error-message="[[order.Freight.notvalid.Name]]" 
+								invalid="[[_asBool(order.Freight.notvalid.Name)]]">
+							</paper-input>
+
+							<paper-input 
+								label="Freight Departure (read-only)" 
+								type="string" 
+								readonly
+								value="[[_formatDate(order.Freight.DepartureDateTime)]]"
+								name="Freight.DepartureDateTime"
+								on-value-changed="onInputChanged"
+								error-message="[[order.Freight.notvalid.DepartureDateTime]]" 
+								invalid="[[_asBool(order.Freight.notvalid.DepartureDateTime)]]">
+							</paper-input>
+
+							<paper-input 
+								label="Weight (read-only) [kg]" 
+								type="string" 
+								readonly
+								value="[[_formatWeightW(order.WeightGrams, 'kg')]]"
+								name="WeightGrams"
+								on-value-changed="onInputChanged"
+								error-message="[[order.notvalid.WeightGrams]]" 
+								invalid="[[_asBool(order.notvalid.WeightGrams)]]">
+							</paper-input>
+	
+							<paper-input 
+								label="SSCC (read-only)" 
+								type="string" 
+								readonly
+								value="[[order.SSCC]]"
+								name="SSCC"
+								on-value-changed="onInputChanged"
+								error-message="[[order.notvalid.SSCC]]" 
+								invalid="[[_asBool(order.notvalid.SSCC)]]">
+							</paper-input>
+	
+							<paper-input 
+								label="Shipping Hub (read-only)" 
+								type="string" 
+								readonly
+								value="[[order.Terminal]]"
+								name="Terminal"
+								on-value-changed="onInputChanged"
+								error-message="[[order.notvalid.Terminal]]" 
+								invalid="[[_asBool(order.notvalid.Terminal)]]">
+							</paper-input>
+	
+							<paper-input 
+								label="Serial Reference Index (read-only)" 
+								type="string" 
+								readonly
+								value="[[order.SerialReferenceIndex]]"
+								name="SerialReferenceIndex"
+								on-value-changed="onInputChanged"
+								error-message="[[order.notvalid.SerialReferenceIndex]]" 
+								invalid="[[_asBool(order.notvalid.SerialReferenceIndex)]]">
+							</paper-input>
+							
+							<paper-input 
+								label="Invoice Organization Name (read-only)" 
+								type="string" 
+								readonly
+								value="[[order.InvoiceOrganizationName]]"
+								name="InvoiceOrganizationName"
+								on-value-changed="onInputChanged"
+								error-message="[[order.notvalid.InvoiceOrganizationName]]" 
+								invalid="[[_asBool(order.notvalid.InvoiceOrganizationName)]]">
+							</paper-input>
+
+							
+	
+							<paper-input 
+								class="small-inputs-mock" 
+								label="..." 
+								type="string" 
+								disabled>
+							</paper-input>
+						</div>
+
+						<div class="shipping-labels">
+							<dom-if if="[[order.ShippingLabelImageUrl]]">
+								<template>
+									<div class="preview-img">
+										<img src="[[order.ShippingLabelImageUrl]]" alt="[[order.ID]]" />
+									</div>
+								</template>
+							</dom-if>
+							<dom-if if="[[order.ShippingDepartureLabelImageUrl]]">
+								<template>
+									<div class="preview-img departure-img">
+										<img src="[[order.ShippingDepartureLabelImageUrl]]" alt="[[order.ID]]" />
+									</div>
+								</template>
+							</dom-if>
+						</div>
+					</div>
+				</div>
+
+
+
+
+				<div class="packages-list">
+					<h4>
+						PACKAGES ([[order.Packages.length]])
+					</h4>
+					
+					<!-- <div>
+						<paper-input class="newinput" label="New Accessory ID" type="string" name="ProductAccessoryID"
+							on-value-changed="onInputChanged" 
+							error-message="[[order.notvalid.ProductAccessoryID]]"
+							invalid="[[_asBool(order.notvalid.ProductAccessoryID)]]">
+							<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+							<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline"
+								oid$="[[order.ProductManufacturerID]]" on-tap="_addAccessoryTap">
+							</paper-icon-button>
+						</paper-input>
+					</div> -->
+
+					<dom-if if="[[order.notvalid.Packages]]">
+						<template>
+							<div class="notvalid alert">
+								<pre>
+									[[order.notvalid.Packages]]
+								</pre>
+							</div>
+						</template>
+					</dom-if>
+
+					<div class="packages-container">
+						<dom-repeat items="[[order.Packages]]" as="packagei" index-as="packageinx">
+							<template>
+								<div class="package-container" is-disposed$="[[packagei.IsDisposed]]">
+									<!-- <div class="remove-container">
+										<paper-spinner-lite class="thick"></paper-spinner-lite>
+										<paper-icon-button class="remove-btn" icon="admin-icons:close" mid$="[[sizei]]"
+											on-tap="_removeAccessoryTap">
+										</paper-icon-button>
+									</div> -->
+
+									<div class="title-container">
+										Package #: 
+										<span class="copy-tap" on-tap="_copyTap">[[packagei.ID]]</span>
+										
+										<dom-if if="[[_asBool(packagei.OrderID)]]">
+											<template>
+												<br/>
+												Order #: 
+												<span class="copy-tap" on-tap="_copyTap">[[packagei.OrderID]]</span>
+												
+												<a href="[[_urlViewOrder(packagei.OrderID)]]" class="iron-icon">
+													<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+												</a>
+											</template>
+										</dom-if> 
+										<dom-if if="[[_asBool(packagei.GroupOrderID)]]">
+											<template>
+												<br/>
+												Group Order #: 
+												<span class="copy-tap" on-tap="_copyTap">[[packagei.GroupOrderID]]</span>
+
+												<a href="[[_urlViewGroupShipping(packagei.GroupOrderID)]]" class="iron-icon">
+													<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+												</a>
+											</template>
+										</dom-if> 
+										<br/>
+										[[_formatDate(packagei.Created)]]
+
+										<dom-if if="[[packagei.QrCodeSvg]]">
+											<template>
+												<teamatical-ui-image-svg class="qr-code" svg-src="[[packagei.QrCodeSvg]]"></teamatical-ui-image-svg>
+											</template>
+										</dom-if>
+									</div>
+						
+									<div class="gap-container">
+										<div class="table">
+											<div class="header">
+												<div>
+													Weight (kg)
+												</div>
+												<div>
+													Item Count
+												</div>
+												<div>
+													Is Disposed
+												</div>
+											</div>
+							
+											<div class="row vcenter">
+												<div>
+													[[_formatWeightW(packagei.WeightGrams, 'kg')]]
+												</div>
+												<div>
+													[[_formatCount(packagei.ItemCount)]]
+												</div>
+												<div>
+													[[packagei.IsDisposed]]
+												</div>
+											</div>
+										</div>
+										
+										<div class="preview-img">
+											<img src="[[packagei.ShippingLabelImageUrl]]" alt="[[packagei.ID]]" />
+										</div>
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+					</div>
+
+					<dom-if if="[[!LenMore(order.Packages)]]">
+						<template>
+							<div class="noitems">
+								no items
+							</div>
+						</template>
+					</dom-if>
+				</div>
+
+				<div class="orders-list">
+					<h4>
+						ORDERS ([[order.Orders.length]])
+					</h4>
+
+					<div class="table">
+						<div class="header">
+						  <div>
+							OrderID
+						  </div>
+						  <div>
+							Quantity
+						  </div>
+						</div>
+					
+						<dom-repeat items="[[order.Orders]]" as="orderi">
+						  <template>
+							<div class="row">
+							  <div>
+								<span class="copy-tap" on-tap="_copyTap">[[orderi.OrderID]]</span>
+								
+								<a href$="[[_urlViewOrder(orderi.OrderID)]]">
+									<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+								<br />
+							  </div>
+							  <div>
+								[[orderi.Quantity]]
+							  </div>
+							</div>
+						  </template>
+						</dom-repeat>
+					
+						<dom-if if="[[LenLess(order.Orders)]]">
+						  <template>
+							<div class="noitems">
+							  no items
+							</div>
+						  </template>
+						</dom-if>
+					</div>
+				</div>
+			</div>
+
+			<tmladmin-ui-changes-history
+				class="order-history"
+				title="Shipping Container History"
+				items="[[order.History]]">
+			</tmladmin-ui-changes-history>
+		</div>
+	</div>
+</div>

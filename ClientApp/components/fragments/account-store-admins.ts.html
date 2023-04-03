@@ -1,0 +1,228 @@
+<app-route route="[[route]]" pattern="/:said" data="{{routeData}}"></app-route>
+
+<teamatical-store-admins-data 
+  id="store-admins-data" 
+  sid="[[routeData.said]]"
+  admins="{{admins}}" 
+  num-items="{{numItems}}"
+  query-params="{{queryParams}}"
+  searching-progress="{{searchingProgress}}"
+  user-info="{{userInfo}}" 
+  website-url="[[websiteUrl]]"
+  loading="{{loading}}" 
+  failure="{{failure}}"
+  visible="[[visible]]" 
+  saving="{{saving}}">
+</teamatical-store-admins-data>
+
+
+<teamatical-ui-loader hidden$="[[_isNotConn]]"></teamatical-ui-loader>
+
+<div hidden$="[[_isNoAdministrators]]">
+  <div class="subsection" visible>
+    <header>
+      <h1>[[localize('store-admins-title', 'sid', admins.StoreID, 'title', admins.StoreTitle)]]</h1>
+      <span hidden$="[[!_hasItems]]">
+        (
+        <span>[[_numItems]][[_numItemsApproximately]]</span>
+        <span hidden="[[!_single]]">[[localize('store-admins-qty-item')]]</span>
+        <span hidden="[[!_many]]">[[localize('store-admins-qty-items')]]</span>
+        )
+      </span>
+    </header>
+
+    <!-- <div id="add-button-container">
+      <paper-fab 
+        id="add-button" 
+        aria-label="add"
+        icon="add" 
+        disabled="[[actionNotAllowed]]"
+        mini
+        on-tap="_onAddTap">
+      </paper-fab>
+
+      <paper-spinner-lite 
+        id="search-progress"
+        class="search-progress"
+        active="[[searchingProgress]]">
+      </paper-spinner-lite>
+    </div>
+    
+    <paper-input 
+      id="search"
+      class="search-input"
+      name="search"
+      type="text"
+      label="[[localize('store-admins-search-input')]]" 
+      aria-label$="[[localize('store-admins-search-input')]]"
+      placeholder="[[localize('store-admins-search-placeholder')]]"
+      value="{{admins.search::input}}"
+      required
+      autocomplete="search"
+      error-message="[[localize('store-admins-search-invalid')]]">
+    </paper-input> -->
+
+    <p class="empty-list" hidden$="[[_hasSearchedItems]]">
+      [[localize('store-admins-search-empty')]]
+    </p>
+    
+    <div
+      id="adminlist" 
+      class="store-admins-list" 
+      hidden$="[[!_hasSearchedItems]]"
+      draggable="false">
+
+      <dom-repeat id="gridList"  items="{{admins.Administrators}}" as="admini">
+          <template>
+            <div class="store-admin drag-item">
+
+              <div class="store-admin-header">
+                <div class="line-horizonal">
+                  <h3 same-organization$="[[admini.SameOrganizationAsStore]]">
+                    [[localize('store-admins-item-title')]] &ndash;
+                    <teamatical-ui-user-inline user="[[admini.User]]" hide-id show-as-line>
+                    </teamatical-ui-user-inline>
+                  </h3>
+                  <div class="buttons-container">
+                    <paper-icon-button 
+                      class="delete-button" 
+                      icon="close" 
+                      disabled="[[actionNotAllowed]]"
+                      tooltip$="[[localize('store-admins-remove-label')]]" tooltip-flow="left"
+                      data-sid="[[admins.StoreID]]"
+                      aria-label$="[[localize('store-admins-remove-label')]]" 
+                      on-tap="_removeAdminTap">
+                    </paper-icon-button>
+                  </div>
+                </div>
+
+                <ul>
+                  <li>[[localize('store-admins-title-since')]] [[_formatDate(admini.AdministratorSince)]]</li>
+                </ul>
+
+              </div>
+              
+              <div class="store-admin-footer">
+              </div>
+            </div>
+          </template>
+      </dom-repeat>
+    </div>
+
+
+
+
+
+    <div
+      id="store-admins-invites" 
+      class="store-admins-list" 
+      draggable="false">
+
+      <dom-repeat id="gridList2"  items="{{admins.Invitations}}" as="invitei">
+          <template>
+            <div class="store-admin drag-item invite">
+
+              <div class="store-admin-header">
+                <div class="line-horizonal">
+                  <h3>
+                    [[localize('store-admins-invite-title')]] &ndash; [[invitei.email]]
+                  </h3>
+                  <div class="buttons-container">
+                    <paper-icon-button 
+                      class="delete-button" 
+                      icon="close" 
+                      disabled="[[actionNotAllowed]]"
+                      tooltip$="[[localize('store-admins-revoke-label')]]" tooltip-flow="left"
+                      data-sid="[[admins.StoreID]]"
+                      aria-label$="[[localize('store-admins-revoke-label')]]" 
+                      on-tap="_revokeInvite">
+                    </paper-icon-button>
+                  </div>
+                </div>
+
+                <ul>
+                  <!-- <li>[[localize('store-admins-title-userid')]] [[invitei.InvitedBy]]</li> -->
+                  <li>[[localize('store-admins-title-email')]] [[invitei.email]]</li>
+                  <li>[[localize('store-admins-title-invited')]] [[_formatDate(invitei.InvitedTime)]]</li>
+                </ul>
+              </div>
+              
+            </div>
+          </template>
+      </dom-repeat>
+    </div>
+
+
+    <div id="invite-button-container">
+      <paper-fab 
+        id="invite-button" 
+        aria-label="add"
+        icon="add" 
+        disabled="[[intiveNotAllowed]]"
+        mini
+        data-sid="[[admins.StoreID]]"
+        on-tap="_inviteTap">
+      </paper-fab>
+      <paper-spinner-lite 
+        id="invite-progress"
+        class="invite-progress"
+        active="[[invitingProgress]]">
+      </paper-spinner-lite>
+    </div>
+    
+    <paper-input 
+      id="inviteInput"
+      class="invite-input"
+      name="invite"
+      type="email"
+      aria-label$="[[localize('store-admins-invite-input')]]"
+      placeholder="[[localize('store-admins-invite-placeholder')]]"
+      value="{{admins.invite::input}}"
+      required
+      maxlength="1000"
+      autocomplete="invite"
+      error-message="[[localize('store-admins-invite-invalid')]]">
+    </paper-input>
+
+    <paper-spinner-lite 
+      id="loadMoreProgress"
+      class="progress-centered"
+      active="[[loading]]">
+    </paper-spinner-lite>
+
+
+    <footer class="progress-container">
+      
+      <!-- <teamatical-ui-button 
+        id="loadMoreBtn"
+        hidden$="[[admins.plast]]"
+        class="hidden-animated slow"
+        hidden-animated$="[[loading]]"
+        disabled$="[[loading]]"
+        on-tap="_loadMore">
+        [[localize('store-admins-load-more-btn')]]
+      </teamatical-ui-button> -->
+
+      <teamatical-ui-button 
+        class="back-store-btn" 
+        on-tap="gotoStoreTap">
+        [[localize('store-admins-btn-gotostore')]]
+      </teamatical-ui-button>
+
+      <teamatical-ui-button 
+        class="back-store-list-btn" 
+        hidden$="[[_asBool(queryParams.backtostore)]]"
+        on-tap="gotoStoreListTap">
+        [[localize('store-admins-btn-storelist')]]
+      </teamatical-ui-button>
+    </footer>
+
+  </div>
+</div>
+
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

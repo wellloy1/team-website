@@ -1,0 +1,130 @@
+<app-localstorage-document key="admin-product-labels-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+			</div>
+		</div>
+
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="ProductLabels" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ID]]</span>
+					<a href="[[_urlViewNestingRequest(item.ID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="352px" resizable="true" id="ID">
+				<template class="header">
+					Nesting ID
+					<vaadin-grid-filter aria-label="ID" path="ID" value="[[_filterID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ID]]</span>
+					<a href="[[_urlViewNestingRequest(item.ID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">
+					Nesting ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column resizable="true" id="NestingKey">
+				<template class="header">
+					NestingKey
+					<vaadin-grid-filter aria-label="NestingKey" path="NestingKey" value="[[_filterNestingKey]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span>
+						[[item.NestingKey]]
+					</span>
+				</template>
+				<template class="footer-off">
+					NestingKey
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="280px" resizable="true" id="Length">
+				<template class="header">
+					Length
+					<vaadin-grid-filter aria-label="Length" path="Length" value="[[_filterLength]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span>
+						[[item.Length]]
+					</span>
+				</template>
+				<template class="footer-off">
+					Length
+				</template>
+			</vaadin-grid-column>
+						
+			<vaadin-grid-column width="290px" flex-grow="0" resizable="true" id="Timestamp">
+				<template class="header">
+					<vaadin-grid-sorter path="Timestamp">Timestamp</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Timestamp" aria-placeholder="Timestamp" path="Timestamp" value="[[_filterTimestamp]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[_formatDate(item.Timestamp)]]
+				</template>
+				<template class="footer-off">Timestamp</template>
+			</vaadin-grid-column>
+		</vaadin-grid>
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-product-labels-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

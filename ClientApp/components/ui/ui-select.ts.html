@@ -1,0 +1,24 @@
+<slot name="prefix" slot="prefix"></slot>
+
+<label id="elLabel2" class="ui-select-label" for="select">[[label]]</label>
+
+<label id="elLabel" prefix for="select">[[captionText]]</label>
+
+<select 
+  id="select" 
+  aria-label$="[[name]]"
+  aria-labelledby$="[[_ariaLabelledby('elLabel', ariaLabelledby)]]" 
+  name$="[[name]]"
+  disabled$="[[disabled]]"
+  autocomplete$="[[autocomplete]]"
+  required$="[[required]]">
+  <slot></slot>
+</select>
+
+<shop-md-decorator aria-hidden="true">
+  <shop-underline></shop-underline>
+</shop-md-decorator>
+
+<template is="dom-if" if="[[errorMessage]]">
+  <p class="error">[[errorMessage]]</p>
+</template>

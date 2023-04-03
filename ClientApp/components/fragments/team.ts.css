@@ -1,0 +1,148 @@
+:host {
+  display: block;
+
+  margin: 0 auto;
+  max-width: var(--app-page-width);
+}
+
+#content {
+  @apply --layout-horizontal;
+  @apply --layout-center-justified;
+
+  transition: opacity 0.5s;
+}
+
+#content-line2 {
+  @apply --layout-horizontal;
+  @apply --layout-center-justified;
+
+  transition: opacity 0.5s;
+}
+
+.image-product {
+  position: relative;
+  margin: 32px 32px;
+  width: 50%;
+  max-width: 600px;
+  --teamatical-ui-image-img: {
+		position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    border-radius: 6px;
+  };
+
+}
+
+.image-product::before {
+  content: "";
+  display: block;
+  padding-top: 133%;
+}
+
+.detail {
+  margin: 32px 32px;
+  width: 50%;
+  max-width: 400px;
+  transition: opacity 0.4s;
+  opacity: 0;
+}
+
+.detail[has-content] {
+  opacity: 1;
+}
+
+.detail-wide {
+  margin: 0px 32px;
+  width: 100%;
+  max-width: 1064px;
+  transition: opacity 0.4s;
+  opacity: 0;
+}
+
+.detail-wide[has-content] {
+  opacity: 1;
+}
+
+.detail-buttons {
+  float: right;
+  text-align: right;
+  margin: 32px 32px;
+}
+/* .detail-buttons > teamatical-ui-button {
+    display: inline-block;
+}
+.detail-buttons > teamatical-ui-button:not(:last-child) {
+    padding-right: 5px;
+} */
+
+
+
+
+.title_small {
+  margin: 16px 0 40px;
+  color: var(--app-secondary-color);
+}
+
+.description {
+  margin: 32px 0;
+}
+
+.description > h2 {
+  margin: 16px 0;
+}
+
+.description > p {
+  margin: 0;
+  color: var(--app-secondary-color);
+}
+
+.pickers {
+  @apply --layout-vertical;
+}
+
+
+@media (max-width: 867px) and (min-width: 766px) {
+  teamatical-ui-button {
+    padding: 8px 26px;
+  }
+}
+
+@media (max-width: 767px) {
+
+  #content {
+    @apply --layout-vertical;
+    @apply --layout-center;
+  }
+
+  #content-line2 {
+    @apply --layout-vertical;
+    @apply --layout-center;
+  }
+
+  .image-product {
+    display: none;
+  }
+
+  .detail {
+    box-sizing: border-box;
+    margin: 0px 0;
+    padding: 0 24px;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .detail-wide {
+    margin: 32px 0;
+    width: 100%;
+    max-width: 1064px;
+  }
+
+  .title_small {
+    font-size: inherit;
+    margin: 12px 0 32px;
+  }
+
+}

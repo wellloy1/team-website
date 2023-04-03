@@ -1,0 +1,31 @@
+<paper-dropdown-menu-light 
+    vertical-align$="[[verticalAlign]]" 
+    horizontal-align$="[[horizontalAlign]]" 
+    label$="[[label]]" 
+    readonly$="[[readonly]]" 
+    disabled="[[disabled]]" 
+    value="[[_valueTitle(valueInternal)]]" 
+    error-message="[[errorMessage]]"
+    invalid="[[invalid]]"
+    on-selected-item-changed="onValueSelected"
+    no-label-float1 
+    no-animations>
+
+    <paper-listbox 
+        slot="dropdown-content" 
+        class="dropdown-content" 
+        attr-for-selected="item-id" 
+        value$="[[_valueTitle(valueInternal)]]"
+        selected$="{{valueInternal}}">
+        <dom-repeat items="[[valueListInternal]]" as="itemi">
+            <template>
+                <paper-item 
+                    class$="[[_itemClassName(itemi, classItem)]]"
+                    item-id$="[[_valueID(itemi)]]">
+                    [[_valueTitle(itemi)]]
+                </paper-item>
+            </template>
+        </dom-repeat>
+    </paper-listbox>
+
+</paper-dropdown-menu-light>

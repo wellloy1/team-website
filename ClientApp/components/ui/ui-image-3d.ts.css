@@ -1,0 +1,292 @@
+:host {
+    display: block;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+
+    --teamatical-ui-image-3d-margin: 12%;
+    --teamatical-ui-image-3d-margin-btn: 0px;
+}
+
+
+:host([is3d-loaded]:not([iszoom])) > div > img {
+    cursor: ew-resize;
+}
+:host([is3d-loaded][iszoom]) > div > img {
+    cursor: pointer;
+}
+
+:host([icon-3d-left]) > div > div > #icon {
+    top: 2px;
+    right: 16px;
+    left: initial;
+}
+
+:host([isloaded][is3d]:not([is3d-loaded])) > div > div > #icon {
+    -moz-animation: blink normal 1s infinite ease-in-out;
+    -webkit-animation: blink normal 1s infinite ease-in-out;
+    -ms-animation: blink normal 1s infinite ease-in-out;
+    animation: blink normal 1s infinite ease-in-out;
+}
+:host([isloaded][is3d]:not([is3d-loaded])[is3d-warn]) > div > div > #icon {
+    fill: var(--paper-orange-900);
+    -moz-animation: blink normal 0.5s infinite ease-in-out;
+    -webkit-animation: blink normal 0.5s infinite ease-in-out;
+    -ms-animation: blink normal 0.5s infinite ease-in-out;
+    animation: blink normal 0.5s infinite ease-in-out;
+}
+
+:host([is3d-loaded][iszoom]) > div > div > #icon {
+    opacity: 0;
+    cursor: pointer;
+}
+:host([is3d-loaded]:not([iszoom])) > div > div > #icon {
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+:host([is3d-error]) > div > div > #icon {
+    fill: var(--error-color);
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+
+/* TODO :not([iszoom]) [isloaded] [isloaded][is3d]:not([is3d-loaded])[is3d-warn]   */
+:host(:not([allow-image-before])) .image-before-btn,
+:host(:not([allow-image-next])) .image-next-btn {
+    display: none;
+}
+:host(:hover) .image-before-btn,
+:host(:hover) .image-next-btn {
+    opacity: 1;
+    transition: all .2s ease-in-out;
+}
+
+
+.loader-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    /* bottom: 0; */
+}
+.loader-wrapper:after {
+    padding-top: 133.33%;
+    display: block;
+    content: '';
+}
+.loader-main {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+
+    background-size: cover;
+    background-position: center;
+
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-drag: none; 
+    -webkit-user-drag: none;
+}
+
+.icon-container {
+    position:relative;
+}
+.icon-container > iron-icon {
+    width:36px;
+    height:36px;
+    position: absolute;
+    top: 2px;
+    left: var(--teamatical-ui-image-3d-margin);
+    user-select: none;
+    -webkit-user-select: none;
+    z-index: 1;
+    pointer-events: none;
+
+    transition: opacity .2s ease-out;
+    opacity: 0;
+    overflow: hidden; 
+
+    --iron-icon: {
+        fill: var(--light-theme-secondary-color);
+        -webkit-filter: drop-shadow( -2px -2px 2px #fff ); 
+                filter: drop-shadow( -2px -2px 2px #fff );
+    }
+}
+
+.buttons-container {
+    pointer-events: none;
+    position:relative;
+    width: 100%;
+    height: 100%;
+}
+.buttons-container > * {
+    pointer-events:auto;
+}
+.sizemeter {
+    position: absolute;
+    transform: translateZ(0);
+    top: 0px;
+    right: var(--teamatical-ui-image-3d-margin);
+    user-select: none;
+    -webkit-user-select: none;
+    --iron-icon: {
+        fill: var(--light-theme-secondary-color);
+        -webkit-filter: drop-shadow( -2px -2px 2px #fff ); 
+                filter: drop-shadow( -2px -2px 2px #fff );
+    }
+}
+.zoomout {
+    position: absolute;
+    top: 0px;
+    left: var(--teamatical-ui-image-3d-margin);
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    --iron-icon: {
+        fill: var(--light-theme-secondary-color);
+        -webkit-filter: drop-shadow( -2px -2px 2px #fff ); 
+                filter: drop-shadow( -2px -2px 2px #fff );
+    }
+}
+.image-next-btn,
+.image-before-btn {
+    position: absolute;
+    top: 50%;
+    margin-top: -28px;
+    --paper-icon-button: {
+        width: 56px;
+        height: 56px;
+    }
+
+    opacity: 0;
+    transition: all .2s ease-in-out;
+
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    --iron-icon: {
+        fill: var(--light-theme-secondary-color);
+        -webkit-filter: drop-shadow( -2px -2px 2px #fff ); 
+                filter: drop-shadow( -2px -2px 2px #fff );
+    }
+}
+.image-next-btn[disabled],
+.image-before-btn[disabled] {
+    --iron-icon: {
+        fill: var(--light-theme-disabled-color);
+    }
+}
+
+.image-before-btn {
+    left: var(--teamatical-ui-image-3d-margin-btn);
+}
+.image-next-btn {
+    right: var(--teamatical-ui-image-3d-margin-btn);
+}
+
+
+:host([draw-dimensions]) .sizemeter {
+    --iron-icon: {
+        fill: var(--paper-blue-700);
+    }
+}
+:host([draw-dimensions]:not([isloaded])) .sizemeter {
+    -moz-animation: blink normal 1s infinite ease-in-out;
+    -webkit-animation: blink normal 1s infinite ease-in-out;
+    -ms-animation: blink normal 1s infinite ease-in-out;
+    animation: blink normal 1s infinite ease-in-out;
+}
+
+
+
+div.sprite-container {
+    @apply --layout-fit;
+}
+
+img {
+    @apply --layout-fit; /*default if no --teamatical-ui-image-img */
+    @apply --teamatical-ui-image-img;
+
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0 auto;
+
+    transition: 0.5s opacity;  
+
+    will-change: background;
+    background-size: cover;
+    background-repeat: no-repeat;  /* chrome-edge - on android was falling without it */
+
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-drag: none; 
+    -webkit-user-drag: none;
+
+    -ms-interpolation-mode: bicubic;
+
+    transition: transform 0.3s cubic-bezier(.36,-0.64,.34,1.76), opacity 0.3s;
+}
+
+@media (max-width: 767px) {
+    .image-next-btn,
+    .image-before-btn {
+        opacity: 1;
+    }
+}
+
+
+
+@-moz-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+} 
+@-webkit-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+@-ms-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+} 
+@keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+} 

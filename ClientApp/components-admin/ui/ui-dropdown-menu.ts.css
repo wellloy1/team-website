@@ -1,0 +1,10 @@
+:host {
+    display: block;
+    width: 240px;
+}
+paper-dropdown-menu-light {
+    width: 100%;
+}
+.dropdown-content {
+    min-width: 220px;
+}

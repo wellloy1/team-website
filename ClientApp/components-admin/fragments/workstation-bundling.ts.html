@@ -1,0 +1,271 @@
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="bundling"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+
+<paper-dialog id="dialogzoom" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center" on-iron-overlay-closed="onCloseZoomDialog" on-iron-overlay-opened="onOpenZoomDialog">
+  <paper-dialog-scrollable>
+    <div style="width: 554px; height: 774px;">
+      <teamatical-ui-image-multiview-3d 
+        style="width: 576px; height: 768px;" 
+        views="{{zoompconfi.ProductViews}}"
+        pv="{{zoompconfi.ProductPointOfView}}" 
+        pvs="[[zoompconfi.ProductPointOfViewCount]]" 
+        visible="[[zoompconfiVisible]]"
+        lazy-load 
+        lazy-observe=[[lazyObserve]] 
+        allow-zoom 
+        alt="">
+      </teamatical-ui-image-multiview-3d>
+    </div>
+  </paper-dialog-scrollable>
+  <!-- <div class="buttons">
+					<paper-button dialog-confirm>OK</paper-button>
+				</div> -->
+</paper-dialog>
+
+
+
+
+<div class="maindiv horiz">
+	<div class="order-container sticky">
+		<div class="order">
+			
+			<!-- Bundling -->
+			<div class="order-bundling" hidden$="[[!order]]">
+				<div class="sticky-container">
+					<h2>
+						<paper-icon-button 
+							class="refresh-btn" 
+							icon="admin-icons:refresh"
+							title="[[localize('admin-ws-refresh')]]" 
+							disabled="[[loadingAny]]"
+							on-tap="_reloadTap">
+						</paper-icon-button>
+
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+
+						[[localize('admin-ws-bundling-title')]]
+					</h2>
+
+					<paper-progress 
+						id="progress" 
+						indeterminate 
+						class="" 
+						disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+				
+				<div class="main">
+					<paper-input id="newbarcode" label="[[localize('admin-ws-bundling-barcode-label')]]" name="barcode" class="barcode-input" type="string" disabled="[[loadingAny]]" on-value-changed="onInputChanged"
+						on-keydown="_barcodeEnter">
+						<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+						<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:arrow-downward" on-tap="_barcodeTap">
+						</paper-icon-button>
+					</paper-input>
+
+					<dom-if if="[[order.InvalidBarcode]]">
+						<template>
+							<h3 class="invalid">
+								[[localize('admin-ws-bundling-invalid')]]
+							</h3>
+						</template>
+					</dom-if>
+
+
+					<div class="product-shapes" hidden$="[[!_asBool(order.Shapes)]]">
+						<dom-repeat items="[[order.Shapes]]" as="shapei">
+							<template>
+								<div class="product-shape">
+									<div class="product-shape-header">
+										<teamatical-ui-image-svg 
+											class="equality-class-svg" 
+											svg-src="[[shapei.ShapeSvg]]" 
+											hidden$="[[!_asBool(shapei.ShapeSvg)]]">
+										</teamatical-ui-image-svg>
+										
+										<!-- <span class="parts-title">[[localize('admin-ws-bundling-batch')]]</span> -->
+										<span class="parts-title-value">#: [[order.ManufactureOrderID]] - [[order.Batch]] -</span>
+
+
+										<span class="parts-title">[[localize('admin-morder-minternalid-title')]]</span>
+										<span class="parts-title-value">[[shapei.ManufactureProductInternalID]]</span>
+
+										<span class="parts-title">[[localize('admin-morder-style-title')]]</span>
+										<span class="parts-title-value">[[shapei.SKU]]</span>,
+
+										<span class="parts-title">[[localize('admin-morder-size-title')]]</span>
+										<span class="parts-title-value">[[shapei.Size]]</span>,
+
+										<span class="parts-title">[[localize('admin-morder-type-title')]]</span>
+										<span class="parts-title-value">[[shapei.Type]]</span>
+
+										<span class="hidden" showen$="[[order.Sandbox]]">
+											<iron-icon icon="admin-icons:warning" class="warning" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+											[[localize('admin-ws-test-item')]]
+										</span>
+									</div>
+
+
+									<div class="product-shape-content" style$="[[partsColumnStyle(shapei.PartHeaders)]]">
+										<dom-repeat items="[[shapei.PartHeaders]]" as="headeri">
+											<template>
+												<div class="product-shape-list-header-item pdf-title">
+													<div class="parts-title">[[localize('admin-ws-bundling-part')]]</div>
+													[[headeri.PartName]]
+												</div>
+											</template>
+										</dom-repeat>
+										<div class="product-shape-list-header-item last">
+											<!-- empty for product column -->
+										</div>
+
+										<dom-repeat items="[[shapei.Products]]" as="producti">
+											<template>
+												<dom-repeat items="[[producti.Parts]]" as="partsrowi">
+													<template>
+														<dom-repeat items="[[partsrowi]]" as="parti">
+															<template>
+																<div class="part-cell" part-header$="[[_asBool(parti.StackIndex)]]" completed$="[[producti.completed]]">
+																	<div class="part-binding pdf-title" hidden$="[[!_asBool(parti.BindingsClassSvg)]]">
+																		<div class="main">
+																			<teamatical-ui-image-svg 
+																				class="equality-class-svg" 
+																				svg-src="[[parti.BindingsClassSvg]]"
+																				hidden$="[[!_asBool(parti.BindingsClassSvg)]]">
+																			</teamatical-ui-image-svg>
+																		</div>
+																	</div>
+
+																	<div class="part-stack-title pdf-title" hidden$="[[!_asBool(parti.StackIndex)]]">
+																		<div class="main">
+																			<span class="parts-title">[[localize('admin-ws-bundling-stack')]]</span> 
+																			[[parti.StackIndex]] / [[parti.StacksCount]]
+																		</div>
+																		<div>
+																			<span class="parts-title">[[localize('admin-ws-bundling-qty')]]</span> <span class="parts-title-value">[[parti.StackSize]]</span>
+																		</div>
+																	</div>
+																	<div class="pdf-title" sendwich-back$="[[_asBool(parti.ImageUrlBack)]]" hidden$="[[!_asBool(parti.ImageUrl)]]">
+																		<teamatical-ui-image 
+																			src="[[parti.ImageUrl]]" 
+																			alt="[[parti.ImageUrl]]" 
+																			lazy-load 
+																			lazy-observe=[[lazyObserve]]>
+																		</teamatical-ui-image>
+
+																		<dom-if if="[[_asBool(parti.ImageUrlBack)]]">
+																			<template>
+																				<teamatical-ui-image 
+																					class="clickable back"
+																					on-tap="onProductPartImageBackTap"
+																					src="[[parti.ImageUrlBack]]" 
+																					alt="[[parti.PartName]] Sendwich Back" 
+																					lazy-load 
+																					lazy-observe=[[lazyObserve]] 
+																					title$="[[parti.PartName]] Sendwich Back">
+																				</teamatical-ui-image>
+																			</template>
+																		</dom-if>
+
+																		<span class="parts-title">[[localize('admin-ws-bundling-part')]]</span>
+																		[[_getPartName(shapei.PartHeaders, index)]]
+
+																		<span class="parts-title">[[localize('admin-ws-bundling-take')]]</span> 
+																		<span class="parts-title-value">[[parti.PartQuantity]] &#8594;</span>
+																	</div>
+																</div>
+															</template>
+														</dom-repeat>
+													</template>
+												</dom-repeat>
+
+
+												<div class="part-cell-product" 
+													style$="[[partsProductImgStyle(shapei.PartHeaders, shapei.Products, index)]]"
+													completed$="[[producti.completed]]">
+
+													<div class="count">
+														<teamatical-ui-image-svg class="equality-class-svg" svg-src="[[producti.EqualityClassSvg]]"
+															hidden$="[[!_asBool(producti.EqualityClassSvg)]]">
+														</teamatical-ui-image-svg>
+														<div>
+															#[[_formatIndex(index)]]
+															([[producti.ProductsCount]])
+															<paper-checkbox checked="{{producti.completed}}" on-change="checkboxCompletedChangeHandler">
+															</paper-checkbox>
+														</div>
+													</div>
+
+													<div id="image-product-grid" class="image-product-grid">
+														<dom-repeat items="[[_computeProductImagesZ('', producti.ImageUrls, producti.ImageUrlsZoomIn)]]" as="imgi">
+															<template>
+																<teamatical-ui-image 
+																	src="[[imgi.imgUrl]]" 
+																	alt="[[imgi.title]]" 
+																	lazy-load 
+																	lazy-observe=[[lazyObserve]] 
+																	on-tap="onProductImageTap">
+																</teamatical-ui-image>
+															</template>
+														</dom-repeat>
+													</div>
+
+												</div>
+											</template>
+										</dom-repeat>
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+
+
+
+<div class="fbuttons-container">
+	<paper-fab 
+		class="button stacking"
+		label="S"
+		disabled$="[[loadingAny]]"
+		title$="[[localize('admin-ws-bundling-stacking-btn-tooltip')]]"
+		mini
+		on-tap="openStackingTap">
+	</paper-fab>
+	<paper-fab 
+		class="button replacements"
+		label="R"
+		disabled$="[[loadingAny]]"
+		title$="[[localize('admin-ws-replacements-btn-tooltip')]]"
+		mini
+		on-tap="openReplacementsTap">
+	</paper-fab>
+</div>
+
+
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="bundling"
+	website-url="[[websiteUrl]]"
+	sticker-printer
+	barcode-scanner
+	loading="{{loadingWS}}"
+	visible="[[visible]]">
+</teamatical-ui-scanner-printer-settings>
+
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>

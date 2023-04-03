@@ -1,0 +1,224 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Size Category #: [[order.id]]
+				</h3>
+
+				<div class="buttons">
+					<paper-button 
+						class="order-save-product-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveSizeCategoryTap">
+						Save Size Category
+					</paper-button>
+				
+					<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm Size Category to Save</h2>
+						<paper-dialog-scrollable>
+							Size Category #: [[order.id]] is going to be saved...are you sure?
+							<!-- <paper-textarea label="Refund reason" value="{{dialogcancel_reason}}"></paper-textarea> -->
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss>Close</paper-button>
+							<paper-button dialog-confirm autofocus on-tap="saveSizeCategoryConfirmTap">Save Size Category</paper-button>
+						</div>
+					</paper-dialog>
+			
+				</div>
+				
+				<div class="order-inputs">
+					<h4>
+						Details:
+					</h4>
+
+
+					<paper-checkbox 
+						checked="{{order.IsDefault}}"
+						name="IsDefault"
+						on-value-changed="onInputChanged"
+						title="[[order.notvalid.IsDefault]]" 
+						error-message="[[order.notvalid.IsDefault]]" 
+						invalid="[[_asBool(order.notvalid.IsDefault)]]">
+						Is Default
+					</paper-checkbox>
+					
+					<paper-checkbox 
+						checked="{{order.IsHumanRelated}}"
+						name="IsHumanRelated"
+						on-value-changed="onInputChanged"
+						title="[[order.notvalid.IsHumanRelated]]" 
+						error-message="[[order.notvalid.IsHumanRelated]]" 
+						invalid="[[_asBool(order.notvalid.IsHumanRelated)]]">
+						Is Human Related
+					</paper-checkbox>
+
+					<paper-checkbox 
+						checked="{{order.IsInternal}}"
+						name="IsInternal"
+						on-value-changed="onInputChanged"
+						title="[[order.notvalid.IsInternal]]" 
+						error-message="[[order.notvalid.IsInternal]]" 
+						invalid="[[_asBool(order.notvalid.IsInternal)]]">
+						Is Internal
+					</paper-checkbox>
+
+					<paper-input 
+						label="Size Category ID" 
+						type="string" 
+						value="{{order.id}}"
+						name="id"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.id]]" 
+						invalid="[[_asBool(order.notvalid.id)]]">
+					</paper-input>
+
+					<paper-input 
+						label="Size Category Name" 
+						type="string" 
+						value="{{order.SizeCategoryName}}"
+						name="SizeCategoryName"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.SizeCategoryName]]" 
+						invalid="[[_asBool(order.notvalid.SizeCategoryName)]]">
+					</paper-input>
+				</div>
+
+
+
+				<div class="size-dialogs">
+					<paper-dialog id="dialog_size" class="dialog-wide-none" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center"
+						on-iron-overlay-closed="onCloseEditItemDialog">
+						<h2>[[editTitle]]</h2>
+						<paper-dialog-scrollable>
+
+							<h4>#: [[editItem.ProductManufacturerID]]</h4>
+
+							<paper-input label="SizeCode" type="string" value="{{editItem.SizeCode::input}}"
+								name="editItem.SizeCode" on-value-changed="onInputChanged"
+								error-message="[[editItem.notvalid.SizeCode]]"
+								invalid="[[_asBool(editItem.notvalid.SizeCode)]]">
+							</paper-input>
+
+							<paper-input label="SizeName" type="string" value="{{editItem.SizeName::input}}"
+								name="editItem.SizeName" on-value-changed="onInputChanged"
+								error-message="[[editItem.notvalid.SizeName]]"
+								invalid="[[_asBool(editItem.notvalid.SizeName)]]">
+							</paper-input>
+
+							<paper-input label="Order" type="string" value="{{editItem.Order::input}}"
+								name="editItem.Order" on-value-changed="onInputChanged"
+								error-message="[[editItem.notvalid.Order]]"
+								invalid="[[_asBool(editItem.notvalid.Order)]]">
+							</paper-input>
+
+						</paper-dialog-scrollable>
+				
+						<div class="buttons">
+							<paper-button dialog-dismiss autofocus>Close</paper-button>
+							<paper-button dialog-confirm on-tap="saveSizeTap">[[editBtn]]</paper-button>
+						</div>
+					</paper-dialog>
+				</div>
+
+				<div class="mproduct-list">
+					<h4>
+						Sizes:
+					</h4>
+
+					<div>
+						<paper-input id="newpm" class="small-input newinput" label="New Size Code" type="string"
+							name="SizeCode" on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.SizeCode]]"
+							invalid="[[_asBool(order.notvalid.SizeCode)]]">
+							<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+							<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline" on-tap="addSizeTap">
+							</paper-icon-button>
+						</paper-input>
+					</div>
+
+					<dom-if if="[[order.notvalid.Sizes]]">
+						<template>
+							<div class="notvalid alert">
+								<pre>
+									[[order.notvalid.Sizes]]
+								</pre>
+							</div>
+						</template>
+					</dom-if>
+
+					<div scrollable-x>
+						<div class="table">
+							<div class="header">
+								<div>
+									SizeCode
+								</div>
+								<div>
+									SizeName
+								</div>
+								<div>
+									Order
+								</div>
+								<div>
+								</div>
+							</div>
+						
+							<dom-repeat items="[[order.Sizes]]" as="sizei">
+								<template>
+									<div class="row">
+										<div has-errors$="[[sizei.notvalid.SizeCode]]" title="[[sizei.notvalid.SizeCode]]">
+											[[sizei.SizeCode]]
+										</div>
+										<div has-errors$="[[sizei.notvalid.SizeName]]" title="[[sizei.notvalid.SizeName]]">
+											[[sizei.SizeName]]
+										</div>
+										<div has-errors$="[[sizei.notvalid.Order]]" title="[[sizei.notvalid.Order]]">
+											[[sizei.Order]]
+										</div>
+										<div class="w10">
+											<div class="horiz">
+												<paper-icon-button class="upward-btn" icon="admin-icons:arrow-upward" on-tap="upwardItemTap"></paper-icon-button>
+												<paper-icon-button class="downward-btn" icon="admin-icons:arrow-downward" on-tap="downwardItemTap"></paper-icon-button>
+
+												<paper-button raised1 on-tap="editItemTap" class="edit-btn" disabled$="[[loading]]">Edit</paper-button>
+												<paper-button raised1 on-tap="deleteItemTap" class="delete-btn" disabled$="[[loading]]">Delete</paper-button>
+											</div>
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+		
+		
+			<div class="order-footer">
+			</div>
+		</div>
+	</div>
+</div>

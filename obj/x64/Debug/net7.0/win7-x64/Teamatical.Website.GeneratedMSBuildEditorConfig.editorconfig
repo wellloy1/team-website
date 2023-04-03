@@ -1,0 +1,101 @@
+is_global = true
+build_property.TargetFramework = net7.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Teamatical.Website
+build_property.RootNamespace = Teamatical.Website
+build_property.ProjectDir = D:\Coding\Teamatical\code-reduced\Website\src\Teamatical.Website\
+build_property.RazorLangVersion = 7.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = true
+build_property.MSBuildProjectDirectory = D:\Coding\Teamatical\code-reduced\Website\src\Teamatical.Website
+build_property._RazorSourceGeneratorDebug = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/Admin/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/Admin/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/Admin/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/Admin/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/API/v1.0/Image/Cache.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQVBJXHYxLjBcSW1hZ2VcQ2FjaGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/API/v1.0/Image/Info.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQVBJXHYxLjBcSW1hZ2VcSW5mby5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/API/v1.0/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQVBJXHYxLjBcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/API/v1.0/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQVBJXHYxLjBcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/API/v1.0/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQVBJXHYxLjBcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/Data/IllustratorApp.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGF0YVxJbGx1c3RyYXRvckFwcC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/Home/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxfVmlld0ltcG9ydHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/Shared/_AppDNSPrefetchHead.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9BcHBETlNQcmVmZXRjaEhlYWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/Shared/_ApplicationInsights.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9BcHBsaWNhdGlvbkluc2lnaHRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/Shared/_AppManifestAndIconsHead.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9BcHBNYW5pZmVzdEFuZEljb25zSGVhZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/Shared/_GoogleTagManager.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Hb29nbGVUYWdNYW5hZ2VyLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/Shared/_GoogleTagManagerBody.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Hb29nbGVUYWdNYW5hZ2VyQm9keS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/Shared/_OpenGraph.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9PcGVuR3JhcGguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/Coding/Teamatical/code-reduced/Website/src/Teamatical.Website/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 

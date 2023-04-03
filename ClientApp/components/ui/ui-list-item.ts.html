@@ -1,0 +1,60 @@
+<div class="product-disabled" hidden$="[[!item.ProductDisabled]]">
+  <div>
+    <p>[[_stringOrLocalize(item.ProductDisabledReason, 'detail-disabled-mark')]]</p>
+  </div>
+</div>
+
+
+<teamatical-ui-image 
+  id="img"
+  src="[[item.image]]" 
+  alt="[[item.title]]"
+  placeholder-img="[[_formatPlaceholder(item.imageembedded)]]"
+  placeholder-error
+  loading-on-update="true"
+  lazy-load
+  hover-effect>
+</teamatical-ui-image>
+
+<dom-if if="[[priceDiscounts.length]]">
+  <template>
+    <div class="discount">
+      <div>
+        <dom-repeat items="[[priceDiscounts]]" as="disi">
+          <template>
+            <p>[[disi]]</p>
+          </template>
+        </dom-repeat>
+      </div>
+    </div>
+  </template>
+</dom-if>
+
+
+<div class="title">
+  <span>
+    <div class="product-patterns-disabled hidden" showen-inline-block$="[[item.ProductPatternsDisabled]]">
+      <div>
+        <p>[[localize('detail-disabledpatterns-mark')]]</p>
+      </div>
+    </div>
+    [[item.title]]
+  </span>
+</div>
+
+<div class="price-container">
+  <dom-if if="[[priceRegularShow]]">
+    <template>
+      <span class="price">[[priceRegular]]</span>
+    </template>
+  </dom-if>
+
+  <dom-if if="[[!priceRegularShow]]">
+    <template>
+      <div>
+        <span class="price_new">[[priceSale]]</span>
+        <span class="price_old">[[priceList]]</span>
+      </div>
+    </template>
+  </dom-if>
+</div>

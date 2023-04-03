@@ -1,0 +1,242 @@
+.texteditor-container {
+    position: relative;
+    width: 100%;
+    height: 800px;
+}
+#texteditor {
+    margin: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+h2 {
+    margin-top: 16px;
+    margin-bottom: 0px;
+}
+input[type=file]  {
+    margin: 4px;
+}
+
+.input {
+    margin: 4px;
+}
+
+.button {
+    --paper-fab-background: var(--paper-grey-50);
+    --paper-fab-keyboard-focus-background: var(--paper-grey-100);
+    --paper-fab-disabled-background: var(--paper-grey-200);
+    --paper-fab-iron-icon: {
+      fill: var(--disabled-text-color);
+    };
+    /* --app-secondary-color */
+    @apply --teamatical-ui-automation-scripts-btn;
+}
+
+:host([connecting]) .button {
+    -moz-animation: blink normal 1s infinite ease-in-out;
+    -webkit-animation: blink normal 1s infinite ease-in-out;
+    -ms-animation: blink normal 1s infinite ease-in-out;
+    animation: blink normal 1s infinite ease-in-out;
+}
+
+:host([connected]) .button {
+    --paper-fab-iron-icon: {
+      fill: var(--paper-green-600);
+    };
+}
+
+:host([failure]) .button {
+    --paper-fab-iron-icon: {
+      fill: var(--paper-red-600);
+    };
+}
+
+paper-dialog {
+  margin: 8px;
+  overflow: hidden;
+}
+
+.help-container {
+    margin: 0px;
+    @apply --layout-horizontal;
+}
+.help-container > div {
+    margin: 0px 12px;
+}
+.help {
+    color: var(--paper-grey-600);
+    @apply --app-font-monospace;
+    font-size: 11px;
+}
+
+
+paper-spinner-lite {
+    display: block;
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    pointer-events: none;
+}
+
+paper-dialog-scrollable {
+    margin-top: 0px;
+}
+
+.scanner-selection {
+	@apply --layout-vertical;
+	@apply --layout-end;
+}
+
+.printer-selection {
+    margin-top: 10px;
+	@apply --layout-vertical;
+	@apply --layout-end;
+}
+
+.rfid-scanner-selection {
+    margin-top: 10px;
+	@apply --layout-vertical;
+	@apply --layout-end;
+}
+
+
+.leds-selection {
+    margin-top: 10px;
+    @apply --layout-horizontal;
+}
+.leds-selection > * {
+    margin: 8px;
+}
+
+
+
+
+#auto_dialog {
+	--tmladmin-ui-dialog-container: {
+	    background: linear-gradient(45deg, #ccc, #aaa);
+	};
+	--tmladmin-ui-dialog-frame: {
+		/* margin: 16px auto; */
+		/* max-width: 1200px; */
+	};
+}
+#auto_dialog div[slot="body"] {
+	overflow: auto;
+}
+/* #auto_dialog .dialog-loading-container {
+	position: relative;
+} */
+#auto_dialog .dialog-loading {
+	display: block;
+    position: absolute;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+
+.dialog-full {
+    width: 95%;
+    height: 95%;
+}
+.dialog-full paper-dialog-scrollable {
+    height: calc(100% - 255px);
+}
+
+.dialog-wide {
+    min-width: 620px;
+    /* min-height: 500px; */
+}
+.dialog-wide paper-dialog-scrollable {
+    min-height: 175px;
+    /* --paper-dialog-scrollable: {
+      box-sizing: border-box;
+      width: 360px;
+      height: 640px;
+    }; */
+}
+.dialog-wide tmladmin-ui-dropdown-menu,
+.dialog-wide paper-dropdown-menu-light {
+    min-width: 520px;
+}
+
+.note-err
+{
+     background-color: #fbf3f0;
+     /* background-image: url(../Images/icons/Pencil-48.png); */
+     background-position: 9px 0px;
+     background-repeat: no-repeat;
+     border-left: solid 4px #b30f00; 
+     margin: 4px;
+     /* #3498db */
+     line-height: 18px;
+     overflow: hidden;
+     padding: 1.1em 2em;
+}
+
+
+@media (max-width: 767px) {
+    .dialog-wide {
+        min-width: unset;
+    }
+    .dialog-wide tmladmin-ui-dropdown-menu,
+    .dialog-wide paper-dropdown-menu-light {
+        min-width: unset;
+    }
+
+}
+
+
+
+
+/* Firefox old*/
+@-moz-keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+@-webkit-keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+/* IE */
+@-ms-keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+/* Opera and prob css3 final iteration */
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+    100% {
+        opacity: 1;
+    }
+}

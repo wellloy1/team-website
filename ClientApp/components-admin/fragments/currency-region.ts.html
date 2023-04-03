@@ -1,0 +1,129 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('admin-flag-unsaved')]]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Currency Region #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.ID]]</span>
+				</h3>
+
+
+				<div class="buttons">
+					<paper-button 
+						class="order-save-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveCurrencyRegionTap">
+						Save Currency Region
+					</paper-button>
+				
+
+					<div class="order-dangersection-btn">
+						<!-- <paper-button 
+							class="order-clone-btn" 
+							disabled$="[[loading]]" 
+							hidden$="[[hideCloneBtn(order.ID)]]" 
+							raised
+							on-tap="cloneTap">
+							Clone Currency Region
+						</paper-button> -->
+					</div>
+				</div>
+				
+				
+				<div class="order-inputs">
+					<h4>
+						Details:
+					</h4>
+
+					<paper-checkbox checked="{{order.Disabled}}" disabled$="[[loadingAny]]">
+						Disabled
+					</paper-checkbox>
+
+
+					<div class="small-inputs">
+						<paper-input 
+							label="Name" 
+							type="string" 
+							disabled$="[[loadingAny]]"
+							value="{{order.Name}}"
+							name="Name"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.Name]]" 
+							invalid="[[_asBool(order.notvalid.Name)]]">
+						</paper-input>
+
+						<div class="selection">
+							<tmladmin-ui-dropdown-menu 
+								style="width:calc(100% - 8px)"
+								vertical-align="top" 
+								horizontal-align="left"
+								id-property="id"
+								title-property="title"
+								label="Currency"
+								disabled$="[[loading]]" 
+								value="{{order.Currency}}"
+								value-list="[[order.Currencies]]"
+								on-value-changed="onInputChanged"
+								error-message="[[order.notvalid.Currency]]"
+								invalid="[[_asBool(order.notvalid.Currency)]]">
+							</tmladmin-ui-dropdown-menu>
+						</div>
+
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+					
+				</div>
+
+				<tmladmin-ui-changes-history
+					class="order-history"
+					title="Currency Region History"
+					items="[[order.History]]">
+				</tmladmin-ui-changes-history>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Confirm Currency Region to Save</h2>
+	<paper-dialog-scrollable>
+		Currency Region #: [[order.ID]] is going to be saved...are you sure?
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm autofocus class="order-save-btn"  on-tap="saveCurrencyRegionConfirmTap">Save Currency Region</paper-button>
+	</div>
+</paper-dialog>

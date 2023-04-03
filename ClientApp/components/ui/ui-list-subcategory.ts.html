@@ -1,0 +1,29 @@
+﻿<app-localstorage-document 
+    key="list-sub-category" 
+    data="{{itemsCache}}">
+</app-localstorage-document>
+
+<iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
+
+<paper-expansion-panel 
+    id="panel" 
+    class="panel-styled" 
+    disabled="[[disabled]]"
+    focused="{{focused}}"
+    header="[[localizeTitle(subcategoryTitle)]]" 
+    opened="{{opened}}" 
+    no-toggle-header
+    no-toggle-btn$="[[noCollapsible]]"
+    on-toggle="_onToggleExpansionPanel">
+
+    <teamatical-ui-list-carousel 
+        id="list"
+        focused="[[focused]]"
+        image-ratio="0.63" 
+        image-height="262" 
+        small-screen="[[smallScreen]]"
+        visible="[[visible]]"
+        items="{{subcategoryItems}}">
+    </teamatical-ui-list-carousel>
+
+</paper-expansion-panel>

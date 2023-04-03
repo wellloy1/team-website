@@ -1,0 +1,29 @@
+<app-route route="[[route]]" pattern="/:category" data="{{routeData}}"></app-route>
+
+<iron-pages id="pages" role="main" selected="[[page]]" attr-for-selected="name" selected-attribute="visible">
+  <teamatical-kits-soccer 
+    name="soccer" 
+    submenu="{{pageMenus.soccer}}" 
+    categories="[[categories]]" 
+    query-params="{{queryParams}}" 
+    offline="[[offline]]" 
+    loading="{{pageUpdating.kits}}" 
+    website-url="[[websiteUrl]]" 
+    images-path="[[imagesPath]]"
+    user-info="{{userInfo}}" 
+    small-screen="[[smallScreen]]">
+  </teamatical-kits-soccer>
+
+  <teamatical-kits-hockey
+    name="hockey" 
+    submenu="{{pageMenus.hockey}}" 
+    categories="[[categories]]" 
+    query-params="{{queryParams}}" 
+    offline="[[offline]]" 
+    loading="{{pageUpdating.kits}}" 
+    website-url="[[websiteUrl]]" 
+    images-path="[[imagesPath]]"
+    user-info="{{userInfo}}" 
+    small-screen="[[smallScreen]]">
+  </teamatical-kits-hockey>
+</iron-pages>

@@ -1,0 +1,100 @@
+:host {
+  width: 620px;
+  top: 84px;
+  right: 16px;
+
+  display: block;
+  position: fixed;
+  background-color: #FFF;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  padding: 12px;
+  visibility: hidden;
+  will-change: transform;
+
+  -webkit-transform: translate3d(calc(100% + 16px), 0, 0);
+  transform: translate3d(calc(100% + 16px), 0, 0);
+  transition-property: visibility, -webkit-transform;
+  transition-property: visibility, transform;
+  transition-duration: 0.2s;
+  transition-delay: 0.1s;
+}
+:host(.opened) {
+  visibility: visible;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+.layout-horizontal {
+  @apply --layout-horizontal;
+  /* margin-top: 12px; */
+}
+
+.label {
+  @apply --layout-flex;
+  line-height: 24px;
+  overflow: hidden;
+  font-size: 1.2em;
+
+  margin: 24px 8px 8px 8px;
+  /* @apply --teamatical-ui-modal-dialog-message; */
+}
+
+.modal-button {
+  @apply --layout-flex;
+  margin: 16px 8px;
+}
+
+.modal-button > a {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px 24px;
+}
+.modal-button.hide {
+  display: none;
+}
+
+.close-btn {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+.close-btn[disabled] {
+  opacity: 0.25;
+}
+
+@media (max-width: 391px) {
+  .layout-horizontal {
+    flex-direction: column;
+  }
+  
+}
+@media (max-width: 1400px) {
+  :host {
+    width: 480px;
+  }
+}
+@media (max-width: 767px) {
+  :host {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    -webkit-transform: translate3d(0, 100%, 0);
+    transform: translate3d(0, 100%, 0);
+
+    width: auto;
+  }
+}
+
+@media (max-width: 539px) {
+  :host {
+    min-width: unset;
+  }
+}
+
+@media (min-width: 1440px) {
+  :host {
+    right: calc((100vw - var(--app-page-width)) / 2);
+  }
+}

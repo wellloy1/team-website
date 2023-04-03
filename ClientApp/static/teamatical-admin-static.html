@@ -1,0 +1,248 @@
+﻿<style>
+    body {
+        margin: 0;
+
+        font-family: 'Roboto',  Noto, sans-serif;
+        font-size: 13px;
+        line-height: 1.5;
+        /* min-height: -webkit-fill-available; */
+        min-height: 100vh;
+        height: 100vh;
+        --iron-overlay-backdrop-opacity: 0.25;
+    }
+
+
+    teamatical-admin[unresolved] {
+        display: block;
+        position: relative;
+        padding-top: 130px;
+        padding-bottom: 64px;
+        color: #202020
+    }
+
+    teamatical-admin>.loader {
+        display: none
+    }
+
+    teamatical-admin[evilbrowser]>.evilbrowser,
+    teamatical-admin[unresolved]>.loader {
+        display: block
+    }
+
+    teamatical-admin[evilbrowser] {
+        color: #fff
+    }
+
+    teamatical-admin[evilbrowser]>.loader {
+        margin-top: -75px
+    }
+
+    teamatical-admin[evilbrowser]>.loader .circle:after {
+        background: #fff
+    }
+
+
+    @media (max-width: 767px) {
+        .dialog-wide {
+            min-width: unset;
+        }
+    }
+
+
+    @media (min-height:200px) {
+        teamatical-admin[evilbrowser]>.loader {
+            margin-top: -105px
+        }
+    }
+
+    @media (min-height:400px) {
+        teamatical-admin[evilbrowser]>.loader {
+            margin-top: -75px
+        }
+    }
+
+    @media (min-height:550px) {
+        teamatical-admin[evilbrowser]>.loader {
+            margin-top: 0
+        }
+    }
+
+    @media (min-height:767px) {
+        teamatical-admin[evilbrowser]>.loader {
+            margin-top: 100px
+        }
+    }
+
+
+
+    .evilbrowser p,
+    .loader p,
+    .noscript-block p {
+        text-align: center;
+        font-size: 14pt
+    }
+
+    .evilbrowser {
+        display: none;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #c14328;
+        overflow: hidden
+    }
+
+    .evilbrowser .evilbrowserContent,
+    .evilbrowser a.closeThis {
+        position: absolute;
+        text-shadow: -1px -1px #a63922;
+        display: block
+    }
+
+    .evilbrowser a.closeThis {
+        top: 20px;
+        right: 20px;
+        width: 20px;
+        height: 20px;
+        font-size: 30px;
+        line-height: 20px;
+        text-align: center;
+        color: #fff;
+        text-decoration: none
+    }
+
+    .evilbrowser .evilbrowserContent {
+        top: 50%;
+        left: 50%;
+        margin: -40px 0 0 -190px;
+        width: 380px;
+        height: 80px;
+        color: #f6e2dd
+    }
+
+    .evilbrowser .evilbrowserContent span {
+        font-size: 81px;
+        font-weight: 700;
+        line-height: 93px;
+        display: block;
+        width: 20px;
+        float: left;
+        margin-right: 5px
+    }
+
+    .evilbrowser .evilbrowserContent .wHeading {
+        font-size: 38px;
+        font-weight: 700;
+        line-height: 45px;
+        margin: 0 0 0 30px;
+        letter-spacing: -2px
+    }
+
+    .evilbrowser .evilbrowserContent p {
+        font-size: 14px;
+        font-weight: regular;
+        line-height: 16px;
+        letter-spacing: 0;
+        margin: 0;
+        padding: 0
+    }
+
+    .evilbrowser .evilbrowserContent p a {
+        font-size: 14px;
+        color: #f6e2dd;
+        font-weight: 700;
+        text-decoration: underline
+    }
+
+
+
+    .loader {
+        position: relative;
+        margin: 100px auto auto;
+        padding-top: 0;
+        width: 40px
+    }
+
+    .loader p {
+        padding-top: 46px;
+        margin-left: -17px
+    }
+
+    .loader .circle {
+        position: absolute;
+        width: 38px;
+        height: 38px;
+        opacity: 0;
+        transform: rotate(225deg);
+        animation-iteration-count: infinite;
+        animation-name: orbit;
+        animation-duration: 5.5s;
+        animation-delay: 3s
+    }
+
+    .loader .circle:after {
+        content: '';
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        border-radius: 5px;
+        background: #111
+    }
+
+    .loader .circle:nth-child(1) {
+        animation-delay: 1s
+    }
+
+    .loader .circle:nth-child(2) {
+        animation-delay: 1.24s
+    }
+
+    .loader .circle:nth-child(3) {
+        animation-delay: 1.48s
+    }
+
+    .loader .circle:nth-child(4) {
+        animation-delay: 1.72s
+    }
+
+    .loader .circle:nth-child(5) {
+        animation-delay: 1.96s
+    }
+
+    
+    @keyframes orbit {
+        0% {
+            transform: rotate(225deg);
+            opacity: 1;
+            animation-timing-function: ease-out
+        }
+        7% {
+            transform: rotate(345deg);
+            animation-timing-function: linear
+        }
+        30% {
+            transform: rotate(455deg);
+            animation-timing-function: ease-in-out
+        }
+        39% {
+            transform: rotate(690deg);
+            animation-timing-function: linear
+        }
+        70% {
+            transform: rotate(815deg);
+            opacity: 1;
+            animation-timing-function: ease-out
+        }
+        75% {
+            transform: rotate(945deg);
+            animation-timing-function: ease-out
+        }
+        100%,
+        76% {
+            transform: rotate(945deg);
+            opacity: 0
+        }
+    }
+
+</style>

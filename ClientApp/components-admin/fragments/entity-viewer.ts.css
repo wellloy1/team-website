@@ -1,0 +1,10 @@
+:host {
+	display: block;
+	padding: 0px;
+	height: 100%;
+}
+.horiz {
+	display: flex;
+    align-items: center;
+    justify-content: left;
+}

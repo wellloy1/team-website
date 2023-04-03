@@ -1,0 +1,115 @@
+:host {
+  display: block;
+
+  margin: 0 auto;
+  max-width: var(--app-page-width);
+}
+
+.hero-image {
+  position: relative;
+  height: 320px;
+  overflow: hidden;
+  margin-bottom: 32px;
+
+  --teamatical-ui-image-img: {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -9999px;
+    right: -9999px;
+    max-width: none; 
+  };
+}
+
+.empty-list {
+  text-align: center;
+  white-space: nowrap;
+  color: var(--app-secondary-color);
+}
+
+
+#notfound {
+  display: block;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--app-secondary-color);
+}
+
+#notfound iron-icon {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+}
+
+#notfound h1 {
+  margin: 50px 0 10px 0;
+  font-weight: 300;
+}
+
+#notfound p {
+  margin: 0;
+}
+
+#notfound teamatical-ui-button {
+  margin-top: 50px;
+}
+
+
+.grid {
+  @apply --layout-horizontal;
+  @apply --layout-wrap;
+  align-items: flex-start;
+  
+  margin: 0 1px 32px 1px;
+  padding: 0;
+  list-style: none;
+}
+
+.grid a {
+  display:block;
+  text-decoration: none;
+}
+
+.grid li {
+  -webkit-flex: 1 1 33.3333%;
+  flex: 1 0 33.3333%;
+  max-width: 33.3333%;
+
+  transition: all 0.2s cubic-bezier(.27,-0.32,.27,1.32);
+  /* transition: all 0.2s cubic-bezier(0,.69,1,.36); */
+}
+
+@media (min-width: 1136px) and (max-height: 966px) {
+  .grid li {
+    -webkit-flex: 1 1 25%;
+    flex: 1 0 25%;
+    max-width: 25%;
+  }
+}
+
+@media (max-width: 768px) {
+  .grid li {
+    -webkit-flex: 1 1 33.3333%;
+    flex: 1 0 33.3333%;
+    max-width: 33.3333%;
+  }
+
+  .hero-image {
+    display: none;
+  }
+}
+
+@media (max-width: 437px) {
+  .grid li {
+    -webkit-flex-basis: 50%;
+    flex-basis: 50%;
+    max-width: 50%;
+  }
+}
+
+
+@media print {
+  teamatical-ui-list-subcategory {
+      display: none;
+  }
+}

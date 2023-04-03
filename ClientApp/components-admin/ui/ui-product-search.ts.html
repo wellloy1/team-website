@@ -1,0 +1,104 @@
+<paper-fab 
+  class="button" 
+  icon="[[icon]]" 
+  disabled$="[[loadingAny]]"
+  title$="[[localize('admin-product-search-tooltip')]]" mini 
+  on-tap="_openDialogTap">
+</paper-fab>
+
+
+<div class="layouts-dialogs">
+  <tmladmin-ui-dialog id="search_dialog" class="search-dialog" scroll-target="[[scrollTarget]]">
+    <div slot="header">
+      <paper-icon-button 
+        class="close-dialog-small-btn" 
+        icon="admin-icons:close"
+        dialog-dismiss>
+      </paper-icon-button>
+      <h2>
+        <iron-icon icon="[[icon]]"></iron-icon>
+        Product Search
+        <paper-spinner-lite 
+          class="thick" 
+          active="[[loading]]"> 
+        </paper-spinner-lite>
+      </h2>
+
+      <div class="filters-container">
+        <paper-input
+          label="Order ID" 
+          class="filter-input" 
+          type="string" 
+          disabled="[[loadingAny]]" 
+          value="{{search.SearchOrderID}}"
+          on-value-changed="onInputChanged"
+          on-keydown="_filterKeydown">
+          <paper-icon-button tabindex="-1" slot="suffix" class="add-btn" icon="admin-icons:arrow-downward" on-tap="_filterTap">
+          </paper-icon-button>
+        </paper-input>
+
+        <span class="filter-and">&</span>
+
+        <paper-input
+          label="Batch ID" 
+          class="filter-input" 
+          type="string" 
+          disabled="[[loadingAny]]" 
+          value="{{search.SearchBatchID}}"
+          on-value-changed="onInputChanged"
+          on-keydown="_filterKeydown">
+          <paper-icon-button tabindex="-1" slot="suffix" class="add-btn" icon="admin-icons:arrow-downward" on-tap="_filterTap">
+          </paper-icon-button>
+        </paper-input>
+
+        <span class="filter-and">&</span>
+
+        <paper-input
+          label="Manufacture Order ID" 
+          class="filter-input" 
+          type="string" 
+          disabled="[[loadingAny]]" 
+          value="{{search.SearchManufactureOrderID}}"
+          on-value-changed="onInputChanged"
+          on-keydown="_filterKeydown">
+          <paper-icon-button tabindex="-1" slot="suffix" class="add-btn" icon="admin-icons:arrow-downward" on-tap="_filterTap">
+          </paper-icon-button>
+        </paper-input>
+      </div>      
+    </div>
+  
+    <div slot="body">
+
+      <!-- search results -->
+      <dom-repeat items="[[search.SearchResults]]" as="searchi">
+        <template>
+          <tmladmin-production-sewing-item 
+            class="hidden"
+            as-list-item
+            showen$="[[_asBool(searchi.ImageUrls)]]"
+            entry="[[searchi]]" 
+            website-url="[[websiteUrl]]" 
+            scroll-target="[[scrollTarget]]"
+            action-disabled="[[loading]]"
+            on-tmladmin-production-sewing-item-tap="onItemTap">
+          </tmladmin-production-sewing-item>
+        </template>
+      </dom-repeat>
+
+      <dom-if if="[[!LenMore(search.SearchResults)]]">
+        <template>
+          <div class="noitems">
+            no items
+          </div>
+        </template>
+      </dom-if>
+
+    </div>
+  
+    <div slot="footer">
+      <div class="buttons">
+      </div>
+    </div>
+  
+  </tmladmin-ui-dialog>
+</div>

@@ -1,0 +1,201 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Custom Design Request #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.id]]</span>
+					([[_formatDate(order.Created)]])
+
+				</h3>
+
+				<ul>
+					<!-- <li><b>Created:</b> [[_formatDate(order.Created)]]</li> -->
+					<li><b>User:</b> 
+						<teamatical-ui-user-inline user="[[order.User]]" show-as-line></teamatical-ui-user-inline>
+					</li>
+					<li><b>Name:</b> [[order.Name]]</li>
+					<li><b>Email:</b> [[order.Email]]</li>
+					<li><b>Phone:</b> [[order.Phone]]</li>
+					<li><b>Company:</b> [[order.Company]]</li>
+					<li><b>ProductConfigurationID:</b> 
+						<span class="copy-tap" on-tap="_copyTap">[[order.ProductConfigurationID]]</span>
+						<a href="[[_urlConsumerViewPConfiguration(order.ProductConfigurationID, item.BaseUrl)]]" target="_blank">
+							<iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon>
+						</a>
+					</li>
+					<li><b>QuantityNeeded:</b> [[order.QuantityNeeded]]</li>
+				</ul>
+
+
+				<!-- <div class="buttons">
+					<paper-button 
+						class="order-resnapshot-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveCustomDesignRequestTap">
+						Save Custom Design Request
+					</paper-button>
+				
+					<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm Custom Design Request to Save</h2>
+						<paper-dialog-scrollable>
+							Custom Design Request #: [[order.id]] is going to be saved...are you sure?
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss>Close</paper-button>
+							<paper-button dialog-confirm autofocus on-tap="saveCustomDesignRequestConfirmTap">Save Custom Design Request</paper-button>
+						</div>
+					</paper-dialog>
+			
+				</div> -->
+				
+				<div class="order-inputs">
+					<h4>
+						Details:
+					</h4>
+
+					<dom-repeat items="[[order.SizesRequested]]" as="productmi">
+						<template>
+							<div class="row input-row">
+								<teamatical-ui-sizes options="[[productmi.Sizes]]"
+									readonly
+									caption-text="[[_formatSizeTitle(productmi, order.SizesRequested)]]"
+									disabled$="[[loadingDisable]]"
+									error-message="[[_errorMessageFor(customDesignRequest.notvalid, 'ProductConfiguration.Product.ProductManufacturers.{i}.Sizes', index)]]"
+									invalid="[[_invalidFor(customDesignRequest.notvalid, 'ProductConfiguration.Product.ProductManufacturers.{i}.Sizes', index)]]"
+									on-change="onInputChanged">
+								</teamatical-ui-sizes>
+							</div>
+						</template>
+					</dom-repeat>
+
+
+					<h2>Customer Preferences:</h2>
+					<teamatical-ui-description html="[[_text2html(order.Description)]]"></teamatical-ui-description>
+					<!-- <paper-textarea 
+						label="Description" 
+						value="{{order.Description}}"
+						name="Description"
+						readonly
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.Description]]" 
+						invalid="[[_asBool(order.notvalid.Description)]]">
+					</paper-textarea> -->
+
+				</div>
+
+				<dom-if if="[[!isOrganization]]">
+					<template>
+						<tmladmin-ui-changes-history
+							class="order-history"
+							title="History"
+							items="[[order.History]]">
+						</tmladmin-ui-changes-history>
+					</template>
+				</dom-if>
+				
+				<div class="assets-list">
+					<h4>
+						Assets:
+					</h4>
+				
+					<div scrollable-x>
+						<div class="table">
+							<div class="header">
+								<div>
+									Type
+								</div>
+								<div>
+									Position
+								</div>
+								<div>
+									File Name 
+								</div>
+								<div>
+									File Size
+								</div>
+								<div>
+									Description
+								</div>
+								<div>
+									<!-- btns -->
+								</div>
+							</div>
+					
+							<dom-repeat items="[[order.Assets]]" as="asseti">
+								<template>
+									<div class="row">
+										<div>
+											[[asseti.Type]]
+										</div>
+										<div>
+											[[asseti.Position]]
+										</div>
+										<div>
+											[[asseti.FileName]]
+										</div>
+										<div>
+											[[_formatFileSize(asseti.FileSize)]]
+										</div>
+										<div>
+											[[asseti.Description]]
+										</div>
+										<div>
+											<paper-spinner-lite class="thick"></paper-spinner-lite>
+											<paper-button on-tap="_onDownload" data-id$="[[order.id]]" raised>
+												-download-
+											</paper-button>
+											<!-- <paper-spinner-lite class="thick"></paper-spinner-lite>
+											<paper-icon-button class="remove-btn" icon="admin-icons:close" uid$="[[useri.Source]]"
+												on-tap="_removeTap"></paper-icon-button> -->
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+					
+							<dom-if if="[[!LenMore(order.Assets)]]">
+								<template>
+									<div>
+										<div class="noitems">
+											no assets
+										</div>
+									</div>
+								</template>
+							</dom-if>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			
+			<div class="order-items" id="order-items">
+			</div>
+		
+
+			<div class="order-footer">
+			</div>
+		</div>
+	</div>
+</div>

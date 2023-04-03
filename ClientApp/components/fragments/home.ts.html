@@ -1,0 +1,510 @@
+<div class="customization-container">
+  <!-- <div class="customization-background"></div> -->
+  <!-- style="background-image:url([[imagesPath]]/home/home_pic_1X1_B1.png);" -->
+
+  <!-- 1 -->
+  <section class="customization">
+    <teamatical-ui-image 
+      class="image" 
+      src="[[imagesPath]]/home/BASKETBALL_1000_1000.png" use-webp1 lazy-load background-dark alt="home-customization">
+    </teamatical-ui-image>
+
+    <div class="detail" has-content>
+      <div class="detail-container">
+        <h1>
+          Custom Sublimation
+          <span class="accent-text">basketball</span><br />
+          UNIFORMs
+        </h1>
+        <div class="h5">
+          Most advanced sublimation technology
+          Million of colors that will stay bright for years
+        </div>
+
+        <a href="/feedback" tabindex="-1">
+          <button class="green">
+            [[localize('home-feedback-button')]]
+          </button>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="customization slide">
+    <teamatical-ui-image 
+      class="image" 
+      src="[[imagesPath]]/home/HOCKEY_1000_1000.png" use-webp1 lazy-load background-dark alt="home-customization">
+    </teamatical-ui-image>
+
+    <div class="detail" has-content>
+      <div class="detail-container">
+        <h1>
+          CUSTOM <span class="accent-text">HOCKEY</span> UNIFORMS
+          <br />
+          FAST AND EASY
+        </h1>
+        <div class="h5">
+          Top quality product for most 
+          demanding teams, players and clubs
+        </div>
+
+        <a href="/feedback" tabindex="-1">
+          <button class="green">[[localize('home-feedback-button')]]</button>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="customization slide">
+    <teamatical-ui-image 
+      class="image" 
+      src="[[imagesPath]]/home/POLO_1000_1000.png" use-webp1 lazy-load background-dark alt="home-customization">
+    </teamatical-ui-image>
+
+    <div class="detail" has-content>
+      <div class="detail-container">
+        <h1>
+          Custom Sublimation<br />
+          <span class="accent-text">POLO SHIRTs</span>
+        </h1>
+        <div class="h5">
+          Perfect for:  Sports teams, Schools, Companies, 
+          Corporate Events, Golf Outings, coaches, 
+          families, or employees using
+        </div>
+
+        <a href="/feedback" tabindex="-1">
+          <button class="green">[[localize('home-feedback-button')]]</button>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="customization slide">
+    <teamatical-ui-image 
+      class="image" 
+      src="[[imagesPath]]/home/SCHOOL_1000_1000.png" use-webp1 lazy-load background-dark alt="home-customization">
+    </teamatical-ui-image>
+
+    <div class="detail" has-content>
+      <div class="detail-container">
+        <h1>
+          Custom Sublimation<br />
+          <span class="accent-text">SCHOOL</span> UNIFORMs
+        </h1>
+        <div class="h5">
+          Customized with your team name, logo, and design
+          Made from high quality materials
+        </div>
+
+        <a href="/feedback" tabindex="-1">
+          <button class="green">[[localize('home-feedback-button')]]</button>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="customization slide">
+    <teamatical-ui-image 
+      class="image" 
+      src="[[imagesPath]]/home/Soccer_1000_1000.png" use-webp1 lazy-load background-dark alt="home-customization">
+    </teamatical-ui-image>
+
+    <div class="detail" has-content>
+      <div class="detail-container">
+        <h1>
+          Custom Sublimation<br />
+          <span class="accent-text">SOCCER</span> UNIFORM
+        </h1>
+        <div class="h5">
+          Made from high quality materials
+          Customized with your team name, logoand design Faster delivery
+        </div>
+
+        <a href="/feedback" tabindex="-1">
+          <button class="green">[[localize('home-feedback-button')]]</button>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="customization slide">
+    <teamatical-ui-image 
+      class="image" 
+      src="[[imagesPath]]/home/baseball_1000_1000.png" use-webp1 lazy-load background-dark alt="home-customization">
+    </teamatical-ui-image>
+
+    <div class="detail" has-content>
+      <div class="detail-container">
+        <h1>
+          Custom Sublimation<br />
+          <span class="accent-text">BASEBALL</span> JERSEYS
+        </h1>
+        <div class="h5">
+          Take your team to the next level with our customized sublimated jerseys.
+        </div>
+
+        <a href="/feedback" tabindex="-1">
+          <button class="green">[[localize('home-feedback-button')]]</button>
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- F -->
+  <div class="customization-foreground">
+    <ul class="view-selector">
+      <dom-repeat items="[[slidesItems]]" as="slidei">
+        <template>
+          <li selected$="[[slidei.Selected]]">
+            <button 
+              type="button" 
+              data-role="none" 
+              role="button" 
+              on-click="_onSelectorTap"
+              tabindex="0">[[index]]</button>
+          </li>
+        </template>
+      </dom-repeat>
+    </ul>
+  </div>
+</div>
+
+
+
+<section class="hero_text">
+  <div class="text">
+    <div class="text-container">
+      <!-- <h2 class="text-light">
+        [[localize('home-www-hero_text0-h2-1')]]
+        <br class="br-mobile" />
+        [[localize('home-www-hero_text0-h2-2')]]
+      </h2> -->
+      <h2 class="text-bold">
+        "Create A Custom Look For Your Team Or Club With Our Design Team"
+      </h2>
+      <div class="h5">
+        We will build an online store with your kits so your team members can order them with no minimum restrictions any time of the year. 
+        Each player can personalize the jerseys with player number and player name according to your team or league policy. 
+        Complete each kit with our high-quality soccer socks in many stock colors. 
+        The production time is ten business days plus shipping from when the order is completed. 
+        All our products are made with high-quality materials and professional workmanship to rival the top brands of soccer uniforms. 
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+<!-- 1 -->
+<div class="designvariations-container">
+  <section class="designvariations">
+    <div class="image-container s1x2">
+        <a href="/kits/hockey">
+          <teamatical-ui-image 
+            src="[[imagesPath]]/home/1.png" 
+            use-webp1 
+            lazy-load
+            placeholder-img="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACBAMAAACNhmBQAAAAElBMVEWbq7CKmqGUpKmUo6iFlJqDkpnslvqpAAAADklEQVQI12MwEmVgEAEAAWgAXMonZuEAAAAASUVORK5CYII="
+            alt="home-designvariations">
+          </teamatical-ui-image>
+        </a>
+    </div>
+
+    <div class="detail" has-content>
+      <div class="detail-container">
+        <h2 class="text-light">
+          HOCKEY UNIFORMS
+        </h2>
+        <div class="h5">
+          From mini-mite’s to the pro’s, we have a the perfect solution for you to take the ice with style. Take your team to the next level with our customized sublimated jerseys.
+          <p><a href="/kits/hockey">Learn more about HOCKEY uniforms ...</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<!-- 2 -->
+<div class="sublimation-container">
+  <section class="sublimation">
+    <div class="image-container s1x2" style="background-image: url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAIBAQEBAQIBAQECAgICAgQDAgICAgUEBAMEBgUGBgYFBgYGBwkIBgcJBwYGCAsICQoKCgoKBggLDAsKDAkKCgr/2wBDAQICAgICAgUDAwUKBwYHCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgr/wgARCAABAAIDAREAAhEBAxEB/8QAFAABAAAAAAAAAAAAAAAAAAAACP/EABQBAQAAAAAAAAAAAAAAAAAAAAX/2gAMAwEAAhADEAAAAGugP//EABsQAAAHAQAAAAAAAAAAAAAAAAACBAUGNnWz/9oACAEBAAE/AJ7envXU9Tj/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/AH//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/AH//2Q==);">
+      <a href="/list/basketball">
+        <teamatical-ui-image 
+          src="[[imagesPath]]/home/2.png" 
+          use-webp1 
+          lazy-load
+          placeholder-img="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACBAMAAACNhmBQAAAAElBMVEWyvsKvu72ruL2st7motbmgr7SX81cRAAAADklEQVQI12NQYGQIEQYAAWUAiTkphDUAAAAASUVORK5CYII="
+          alt="home-sublimation">
+        </teamatical-ui-image>
+      </a>
+    </div>
+
+    <div class="detail" has-content>
+      <div class="detail-container">
+        <h2 class="text-light">
+          BASKETBALL UNIFORMS
+        </h2>
+        <div class="h5">
+          Storm the court with the high-quality sublimated uniforms that unite your team from head to toe. Our refined basketball uniforms give you the style and durability to perform all season long.  
+          <p><a href="/list/basketball">Learn more about BASKETBALL uniforms ...</a></p>
+        </div>
+        <!-- <div class="icon-img">
+          <img 
+            src="data:image/png;base64,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" 
+            alt="home-sublimation-icon" />
+        </div> -->
+      </div>
+    </div>
+  </section>
+</div>
+<!-- 3 -->
+<div class="designvariations-container">
+  <section class="designvariations">
+    <div class="image-container s1x2">
+        <a href="/kits/soccer">
+          <teamatical-ui-image 
+            src="[[imagesPath]]/home/3.png" 
+            use-webp1 
+            lazy-load
+            placeholder-img="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACBAMAAACNhmBQAAAAFVBMVEWGlJ67oqqRoKmNnaa7j5q+h5PBfYsHkqfgAAAADklEQVQI12NQTmFgCAQAApYA2VD2ApIAAAAASUVORK5CYII="
+            alt="home-designvariations">
+          </teamatical-ui-image>
+        </a>
+    </div>
+
+    <div class="detail" has-content>
+      <div class="detail-container">
+        <h2 class="text-light">SOCCER UNIFORMS</h2>
+        <div class="h5">
+          Elevate your club with our premium sublimated soccer kits. Our hand-selected fabrics provide maximum cooling and moisture control to keep you fresh all season long.
+          <p><a href="/kits/soccer">Learn more about SOCCER uniforms ...</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<!-- 4 -->
+<div class="sublimation-container">
+  <section class="sublimation">
+    <div class="image-container s1x2" style="background-image: url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAIBAQEBAQIBAQECAgICAgQDAgICAgUEBAMEBgUGBgYFBgYGBwkIBgcJBwYGCAsICQoKCgoKBggLDAsKDAkKCgr/2wBDAQICAgICAgUDAwUKBwYHCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgr/wgARCAABAAIDAREAAhEBAxEB/8QAFAABAAAAAAAAAAAAAAAAAAAACP/EABQBAQAAAAAAAAAAAAAAAAAAAAX/2gAMAwEAAhADEAAAAGugP//EABsQAAAHAQAAAAAAAAAAAAAAAAACBAUGNnWz/9oACAEBAAE/AJ7envXU9Tj/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAECAQE/AH//xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oACAEDAQE/AH//2Q==);">
+      <a href="/list/baseball">
+        <teamatical-ui-image 
+          src="[[imagesPath]]/home/4.png" 
+          use-webp1 
+          lazy-load
+          placeholder-img="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACBAMAAACNhmBQAAAAElBMVEWQoqeZrK+UpqmPn6aEl6CEl5/hUZMyAAAADklEQVQI12NwFWIwYAAAAgcAiDhAzMgAAAAASUVORK5CYII="
+          alt="home-sublimation">
+        </teamatical-ui-image>
+      </a>
+    </div>
+
+    <div class="detail" has-content>
+      <div class="detail-container">
+        <h2 class="text-light">
+          BASEBALL UNIFORMS
+        </h2>
+        <div class="h5">
+          Score a homerun of a deal when outfitting your team in our premium sublimated baseball uniforms. From Little League to the pro’s you can do everything you need.
+          <p><a href="/list/baseball">Learn more about BASEBALL uniforms ...</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<!-- 5 -->
+<div class="designvariations-container">
+  <section class="designvariations">
+    <div class="image-container s1x2">
+        <a href="">
+          <teamatical-ui-image 
+            src="[[imagesPath]]/home/5.png" 
+            use-webp1 
+            lazy-load
+            placeholder-img="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACAgMAAAACxpXwAAAADFBMVEXDzc+7xMi1wMW1vcGmaaVNAAAADElEQVQI12PgZPAGAABqAFXS9c9ZAAAAAElFTkSuQmCC"
+            alt="home-designvariations">
+          </teamatical-ui-image>
+        </a>
+    </div>
+
+    <div class="detail" has-content>
+      <div class="detail-container">
+        <h2 class="text-light">
+          SPIRIT WEAR AND ACCESSORIES
+        </h2>
+        <div class="h5">
+          Our sublimated spiritwear will bring your supporters together with unrivaled designs and personalization opportunities. From hoodies to performance t-shirts, we have the perfect solution for you!  
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+
+
+<section class="hero_text">
+  <div class="text">
+    <div class="text-container">
+      <a href="/feedback" tabindex="-1">
+        <button class="green">[[localize('home-feedback-button')]]</button>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- 
+<div id="customstore-container">
+  <section id="customstore">
+    <teamatical-ui-image class="image" src="[[imagesPath]]/home/i3.jpg" use-webp1 lazy-load background-dark alt="home-customstore">
+    </teamatical-ui-image>
+
+    <div class="detail" has-content>
+      <div class="detail-container">
+        <h1>
+          [[localize('home-www-customstore-h1-l1')]]
+          <br />
+          [[localize('home-www-customstore-h1-l2')]]
+        </h1>
+        <div class="h5">
+          [[localize('home-www-customstore-h5')]]
+        </div>
+
+        <a href="/feedback" tabindex="-1">
+          <button class="green">[[localize('home-feedback-button')]]</button>
+        </a>
+      </div>
+    </div>
+  </section>
+</div> -->
+
+
+<div class="module-container">
+  <div class="module-header">
+    <div>
+      Teamatical End-to-End Platform for On-Demand Apparel
+    </div>
+  </div>
+  <div class="module-header-description">
+    <div>
+      Teamatical’s software is the leading on-demand platform that links e-commerce directly into an integrated digital supply chain. 
+      Teamatical seamlessly connects designers, brands, sellers, and manufacturers with cloud  technology driving efficiencies throughout the entire value chain. 
+      No matter what type of user you are, we have an integrated solution for you! 
+    </div>
+  </div>
+
+  <div class="module-details">
+    <div class="module-detail-p2">
+      <h2>Sales Module</h2>
+      <p>
+        <b>Build custom stores on the fly with Teamatical Sales Module.</b>
+        Generate custom themed store online stores with products that are enabled in Teamatical’s digital supply chain. 
+        Utilize our proprietary Adobe Illustrator plugin to publish next level designs instantly into your online stores.​
+      </p>
+      <p>
+        <b>Tailored e-commerce solutions enabling numerous selling scenarios.​</b>
+        Online stores open 24/7 with no minimum quantities powered by the Teamatical platform.​
+      </p>
+      <p>
+        <b>Focus all your time on selling more and we automate the production and fulfillment for you.​​</b>
+        Leave the days of carrying inventory and decorating in the past, automate your production and fulfillment with Teamatical.​
+      </p>
+      <p><a href="/help/sales-module/">Learn more about Teamatical’s Sales Module ...</a></p>
+    </div>
+    <div class="module-detail-p2">
+      <h2>BRAND Module</h2>
+      <p>
+        <b>Manage a curated collection of products through your digital catalog.​</b>
+        Single System of Record (“SSOR”) to manage your product catalogs centrally for all your sales channels.
+      </p>
+      <p>
+        <b>Harness the power of integrating e-commerce across multiple sales channels directly into production.</b>
+        Orders are aggregated and automatically submitted directly into Teamatical enabled production and fulfillment.
+      </p>
+      <p>
+        <b>Gain an unprecedented level of visibility and automation across your value chain.</b>
+        Optimize your business with insights captured across every aspect of your business.
+      </p>
+      <p><a href="/help/brand-module/">Learn more about Teamatical’s Brand Module ...</a></p>
+    </div>
+  </div>
+
+  <div class="module-details">
+    <div class="module-detail-p2">
+      <h2>Manufacturing Module​</h2>
+      <p>
+        <b>Enable your factory in the Teamatical Digital Supply Chain.</b>
+        Implement the power of Teamatical Production Workflow System (“TPWS”) into your production process.
+      </p>
+      <p>
+        <b>Receive production ready orders in a standardized system.</b>
+        Eliminate paper and communication and begin producing orders in the matter of minutes.
+      </p>
+      <p>
+        <b>Unleash the power of on-demand production scalable through technology and automation.</b>
+        Action driven processes automated with technology at every gate of the production process delivers unprecedented manufacturing efficiency.
+      </p>
+      <p><a href="/help/manufacturing-module/">Learn more about Teamatical’s Manufacturing Module ...</a></p>
+    </div>
+    <div class="module-detail-p2">
+      <h2>Design Module</h2>
+      <p>
+        <b>Instantly publish new designs to your online store for immediate sale.</b>
+        Teamatical’s  Adobe Illustrator Plugin connects directly to your online store so uploading new designs is fast and easy.​
+      </p>
+      <p>
+        <b>Use Teamatical’s garment patterns for free or upload your own​.</b>
+        Quickly access Teamatical’s garment patterns or upload your brand’s patterns that you have perfected​.
+      </p>
+      <p>
+        <b>Add dynamic name and number fields for easy personalization​.</b>
+        Spreadsheets with names and numbers are no longer required – let the customer provide this information or upload your roster using our roster upload feature​.
+      </p>
+      <p><a href="/help/design-module/">Learn more about Teamatical’s Design Module ...</a></p>
+    </div>
+  </div>
+</div>
+
+
+
+<section id="plugin" class="hero_text">
+  <div class="text">
+    <div class="text-container">
+      <h2 class="text-light">[[localize('home-www-plugin-h2')]]</h2>
+      <h1 class="">[[localize('home-www-plugin-h1-l1')]]</h1>
+      <h1 class="">[[localize('home-www-plugin-h1-l2')]]</h1>
+      <div class="h5">[[localize('home-www-plugin-h5')]]</div>
+      <div class="links">
+        <a href="/designplugin/mac" tabindex="-1"><button class="green">[[localize('home-designplugin-btn-mac')]]</button></a>
+        <a href="/designplugin/win" tabindex="-1"><button class="green">[[localize('home-designplugin-btn-win')]]</button></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<div id="partnerlist-container">
+  <section id="partner-list" class="hero_text">
+    <div class="text">
+      <div class="text-container">
+        <h1 class="">[[localize('home-www-partnerlist-h1')]]</h1>
+        <div class="partner-images">
+          <img src="[[imagesPath]]/home/o1.png" alt="office depot">
+          <img src="[[imagesPath]]/home/o2.png" alt="bda">
+          <img src="[[imagesPath]]/home/o3.png" alt="decathlon">
+          <img src="[[imagesPath]]/home/o4.png" alt="ontrack">
+          <img src="[[imagesPath]]/home/o5.png" alt="xblades">
+          <img src="[[imagesPath]]/home/o6.png" alt="winners">
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

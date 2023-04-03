@@ -1,0 +1,965 @@
+<app-route route="[[route]]" pattern="/:state" active="{{routeActive}}" data="{{routeData}}">
+</app-route>
+
+<teamatical-checkout-data id="checkoutData" 
+	query-params="{{queryParams}}" 
+	website-url="[[websiteUrl]]" 
+	cart="[[cart]]"
+	user-info="[[userInfo]]" 
+	model="{{model}}" 
+	post-data="[[postData]]"
+
+	api-gateway="[[apiGateway]]"
+	api-pubkey="[[apiPubkey]]" 
+	org-country="[[orgCountry]]"
+	org-subdomain="[[orgSubdomain]]"
+	org-connected-id="[[orgConnectedId]]"
+	stripe-loaded="[[stripeLoaded]]" 
+	stripe-ready="{{stripeReady}}"
+	paypal-ready="{{paypalReady}}"
+
+	country-profile="{{countryProfile}}" 
+	country-bill-profile="{{countryBillProfile}}"
+	country-order-profile="{{countryOrderProfile}}"
+	country-order-bill-profile="{{countryOrderBillProfile}}"
+	visible="{{visible}}" 
+	failure="{{failure}}"
+	loading="{{loading}}" 
+	loading-debounce="{{loadingDebounce}}" 
+	saving="{{saving}}" 
+	success="{{success}}" 
+	summary="{{summary}}">
+</teamatical-checkout-data>
+
+<teamatical-ui-loader hidden$="[[_isNotConn(model, failure, offline, loading)]]">
+</teamatical-ui-loader>
+
+<div class="main-frame" hidden$="[[_isNoModel(model,failure,offline)]]">
+	<iron-pages id="pages" selected="[[state]]" attr-for-selected="state" fallback-selection="init">
+
+		<div state="init">
+			<iron-form id="checkoutForm">
+				<form method="POST">
+					<input name="InvalidAddressDialog" type="hidden" />
+					
+					<!-- empty -->
+					<div class="subsection hidden" visible$="[[_emptyCart]]">
+						<p class="empty-cart">[[localize('checkout-cart-empty-1')]]
+							<iron-icon icon="shopping-cart"></iron-icon>[[localize('checkout-cart-empty-2')]]
+						</p>
+					</div>
+
+					<!-- header -->
+					<header class="subsection" visible$="[[_hasItems]]">
+						<h1>
+							[[localize('checkout-title')]]
+						</h1>
+
+						<div>
+							<span class="hidden" showen$="[[model.Sandbox]]">
+								<iron-icon icon="warning" class="warning"></iron-icon> [[localize('checkout-testmark')]]
+							</span>
+
+							<!-- group order block -->
+							<span hidden$="[[!model.isgroup]]">[[localize('checkout-shipping-group-deadline')]]</span>
+							<teamatical-ui-date-time 
+								hidden$="[[!model.isgroup]]"
+								tooltip$="[[localize('groupshipping-date-title')]]" tooltip-flow="down"
+								hour="numeric" minute="numeric" second="numeric" 
+								datetime-obj="[[model.groupdeadline]]">
+							</teamatical-ui-date-time>
+						</div>
+						<!-- <span>[[localize('checkout-desc')]]</span> -->
+					</header>
+
+					<!-- main -->
+					<div class="subsection grid" visible$="[[_hasItems]]">
+						<!-- account, paynow, ship address -->
+						<section>
+							<!-- subsection 1 - accountinfo -->
+							<div>
+								<h2 id="accountInfoHeading">[[localize('checkout-accountinfo-title')]]</h2>
+								<div class="row input-row">
+									<paper-input id="AccountEmail" name="email" type="email"
+										label="[[localize('checkout-email')]]" 
+										value="{{model.AccountEmail}}" autofocus-off
+										autocomplete="email" 
+										aria-labelledby="accountInfoHeading"
+										error-message="[[localize('checkout-email-invalid')]]">
+									</paper-input>
+								</div>
+
+								<div class="row input-row">
+									<paper-input id="AccountPhone" 
+										name="phone" 
+										type="tel" 
+										label="[[localize('checkout-phone')]]"
+										value="{{model.AccountPhone}}" 
+										autocomplete="tel"
+										aria-labelledby="accountInfoHeading"
+										error-message="[[localize('checkout-phone-invalid')]]">
+									</paper-input>
+								</div>
+
+								<div id="pay-request-section-ahead" show$="[[_showPayBtn]]">
+									<h2 id="payRequestHeading">[[payNowTitle]]</h2>
+									<div id="pay-request-button">
+										<teamatical-ui-button disabled$="[[disabledPayBtn]]" on-tap="_paynowTap">
+											<iron-icon class="apple-pay hidden" showen$="[[_applePay]]" icon="brand:apple-pay"></iron-icon>
+											<iron-icon class="google-pay hidden" showen$="[[_googlePay]]" icon="brand:google-pay"></iron-icon>
+											<span hidden$="[[_applePay]]" hidden2$="[[_googlePay]]">[[payNowBtn]]</span>
+										</teamatical-ui-button>
+									</div>
+								</div>
+							</div>
+
+							<!-- shipping -->
+							<div class="shipping-block">
+								<h2 id="shipAddressHeading">[[shipAddressTitle]]</h2>
+								
+								<div class="auto-fill-address-section" hidden$="[[hideAllowAutoFillAddress]]">
+									<paper-checkbox name="AllowAutoFillAddress" 
+										checked="{{model.AllowAutoFillAddress}}" 
+										on-change="_toggleAllowAutoFillAddress">
+										[[localize('checkout-allow-autofilladdress')]]
+									</paper-checkbox>
+								</div>
+								
+								<div class="row input-row">
+									<paper-input id="ShipFirstName" name="firstName" type="text" 
+										autocomplete="firstname" disabled$="[[disabled_Input]]"
+										label="[[localize('checkout-firstname')]]" value="{{model.ShipFirstName}}"
+										aria-labelledby="shipAddressHeading"
+										error-message="[[localize('checkout-firstname-invalid')]]">
+									</paper-input>
+								</div>
+
+								<div class="row input-row">
+									<paper-input id="ShipLastName" name="lastName" type="text" 
+										autocomplete="lastname" disabled$="[[disabled_Input]]"
+										label="[[localize('checkout-lastname')]]" value="{{model.ShipLastName}}"
+										aria-labelledby="shipAddressHeading"
+										error-message="[[localize('checkout-lastname-invalid')]]">
+									</paper-input>
+								</div>
+
+
+
+								<div class="column">
+									<teamatical-ui-select id="ShipCountry" name="shipCountry"
+										label="[[localize('checkout-country')]]"
+										options="[[model.CountryList]]" to-left text-property="title"
+										value-property="id" disabled$="[[disabled_Input]]"
+										autocomplete="country" value="{{model.ShipCountry}}">
+									</teamatical-ui-select>
+								</div>
+
+
+								<!-- shipping validation summary -->
+								<teamatical-ui-validation-summary id="ShipAddressSummary"></teamatical-ui-validation-summary>
+								<div id="IgnoreSuggestionValidation"></div>
+
+								<div class="row input-row">
+									<paper-input id="ShipAddress" name="shipAddress" type="text" 
+										autocomplete="address-line1"
+										disabled$="[[disabled_Input]]" 
+										label="[[localize('checkout-address')]]"
+										value="{{model.ShipAddress}}" aria-labelledby="shipAddressHeading"
+										error-message="[[localize('checkout-address-invalid')]]"></paper-input>
+								</div>
+								<div class="row input-row">
+									<paper-input id="ShipAddress2" name="shipAddress2" type="text"
+										autocomplete="address-line2" 
+										disabled$="[[disabled_Input]]"
+										label="[[localize('checkout-address2')]]" 
+										value="{{model.ShipAddress2}}"
+										aria-labelledby="shipAddressHeading"
+										error-message="[[localize('checkout-address-invalid')]]">
+									</paper-input>
+								</div>
+								<div class="row input-row">
+									<paper-input id="ShipAddress3" name="shipAddress3" type="text"
+										autocomplete="address-line3" 
+										disabled$="[[disabled_Input]]"
+										label="[[localize('checkout-address3')]]" 
+										value="{{model.ShipAddress3}}"
+										aria-labelledby="shipAddressHeading"
+										error-message="[[localize('checkout-address-invalid')]]">
+									</paper-input>
+								</div>
+
+								<div class="row input-row">
+									<paper-input id="ShipCity" name="shipCity" type="text" 
+										autocomplete="city" value="{{model.ShipCity}}"
+										disabled$="[[disabled_Input]]" label="[[localize('checkout-city')]]"
+										aria-labelledby="shipAddressHeading"
+										error-message="[[localize('checkout-city-invalid')]]">
+									</paper-input>
+								</div>
+								
+								<div class="row input-row">
+									<paper-input id="ShipState" name="shipState" type="text" 
+										autocomplete="state" value="{{model.ShipState}}"
+										disabled$="[[disableShipState(countryProfile.NoState)]]"
+										label="[[localize(countryProfile.ShipState)]]"
+										aria-labelledby="shipAddressHeading"
+										error-message="[[localize('checkout-state-invalid')]]">
+									</paper-input>
+
+									<paper-input id="ShipZip" name="shipZip" type="text" 
+										autocomplete="postal-code" 
+										value="{{model.ShipZip}}"
+										disabled$="[[disabled_Input]]" 
+										label="[[localize(countryProfile.ShipZip)]]"
+										aria-labelledby="shipAddressHeading"
+										error-message="[[localize('checkout-zip-invalid')]]">
+									</paper-input>
+								</div>
+
+
+								
+								<!-- COMPANY (regular shipping) -->
+								<div class="company-picker">
+									<paper-checkbox id="isCompany" name="isCompany" 
+										disabled$="[[disabled_Input]]"
+										checked="{{model.IsCompany}}" 
+										on-change="_toggleIsCompany">
+										[[localize('checkout-is-company')]]
+									</paper-checkbox>
+								</div>
+
+								<iron-collapse class="ship-company-block" opened="[[model.IsCompany]]">
+									<div class="row input-row">
+										<paper-input id="ShipCompany" name="shipCompany" type="text" 
+											error-message="[[localize('checkout-company-invalid')]]"
+											autocomplete="organization" 
+											disabled$="[[disabled_Input_ShipCompany]]" 
+											label="[[localize('checkout-company')]]" value="{{model.ShipCompany}}"
+											aria-labelledby="shipAddressHeading">
+										</paper-input>
+									</div>
+
+									<div class="row input-row">
+										<paper-input id="ShipTaxID" name="shipTaxID" type="text" 
+											error-message="[[localize('checkout-tax-invalid')]]" 
+											autocomplete="TaxID"
+											disabled$="[[disabled_Input_ShipTaxID]]" 
+											hidden$="[[hidden_ShipTaxID]]"
+											label="[[localize('checkout-tax')]]"
+											value="{{model.ShipTaxID}}" 
+											aria-labelledby="shipAddressHeading">
+										</paper-input>
+									</div>
+
+									<div class="row input-row">
+										<paper-input id="ShipEORI" name="shipEORI" type="text" 
+											autocomplete="EORI"
+											error-message="[[localize('checkout-eori-invalid')]]" 
+											disabled$="[[disabled_Input_ShipEORI]]" 
+											hidden$="[[hidden_ShipEORI]]"
+											label="[[localize('checkout-eori')]]"
+											value="{{model.ShipEORI}}"
+											aria-labelledby="shipAddressHeading">
+										</paper-input>
+									</div>
+								</iron-collapse>
+
+
+								<!-- Residential Address -->
+								<div class="residential-picker">
+									<paper-checkbox 
+										id="isResidential" 
+										name="isResidential" 
+										disabled$="[[disabled_Input]]" 
+										checked="{{model.IsResidential}}"
+										on-change="_toggleIsResidential">
+										[[localize('checkout-is-residential')]]
+									</paper-checkbox>
+								</div>
+
+							</div>
+
+							<div hidden$="[[!model.DeliveryDetailsOnly]]">
+								<h2>[[localize('checkout-deliverydetails-title')]]</h2>
+								<div class="row input-row">
+									<p class="note">[[model.DeliveryDetails]]</p>
+								</div>
+							</div>
+
+							<!-- shipment method -->
+							<div>
+							<h2 id="smHeading">[[localize('checkout-shipment-title')]]</h2>
+							<div class="row input-row">
+								<teamatical-ui-select id="ShipmentMethod" name="ShipmentMethod" 
+									options="[[_formatCurrencyShipmentMethodList(model.ShipmentMethodList, model.Currency)]]" 
+									to-left
+									hidden$="[[!_hasShipment]]"
+									text-property="title" 
+									value-property="id" 
+									value="{{model.ShipmentMethod}}"
+									error-message="[[model.result.shipmentMethodError]]"
+                    				invalid="[[_asBool(model.result.shipmentMethodError)]]"
+									aria-label$="[[localize('checkout-shipment-aria-label')]]">
+								</teamatical-ui-select>
+								
+								<div class="noship" hidden$="[[_hasShipment]]">
+									<iron-icon class="icon" icon="maps:local-shipping" draggable="false"></iron-icon>
+									[[localize('checkout-shipment-notselectedyet')]]
+									<div id="shipmentMethodError" role="alert">[[model.result.shipmentMethodError]]</div>
+								</div>
+							</div>
+							<div class="row input-row">
+								<div class="shipdesc" hidden$="[[!_asBool(model.ShipmentMethod.desc)]]">
+									<iron-icon class="icon" 
+										icon$="[[_iconShipmentMethod(model.ShipmentMethod.express, model.ShipmentMethod.pickup, model.ShipmentMethod.group, model.ShipmentMethod.noshipping)]]" 
+										draggable="false">
+									</iron-icon>
+									[[_descShipmentMethod(model.ShipmentMethod.desc)]]
+								</div>
+							</div>
+							</div>
+
+						</section>
+
+						<!-- bill address, paymethod, summary, totals -->
+						<section>
+							<!-- subsection - billing -->
+							<h2 id="billAddressHeading" hidden$="[[hideHasBillingAddress]]">
+								[[localize('checkout-billing-title')]]
+							</h2>
+							<div class="billing-address-picker" hidden$="[[hideHasBillingAddress]]">
+								<paper-checkbox id="hasBillingAddress" name="hasBillingAddress" 
+									checked="{{model.hasBillingAddress}}" 
+									on-change="_toggleBillingAddress">
+									[[localize('checkout-billing-other')]]
+								</paper-checkbox>
+							</div>
+
+							<iron-collapse 
+								class="bill-address-block"
+								opened="[[!hidden_BillAddress]]"
+								on-transitionend="hidden_BillAddress_onTransitionEnd">
+
+								<div class="row input-row">
+									<paper-input id="BillFirstName" name="firstName" type="text" required$="[[model.hasBillingAddress]]"
+										disabled$="[[hidden_BillAddress]]" autocomplete="firstname"
+										label="[[localize('checkout-firstname')]]" value="{{model.BillFirstName}}"
+										aria-labelledby="billAddressHeading" error-message="[[localize('checkout-firstname-invalid')]]">
+									</paper-input>
+								</div>
+								<div class="row input-row">
+									<paper-input id="BillLastName" name="lastName" type="text" required$="[[model.hasBillingAddress]]"
+										disabled$="[[hidden_BillAddress]]" autocomplete="lastname"
+										label="[[localize('checkout-lastname')]]" value="{{model.BillLastName}}"
+										aria-labelledby="billAddressHeading" error-message="[[localize('checkout-lastname-invalid')]]">
+									</paper-input>
+								</div>
+							
+								<div class="column">
+									<teamatical-ui-select id="BillCountry" name="billCountry" 
+										options="[[model.BillCountryList]]"
+										label="[[localize('checkout-country')]]"
+										autocomplete="billing country" 
+										required$="[[model.hasBillingAddress]]"
+										disabled$="[[hidden_BillAddress]]" 
+										to-left 
+										text-property="title" 
+										value-property="id"
+										value="{{model.BillCountry}}">
+									</teamatical-ui-select>
+								</div>
+							
+								
+							
+								<div class="row input-row">
+									<paper-input id="BillAddress" name="billAddress" type="text"
+										autocomplete="billing street-address" required$="[[model.hasBillingAddress]]"
+										disabled$="[[hidden_BillAddress]]" value="{{model.BillAddress}}"
+										label="[[localize('checkout-address')]]" aria-labelledby="billAddressHeading"
+										error-message="[[localize('checkout-address-invalid')]]">
+									</paper-input>
+								</div>
+								<div class="row input-row">
+									<paper-input id="BillAddress2" name="billAddress2" type="text" autocomplete="billing street-address2"
+										disabled$="[[hidden_BillAddress]]" value="{{model.BillAddress2}}"
+										label="[[localize('checkout-address2')]]" aria-labelledby="billAddressHeading"
+										error-message="[[localize('checkout-address-invalid')]]"></paper-input>
+								</div>
+								<div class="row input-row">
+									<paper-input id="BillAddress3" name="billAddress3" type="text" autocomplete="billing street-address3"
+										disabled$="[[hidden_BillAddress]]" value="{{model.BillAddress3}}"
+										label="[[localize('checkout-address3')]]" aria-labelledby="billAddressHeading"
+										error-message="[[localize('checkout-address-invalid')]]"></paper-input>
+								</div>
+							
+
+								<div class="row input-row">
+									<paper-input id="BillCity" name="billCity" type="text" autocomplete="billing address-level2"
+										required$="[[model.hasBillingAddress]]" disabled$="[[hidden_BillAddress]]" value="{{model.BillCity}}"
+										label="[[localize('checkout-city')]]" aria-labelledby="billAddressHeading"
+										error-message="[[localize('checkout-city-invalid')]]"></paper-input>
+								</div>
+								
+								<div class="row input-row">
+									<paper-input id="BillState" name="billState" type="text" autocomplete="billing address-level1"
+										required$="[[model.hasBillingAddress]]"
+										disabled$="[[disableBillState(hidden_BillAddress, countryBillProfile.NoState)]]"
+										value="{{model.BillState}}" label="[[localize(countryBillProfile.ShipState)]]"
+										aria-labelledby="billAddressHeading" error-message="[[localize('checkout-state-invalid')]]">
+									</paper-input>
+
+									<paper-input id="BillZip" name="billZip" type="text" autocomplete="billing postal-code"
+										required$="[[model.hasBillingAddress]]" disabled$="[[hidden_BillAddress]]" value="{{model.BillZip}}"
+										label="[[localize(countryBillProfile.ShipZip)]]" aria-labelledby="billAddressHeading"
+										error-message="[[localize('checkout-zip-invalid')]]">
+									</paper-input>
+								</div>								
+								
+							
+								<!-- COMPANY (billing) -->
+								<div class="row input-row company-picker">
+									<paper-checkbox 
+										id="billIsCompany" 
+										name="billIsCompany" 
+										disabled$="[[hidden_BillAddress]]"
+										checked="{{model.BillIsCompany}}" 
+										on-change="_toggleBillIsCompany">
+										[[localize('checkout-bill-is-company')]]
+									</paper-checkbox>
+								</div>
+																
+								<iron-collapse class="bill-company-block" opened="[[model.BillIsCompany]]" on-transitionend="modelBillIsCompany_onTransitionEnd">
+									<div class="row input-row">
+										<paper-input id="BillCompany" name="billCompany" type="text" 
+											label="[[localize('checkout-company')]]"
+											error-message="[[localize('checkout-company-invalid')]]"
+											autocomplete="organization" 
+											disabled$="[[disabled_Input_BillCompany]]" 
+											value="{{model.BillCompany}}"
+											aria-labelledby="billAddressHeading">
+										</paper-input>
+									</div>
+								
+									<div class="row input-row">
+										<paper-input id="BillTaxID" name="billTaxID" type="text" 
+											label="[[localize('checkout-tax')]]"	
+											error-message="[[localize('checkout-tax-invalid')]]" 
+											autocomplete="TaxID"
+											disabled$="[[disabled_Input_BillTaxID]]" 
+											hidden$="[[hidden_BillTaxID]]"
+											value="{{model.BillTaxID}}" 
+											aria-labelledby="billAddressHeading">
+										</paper-input>
+									</div>
+								
+									<div class="row input-row">
+										<paper-input id="BillEORI" name="billEORI" type="text" 
+											label="[[localize('checkout-eori')]]"
+											error-message="[[localize('checkout-eori-invalid')]]" 
+											autocomplete="EORI"
+											disabled$="[[disabled_Input_BillEORI]]" 
+											hidden$="[[hidden_BillEORI]]"
+											value="{{model.BillEORI}}"
+											aria-labelledby="billAddressHeading">
+										</paper-input>
+									</div>
+								</iron-collapse>
+							</iron-collapse>
+
+
+							<!-- payment -->
+							<h2 id="ccHeading" is-admin$="[[isPaymentListForcedByAdmin]]">
+								[[localize('checkout-payment-title')]]
+							</h2>
+							<div class="row input-row hidden" showen-flex$="[[showSwitchCheckoutCode]]">
+								<paper-toggle-button 
+									id="switchCheckoutCode" 
+									class="hidden"
+									showen-flex$="[[showSwitchCheckoutCode]]" 
+									on-change="switchCheckoutCodeToggled">
+									[[localize('checkout-payment-switchto-checkoutcode')]]
+								</paper-toggle-button>
+							</div>
+							<div class="row input-row hidden" showen-flex$="[[showPaymentMethodList]]">
+								<teamatical-ui-select id="PaymentMethod" name="PaymentMethod"
+									options="[[model.PaymentMethodList]]" 
+									disabled$="[[!showPaymentMethodList]]"
+									required 
+									to-left 
+									text-property="title"
+									value-property="id" 
+									value="{{model.PaymentMethod}}"
+									aria-label$="[[localize('checkout-payment-aria-label')]]">
+								</teamatical-ui-select>
+							</div>
+
+							<div id="pay-cc-section" class="pay-cc-section" hidden="[[!_ccPayM_delayed]]">
+								<dom-if if="[[_equal(model.PaymentMethod.id, 'SP')]]">
+									<template>
+										<div id="cc-form-element" tabindex="0" on-focus="ccFormElementFocus" on-blur="ccFormElementBlur"></div>
+									</template>
+								</dom-if>
+								<dom-if if="[[_equal(model.PaymentMethod.id, 'PayPal')]]">
+									<template>
+										<div id="cc-form-element-paypal"></div>
+									</template>
+								</dom-if>
+								<div id="cc-form-errors" role="alert">[[model.result.cardError]]</div>
+							</div>
+
+							<div id="pay-po-section" class="pay-po-section" hidden$="[[!_poPayM_delayed]]">
+								<paper-input id="PurchaseOrderToken" name="purchaseOrderToken" type="text" 
+									class="hidden" showen-block$="[[_poPayM_delayed]]" disabled$="[[!_poPayM_delayed]]"
+									required$="[[_poPayM_delayed]]" 
+									autocomplete="purchaseOrderToken"
+									label="[[localize('checkout-purchase-order-token')]]"
+									value="{{model.PurchaseOrderToken}}"
+									error-message="[[localize('checkout-purchase-order-token-invalid')]]">
+								</paper-input>
+
+								<p hidden$="[[!model.PurchaseOrderDescription]]">[[model.PurchaseOrderDescription]]</p>
+							</div>
+
+							<div id="pay-request-section" class="hidden-animated" hidden="[[!_prPayM_delayed]]"
+								hidden-animated$="[[!_prPayM_animated]]">
+								<div id="pay-request-text">[[localize('checkout-pay-request-text')]]</div>
+							</div>
+
+
+							<h2>[[localize('checkout-order-title')]][[_itemgroupTitle(model.Cart.stores.0)]]</h2>
+							<div class="cart-items">
+								<dom-repeat items="[[cartCheckout]]" as="entry">
+									<template>
+										<div class="row order-summary-row" 
+											checkout-code-invalid$="[[entry.checkoutcodeinvalid]]">
+											<div class="flex">
+												[[entry.title_wcount]]
+												<div class="product-disabled hidden" showen-inline-block$="[[entry.notAvailable]]">
+													<div>
+													<p>[[_stringOrLocalize(entry.notAvailableReason, 'detail-disabled-mark')]]</p>
+													</div>
+												</div>
+											</div>
+											<div class="price" 
+												hide-prices$="[[entry.hideprices]]" 
+												is-org-related$="[[entry.price.DirectOrganizationPrice]]">
+												<dom-if if="[[entry.is_price_regular]]">
+													<template>
+														[[entry.price_regular]]
+													</template>
+												</dom-if>
+												<dom-if if="[[!entry.is_price_regular]]">
+													<template>
+														<span class="price_new">[[entry.price_sale]]</span>
+														<span class="price_old">[[entry.price_list]]</span>
+													</template>
+												</dom-if>
+											</div>
+										</div>
+									</template>
+								</dom-repeat>
+							</div>
+
+							<div class="total-items">
+								<dom-repeat items="[[modelTotalsVisible]]" as="totali">
+									<template>
+										<div class$="row total-row {{totali.class}}" 
+											 title$="[[totali.detail]]" 
+											 hide-prices$="[[totali.hideprices]]">
+											<div class="flex">[[totali.title]]</div>
+											<div>[[_formatTotalsItem(totali.id, totali.amount, model.Currency)]]</div>
+										</div>
+									</template>
+								</dom-repeat>
+							</div>
+
+
+							<teamatical-ui-button id="submitBox" 
+								tabindex="0"
+								disabled$="[[dis_placeorder_btn]]"
+								is-admin$="[[isPlaceOrderForcedByAdmin]]" on-tap="_submit">
+								[[localize('checkout-placeorder')]]
+							</teamatical-ui-button>
+
+							<teamatical-ui-button id="submitBox_r" 
+								responsive 
+								responsive-hide 
+								disabled$="[[dis_placeorder_btn]]"
+								is-admin$="[[isPlaceOrderForcedByAdmin]]" on-tap="_submit">
+								[[localize('checkout-placeorder')]]
+							</teamatical-ui-button>
+						</section>
+					</div>
+				</form>
+			</iron-form>
+		</div>
+
+
+		<div state="success">
+			<header>
+				<h1>[[localize('checkout-success-title')]]</h1>
+				<p>
+					[[localize('checkout-success-msg', 'orderID', model.result.order.id)]]
+				</p>
+			</header>
+
+			<div class="order">
+				<div class="order-header">
+					<h3>
+						[[localize('order-title-id')]] 
+						[[model.result.order.id]]
+						<a href="[[_hrefAccountOrder(model.result.order.id)]]" class="iron-icon">
+							<iron-icon icon="open-in-new" class="open-in-here"></iron-icon>
+						</a>
+						<span class="hidden" showen$="[[model.result.order.Sandbox]]">
+							<iron-icon icon="warning" class="warning"></iron-icon>
+							[[localize('order-testmark')]]
+						</span>
+						<!-- -
+						<span class="status" order-status$="[[model.result.order.Status]]">
+							<span class="hidden cancelled" showen$="[[showCancelledStatus(model.result.order.Status)]]">
+								<iron-icon icon="block" class="cancelled"></iron-icon>
+							</span>
+							[[_formatOrderStatus(model.result.order.Status, model.result.order.PaymentHistory)]]
+						</span> -->
+					</h3>
+
+					<div class="order-details-container">
+						<div>
+							<dom-if if="[[!model.result.order.isgroup]]">
+								<template>
+									<h4>[[localize('order-title-shipaddress')]]</h4>
+								</template>
+							</dom-if>
+							<dom-if if="[[model.result.order.isgroup]]">
+								<template>
+									<h4>[[localize('order-title-shiphomeaddress')]]</h4>
+								</template>
+							</dom-if>
+
+							<div class="table order-details-shipment">
+								<!--  shipaddress -->
+								<div class="row">
+									<div>
+										[[localize('order-title-firstname')]]
+									</div>
+									<div>
+										[[model.result.order.ShipFirstName]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize('order-title-lastname')]]
+									</div>
+									<div>
+										[[model.result.order.ShipLastName]]
+									</div>
+								</div>
+
+								<div class="row" hidden$="[[!model.result.order.ShipCompany]]">
+									<div>
+										[[localize('order-title-company')]]
+									</div>
+									<div>
+										[[model.result.order.ShipCompany]]
+									</div>
+								</div>
+
+								<div class="row" hidden$="[[!model.result.order.ShipTaxID]]">
+									<div>
+										[[localize('order-title-tax')]]
+									</div>
+									<div>
+										[[model.result.order.ShipTaxID]]
+									</div>
+								</div>
+
+								<div class="row" hidden$="[[!model.result.order.ShipEORI]]">
+									<div>
+										[[localize('order-title-eori')]]
+									</div>
+									<div>
+										[[model.result.order.ShipEORI]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize('order-title-address')]]
+									</div>
+									<div>
+										[[model.result.order.ShipAddress]]
+									</div>
+								</div>
+
+								<div class="row" hidden$="[[!model.result.order.ShipAddress2]]">
+									<div>
+										[[localize('order-title-address2')]]
+									</div>
+									<div>
+										[[model.result.order.ShipAddress2]]
+									</div>
+								</div>
+
+								<div class="row" hidden$="[[!model.result.order.ShipAddress2]]">
+									<div>
+										[[localize('order-title-address3')]]
+									</div>
+									<div>
+										[[model.result.order.ShipAddress3]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize('order-title-city')]]
+									</div>
+									<div>
+										[[model.result.order.ShipCity]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize(countryOrderProfile.ShipState)]]
+									</div>
+									<div>
+										[[model.result.order.ShipState]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize(countryOrderProfile.ShipZip)]]
+									</div>
+									<div>
+										[[model.result.order.ShipZip]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize('order-title-country')]]
+									</div>
+									<div>
+										[[model.result.order.ShipCountry]]
+									</div>
+								</div>
+
+							</div>
+						</div>
+
+						<div>
+							<h4>[[localize('order-title-billaddress')]]</h4>
+							<div class="table order-details-billing">
+								<!--  billaddress -->
+								<div class="row">
+									<div>
+										[[localize('order-title-firstname')]]
+									</div>
+									<div>
+										[[model.result.order.BillFirstName]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize('order-title-lastname')]]
+									</div>
+									<div>
+										[[model.result.order.BillLastName]]
+									</div>
+								</div>
+
+
+								<div class="row" hidden$="[[!model.result.order.BillCompany]]">
+									<div>
+										[[localize('order-title-company')]]
+									</div>
+									<div>
+										[[model.result.order.BillCompany]]
+									</div>
+								</div>
+
+								<div class="row" hidden$="[[!model.result.order.BillTaxID]]">
+									<div>
+										[[localize('order-title-tax')]]
+									</div>
+									<div>
+										[[model.result.order.BillTaxID]]
+									</div>
+								</div>
+
+								<div class="row" hidden$="[[!model.result.order.BillEORI]]">
+									<div>
+										[[localize('order-title-eori')]]
+									</div>
+									<div>
+										[[model.result.order.BillEORI]]
+									</div>
+								</div>
+
+
+								<div class="row">
+									<div>
+										[[localize('order-title-address')]]
+									</div>
+									<div>
+										[[model.result.order.BillAddress]]
+									</div>
+								</div>
+
+								<div class="row" hidden$="[[!model.result.order.BillAddress2]]">
+									<div>
+										[[localize('order-title-address2')]]
+									</div>
+									<div>
+										[[model.result.order.BillAddress2]]
+									</div>
+								</div>
+
+								<div class="row" hidden$="[[!model.result.order.BillAddress3]]">
+									<div>
+										[[localize('order-title-address3')]]
+									</div>
+									<div>
+										[[model.result.order.BillAddress3]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize('order-title-city')]]
+									</div>
+									<div>
+										[[model.result.order.BillCity]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize(countryOrderBillProfile.ShipState)]]
+									</div>
+									<div>
+										[[model.result.order.BillState]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize(countryOrderBillProfile.ShipZip)]]
+									</div>
+									<div>
+										[[model.result.order.BillZip]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize('order-title-country')]]
+									</div>
+									<div>
+										[[model.result.order.BillCountry]]
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+						<div>
+							<h4>[[localize('order-title-details')]]</h4>
+							<div class="table order-details">
+								<div class="row">
+									<div>
+										[[localize('order-title-created')]]
+									</div>
+									<div>
+										[[_formatDate(model.result.order.Created)]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize('order-title-email')]]
+									</div>
+									<div>
+										[[model.result.order.AccountEmail]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize('order-title-phone')]]
+									</div>
+									<div>
+										[[model.result.order.AccountPhone]]
+									</div>
+								</div>
+
+								<div class="row" hidden$="[[!model.result.order.DeliveryDetailsOnly]]">
+									<div>
+										[[localize('order-title-deliverydetails')]]
+									</div>
+									<div>
+										[[model.result.order.DeliveryDetails]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize('order-title-shipment')]]
+									</div>
+									<div>
+										[[_formatShipment(model.result.order.ShipmentMethod)]]
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div id="order-items" class="order-items">
+					<dom-repeat items="[[model.result.order.items]]" as="itemi">
+						<template>
+							<teamatical-ui-order-item entry="[[itemi]]" action-disabled="[[loading]]"></teamatical-ui-order-item>
+						</template>
+					</dom-repeat>
+				</div>
+
+
+				<div class="order-footer">
+					<div class="total-items">
+						<dom-repeat items="[[_computeTotalsVisible(model.result.order.Totals)]]" as="totali">
+							<template>
+								<div class$="total-row {{totali.class}}" title$="[[totali.detail]]" hide-prices$="[[totali.hideprices]]">
+									<div>[[totali.title]]</div>
+									<div>[[_formatTotalsItem(totali.id, totali.amount, model.result.order.Currency)]]</div>
+								</div>
+							</template>
+						</dom-repeat>
+					</div>
+				</div>
+
+			</div>
+
+			<footer>
+				<teamatical-ui-button responsive href$="[[checkoutSuccessBackUrl]]">[[localize('checkout-success-btn')]]
+				</teamatical-ui-button>
+			</footer>
+		</div>
+
+
+		<header state="error">
+			<h1>[[localize('checkout-failed-title')]]</h1>
+			<p id="errorMessage">[[model.result.errorMessage]]</p>
+			<teamatical-ui-button responsive on-tap="_tryReconnect">
+				[[localize('checkout-failed-btn')]]
+			</teamatical-ui-button>
+		</header>
+
+	</iron-pages>
+</div>
+
+<teamatical-ui-network-warning hidden$="[[!failure]]" offline="[[offline]]" on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

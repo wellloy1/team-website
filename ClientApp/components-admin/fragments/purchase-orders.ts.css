@@ -1,0 +1,32 @@
+:host {
+	display: block;
+	padding: 0px;
+	height: 100%;
+}
+
+.order-items {
+	background-color: white;
+	border-radius: 6px;
+}
+
+
+paper-button.create-invoice-btn {
+	--paper-button: {
+		background: var(--paper-indigo-600);
+		color: white;
+	};
+}
+
+paper-button.payment-approve {
+	--paper-button: {
+		background: var(--paper-green-600);
+		color: white;
+	};
+}
+
+paper-button.need-refund {
+	--paper-button: {
+		background: var(--paper-red-600);
+		color: white;
+	};
+}

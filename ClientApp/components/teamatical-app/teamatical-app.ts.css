@@ -1,0 +1,956 @@
+:host {
+    margin: 0;
+
+    @apply --paper-font-common-base;
+    --app-font-size: 13px;
+    font-size: var(--app-font-size);
+    -webkit-font-smoothing: antialiased;
+    --app-toolbar-font-size: var(--app-font-size);
+    line-height: 1.5;
+
+    /* overflow-x: hidden; */
+    display: block;
+    position: relative;
+
+    
+    --app-primary-color: #202020;
+    --app-secondary-color: #757575;
+    --app-accent-color: #172C50;
+    --app-accent-color-rgb: 23, 44, 80;
+    --app-accent-button-color: #57AF48;
+    --app-disabled-color: #eaeaea;
+    --app-discount-color: #b30f00;
+    /* --app-discount-color-bkg: rgba(179, 15, 0, 0.75);
+    --app-discount-color-text: #fff; */
+    --app-discount-color-bkg: rgba(15, 15, 15, 0.75);
+    --app-discount-color-text: #fff;
+    --app-disabled-color-bkg: #A8A8A8;
+    --app-disabled-color-bkg-gradient-light: rgba(227,227,227,1);
+    --app-disabled-color-text: #fff;
+    --app-hidden-color-bkg: #b30f00;
+    --app-hidden-color-bkg-gradient-light: #EAA89A;
+    --app-helptips-color: rgba(var(--app-accent-color-rgb), 0.61);
+    --app-admin-color: var(--paper-deep-orange-a700); 
+    --app-admin-color-dark: var(--paper-red-900); 
+    --app-admin-color-rgb: 221, 44, 00;
+    --app-admin-color-gradient-light: rgba(221,44,0,0.4);
+
+    --app-footer-backgound-color: #303030;
+    --app-footer-color: #C1C1C1;
+    --app-footer-color-hover: #FFF;
+    --app-footer-color2: #FFF;
+    --app-footer-color2-hover: #DBDBDB;
+    --app-footer-version-color: #aaa;
+    --app-footer-height: 239px;
+    --app-footer-defaultbutton: 64px;
+    --app-footer-scrollupbutton: 85px;
+
+    --app-logo-width: 308px;
+    --app-logo-height: 48px;
+    --app-logo-mini-width: 41px;
+    --app-logo-mini-height: 41px;
+    --app-logo-margin-left-backward-compatibility: 120px; /* sets for browsers that does not supports CSS-calc */
+    --app-logo-btns-base-width: 80px; /* cart & account/sign in */
+    --app-logo-btns-left-width: 0px; /* back - default none */
+    --app-logo-btns-right-width: 40px; /* sign in bts - products search - default none */
+
+    --app-header-text-color: var(--app-primary-color);
+    --app-header-tab-color: var(--app-accent-color);
+    --app-header-bkg-color: hsla(0,0%,100%,.7);
+    --app-header-cart-bkg-color: #5B5B5B;
+    --app-header-cart-badge-color: white;
+
+    --app-page-width: 1440px;
+    min-height: 100vh;
+
+    --paper-button-ink-color: var(--app-accent-color);
+    --paper-icon-button-ink-color: var(--app-accent-color);
+    --paper-spinner-color: var(--app-accent-color);
+    --paper-input-container: var(--app-secondary-color);
+    --paper-input-container-color: var(--app-secondary-color);
+    --paper-input-container-label: var(--app-secondary-color);
+    --paper-input-container-underline: var(--app-secondary-color);
+    --paper-input-container-input-color: var(--app-primary-color);
+    --paper-input-container-focus-color: var(--app-primary-color);
+    --paper-input-container-label-focus: var(--app-primary-color);
+    --paper-input-container-underline-focus: var(--app-primary-color);
+    --paper-input-container-disabled: var(--app-disabled-color);
+    --primary-text-color: var(--light-theme-text-color);
+    --primary-background-color: var(--light-theme-background-color);
+    --secondary-text-color: var(--light-theme-secondary-color);
+    --disabled-text-color: var(--light-theme-disabled-color);
+    --divider-color: var(--light-theme-divider-color);
+    --error-color: var(--paper-deep-orange-a700);
+    --error-color-rgb: 221, 44, 00;
+    /*
+        * Primary and accent colors. Also see color.html for more colors.
+        */
+    --primary-color: var(--app-primary-color);
+    --light-primary-color: var(--app-disabled-color);
+    --dark-primary-color: var(--app-secondary-color);
+    --accent-color: var(--app-accent-color);
+    --light-accent-color: var(--app-disabled-color);
+    --dark-accent-color: var(--app-secondary-color);
+    /*
+        * Material Design Light background theme
+        */
+    --light-theme-background-color: #ffffff;
+    --light-theme-base-color: #000000;
+    --light-theme-text-color: var(--paper-grey-900);
+    --light-theme-secondary-color: #737373; /* for secondary text and icons */
+    --light-theme-disabled-color: #9b9b9b; /* disabled/hint text */
+    --light-theme-divider-color: #dbdbdb;
+    /*
+        * Material Design Dark background theme
+        */
+    --dark-theme-background-color: var(--paper-grey-900);
+    --dark-theme-base-color: #ffffff;
+    --dark-theme-text-color: #ffffff;
+    --dark-theme-secondary-color: #bcbcbc; /* for secondary text and icons */
+    --dark-theme-disabled-color: #646464; /* disabled/hint text */
+    --dark-theme-divider-color: #3c3c3c;
+    
+    color: var(--app-primary-color);
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+/* @media (prefers-color-scheme: dark) {
+    :host {
+        background-color: var(--dark-theme-background-color);
+    }
+} */
+
+/* :host([fonts-loaded]) {
+} */
+
+:host([poweredby]) {
+    --app-footer-height: 203px;
+}
+
+:host([embedded-mode]) .importprogress,
+:host([embedded-mode]) #header,
+:host([embedded-mode]) #app-footer {
+    display: none !important;
+}
+:host([embedded-mode]) iron-pages {
+    /* margin-bottom: 0px !important;  */
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+:host([embedded-mode]) {
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+
+:host([drawer-opened]) iron-pages,
+:host([drawer-opened]) footer#app-footer {
+    transform: scaleX(0.95) translateX(-30px) !important;
+}
+
+:host([error-unhandled]) app-header {
+    outline: 1px solid var(--error-color) !important;
+}
+:host([env="Development"]) .dev {
+    display: inline-block !important;
+}
+:host([user-waiting]) {
+    cursor: wait !important;
+    /* cursor: progress !important; */
+}
+
+iron-pages {
+    /* margin-bottom: var(--app-footer-height); */
+    /* margin-bottom: calc(var(--app-footer-height) + 8px); */
+    padding-top: 64px;
+    /* padding-top: 36px; */
+    padding-bottom: var(--app-footer-height);
+    /* padding-bottom: calc(var(--app-footer-height)); */
+}
+:host([should-show-tabs]) iron-pages#pages {
+    padding-top: 130px;
+    /* padding-top: 102px; */
+}
+iron-pages,
+footer#app-footer {
+    transition: all .2s ease-in-out;
+    transform-origin: left;
+}
+footer#app-footer {
+    overflow: hidden;
+}
+
+
+teamatical-ui-locale-switcher {
+    --teamatical-ui-locale-switcher-itemlink: {
+        color: var(--app-footer-color);
+    };
+}
+.dev {
+    display: none;
+    /* transition: all 3.2s cubic-bezier(.27,-0.32,.27,1.32);
+    opacity: 0; */
+    opacity: 0.75;
+    letter-spacing: normal;
+
+    position: fixed;
+    z-index: 11;
+    top: 0px;
+    left: 0px;
+    pointer-events: none;
+
+    /* position: absolute;
+    top: 20px;
+    left: 8px;
+    z-index: 1; */
+
+	color: black;
+	background-color: #FFDC00;
+	font-weight: bold;
+	border-radius: 4px;
+    padding: 4px;
+    -webkit-filter: drop-shadow( 2px 1px 2px #c0c0c0 ); 
+        filter: drop-shadow( 2px 1px 2px #c0c0c0 );
+}
+
+app-header {
+    @apply --layout-fixed-top;
+    z-index: 10;
+
+    background-color: var(--app-header-bkg-color);
+    --iron-icon-fill-color: var(--app-header-text-color);
+
+    -webkit-backdrop-filter: blur(10px);
+    -moz-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+
+    --app-header-shadow: { 
+        box-shadow: inset 0px 5px 6px -3px rgba(0, 0, 0, 0.2);
+        height: 10px; 
+        bottom:-10px; 
+    };
+}
+
+app-toolbar {
+    max-width: var(--app-page-width);
+    margin: 0 auto;
+    /* make sure it over tabs for tooltips .... */
+    z-index: 1; 
+}
+
+.loading-catalog-progress {
+    pointer-events: none;
+    position: absolute;
+    bottom: 18px;
+    z-index: 1;
+}
+paper-progress.importprogress {
+    --paper-progress-active-color: var(--accent-color);
+    --paper-progress-secondary-color: var(--light-accent-color);
+    --paper-progress-height: 2px;
+    display: block;
+    width: 100%;
+    margin: 0px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 12;
+}
+paper-spinner-lite.pageprogress {
+    top: 49%;
+    left: 49%;
+    top: calc(40% - 14px);
+    left: calc(50% - 14px);
+    position: absolute;
+    pointer-events: none;
+}
+paper-spinner-lite#savingprogress {
+    top: 49%;
+    left: 49%;
+    top: calc(50% - 14px);
+    left: calc(50% - 14px);
+    position: fixed;
+    pointer-events: none;
+}
+
+@media (max-width: 767px) {
+    paper-spinner-lite.pageprogress {
+        top: calc(60% - var(--app-footer-height));
+    }
+    paper-spinner-lite#savingprogress {
+        top: calc(40% - 14px);
+    }
+}
+
+:host([page-loading]),
+:host([saving-progress]) {
+    min-height: calc(100vh + var(--app-footer-height) + 10px);
+}
+:host([saving-progress]) iron-pages,
+:host([saving-progress]) footer#app-footer,
+:host([saving-progress]) app-header#header app-toolbar,
+:host([saving-progress]) app-header#header div#tabContainer {
+    pointer-events: none;
+    opacity: 0.2;
+    
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-drag: none;
+    -webkit-user-drag: none;
+}
+:host([saving-progress]) app-header#header app-toolbar > * {
+    pointer-events: none;
+}
+:host([saving-progress]) .logo a {
+    pointer-events: none;
+}
+:host([saving-progress]) teamatical-ui-button-scrollup#scrollup {
+    display: none;
+}
+
+
+teamatical-ui-button-scrollup#scrollup {
+    display: block;
+    position: fixed;
+    bottom: 1em;
+    right: 1.6em;
+    z-index: 12;
+}
+
+paper-icon-button {
+    color: var(--app-primary-color);
+}
+
+.logo {
+    text-align: center;
+    margin-left: var(--app-logo-margin-left-backward-compatibility); 
+    margin-left: calc(var(--app-logo-btns-base-width) + var(--app-logo-btns-right-width) - var(--app-logo-btns-left-width)); 
+}
+
+.logo a {
+    font-size: 1em;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    color: var(--app-primary-color);
+    text-decoration: none; /* required for IE 11, so this <a> can receive pointer events */
+    display: inline-block;
+    pointer-events: auto;
+    outline: none;
+    white-space: nowrap;
+}
+
+.logo .icon-logo {
+    display: block;
+}
+.logo .icon-logo-mini,
+.logo .icon-logo-cobrand-mini {
+    display: none;
+    --iron-icon-height: var(--app-logo-mini-height);
+    --iron-icon-width:  var(--app-logo-mini-width);
+}
+.logo iron-icon {
+    vertical-align: sub;
+    --iron-icon-height: var(--app-logo-height);
+    --iron-icon-width: var(--app-logo-width);
+}
+.logo .icon-logo-cobrand {
+    display: inline-block;
+}
+.logo .icon-logo-cobrand.undefined,
+.logo .icon-logo-cobrand-mini.undefined {
+    display: none !important;
+}
+.logo[cobrand] .icon-logo,
+.logo[cobrand] .icon-logo-mini {
+    display: none !important;
+}
+
+
+
+
+.cart-btn-container {
+    position: relative;
+    width: 40px;
+}
+
+.btns-container {
+    position: relative;
+    /* width: 80px; */
+    /* overflow: hidden; */
+    display: inline-flex;
+    /* margin-left: 8px; */
+    margin-right: -8px;
+}
+.btns-container > * {
+    margin-left: auto;
+}
+.btns-container paper-icon-button {
+    transition: all 0.2s cubic-bezier(.27,-0.32,.27,1.32);
+}
+
+.search-btn {
+    /* display: none; */
+    width: 40px;
+    position: relative;
+}
+/* :host([is-auth]) .search-btn {
+    display: block;
+}
+:host([is-auth]) .logo {
+    --app-logo-btns-right-width: 40px; 
+} */
+
+
+.menu-btn {
+    display: none;
+    width: 40px;
+    position: relative;
+}
+
+.back-btn {
+    position: relative;
+    width: 40px;
+    display: none;
+}
+
+.announcer {
+    position: fixed;
+    height: 0;
+    overflow: hidden;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+.hidden-animated {
+    opacity: 1;
+    transform: none;
+    transition: all 0.3s cubic-bezier(.36,-0.64,.34,1.76);
+}
+
+[hidden-animated] {
+    opacity: 0 !important;
+    transform: rotateY(-90deg) !important;
+    transition: all 0.3s cubic-bezier(.36,-0.64,.34,1.76) !important;
+}
+
+
+#tabContainer {
+    position: relative;
+    height: 66px;
+    text-align: center;
+}
+
+teamatical-tabs,
+teamatical-tab {
+    --teamatical-tab-overlay: {
+        border-bottom: 2px solid var(--app-header-tab-color);
+    };
+}
+
+teamatical-tabs {
+    height: 100%;
+    margin: auto 0;
+}
+
+teamatical-tab {
+    margin: 0 10px;
+    scroll-snap-align: start;
+}
+
+teamatical-tab a,
+teamatical-tab span {
+    display: inline-block;
+    outline: none;
+    padding: 9px 3px;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--app-header-text-color);
+    cursor: pointer;
+}
+
+.cart-badge {
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    position: absolute;
+    top: -2px;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background-color: var(--app-header-cart-bkg-color);
+    color: var(--app-header-cart-badge-color);
+    border-radius: 50%;
+    font-size: 0.94em;
+    font-weight: 500;
+    pointer-events: none;
+    @apply --layout-vertical;
+    @apply --layout-center-center;
+}
+
+app-drawer {
+    transition: all 0.2s cubic-bezier(.27,-0.32,.27,1.32);
+}
+app-drawer .pageprogress,
+app-drawer .loading-catalog-progress {
+    top: 45%;
+    left: 50%;
+}
+.drawer-list-container {
+    position: relative;
+    transition: all 0.2s cubic-bezier(.27,-0.32,.27,1.32);
+}
+.drawer-list {
+    margin: 0 20px;
+    margin-bottom: 120px;
+    transition: all 0.2s cubic-bezier(.27,-0.32,.27,1.32);
+}
+
+.drawer-list[disabled] {
+	--blur-value: 2px;
+	-webkit-filter: blur(var(--blur-value));
+	-moz-filter: blur(var(--blur-value));
+	-o-filter: blur(var(--blur-value));
+	-ms-filter: blur(var(--blur-value));
+	filter: blur(var(--blur-value));
+	pointer-events: none;
+}
+
+
+.drawer-list paper-item {
+    font-size: 1.2em;
+    display: block;
+    padding: 0 16px;
+    line-height: 40px;
+    text-decoration: none;
+    color: var(--app-secondary-color);
+
+    white-space: nowrap;
+}
+
+.drawer-list h3 {
+    display: block;
+    font-weight: normal;
+    /* padding: 0 16px; */
+    line-height: 40px;
+    text-decoration: none;
+    pointer-events: none;
+    color: var(--app-secondary-color);
+}
+
+teamatical-ui-modal-dialog,
+teamatical-ui-cart-modal {
+    z-index: 11;
+}
+
+app-drawer {
+    z-index: 30;
+    --app-drawer-width-swipeout: 14px;
+    --app-drawer-width: 256px;
+    --app-drawer-content-padding: 120px 0px 0px 0px;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    text-align: center;
+    /* line-height: 24px; */
+    background-color: var(--app-footer-backgound-color);
+    color: var(--app-footer-color);
+    padding: 8px;
+    /* margin-top: 20px; */
+
+    max-height: var(--app-footer-height);
+}
+
+footer .separator {
+    width: 100%;
+    border-bottom: 1px solid var(--app-footer-color);
+}
+
+footer .socials-links {
+    @apply --layout-horizontal;
+    max-width: var(--app-page-width);
+    margin: 0 auto;
+}
+
+footer .socials,
+footer .privacy {
+    position: relative;
+    margin: 16px 16px;
+    width: 50%;
+    @apply --layout-horizontal;
+    @apply --layout-center;
+}
+
+footer .socials {
+    @apply --layout-start-justified;
+}
+
+footer .privacy {
+    @apply --layout-end-justified;
+}
+
+footer .privacy a {
+    color: var(--app-footer-color2);
+}
+footer .privacy a:hover {
+    color: var(--app-footer-color2-hover);
+}
+
+
+footer .version {
+    pointer-events: none;
+    cursor: default;
+    color: var(--app-footer-version-color) !important;
+}
+
+footer .socials paper-icon-button {
+    color: var(--app-footer-color2);
+    margin: 8px 0px;
+    --paper-icon-button-ink-color: var(--app-footer-color);
+}
+footer .socials paper-icon-button:hover {
+    color: var(--app-footer-color2-hover);
+}
+
+footer .privacy a {
+    margin: 8px;
+}
+footer a {
+    color: var(--app-footer-color);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+footer a:hover {
+    text-decoration: underline;
+    color: var(--app-footer-color-hover);
+}
+
+/* line-2 */
+
+footer .website-links {
+    @apply --layout-horizontal;
+    max-width: var(--app-page-width);
+    margin: 0 auto;
+}
+
+footer a[disabled] {
+    pointer-events: none;
+}
+
+footer .footer-logo,
+footer .links {
+    /* position: relative; */
+    margin: 16px 16px;
+    width: 50%;
+    @apply --layout-horizontal;
+}
+footer .footer-logo a {
+    outline: none;
+}   
+    
+
+footer .footer-logo {
+    @apply --layout-start-justified;
+}
+footer .footer-logo iron-icon {
+    vertical-align: sub;
+    --iron-icon-height: 26px;
+    --iron-icon-width: 167.17px;
+}
+footer .footer-logo teamatical-logo-footer {
+    margin-right: 16px;
+}
+[showen-inline],
+[showen-icon] {
+  display: inline-block !important;
+}
+[showen-block] {
+    display: block !important;
+}
+  
+footer .footer-logo teamatical-ui-locale-switcher {
+    /* overflow-y: hidden; */
+    /* height: 37px; */
+    margin-left: 8px;
+}
+
+footer .links {
+    @apply --layout-end-justified;
+
+    background-color: var(--app-footer-backgound-color);
+
+    line-height: 2em;
+    text-transform: uppercase;
+    font-weight: 400;
+}
+
+footer .links a {
+    margin: 4px 24px;
+    text-align: left;
+}
+
+footer .links .left,
+footer .links .right {
+    @apply --layout-vertical;
+}
+footer .links .left {
+    /* temp */
+    display:none !important;
+}
+
+footer .footer-logo paper-icon-button {
+    color: var(--app-footer-color);
+    margin: 8px 0px;
+    --paper-icon-button-ink-color: var(--app-footer-color);
+}
+
+:host([page^=account]) .back-btn,
+:host([page=detail]) .back-btn,
+:host([page=customize]) .back-btn {
+    display: block;
+}
+:host([page^=account]) .logo,
+:host([page=detail]) .logo,
+:host([page=customize]) .logo {
+    --app-logo-btns-left-width: 40px;
+}
+
+@media (max-width: 1104px) {
+    teamatical-tab {
+        margin: 0 0px;
+    }
+    teamatical-tab:first-of-type {
+	    margin-left: 8px; 
+    }
+    teamatical-tab:last-of-type {
+        margin-right: 8px; 
+    }
+}
+
+@media (max-width: 767px) {
+    .logo {
+        text-align: left;
+        margin-left: 0px;
+        transition: all 0.2s cubic-bezier(.27,-0.32,.27,1.32);
+    }    
+    .footer-logo,
+    .logo .icon-logo {
+        --iron-icon-height: 41px;
+        --iron-icon-width: 263.6px;
+    }
+    .footer-logo,
+    .logo .icon-logo {
+        --iron-icon-height: var(--app-logo-mini-height);
+        --iron-icon-width: calc(var(--app-logo-width) * (var(--app-logo-mini-height) / var(--app-logo-height)));
+    }
+
+    .menu-btn {
+        display: block;
+    }
+
+    footer .socials-links {
+        @apply --layout-vertical;
+    }
+
+    footer .socials,
+    footer .privacy {
+        width: 100%;
+        width: calc(100% - 8px);
+        margin: 4px;
+        @apply --layout-start-justified;
+    }
+
+    footer .privacy {
+        @apply --layout-horizontal-reverse;
+        @apply --layout-end-justified;
+        overflow: hidden;
+    }
+
+    footer .website-links {
+        @apply --layout-vertical;
+    }
+
+    footer .footer-logo,
+    footer .links {
+        width: 100%;
+        width: calc(100% - 16px);
+        margin: 8px;
+        @apply --layout-start-justified;
+    }
+
+
+    :host {
+        --app-footer-height: 287px; 
+    }
+
+    :host([poweredby]) {
+        --app-footer-height: 211px; 
+    }
+
+    /* :host([page=detail]) .menu-btn,
+        :host([page=customize]) .menu-btn, 
+        :host([page=checkout]) .menu-btn {
+            display: none;
+        } */
+
+
+    :host([page=store][page-mode=edit]) footer,
+    :host([page=customize]) footer,
+    :host([page=checkout]) footer,
+    :host([page=cart][page-mode=has-items]) footer,
+    :host([page=feedback]) footer,
+    :host([page=team]) footer,
+    :host([page=custom-design-request]) footer,
+    :host([page=detail]) footer {
+        padding-bottom: var(--app-footer-defaultbutton);
+        padding-bottom: calc(8px + var(--app-footer-defaultbutton));
+    }
+
+    :host([page=store][page-mode=edit]) iron-pages,
+    :host([page=customize]) iron-pages,
+    :host([page=checkout]) iron-pages,
+    :host([page=cart]) iron-pages,
+    :host([page=team]) iron-pages,
+    :host([page=custom-design-request]) iron-pages,
+    :host([page=detail]) iron-pages {
+        padding-bottom: var(--app-footer-height);
+        padding-bottom: calc(var(--app-footer-height) + var(--app-footer-defaultbutton));
+    }
+
+    :host([page^=account]) .logo,
+    :host([page=detail]) .logo,
+    :host([page=customize]) .logo {
+        margin-left: 15px;
+    }
+
+    teamatical-ui-button-scrollup#scrollup {
+        bottom: var(--app-footer-scrollupbutton);
+    }
+
+}
+
+@media (max-width: 497px) {
+    .logo .icon-logo,
+    .logo .icon-logo-cobrand {
+        display: none;
+    }
+    .logo .icon-logo-mini,
+    .logo .icon-logo-cobrand-mini {
+        display: block;
+    }
+}
+@media (max-width: 320px) {
+    app-toolbar {
+        padding: 0px 16px 0px 8px;
+    }
+}
+
+
+
+div.print-header {
+    display: none;
+}
+@media print {
+
+    @page {
+        size: A4; 
+        margin: 2cm;
+    }
+    
+    html, body {
+        width: 210mm;
+        height: 297mm;
+    }
+
+    div.print-header {
+        display: block !important;
+
+        text-align: left;
+        margin-left: 8px;
+    }
+
+    div.print-header iron-icon {
+        vertical-align: sub;
+        --iron-icon-height: 20px;
+        --iron-icon-width: 128.6px;
+    }    
+
+
+    * {
+        -webkit-transition: none !important;
+        transition: none !important;
+    }
+    a[href]:after {
+        content: none !important;
+    }
+    /* body { 
+        zoom: 60%;
+        ff: This page uses the non standard property “zoom”. Consider using calc() in the relevant property values, or using “transform” along with “transform-origin: 0 0”.
+    } */
+
+    :host {
+        margin: 0px !important;
+        padding: 0px !important;
+    }
+    :host([should-show-tabs]) {
+        padding-top: 0px !important;
+    }
+
+    app-header#header,
+    app-drawer,
+    footer#app-footer,
+    app-header#header .cart-btn-container,
+    app-header#header .btns-container,
+    app-header#header #tabContainer {
+        display: none !important;
+    }
+
+    iron-pages {
+        overflow: hidden !important;
+        margin: 0px !important;
+        padding: 0px !important;
+    }
+
+    .importprogress,
+    paper-spinner-lite#savingprogress,
+    teamatical-ui-button-scrollup#scrollup {
+        display: none !important;
+    }
+}
+
+
+/* 
+@keyframes hide-frame-down {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(120px);
+  }
+}
+@keyframes hide-frame-up {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-70px);
+  }
+}
+@keyframes hide-frame-left {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateX(-240px);
+    display: none;
+  }
+} */
+

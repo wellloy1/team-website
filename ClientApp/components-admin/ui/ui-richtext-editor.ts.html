@@ -1,0 +1,27 @@
+<slot name="prefix" slot="prefix"></slot>
+
+<label id="elLabel" for="input" prefix>[[label]]</label>
+
+<vaadin-rich-text-editor 
+    id="input"
+    value="{{valueDelta}}"
+    html-value="{{valueHtml}}"
+
+    toolbar-hidden="[[codeText]]"
+
+    error-message="[[errorMessage]]" 
+    invalid="[[invalid]]"
+
+    name="[[name]]"
+    disabled="[[disabled]]" 
+    readonly="[[readonly]]" 
+
+    autocomplete$="[[autocomplete]]" 
+    required$="[[required]]"
+    aria-label$="[[name]]" 
+    aria-labelledby$="[[_ariaLabelledby('elLabel', ariaLabelledby)]]">
+</vaadin-rich-text-editor>
+
+<template is="dom-if" if="[[errorMessage]]">
+    <p class="error">[[errorMessage]]</p>
+</template>

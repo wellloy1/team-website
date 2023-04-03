@@ -1,0 +1,223 @@
+<div class="inputs">
+    <h2>[[localize('teaminfo-title')]]</h2>
+
+
+    <dom-if if="[[_shouldRenderSports]]">
+        <template>
+            <div class="select-row">
+                <teamatical-ui-select 
+                    id="TeaminfoSports" 
+                    name="Sports" 
+                    required 
+                    to-left 
+                    label="[[localize('teaminfo-sports')]]"
+                    text-property="title"
+                    value-property="id" 
+                    options="[[sportsList]]"
+                    value="{{teamInfo.Sports}}"
+                    on-value-changed="onInputChanged"
+                    error-message="[[teamInfo.notvalid.Sports]]"
+                    invalid="[[_asBool(teamInfo.notvalid.Sports)]]">
+                </teamatical-ui-select>
+            </div>
+        </template>
+    </dom-if>
+
+    <div class="row input-row" hidden$="[[notTeamName1]]">
+        <paper-input 
+            label="[[localize('teaminfo-name-1-label')]]" 
+            name="teamInfo.TeamNames.0"
+            type="string" 
+            value="{{teamInfo.TeamNames.0}}" 
+            maxlength="150" 
+            char-counter
+            on-value-changed="onInputChanged"
+            error-message="[[teamInfo.notvalid.TeamNames.0]]"
+            invalid="[[_asBool(teamInfo.notvalid.TeamNames.0)]]">
+        </paper-input>
+    </div>
+
+    <div class="row input-row" hidden$="[[notTeamName2]]">
+        <paper-input 
+            label="[[localize('teaminfo-name-2-label')]]" 
+            name="teamInfo.TeamNames.1"
+            type="string" 
+            value="{{teamInfo.TeamNames.1}}" 
+            maxlength="150" 
+            char-counter
+            on-value-changed="onInputChanged"
+            error-message="[[teamInfo.notvalid.TeamNames.1]]"
+            invalid="[[_asBool(teamInfo.notvalid.TeamNames.1)]]">
+        </paper-input>
+    </div>
+
+    <div class="row input-row" hidden$="[[notTeamName3]]">
+        <paper-input 
+            label="[[localize('teaminfo-name-3-label')]]" 
+            name="teamInfo.TeamNames.2"
+            type="string" 
+            value="{{teamInfo.TeamNames.2}}" 
+            maxlength="150" 
+            char-counter
+            on-value-changed="onInputChanged"
+            error-message="[[teamInfo.notvalid.TeamNames.2]]"
+            invalid="[[_asBool(teamInfo.notvalid.TeamNames.2)]]">
+        </paper-input>
+    </div>
+
+    <div class="row input-row" hidden$="[[notTeamName4]]">
+        <paper-input 
+            label="[[localize('teaminfo-name-4-label')]]" 
+            name="teamInfo.TeamNames.3"
+            type="string" 
+            value="{{teamInfo.TeamNames.3}}" 
+            maxlength="150" 
+            char-counter
+            on-value-changed="onInputChanged"
+            error-message="[[teamInfo.notvalid.TeamNames.3]]"
+            invalid="[[_asBool(teamInfo.notvalid.TeamNames.3)]]">
+        </paper-input>
+    </div>
+
+
+    
+    
+
+
+
+    <div class="row input-row" hidden$="[[notColor1]]">
+        <paper-input 
+            id="inputColor1" 
+            name="teamInfo.Colors.0"
+            label="[[localize('teaminfo-color-1-label')]]" 
+            type="string" 
+            value="{{teamInfo.Colors.0.n}}" 
+            readonly="true"
+            on-value-changed="onInputChanged"
+            error-message="[[teamInfo.notvalid.Colors.0]]"
+            invalid="[[_asBool(teamInfo.notvalid.Colors.0)]]">
+            <dom-if if="[[isPantonePicker]]">
+                <template>
+                    <iron-icon
+                        class="color-picker-button" 
+                        icon="image:style" 
+                        slot="suffix"
+                        style$="[[_convertSwColor(teamInfo.Colors.0.h)]]"
+                        on-tap="onPantoneColor1">
+                    </iron-icon>
+                </template>
+            </dom-if>
+        </paper-input>
+
+        <dom-if if="[[_shouldRenderSwPalette]]">
+            <template>
+                <teamatical-ui-color-picker
+                    id="swatchPicker1"
+                    colors-palette="{{colorsSwatchPalette}}"
+                    selected-color="{{teamInfo.Colors.0}}">
+                </teamatical-ui-color-picker>
+            </template>
+        </dom-if>
+    </div>
+
+    <div class="row input-row" hidden$="[[notColor2]]">
+        <paper-input 
+            id="inputColor2" 
+            name="teamInfo.Colors.1"
+            label="[[localize('teaminfo-color-2-label')]]" 
+            type="string" 
+            value="{{teamInfo.Colors.1.n}}" 
+            readonly="true"
+            on-value-changed="onInputChanged"
+            error-message="[[teamInfo.notvalid.Colors.1]]"
+            invalid="[[_asBool(teamInfo.notvalid.Colors.1)]]">
+            <dom-if if="[[isPantonePicker]]">
+                <template>
+                    <iron-icon
+                        class="color-picker-button" 
+                        icon="image:style" 
+                        slot="suffix"
+                        style$="[[_convertSwColor(teamInfo.Colors.1.h)]]"
+                        on-tap="onPantoneColor2">
+                    </iron-icon>
+                </template>
+            </dom-if>
+        </paper-input>
+
+        <dom-if if="[[_shouldRenderSwPalette]]">
+            <template>
+                <teamatical-ui-color-picker
+                    id="swatchPicker2"
+                    colors-palette="{{colorsSwatchPalette}}" 
+                    selected-color="{{teamInfo.Colors.1}}">
+                </teamatical-ui-color-picker>
+            </template>
+        </dom-if>
+    </div>
+
+    <div class="row input-row" hidden$="[[notColor3]]">
+        <paper-input 
+            id="inputColor3" 
+            name="teamInfo.Colors.2"
+            label="[[localize('teaminfo-color-3-label')]]" 
+            type="string" 
+            value="{{teamInfo.Colors.2.n}}" 
+            readonly="true"
+            on-value-changed="onInputChanged"
+            error-message="[[teamInfo.notvalid.Colors.2]]"
+            invalid="[[_asBool(teamInfo.notvalid.Colors.2)]]">
+            <dom-if if="[[isPantonePicker]]">
+                <template>
+                    <iron-icon
+                        class="color-picker-button" 
+                        icon="image:style" 
+                        slot="suffix"
+                        style$="[[_convertSwColor(teamInfo.Colors.2.h)]]"
+                        on-tap="onPantoneColor3">
+                    </iron-icon>
+                </template>
+            </dom-if>
+        </paper-input>
+
+        <dom-if if="[[_shouldRenderSwPalette]]">
+            <template>
+                <teamatical-ui-color-picker
+                    id="swatchPicker3"
+                    colors-palette="{{colorsSwatchPalette}}" 
+                    selected-color="{{teamInfo.Colors.2}}">
+                </teamatical-ui-color-picker>
+            </template>
+        </dom-if>
+    </div>
+    
+</div>
+
+
+<dom-if if="[[isPantonePicker]]">
+    <template>
+        <teamatical-ui-pantone-color-picker 
+            id="colorPicker1" 
+            draggable="false" 
+            with-backdrop="true" 
+            colors-palette="{{colorsPantonePalette}}" 
+            selected-color="{{teamInfo.Colors.0}}">
+        </teamatical-ui-pantone-color-picker>
+
+        <teamatical-ui-pantone-color-picker 
+            id="colorPicker2" 
+            draggable="false" 
+            with-backdrop="true" 
+            colors-palette="{{colorsPantonePalette}}" 
+            selected-color="{{teamInfo.Colors.1}}">
+        </teamatical-ui-pantone-color-picker>
+
+        <teamatical-ui-pantone-color-picker 
+            id="colorPicker3" 
+            draggable="false" 
+            with-backdrop="true" 
+            colors-palette="{{colorsPantonePalette}}" 
+            selected-color="{{teamInfo.Colors.2}}">
+        </teamatical-ui-pantone-color-picker>
+    </template>
+</dom-if>
+            

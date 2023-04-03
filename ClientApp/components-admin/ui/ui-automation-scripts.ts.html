@@ -1,0 +1,101 @@
+<!-- <app-localstorage-document key="ui-automation-scripts" data="{{deviceSettings}}"></app-localstorage-document> -->
+<iron-media-query query="max-width: 2767px" query-matches="{{mini}}"></iron-media-query> 
+
+
+<paper-fab 
+  class="button"
+  icon="[[icon]]" 
+  hidden$="[[loading]]"
+  mini
+  title="Ctrl + Shift + A"
+  on-tap="_openDialogTap">
+</paper-fab>
+
+
+<div class="layouts-dialogs">
+  <tmladmin-ui-dialog id="auto_dialog" 
+    disabled$="[[dialogcellinfo.loading]]" 
+    scroll-target="[[scrollTarget]]" 
+    frame-margin="5% auto">
+    <div slot="header">
+      <paper-icon-button 
+        class="close-dialog-small-btn" 
+        icon="admin-icons:close"
+        dialog-dismiss>
+      </paper-icon-button>      
+      <!-- <div class="dialog-loading-container">
+        <paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogcellinfo.loading]]"
+          hidden$="[[!dialogcellinfo.loading]]">
+        </paper-progress>
+      </div> -->
+  
+      <h2>Automation Scripts</h2>
+      <paper-spinner-lite 
+        class="thick" 
+        active="[[loading]]"> 
+      </paper-spinner-lite>
+
+
+      <paper-expansion-panel id="automationfile" header="Help" opened="false">
+        <div class="help-container">
+          <div>
+            <p class="help">
+              await apiRequest[POST|GET](url = '', data = {}, retry = { count: 1, summaryKey: '-' }, headers = {}) <br />
+              await apiList(url = '', filters = [], processHandler = async (item, outAr)) <br />
+              await fetch(url = '', opt = { method: 'GET' }) <br />
+              await Promise.allSettled([])<br />
+              <br />
+              <br />
+            </p>
+          </div>
+          <div>
+            <p class="help">
+              url started without '/' - means prefix '/admin/api' <br />
+              urlquery(url = '', data = {}) <br />
+              download(JSON.stringify(r, null, "\t"), filename) <br />
+              console_[log|err|res|title](...) <br />
+              randomint(min, max) <br />
+              runsleep(ms) <br />
+            </p>
+          </div>
+        </div>
+      </paper-expansion-panel>
+      <div class="input">
+        <button on-tap="onOpenFileTap"  title="Ctrl + O">Open</button>
+        <button on-tap="onReloadFileTap" title="Ctrl + Shift + O" hidden$="[[!_asBool(filename)]]">Reload</button>
+        <button on-tap="onCloseFileTap" title="Ctrl + Shift + C" hidden$="[[!_asBool(filename)]]">Close</button>
+        <button on-tap="onSaveFileTap"  title="Ctrl + S" hidden$="[[!_asBool(filename)]]">Save</button>
+        <div>[[filename]]</div>
+      </div>
+      <!-- <input type="file" accept="text/javascript" on-change="openFile"><br> -->
+    </div>
+  
+    <div slot="body">
+  
+      <div class="texteditor-container">
+        <pre id="texteditor"></pre>
+      </div>
+      
+      <div>
+        <dom-repeat items="[[log]]" as="logi">
+          <template>
+            <div log$="[[logi.type=='log']]">
+              [[logi.data]]
+            </div>
+          </template>
+        </dom-repeat>
+      </div>
+    </div>
+  
+    <div slot="footer">
+      <div class="buttons">
+        <div class="note-err" hidden$="[[devConsole]]">Open Developer Console to monitor script output</div>
+        <paper-button dialog-dismiss autofocus>Close</paper-button>
+        <paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+        <paper-button id="runbtn" on-tap="_onRunTap" disabled$="[[disableRun]]">Run</paper-button>
+      </div>
+    </div>
+  
+  </tmladmin-ui-dialog>
+
+</div>

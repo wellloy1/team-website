@@ -1,0 +1,17 @@
+paper-input {
+    --paper-input-container-input: {
+        text-align: center;
+    };
+
+    --paper-input-container-label-floating: {
+        top:12px;
+    };
+}
+
+
+@media print {
+    paper-icon-button {
+        display: none;
+    }
+}
+  

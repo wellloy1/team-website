@@ -1,0 +1,252 @@
+<app-localstorage-document key="admin-organizations-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+
+				<paper-button class="create-new-organization-btn indigo" disabled$="[[loadingCmd]]" raised on-tap="createNewOrgConfirmTap">
+					Create New Organization
+				</paper-button>
+			</div>
+		</div>
+
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="Organizations" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.OrganizationID]]</span>
+					<a href="[[_urlViewOrganization(item.OrganizationID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="OrganizationID">
+				<template class="header">
+					OrganizationID
+					<vaadin-grid-filter aria-label="OrganizationID" path="OrganizationID" value="[[_filterOrganizationID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.OrganizationID]]</span>
+					<a href="[[_urlViewOrganization(item.OrganizationID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">OrganizationID</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="380px" resizable="true" id="Name">
+				<template class="header">
+					Name
+					<vaadin-grid-filter aria-label="Name" path="Name" value="[[_filterName]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.Name]]</template>
+				<template class="footer-off">Name</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="140px" resizable="true" id="Subdomain">
+				<template class="header">
+					Subdomain
+				</template>
+					<!-- <vaadin-grid-filter aria-label="Name" path="Name" value="[[_filterName]]"></vaadin-grid-filter> -->
+				<template>
+					[[item.Subdomain]]
+				</template>
+				<template class="footer-off">
+					Subdomain
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="380px" resizable="true" id="ConnectedStripeAccountID">
+				<template class="header">
+					Connected Stripe AccountID
+					<vaadin-grid-filter aria-label="ConnectedStripeAccountID" path="ConnectedStripeAccountID" value="[[_filterConnectedStripeAccountID]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.ConnectedStripeAccountID]]</template>
+				<template class="footer-off">
+					Connected Stripe AccountID
+				</template>
+			</vaadin-grid-column>
+			
+
+			<vaadin-grid-column width="340px" resizable="true" id="FeeDistributionMode">
+				<template class="header">
+					Fee Distribution Mode
+					<vaadin-grid-filter class="hidden" aria-label="FeeDistributionMode" aria-placeholder="FeeDistributionMode" path="FeeDistributionMode" value="[[_filterFeeDistributionMode]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="FeeDistributionModeCombo" style="width:280px;" value="{{_filterFeeDistributionMode}}"></vaadin-combo-box>
+				</template>
+				<template>
+					<span hidden$="[[!_asBool(item.FeeDistributionMode)]]">
+						[[_formatFeeDistributionMode(item.FeeDistributionMode.id)]]
+					</span>
+				</template>
+				<template class="footer-off">
+					Fee Distribution Mode
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" resizable="true" id="TeamaticalCombinedFeePercent">
+				<template class="header">
+					Teamatical Combined Fee (%)
+				</template>
+				<template>
+					[[item.TeamaticalCombinedFeePercent]]
+				</template>
+				<template class="footer-off">
+					Teamatical Combined Fee (%)
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="220px" flex-grow="0" resizable="true" id="Created">
+				<template class="header">
+					<vaadin-grid-sorter path="Created">Created</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Created" aria-placeholder="Created" path="Created" value="[[_filterCreated]]">
+					</vaadin-grid-filter>
+				</template>
+				<template>[[_formatDate(item.Created)]]</template>
+				<template class="footer-off">Created</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="160px" resizable="true" id="IsSeller">
+				<template class="header">
+					Is Seller
+					<vaadin-grid-filter class="hidden" aria-label="IsSeller" aria-placeholder="IsSeller" path="IsSeller" value="[[_filterIsSeller]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="IsSellerCombo" style="width:80px;" value="{{_filterIsSeller}}"></vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted$="[[item.IsSeller]]">
+						[[item.IsSeller]]
+					</span>
+				</template>
+				<template class="footer-off">
+					Is Seller
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="160px" resizable="true" id="IsAllowCreateNewPurchaseOrder">
+				<template class="header">
+					Is Allow Create New Checkout Code
+					<vaadin-grid-filter class="hidden" aria-label="IsAllowCreateNewPurchaseOrder" aria-placeholder="IsAllowCreateNewPurchaseOrder" path="IsAllowCreateNewPurchaseOrder" value="[[_filterIsAllowCreateNewPurchaseOrder]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="IsAllowCreateNewPurchaseOrderCombo" style="width:80px;" value="{{_filterIsAllowCreateNewPurchaseOrder}}"></vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted$="[[item.IsAllowCreateNewPurchaseOrder]]">
+						[[item.IsAllowCreateNewPurchaseOrder]]
+					</span>
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="160px" resizable="true" id="PaymentDueDays">
+				<template class="header">
+					Payment Due Days
+				</template>
+					<!-- <vaadin-grid-filter aria-label="PaymentDueDays" path="PaymentDueDays" value="[[_filterPaymentDueDays]]"></vaadin-grid-filter> -->
+				<template>[[item.PaymentDueDays]]</template>
+				<template class="footer-off">Payment Due Days</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="160px" resizable="true" id="UserCount">
+				<template class="header">
+					User Count
+					<vaadin-grid-filter aria-label="UserCount" path="UserCount" value="[[_filterUserCount]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.UserCount]]</template>
+				<template class="footer-off">User Count</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="260px" resizable="true" id="PaymentTerms">
+				<template class="header">
+					Payment Terms
+				</template>
+					<!-- <vaadin-grid-filter aria-label="PaymentTerms" path="PaymentTerms" value="[[_filterPaymentTerms]]"></vaadin-grid-filter> -->
+				<template>
+					<div class="bigtext-cell">
+						<div>[[item.PaymentTerms]]</div>
+					</div>
+				</template>
+				<template class="footer-off">PaymentTerms</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" resizable="true" id="AllowDirectShipping">
+				<template class="header">
+					Allow Internatinal Shipping (wo Logistic Hub)
+					<vaadin-grid-filter class="hidden" aria-label="AllowDirectShipping" aria-placeholder="AllowDirectShipping" path="AllowDirectShipping" value="[[_filterAllowDirectShipping]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="AllowDirectShippingCombo" style="width:80px;" value="{{_filterAllowDirectShipping}}"></vaadin-combo-box>
+				</template>
+				<template>
+					[[item.AllowDirectShipping]]
+				</template>
+				<template class="footer-off">
+					Allow Internatinal Shipping  (wo Logistic Hub)
+				</template>
+			</vaadin-grid-column>
+
+		</vaadin-grid>
+
+
+		
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-organizations-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+		
+	</div>
+</div>
+
+
+
+<paper-dialog id="dialogconfirm" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Confirmation</h2>
+	<paper-dialog-scrollable>
+		Are you sure you'd like to Create New Organization?
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>Close</paper-button>
+		<paper-button dialog-confirm on-tap="createNewOrgTap">Create</paper-button>
+	</div>
+</paper-dialog>

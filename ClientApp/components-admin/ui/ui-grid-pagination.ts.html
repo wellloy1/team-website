@@ -1,0 +1,57 @@
+<div class="pager">
+  
+  <div id="pages-container">
+    <div id="pages">
+      <dom-if if="[[LenMore(pages)]]">
+        <template>
+          <button 
+            on-tap="_startover" 
+            title$="[[localize('admin-page-startover-tooltip')]]"
+            disabled$="[[loading]]"
+            >[[localize('admin-page-startover')]]</button>
+        </template>
+      </dom-if>
+    
+      <dom-repeat items="[[visiblePages]]" as="pagei">
+        <template>
+          <button 
+            on-tap="_selectPage" 
+            selected$="[[_equal(page, pagei.i)]]"
+            disabled$="[[!_allowButton(loading, pagei.i, pagei.ptoken)]]"
+            >[[pagei.t]]</button>
+        </template>
+      </dom-repeat>
+    </div>
+  </div>
+  
+  
+  <div class="pagesize-selector">
+    <dom-if if="[[LenMore(pages)]]">
+      <template>
+        <button 
+          on-tap="_next" 
+          disabled$="[[!_allowNext(loading, plast)]]" 
+          title$="[[localize('admin-page-next-tooltip')]]" 
+          >[[localize('admin-page-next')]]</button>
+      </template>
+    </dom-if>
+  
+    <dom-if if="[[LenMore(pages)]]">
+      <template>
+        <button disabled title$="[[localize('admin-page-itemscount-tooltip')]]">
+          [[localize('admin-page-itemscount')]]: 
+          [[_formatTotalElements(totalElements)]]
+        </button>
+      </template>
+    </dom-if>
+
+    <teamatical-ui-select 
+      micro
+      title$="[[localize('admin-page-rows-tooltip')]]"
+      options="[[pageSizes]]" 
+      text-property="title"
+      value-property="id" 
+      value="{{selectedPageSize}}">
+    </teamatical-ui-select>
+  </div>
+</div>

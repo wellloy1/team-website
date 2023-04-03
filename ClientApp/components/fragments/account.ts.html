@@ -1,0 +1,559 @@
+<teamatical-order-data 
+	id="orders-data" 
+	orders="{{orders}}" 
+	order-view="{{orderView}}" 
+	num-items="{{numItems}}"
+	searching-progress="{{searchingProgress}}" 
+	query-params="{{queryParams}}" 
+	access-token="{{accessToken}}"
+	currency="{{currency}}"
+	loading="{{loading}}" 
+	failure="{{failure}}" 
+	user-info="{{userInfo}}" 
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-order-data>
+
+<teamatical-ui-loader hidden$="[[_isNotConn]]"></teamatical-ui-loader>
+
+<div hidden$="[[_isNoOrders]]">
+	<div class="subsection" visible>
+		<header>
+			<h1 hidden$="[[orderView]]">
+				[[_accountTitle(userInfo.orgName, 'orders-title', visible)]]
+			</h1>
+			<span hidden$="[[hideCountTitle]]">
+				(
+				<span>[[_numItems]][[_numItemsApproximately]]</span>
+				<span hidden="[[!_single]]">[[localize('orders-qty-item')]]</span>
+				<span hidden="[[!_many]]">[[localize('orders-qty-items')]]</span>
+				)
+			</span>
+
+			<teamatical-ui-button disabled$="[[loading]]" hidden$="[[!orderView]]" on-tap="allOrdersTap">
+				[[localize('order-btn-back2list')]]
+			</teamatical-ui-button>
+		</header>
+
+		<div id="search-progress-container">
+			<paper-spinner-lite id="search-progress" active="[[searchingProgress]]">
+			</paper-spinner-lite>
+		</div>
+
+		<paper-input id="search" name="search" hidden$="[[_hideSearchInput]]" type="text"
+			label="[[localize('orders-search-input')]]" aria-label$="[[localize('orders-search-input')]]"
+			placeholder="[[localize('orders-search-placeholder')]]" value="{{orders.search::input}}" required
+			autocomplete="search" error-message="[[localize('orders-search-invalid')]]">
+		</paper-input>
+
+
+		<p class="empty-list" hidden$="[[_hasInitialItems]]">
+			[[localize('orders-empty')]]
+		</p>
+
+		<p class="empty-list" hidden$="[[_hasSearchedItems]]">
+			[[localize('orders-search-empty')]]
+		</p>
+
+		<div id="list" class="order-list">
+			<iron-list id="gridList" items="[[orders.items]]" as="orderi" scroll-target="document"
+				default-physical-count="40">
+				<template>
+
+					<div class="order">
+						<div class="order-header">
+							<h3>
+								[[localize('order-title-id')]]
+								<span class="copy-tap" on-tap="_copyTap">[[orderi.id]]</span>
+								<dom-if if="[[showOrderLink]]">
+									<template strip-whitespace>
+										<a href="[[_hrefAccountOrder(orderi.id)]]">
+											<iron-icon icon="open-in-new" class="open-in-here"></iron-icon>
+										</a>
+									</template>
+								</dom-if>
+
+								<span class="hidden" showen$="[[orderi.Sandbox]]">
+									<iron-icon icon="warning" class="warning"></iron-icon>
+									[[localize('order-testmark')]]
+								</span>
+		
+								-
+								<span class="status" order-status$="[[orderi.Status]]">
+									<span class="hidden cancelled" showen$="[[showCancelledStatus(orderi.Status)]]">
+										<iron-icon icon="block" class="cancelled"></iron-icon>
+									</span>
+									[[_formatOrderStatus(orderi.Status, orderi.PaymentHistory)]]
+								</span>
+							</h3>
+
+							<div class="order-details-container">
+								<div>
+									<dom-if if="[[!orderi.isgroup]]">
+										<template>
+											<h4>[[localize('order-title-shipaddress')]]</h4>
+										</template>
+									</dom-if>
+									<dom-if if="[[orderi.isgroup]]">
+										<template>
+											<h4>[[localize('order-title-shiphomeaddress')]]</h4>
+										</template>
+									</dom-if>
+									<div class="table order-details-shipment">
+										<!--  shipaddress -->
+										<div class="row">
+											<div>
+												[[localize('order-title-firstname')]]
+											</div>
+											<div>
+												[[orderi.ShipFirstName]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('order-title-lastname')]]
+											</div>
+											<div>
+												[[orderi.ShipLastName]]
+											</div>
+										</div>
+
+										<div class="row" hidden$="[[!orderi.ShipCompany]]">
+											<div>
+												[[localize('order-title-company')]]
+											</div>
+											<div>
+												[[orderi.ShipCompany]]
+											</div>
+										</div>
+
+										<div class="row" hidden$="[[!orderi.ShipTaxID]]">
+											<div>
+												[[localize('order-title-tax')]]
+											</div>
+											<div>
+												[[orderi.ShipTaxID]]
+											</div>
+										</div>
+
+										<div class="row" hidden$="[[!orderi.ShipEORI]]">
+											<div>
+												[[localize('order-title-eori')]]
+											</div>
+											<div>
+												[[orderi.ShipEORI]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('order-title-address')]]
+											</div>
+											<div>
+												[[orderi.ShipAddress]]
+											</div>
+										</div>
+
+										<div class="row" hidden$="[[!orderi.ShipAddress2]]">
+											<div>
+												[[localize('order-title-address2')]]
+											</div>
+											<div>
+												[[orderi.ShipAddress2]]
+											</div>
+										</div>
+
+										<div class="row" hidden$="[[!orderi.ShipAddress3]]">
+											<div>
+												[[localize('order-title-address3')]]
+											</div>
+											<div>
+												[[orderi.ShipAddress3]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('order-title-city')]]
+											</div>
+											<div>
+												[[orderi.ShipCity]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localizeByCountry('order-title-state', orderi.ShipCountryCode)]]
+											</div>
+											<div>
+												[[orderi.ShipState]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localizeByCountry('order-title-zip', orderi.ShipCountryCode)]]
+											</div>
+											<div>
+												[[orderi.ShipZip]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('order-title-country')]]
+											</div>
+											<div>
+												[[orderi.ShipCountry]]
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div>
+									<h4>[[localize('order-title-billaddress')]]</h4>
+									<div class="table order-details-billing">
+										<!--  billaddress -->
+										<div class="row">
+											<div>
+												[[localize('order-title-firstname')]]
+											</div>
+											<div>
+												[[orderi.BillFirstName]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('order-title-lastname')]]
+											</div>
+											<div>
+												[[orderi.BillLastName]]
+											</div>
+										</div>
+
+										<div class="row" hidden$="[[!orderi.BillCompany]]">
+											<div>
+												[[localize('order-title-company')]]
+											</div>
+											<div>
+												[[orderi.BillCompany]]
+											</div>
+										</div>
+
+										<div class="row" hidden$="[[!orderi.BillTaxID]]">
+											<div>
+												[[localize('order-title-tax')]]
+											</div>
+											<div>
+												[[orderi.BillTaxID]]
+											</div>
+										</div>
+
+										<div class="row" hidden$="[[!orderi.BillEORI]]">
+											<div>
+												[[localize('order-title-eori')]]
+											</div>
+											<div>
+												[[orderi.BillEORI]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('order-title-address')]]
+											</div>
+											<div>
+												[[orderi.BillAddress]]
+											</div>
+										</div>
+
+										<div class="row" hidden$="[[!orderi.BillAddress2]]">
+											<div>
+												[[localize('order-title-address2')]]
+											</div>
+											<div>
+												[[orderi.BillAddress2]]
+											</div>
+										</div>
+
+										<div class="row" hidden$="[[!orderi.BillAddress3]]">
+											<div>
+												[[localize('order-title-address3')]]
+											</div>
+											<div>
+												[[orderi.BillAddress3]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('order-title-city')]]
+											</div>
+											<div>
+												[[orderi.BillCity]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localizeByCountry('order-title-state', orderi.BillCountryCode)]]
+											</div>
+											<div>
+												[[orderi.BillState]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localizeByCountry('order-title-zip', orderi.BillCountryCode)]]
+											</div>
+											<div>
+												[[orderi.BillZip]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('order-title-country')]]
+											</div>
+											<div>
+												[[orderi.BillCountry]]
+											</div>
+										</div>
+									</div>
+								</div>
+
+
+								<div>
+									<h4>[[localize('order-title-details')]]</h4>
+									<div class="table order-details">
+										<div class="row">
+											<div>
+												[[localize('order-title-created')]]
+											</div>
+											<div>
+												[[_formatDate(orderi.Created)]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('order-title-email')]]
+											</div>
+											<div>
+												[[orderi.AccountEmail]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('order-title-phone')]]
+											</div>
+											<div>
+												[[orderi.AccountPhone]]
+											</div>
+										</div>
+
+										<div class="row" hidden$="[[!orderi.DeliveryDetailsOnly]]">
+											<div>
+												[[localize('order-title-deliverydetails')]]
+											</div>
+											<div>
+												[[orderi.DeliveryDetails]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('order-title-shipment')]]
+											</div>
+											<div>
+												[[_formatShipment(orderi.ShipmentMethod)]]
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+
+							<div class="order-shipment" hidden$="[[!orderi.Tracking]]">
+								<div class="h4">
+									<h4>
+										[[localize('order-shipment-title')]]
+									</h4>
+								</div>
+								<div class="table-container">
+									<div class="table">
+										<div class="header">
+											<div>
+												[[localize('order-shipment-carrier')]]
+											</div>
+											<div>
+												[[localize('order-shipment-trackid')]]
+											</div>
+											<div>
+												[[localize('order-shipment-place')]]
+											</div>
+											<!-- <div>
+												[[localize('order-shipment-shippedcount')]]
+											</div> -->
+										</div>
+	
+										<dom-repeat items="[[orderi.Tracking]]" as="tracki">
+											<template>
+												<div class="row">
+													<div>
+														[[tracki.Carrier]]
+													</div>
+													<div>
+														[[tracki.TrackingNumber]]
+													</div>
+													<div>
+														[[tracki.Place]]
+													</div>
+													<!-- <div>
+														[[tracki.ShippedCount]]
+													</div> -->
+												</div>
+											</template>
+										</dom-repeat>
+									</div>
+								</div>
+							</div>
+
+							<div class="order-payment-history">
+								<div class="h4">
+									<h4>
+										[[localize('order-title-paymenthistory')]]
+										<span class="hidden" showen$="[[orderi.Sandbox]]">
+											<iron-icon icon="warning" class="warning"></iron-icon>
+											[[localize('order-testmark')]]
+										</span>
+									</h4>
+								</div>
+								<div class="table-container">
+									<div class="table">
+										<div class="header hcenter">
+											<div>
+												[[localize('order-paymenthistory-date')]]
+											</div>
+											<div>
+												[[localize('order-paymenthistory-method')]]
+											</div>
+											<div>
+												[[localize('order-paymenthistory-kind')]]
+											</div>
+											<div>
+												[[localize('order-paymenthistory-status')]]
+											</div>
+										</div>
+	
+										<dom-repeat items="[[orderi.PaymentHistory]]" as="payi">
+											<template>
+												<div class="row vcenter hcenter">
+													<div>
+														[[_formatDate(payi.TimeStamp)]]
+													</div>
+													<div>
+														<teamatical-ui-payment-type 
+															pay-type="[[payi.PaymentType]]"
+															pay-method="[[payi.PaymentMethod.id]]"
+															pay-kind="[[payi.Kind]]">
+														</teamatical-ui-payment-type>
+													</div>
+													<div>
+														[[_formatPayKind(payi.Kind, payi.Amount, orderi.Currency)]]
+													</div>
+													<div>
+														[[_formatPayStatus(payi.Status, orderi.PaymentHistory)]]
+													</div>
+												</div>
+											</template>
+										</dom-repeat>
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+						<div class="order-items">
+							<dom-repeat items="[[orderi.items]]" as="itemi">
+								<template>
+									<teamatical-ui-order-item 
+										entry="[[itemi]]" 
+										hide-prices="[[orderi.hideprices]]"
+										action-disabled="[[loading]]"
+										access-token="[[accessToken]]"
+										user-info="[[userInfo]]">
+									</teamatical-ui-order-item>
+								</template>
+							</dom-repeat>
+						</div>
+
+						<div class="order-footer">
+							<div class="total-items">
+								<dom-repeat items="[[_computeTotalsVisible(orderi.Totals)]]" as="totali">
+									<template>
+										<div class$="total-row {{totali.class}}" hide-prices$="[[totali.hideprices]]">
+											<div>[[totali.title]]</div>
+											<div>[[_formatTotalsItem(totali.id, totali.amount, orderi.Currency)]]</div>
+										</div>
+									</template>
+								</dom-repeat>
+							</div>
+							<div class="buttons">
+								<teamatical-ui-button 
+									class="order-cancel-btn hidden" 
+									disabled$="[[loading]]"
+									showen-icon$="[[orderi.Cancelable]]" 
+									on-tap="cancelOrderTap">
+									[[localize('order-button-cancel', 'oid', orderi.id)]]
+								</teamatical-ui-button>
+
+								<teamatical-ui-button 
+									class="order-addtocart-btn hidden" 
+									disabled$="[[loading]]"
+									showen-icon$="[[orderi.AddableToShoppingCart]]" 
+									on-tap="addtocartOrderTap">
+									[[localize('order-button-addtocart', 'oid', orderi.id)]]
+								</teamatical-ui-button>
+							</div>
+						</div>
+					</div>
+
+				</template>
+			</iron-list>
+		</div>
+
+		<div class="detail-buttons progress-container">
+			<paper-spinner-lite id="loadMoreProgress" class="progress-centered"
+				active="[[_loadMoreProgress(loading, loadingMore)]]">
+			</paper-spinner-lite>
+
+			<teamatical-ui-button class="order-sigin-btn" disabled$="[[loading]]"
+				hidden$="[[hideSignInBtn(orderi, userInfo)]]" on-tap="signInTap">
+				[[localize('order-button-signin')]]
+			</teamatical-ui-button>
+
+			<teamatical-ui-button class="order-sigin-btn" disabled$="[[loading]]"
+				hidden$="[[hideSignInBtn(orderi, userInfo)]]" on-tap="signUpTap">
+				[[localize('order-button-signup')]]
+			</teamatical-ui-button>
+
+			<teamatical-ui-button id="loadMoreBtn" aria-label$="[[localize('orders-btn-more-label')]]"
+				disabled$="[[loading]]" hidden$="[[orders.plast]]" class="hidden-animated slow"
+				hidden-animated$="[[_loadMoreProgress(loading, loadingMore)]]" on-tap="moreOrdersTap">
+				[[localize('orders-btn-more')]]
+			</teamatical-ui-button>
+
+			<div class="end-list" hidden$="[[!_hasNoMoreItems]]">[[localize('orders-list-end')]]</div>
+		</div>
+
+	</div>
+</div>
+
+<teamatical-ui-network-warning hidden$="[[!failure]]" offline="[[offline]]" on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

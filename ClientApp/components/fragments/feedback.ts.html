@@ -1,0 +1,207 @@
+<div class="main-frame">
+  <header>
+    <h1>[[localize('feedback-title')]]</h1>
+  </header>
+
+  <div id="container">
+
+    <div class="column">
+      <teamatical-ui-select
+        id="Type"
+        name="type"
+        label="[[localize('feedback-type')]]"
+        options="[[TypeListLoc]]"
+        required
+        to-left
+        text-property="title"
+        value-property="id" 
+        autocomplete="type"
+        value="{{TypeSelected}}"
+        disabled$="[[loading]]"
+        aria-labelledby="shipAddressHeading"
+        aria-label$="[[localize('feedback-type')]]">
+      </teamatical-ui-select>
+    </div>
+
+
+    <div class="row input-row">
+      <paper-input 
+          autofocus 
+          id="FirstName"
+          name="firstName"
+          type="text"
+          required
+          pattern=".{1,}"
+          autocomplete="firstname"
+          disabled$="[[loading]]"
+          label="[[localize('feedback-firstname')]]" 
+          aria-labelledby="shipAddressHeading"
+          error-message="[[localize('feedback-firstname-invalid')]]">
+      </paper-input>
+    </div>
+
+    <div class="row input-row">
+      <paper-input 
+          id="LastName"
+          name="lastName"
+          type="text"
+          pattern=".{1,}"
+          autocomplete="lastname"
+          disabled$="[[loading]]"
+          label="[[localize('feedback-lastname')]]" 
+          aria-labelledby="shipAddressHeading"
+          error-message="[[localize('feedback-lastname-invalid')]]">
+      </paper-input>
+    </div>
+
+    <!-- <div class="column">
+      <teamatical-ui-select
+        id="Country"
+        name="country"
+        label="[[localize('feedback-country')]]"
+        options="[[CountryList]]"
+        required
+        to-left
+        text-property="title"
+        value-property="id" 
+        autocomplete="country"
+        value="{{CountrySelected}}"
+        disabled$="[[loading]]"
+        aria-labelledby="shipAddressHeading"
+        aria-label$="[[localize('feedback-country')]]">
+      </teamatical-ui-select>
+
+      <paper-input 
+        id="State" 
+        name="state" 
+        type="text" 
+        autocomplete="state" 
+        disabled$="[[loading]]"
+        label="[[localize('feedback-state')]]"
+        aria-labelledby="shipAddressHeading"
+        error-message="[[localize('feedback-state-invalid')]]">
+      </paper-input>
+    </div>
+
+
+    <div class="row input-row">
+      <paper-input 
+          id="Company"
+          name="company"
+          type="text"
+          pattern=".{1,}"
+          autocomplete="company"
+          disabled$="[[loading]]"
+          label="[[localize('feedback-company')]]" 
+          aria-labelledby="shipAddressHeading"
+          error-message="[[localize('feedback-company-invalid')]]">
+      </paper-input>
+    </div> -->
+
+
+    <div class="row input-row">
+      <paper-input 
+          id="Organization"
+          name="Organization"
+          type="text"
+          pattern=".{1,}"
+          autocomplete="organization"
+          disabled$="[[loading]]"
+          label="[[OrganizationTitleLoc]]" 
+          aria-labelledby="shipAddressHeading">
+      </paper-input>
+
+      <teamatical-ui-select
+        id="Orgtype"
+        name="Orgtype"
+        options="[[OrgtypeListLoc]]"
+        required
+        to-left
+        text-property="title"
+        value-property="id" 
+        autocomplete="organizationtype"
+        value="{{OrgtypeSelected}}"
+        disabled$="[[loading]]"
+        aria-labelledby="Orgtype"
+        aria-label$="Orgtype">
+      </teamatical-ui-select>
+    </div>
+
+
+    <!-- Relationship to team -->
+    <div class="column">
+      <teamatical-ui-select
+        id="Relationship"
+        name="relationship"
+        caption-text="[[RelationshipTitleLoc]]"
+        options="[[RelationshipListLoc]]"
+        required
+        to-left
+        text-property="title"
+        value-property="id" 
+        autocomplete="relationship"
+        value="{{RelationshipSelected}}"
+        disabled$="[[loading]]"
+        aria-labelledby="Relationship"
+        aria-label$="Relationship">
+      </teamatical-ui-select>
+    </div>
+
+          
+    <div class="row input-row">
+      <paper-input 
+          id="AccountPhone"
+          name="phone" 
+          type="tel"
+          pattern="[\+]?[\d\s\.\-\(\)]{10,}"
+          label="[[localize('feedback-phone')]]" 
+          
+          autocomplete="tel"
+          disabled$="[[loading]]"
+          aria-labelledby="accountInfoHeading"
+          error-message="[[localize('feedback-phone-invalid')]]">
+        </paper-input>
+    </div>
+
+    
+    <div class="row input-row">
+      <paper-input 
+          id="AccountEmail"
+          name="email"
+          type="email"
+          label="[[localize('feedback-email')]]" 
+          required
+          disabled$="[[loading]]"
+          autocomplete="email"
+          aria-labelledby="accountInfoHeading"
+          error-message="[[localize('feedback-email-invalid')]]">
+      </paper-input>
+    </div>
+
+
+    <div class="textcontainer">
+      <textarea
+        id="Description"
+        disabled="[[loading]]"
+        required
+        pattern=".{1,}"
+        error-message="[[localize('feedback-text-invalid')]]"
+        placeholder="[[localize('feedback-text-placeholder')]]"></textarea>
+    </div>
+
+    <div class="footer">
+      <teamatical-ui-button 
+          disabled$="[[loading]]"
+          on-tap="onSubmit">
+          [[localize('feedback-btn-submit')]]
+      </teamatical-ui-button>
+      <teamatical-ui-button 
+          responsive
+          responsive-hide
+          disabled$="[[loading]]"
+          on-tap="onSubmit">
+          [[localize('feedback-btn-submit')]]
+      </teamatical-ui-button>
+    </div>
+  </div>
+</div>

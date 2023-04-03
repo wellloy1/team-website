@@ -1,0 +1,126 @@
+<app-localstorage-document key="admin-threads-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+				<!-- <paper-button class="refresh-btn" disabled$="[[loadingCmd]]" raised on-tap="refreshTap">
+					Refresh
+				</paper-button> -->
+
+				<paper-button class="new-product-view-btn indigo" raised on-tap="newProductThreadTap">
+					New Product Thread
+				</paper-button>
+			</div>
+		</div>
+
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="ProductAccessories" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ProductThreadID]]</span>
+					<a href="[[_urlViewProductThread(item.ProductThreadID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="ProductThreadID">
+				<template class="header">
+					Product Thread ID
+					<vaadin-grid-filter aria-label="ProductThreadID" path="ProductThreadID" value="[[_filterProductThreadID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ProductThreadID]]</span>
+					<a href="[[_urlViewProductThread(item.ProductThreadID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">
+					Product Thread ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="380px" resizable="true" id="Quality">
+				<template class="header">
+					Quality
+					<vaadin-grid-filter aria-label="Quality" path="Quality" value="[[_filterQuality]]">
+					</vaadin-grid-filter>
+				</template>
+				<template>[[item.Quality]]</template>
+				<template class="footer-off">Quality</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="380px" resizable="true" id="Color">
+				<template class="header">
+					Color
+					<!-- <vaadin-grid-filter aria-label="Color" path="Color" value="[[_filterColor]]">
+					</vaadin-grid-filter> -->
+				</template>
+				<template>
+					<div class="thread-color">
+						<dom-if if="[[item.Color]]">
+							<template>
+								<div class="color" style$="[[_convertBkgColor(item.Color.h)]]">
+									[[item.Color.n]]
+								</div>
+							</template>
+						</dom-if>
+					</div>
+				</template>
+				<template class="footer-off">Color</template>
+			</vaadin-grid-column>
+			
+		</vaadin-grid>
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-threads-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+		
+	</div>
+</div>

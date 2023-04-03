@@ -1,0 +1,281 @@
+<app-route route="[[route]]" pattern="/:pcid" data="{{routeData}}"></app-route>
+
+<teamatical-custom-design-request-data 
+  id="custom-design-request-data" 
+  pcid="[[routeData.pcid]]"
+  custom-design-request="{{customDesignRequest}}"
+  item-model="{{item}}"
+  query-params="{{queryParams}}" 
+  user-info="{{userInfo}}"
+  website-url="[[websiteUrl]]" 
+  api_action="{{api_action}}" 
+  visible="[[visible]]" 
+  loading="{{loading}}" 
+  failure="{{failure}}" 
+  saving="{{saving}}">
+</teamatical-custom-design-request-data>
+
+<teamatical-ui-loader hidden$="[[_isNotConn(item,failure,offline,loading)]]"></teamatical-ui-loader>
+
+<teamatical-ui-product-notfound hidden$="[[_isFound(item,failure,offline,loading)]]"></teamatical-ui-product-notfound>
+
+<header hidden$="[[_isNoProduct(item,failure,offline)]]">
+  <h1>[[localize('custom-design-request-title')]]</h1>
+</header>
+
+<div id="content" hidden$="[[_isNoProduct(item,failure,offline)]]">
+
+  <teamatical-ui-image-multiview-3d 
+    id="image-product" 
+    tooltip-overlow-mode
+    class="image-product" 
+    alt="" 
+    views="{{item.ProductViews}}" 
+    overlays="[[item.ProductOverlays]]" 
+    pv="{{item.ProductPointOfView}}" 
+    pvs="[[item.ProductPointOfViewCount]]" 
+    visible="[[visible]]" 
+    lazy-load 
+    is-youth="[[item.ProductIsYouth]]" 
+    is-reversible="[[item.ProductIsReversible]]">
+  </teamatical-ui-image-multiview-3d>
+
+
+
+  <div id="requestForm" class="detail" has-content$="[[_isDefined(item)]]">
+    
+    <!-- sides -->
+    <div hidden$="[[!item.ProductSides]]" class="sides-list">
+      <h2>
+        [[localize('customize-productsides-title')]]
+        <span class="desc">[[localize('customize-productsides-desc')]]</span>
+      </h2>
+      <teamatical-ui-carousel 
+        id="sides_list" 
+        image-ratio="0.65" 
+        image-height="156" 
+        visible="[[visible]]" 
+        counter-hide
+        border-hide 
+        options="{{item.ProductSides}}">
+      </teamatical-ui-carousel>
+    </div>
+
+
+    <div class="row input-row">
+      <paper-input id="Name" name="Name" type="text" 
+        label="[[localize('custom-design-request-name')]]" autofocus
+        disabled$="[[loadingDisable]]" 
+        autocomplete="name"
+        value="{{customDesignRequest.Name}}"
+        error-message="[[customDesignRequest.notvalid.Name]]"
+        invalid="[[_asBool(customDesignRequest.notvalid.Name)]]"
+        on-change="onInputChanged">
+      </paper-input>
+    </div>
+    
+    <div class="row input-row">
+      <paper-input id="Email" name="Email" type="email" 
+        label="[[localize('custom-design-request-email')]]"
+        disabled$="[[loadingDisable]]" 
+        autocomplete="email"
+        value="{{customDesignRequest.Email}}"
+        error-message="[[customDesignRequest.notvalid.Email]]"
+        invalid="[[_asBool(customDesignRequest.notvalid.Email)]]"
+        on-change="onInputChanged">
+      </paper-input>
+    </div>
+
+    <div class="row input-row">
+      <paper-input id="Phone" name="Phone" type="tel" 
+        label="[[localize('custom-design-request-phone')]]"
+        disabled$="[[loadingDisable]]" 
+        autocomplete="tel"
+        value="{{customDesignRequest.Phone}}"
+        error-message="[[customDesignRequest.notvalid.Phone]]"
+        invalid="[[_asBool(customDesignRequest.notvalid.Phone)]]"
+        on-change="onInputChanged">
+      </paper-input>
+    </div>
+
+    
+    <dom-repeat items="[[item.Product.ProductManufacturers]]" as="productmi">
+      <template>
+        <div class="row input-row">
+          <teamatical-ui-sizes 
+            options="[[productmi.Sizes]]"
+            caption-text="[[_formatSizeTitle(productmi, item.Product.ProductManufacturers)]]" 
+            disabled$="[[loadingDisable]]"
+            id$="[[_invalidId('ProductConfiguration.Product.ProductManufacturers.{i}.Sizes', index)]]"
+            error-message="[[_errorMessageFor(customDesignRequest.notvalid, 'ProductConfiguration.Product.ProductManufacturers.{i}.Sizes', index)]]"
+            invalid="[[_invalidFor(customDesignRequest.notvalid, 'ProductConfiguration.Product.ProductManufacturers.{i}.Sizes', index)]]"
+            on-change="onInputChanged">
+          </teamatical-ui-sizes>
+        </div>
+      </template>
+    </dom-repeat>
+
+    
+    <div class="row input-row">
+      <!-- <paper-input id="QuantityNeeded" name="QuantityNeeded" type="number" label="[[localize('custom-design-request-qty')]]"
+        value="{{customDesignRequest.QuantityNeeded}}"
+        autocomplete="qty" disabled$="[[loadingDisable]]" error-message="[[localize('custom-design-request-qty-invalid')]]">
+      </paper-input> -->
+      <teamatical-ui-quantity 
+        id="QuantityNeeded"
+        name="QuantityNeeded"
+        caption-text="[[localize('custom-design-request-qty')]]" 
+        value="{{customDesignRequest.QuantityNeeded}}" 
+        step="1"
+        disabled$="[[loadingDisable]]" 
+        error-message="[[customDesignRequest.notvalid.QuantityNeeded]]"
+        invalid="[[_asBool(customDesignRequest.notvalid.QuantityNeeded)]]"
+        on-change="onInputChanged"
+        debouncing="{{debouncing.quantity}}">
+      </teamatical-ui-quantity>
+    </div>
+    
+    <div class="row input-row">
+      <paper-input id="Company" name="Company" type="text" 
+        autocomplete="Company"
+        value="{{customDesignRequest.Company}}"
+        disabled$="[[loadingDisable]]" 
+        label="[[localize('custom-design-request-company')]]"
+        error-message="[[customDesignRequest.notvalid.Company]]"
+        invalid="[[_asBool(customDesignRequest.notvalid.Company)]]"
+        on-change="onInputChanged"></paper-input>
+    </div>
+
+    <div class="textcontainer">
+      <div class="desc-prefix">
+        <teamatical-ui-description 
+          on-tap="focusDesc"
+          html="[[customDesignRequestDescriptionPrefix]]">
+        </teamatical-ui-description>
+      </div>
+      <paper-textarea 
+        id="Description" 
+        class="description"
+        name="Description" 
+        disabled$="[[loadingDisable]]"
+        value="{{customDesignRequest.Description::input}}"
+        placeholder="[[localize('custom-design-request-text-placeholder')]]" 
+        error-message="[[customDesignRequest.notvalid.Description]]"
+        invalid="[[_asBool(customDesignRequest.notvalid.Description)]]" 
+        on-change="onInputChanged">
+      </paper-textarea>
+    </div>
+
+
+    <div class="assets-uploader-section">
+      <h2>
+        [[localize('custom-design-request-assets-uploader-section')]]
+        <div hidden$="[[!_asBool(customDesignRequest.notvalid.Assets)]]" class="error">
+            [[customDesignRequest.notvalid.Assets]]
+        </div>
+      </h2>
+      <dom-repeat items="[[customDesignRequest.Assets]]" as="asseti">
+        <template>
+          <div class="assets-desc"
+            hide-assets-type$="[[_computed_hideByAssetsTypeSelector(asseti.Type.id)]]" 
+            hidden$="[[_hideAssetDesc(asseti.Files, asseti.Files.*, index)]]">
+            <teamatical-ui-select 
+              class="assets-type-selector" 
+              disabled$="[[loadingDisable]]"
+              caption-text="[[localize('custom-design-request-type')]]" 
+              options="[[assetsTypeSelectorItems]]" 
+              text-property="title"
+              value-property="id" 
+              value="{{asseti.Type}}">
+            </teamatical-ui-select>
+            <paper-input 
+              name="TypeOther" type="text" 
+              value="{{asseti.TypeOther}}"
+              hidden$="[[_computed_hideByAssetsTypeSelector(asseti.Type.id)]]"
+              disabled$="[[loadingDisable]]" 
+              label="[[localize('custom-design-request-typeother')]]"
+              error-message="[[asseti.notvalid.TypeOther]]"
+              invalid="[[_asBool(asseti.notvalid.TypeOther)]]"
+              on-change="onAssetInputChanged">
+            </paper-input>
+          </div>
+
+          <div class="assets-desc"
+            hide-assets-type$="[[_computed_hideByAssetsTypeSelector(asseti.Position.id)]]" 
+            hidden$="[[_hideAssetDesc(asseti.Files, asseti.Files.*, index)]]">
+            <teamatical-ui-select 
+              class="assets-position-selector" 
+              disabled$="[[loadingDisable]]"
+              caption-text="[[localize('custom-design-request-position')]]" 
+              options="[[assetsPositionSelectorItems]]" 
+              text-property="title"
+              value-property="id" 
+              value="{{asseti.Position}}">
+            </teamatical-ui-select>
+            <paper-input 
+              name="PositionOther" type="text" 
+              value="{{asseti.PositionOther}}"
+              hidden$="[[_computed_hideByAssetsTypeSelector(asseti.Position.id)]]"
+              disabled$="[[loadingDisable]]" 
+              label="[[localize('custom-design-request-positionother')]]"
+              error-message="[[asseti.notvalid.PositionOther]]"
+              invalid="[[_asBool(asseti.notvalid.PositionOther)]]"
+              on-change="onAssetInputChanged">
+            </paper-input>
+          </div>
+
+          <div class="description-container"
+            hidden$="[[_hideAssetDesc(asseti.Files, asseti.Files.*, index)]]">
+            <paper-textarea 
+              class="description"
+              name="Description" 
+              disabled$="[[loadingDisable]]"
+              value="{{asseti.Description::input}}"
+              placeholder="[[localize('custom-design-request-description')]]" 
+              error-message="[[asseti.notvalid.Description]]"
+              invalid="[[_asBool(asseti.notvalid.Description)]]" 
+              on-change="onAssetInputChanged">
+            </paper-textarea>
+          </div>
+
+          <teamatical-ui-assets-uploader 
+            name="Assets"
+            website-url="[[websiteUrl]]"
+            api-path="customdesignrequest/upload-asset"
+            no-multiple
+            disabled$="[[loadingDisable]]"
+            visible="[[visible]]" 
+            assets="{{asseti.Files}}"
+            loading="{{assetsLoading}}"
+            error-message="[[asseti.notvalid.Files]]"
+            invalid="[[_asBool(asseti.notvalid.Files)]]"
+            on-change="onAssetInputChanged">
+          </teamatical-ui-assets-uploader>
+        </template>
+      </dom-repeat>
+    </div>
+
+
+    <div class="detail-buttons">
+      <teamatical-ui-button 
+        disabled$="[[disableSubmit]]" 
+        on-tap="onSubmit">
+        [[localize('custom-design-request-btn-submit')]]
+      </teamatical-ui-button>
+
+      <teamatical-ui-button 
+        responsive 
+        responsive-hide 
+        disabled$="[[disableSubmit]]" 
+        on-tap="onSubmit">
+        [[localize('custom-design-request-btn-submit')]]
+      </teamatical-ui-button>
+    </div>
+  </div>
+</div>
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

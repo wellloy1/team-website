@@ -1,0 +1,284 @@
+<app-localstorage-document key="admin-shipping-containers-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+			</div>
+		</div>
+
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="shipping-containers" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ID]]</span>
+					<a href="[[_urlViewShippingContainer(item.ID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="340px" resizable="true" id="ID">
+				<template class="header">
+					ID
+					<vaadin-grid-filter aria-label="ID" path="ID" value="[[_filterID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ID]]</span>
+					<a href="[[_urlViewShippingContainer(item.ID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">
+					ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="FreightID">
+				<template class="header">
+					Freight
+					<vaadin-grid-filter aria-label="FreightID" path="FreightID" value="[[_filterFreightID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span hidden$="[[!item.FreightID]]">
+						<span class="copy-tap" on-tap="_copyTap">[[item.FreightID]]</span>
+						<a href="[[_urlViewShippingFreight(item.FreightID)]]">
+							<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+						</a>
+					</span>
+					<span hidden$="[[item.FreightID]]">NA</span>
+				</template>
+				<template class="footer-off">
+					Freight
+				</template>
+			</vaadin-grid-column>
+
+			<dom-if if="[[userInfo.isAdmin]]">
+				<template>
+
+					<vaadin-grid-column width="340px" resizable="true" id="ManufacturerID">
+						<template class="header">
+							Manufacturer
+							<vaadin-grid-filter class="hidden" aria-label="ManufacturerID" aria-placeholder="ManufacturerID" path="ManufacturerID" value="[[_filterManufacturerID]]"></vaadin-grid-filter>
+							<vaadin-combo-box id="ManufacturerIDCombo" value="{{_filterManufacturerID}}"></vaadin-combo-box>
+						</template>
+						<template>
+							<span hidden$="[[!item.ManufacturerID]]">
+								<b>[[item.ManufacturerName]]</b><br /> 
+								#: <span class="copy-tap" on-tap="_copyTap">[[item.ManufacturerID]]</span>
+								<a href="[[_urlViewManufacturer(item.ManufacturerID)]]">
+									<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+								</a>
+							</span>
+						</template>
+					</vaadin-grid-column>
+
+				</template>
+			</dom-if>
+
+			<vaadin-grid-column width="140px" flex-grow="0" resizable="true" id="Sandbox">
+				<template class="header">
+					Sandbox
+					<vaadin-grid-filter class="hidden" aria-label="Sandbox" aria-placeholder="Sandbox" path="Sandbox" value="[[_filterSandbox]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="SandboxCombo" value="{{_filterSandbox}}" style="width:80px;"></vaadin-combo-box>
+				</template>
+				<template>
+					<span class="hidden" showen$="[[item.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('order-testmark')]]
+					</span>
+				</template>
+				<template class="footer-off">Sandbox</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="120px" flex-grow="0" resizable="true" id="Created">
+				<template class="header">
+					<vaadin-grid-sorter path="Created">Created</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Created" aria-placeholder="Created" path="Created" value="[[_filterCreated]]"></vaadin-grid-filter>
+				</template>
+				<template>[[_formatDate(item.Created)]]</template>
+				<template class="footer-off">Created</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="220px" resizable="true" id="Barcode">
+				<template class="header">
+					Barcode
+					<vaadin-grid-filter aria-label="Barcode" path="Barcode" value="[[_filterBarcode]]">
+					</vaadin-grid-filter>
+				</template>
+				<template>[[item.Barcode]]</template>
+				<template class="footer-off">
+					Barcode
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="220px" resizable="true" id="TrackNumber">
+				<template class="header">
+					Track Number
+					<vaadin-grid-filter aria-label="TrackNumber" path="TrackNumber" value="[[_filterTrackNumber]]">
+					</vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="copy-tap" on-tap="_copyTap">[[item.TrackNumber]]</span>
+				</template>
+				<template class="footer-off">
+					Track Number
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="180px" resizable="true" id="IsDisposed">
+				<template class="header">
+					Is Disposed
+					<vaadin-grid-filter class="hidden" aria-label="IsDisposed" aria-placeholder="IsDisposed" path="IsDisposed" value="[[_filterIsDisposed]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="IsDisposedCombo" value="{{_filterIsDisposed}}" style="width:120px;"></vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted$="[[item.IsDisposed]]">[[item.IsDisposed]]</span>
+				</template>
+				<template class="footer-off">
+					Is Disposed
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="220px" resizable="true" id="SerialReferenceIndex">
+				<template class="header">
+					Serial Reference Index
+					<vaadin-grid-filter aria-label="SerialReferenceIndex" path="SerialReferenceIndex" value="[[_filterSerialReferenceIndex]]">
+					</vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.SerialReferenceIndex]]
+				</template>
+				<template class="footer-off">
+					Serial Reference Index
+				</template>
+			</vaadin-grid-column>
+			
+			<vaadin-grid-column width="180px" resizable="true" id="Terminal">
+				<template class="header">
+					Shipping Hub
+					<vaadin-grid-filter class="hidden" aria-label="Shipping Hub" aria-placeholder="Shipping Hub" path="Terminal" value="[[_filterTerminal]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="TerminalCombo" value="{{_filterTerminal}}" style="width:120px;"></vaadin-combo-box>
+				</template>
+				<template>[[item.Terminal]]</template>
+				<template class="footer-off">
+					Shipping Hub
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="180px" resizable="true" id="SSCC">
+				<template class="header">
+					SSCC
+					<vaadin-grid-filter aria-label="SSCC" path="SSCC" value="[[_filterSSCC]]">
+					</vaadin-grid-filter>
+				</template>
+				<template>[[item.SSCC]]</template>
+				<template class="footer-off">
+					SSCC
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="180px" flex-grow="0" resizable="true" id="Weight">
+				<template class="header">
+					Weight (kg)
+				</template>
+				<template>
+					[[_formatWeightW(item.WeightGrams, 'kg')]]
+				</template>
+				<template class="footer-off">
+					Weight (kg)
+				</template>
+			</vaadin-grid-column>
+			
+			<vaadin-grid-column width="340px" resizable="true" id="InvoiceOrganizationName">
+				<template class="header">
+					Invoice Organization
+					<vaadin-grid-filter aria-label="InvoiceOrganizationName" path="InvoiceOrganizationName" value="[[_filterInvoiceOrganizationName]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span hidden$="[[!item.InvoiceOrganizationID]]">
+						<b>[[item.InvoiceOrganizationName]]</b><br /> 
+						#: <span class="order-id copy-tap" on-tap="_copyTap">[[item.InvoiceOrganizationID]]</span>
+						<a href="[[_urlViewOrganization(item.InvoiceOrganizationID)]]">
+							<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+						</a>
+					</span>
+
+				</template>
+				<template class="footer-off">
+					Invoice Organization
+				</template>
+			</vaadin-grid-column>
+			
+			<vaadin-grid-column width="420px" flex-grow="0" resizable="true" id="Packages">
+				<template class="header">
+					Packages
+					<vaadin-grid-filter aria-label="Packages" path="Packages" value="[[_filterPackages]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<dom-repeat items="[[item.Packages]]" as="packagei">
+						<template>
+							<span class="copy-tap" on-tap="_copyTap">[[packagei.ID]]</span><dom-if if="[[_notLast(item.Packages, index)]]"><template>,</template></dom-if>
+						</template>
+					</dom-repeat>
+				</template>
+				<template class="footer-off">
+					Packages
+				</template>
+			</vaadin-grid-column>
+
+		</vaadin-grid>
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-shipping-containers-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

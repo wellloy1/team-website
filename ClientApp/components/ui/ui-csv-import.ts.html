@@ -1,0 +1,160 @@
+<input 
+    id="paste-input" 
+    type="text" 
+    on-focus="onFocus"
+    on-blur="onBlur"
+    on-paste="onPaste"
+    tabindex="1"
+    readonly
+/>
+
+<input 
+    id="file-input" 
+    tabindex="-1"
+    type="file" 
+    name$="[[name]]" 
+    required$="[[required]]" 
+    multiple$="[[multiple]]" 
+    accept$="[[accept]]" 
+    capture$="[[capture]]"
+/>
+
+<div class="layout vertical center center-justified">
+    <iron-icon
+        on-tap="_onFilePickerTap"
+        class="file-picker" 
+        hidden$="[[hasFiles]]"
+        icon="view-list">
+    </iron-icon>
+    <div 
+        unselectable="on"
+        hidden$="[[hasFiles]]" 
+        class="title">
+        [[localize('csvimport-drophere')]]
+    </div>
+
+    <div class="error small">[[lastError.message]]</div>
+
+        
+    <dom-repeat items="[[files]]">
+        <template>
+            <div class="file-name small" on-tap="onTableTap">
+                <span>[[item.name]]</span> 
+                <paper-icon-button 
+                    class="delete-button" 
+                    icon="close" 
+                    tooltip$="[[localize('csvimport-filelist-remove-label')]]" tooltip-flow="left"
+                    aria-label$="[[localize('csvimport-filelist-remove-label')]]" 
+                    on-tap="_removeFileTap">
+                </paper-icon-button>
+
+                <paper-checkbox checked="{{transposing}}" on-change="transposingChangeHandler">
+                    [[localize('csvimport-transpose')]]
+                </paper-checkbox>
+            </div>
+            <!-- <div class="file-img">
+                <img 
+                    src="[[item.imgUrl]]" 
+                    draggable="false" 
+                    img-orientation$="[[item.imgOrientation]]" 
+                    style$="[[imgStyle]]"
+                />
+                <div 
+                    class="progress-circle hidden-animated" 
+                    aria-valuemin="0" 
+                    aria-valuemax="100" 
+                    aria-valuenow$="[[item.progress]]" 
+                    hidden-animated$="[[item.progressHide]]" 
+                    processing$="[[item.processing]]">
+                    <span class="p-h"></span>
+                    <span class="p-f"></span>
+                    <span class="p-t">[[item.progressText]]</span>
+                </div>
+            </div> -->
+
+            <div class="table-container" on-tap="onTableTap" hidden$="[[!items.length]]">
+                <div class="table">
+                    <div class="header hcenter">
+                        <div>
+                            [[localize('csvimport-list-from')]]
+                        </div>
+                        <div>
+                            <!-- # -->
+                        </div>
+                        <dom-repeat items="[[_headerKeys(items)]]" as="headi">
+                            <template>
+                                <div>[[headi]]</div>
+                            </template>
+                        </dom-repeat>
+                        <div>
+                            <!--  -->
+                        </div>
+                    </div>
+                
+                    <div class="row mapping hcenter">
+                        <div>
+                            [[localize('csvimport-list-to')]]
+                        </div>
+                        <div>
+                            #
+                        </div>
+                        <dom-repeat items="[[mapping]]" as="mapi">
+                            <template>
+                                <div>
+                                    <teamatical-ui-select
+                                        no-caption
+                                        value="{{mapi.To}}"
+                                        options="[[mappingKeys]]">
+                                    </teamatical-ui-select>
+                                </div>
+                            </template>
+                        </dom-repeat>
+                        <div>
+                            <!--  -->
+                        </div>
+                    </div>
+
+
+                    <dom-repeat items="[[_preview(items)]]" as="rowi">
+                        <template>
+                            <div class="row hcenter">
+                                <div>
+                                    <!--  -->
+                                </div>
+                                <div>
+                                    [[_formatN(index)]]
+                                </div>
+                                <dom-repeat items="[[_objectKeys(rowi)]]" as="coli">
+                                    <template>
+                                        <div>
+                                            [[_valueArr(rowi, coli)]]
+                                        </div>
+                                    </template>
+                                </dom-repeat>
+                                <div>
+                                    <!-- <paper-icon-button 
+                                        class="delete-button" 
+                                        icon="close" 
+                                        tooltip$="[[localize('csvimport-list-remove-label')]]"
+                                        aria-label$="[[localize('csvimport-list-remove-label')]]" 
+                                        on-tap="_removePlayerTap">
+                                    </paper-icon-button> -->
+                                </div>
+                            </div>
+                        </template>
+                    </dom-repeat>
+                </div>
+
+                <dom-if if="[[_moreItems(items)]]">
+                    <template>
+                        <div class="more-items">
+                            [[localize('csvimport-list-moreitems')]]
+                            ([[items.length]])
+                        </div>
+                    </template>
+                </dom-if>
+
+            </div>
+        </template>
+    </dom-repeat>
+</div>

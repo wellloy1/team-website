@@ -1,0 +1,1001 @@
+<app-route route="{{route}}" pattern="/:storeid" data="{{routeData}}"></app-route>
+
+<app-localstorage-document key="account-products" data="{{localStorage}}"></app-localstorage-document>
+
+
+<teamatical-store-data 
+  id="storeData" 
+  item-name="[[routeData.storeid]]" 
+  item-model="{{store}}" 
+  is-organization="[[_allowEditOrganization]]"
+  user-info="[[userInfo]]"
+  query-params="{{queryParams}}" 
+  website-url="[[websiteUrl]]" 
+  country-group-profile="{{countryGroupProfile}}"
+  visible="{{visible}}" 
+  failure="{{failure}}" 
+  loading="{{loading}}" 
+  saving="{{saving}}">
+</teamatical-store-data>
+
+
+<dom-if if="[[_showHeroImage]]">
+  <template>
+    <teamatical-ui-image
+      class="hero-image" 
+      style$="[[_heroImageStyles]]"
+      alt="[[store.storelogo.name]]" 
+      src="[[store.storelogo.imgUrl]]" 
+      not-use-webp 
+      lazy-load
+      placeholder-img="[[store.storelogo.placeholder]]">
+    </teamatical-ui-image>
+  </template>
+</dom-if>
+
+<header>
+  <h1>
+    <iron-icon
+      hidden$="[[hideStoreDefault]]" 
+      icon="label" 
+      tooltip$="[[localize('store-default-hint')]]" tooltip-flow="down" tooltip-flow-horiz="right"
+      class="store-default">
+    </iron-icon>
+
+    <iron-icon
+      hidden$="[[hideCustomizingLock]]" 
+      icon="lock" 
+      tooltip$="[[localize('store-customizelock-hint')]]" tooltip-flow="down" tooltip-flow-horiz="right"
+      class="customize-lock">
+    </iron-icon>
+
+    <iron-icon
+      hidden="[[_hideStoreMatrixDelayed]]" 
+      hidden-animated$="[[_hideStoreMatrix]]" 
+      disabled$="[[_disabled]]" 
+      class="matrix-flag hidden-animated" 
+      aria-label$="[[_storeMatrixName]]" 
+      tooltip$="[[_storeMatrixName]]" tooltip-flow="down" tooltip-flow-horiz="left"
+      icon="store:matrix" 
+      class="confirmed" 
+      tooltip$="[[localize('store-email-confirmed')]]">
+    </iron-icon>
+
+
+    <span hidden$="[[editing]]">[[store.title]]</span>
+
+    <div class="share-btn" share-branded$="[[!_hideShareBranded]]">
+      <teamatical-ui-button-share 
+        hidden$="[[_hideShare]]" 
+        disabled$="[[_disableShare]]"
+        customization-type="[[_shareType]]"
+        position-element="header" 
+        item-model="[[store]]" 
+        route="[[route]]" 
+        route-data="[[routeData]]" 
+        query-params="[[queryParams]]" 
+        website-url="[[websiteUrl]]" 
+        app-title-default="[[appTitleDefault]]" 
+        visible="[[visible]]" 
+        tooltip$="[[localize('store-sharebutton-tooltip')]]" tooltip-flow="down"
+        sharing-picture="[[store.image]]">
+      </teamatical-ui-button-share>
+
+      <teamatical-ui-button-share 
+        hidden$="[[_hideShareBranded]]" 
+        disabled$="[[_disableShare]]"
+        customization-type="store-branded"
+        position-element="header" 
+        item-model="[[store]]" 
+        route="[[route]]" 
+        route-data="[[routeData]]" 
+        query-params="[[queryParams]]" 
+        website-url="[[websiteUrl]]" 
+        app-title-default="[[appTitleDefault]]" 
+        visible="[[visible]]" 
+        tooltip$="[[localize('store-sharebrandedbutton-tooltip')]]" tooltip-flow="down"
+        sharing-picture="[[store.image]]">
+      </teamatical-ui-button-share>
+    </div>
+    
+    <div class="live" hidden$="[[_hideLive]]">[[localize('store-islive')]]</div>
+
+    <div class="organization" data-own$="[[store.SameOrganizationAsStore]]" hidden$="[[_hideOrganization]]" >
+      <div>[[store.organization.OrganizationName]]</div>
+    </div>
+
+    <div class="switchers-сontainer">
+      <!-- html markup fix -->
+    </div>
+    
+    <div id="switchGroupContainer" class="switch-group-container" hidden$="[[_hideSaveDelayed]]">
+      <paper-toggle-button 
+        id="switchGroup" 
+        hidden$="[[_hideSaveDelayed]]" 
+        hidden-animated$="[[_hideSave]]" 
+        disabled$="[[_disabledSwitchGroup]]" 
+        class="hidden-animated" 
+        on-change="switchGroupToggled"
+        checked="{{store.isgroup}}">
+        [[localize('store-groupshipping-switch')]]
+      </paper-toggle-button>
+    </div>
+    
+
+    <div class="switchers-сontainer">
+      <paper-toggle-button 
+        id="switchMatrix" 
+        hidden="[[_hideMatrixDelayed]]" 
+        hidden-animated$="[[_hideMatrix]]" 
+        disabled$="[[_disabledMatrix]]"
+        class="hidden-animated" 
+        checked="{{store.isMatrix}}">
+        [[localize('store-matrix-switch')]]
+      </paper-toggle-button>
+
+      <paper-toggle-button 
+        id="switchCustomize" 
+        hidden="[[_hideSaveDelayed]]" 
+        hidden-animated$="[[_hideSave]]" 
+        disabled$="[[_disabledSwitchCustomize]]"
+        class="hidden-animated" 
+        checked="{{store.hidecustomize}}">
+        [[localize('store-customize-switch')]]
+      </paper-toggle-button>
+
+      <paper-toggle-button 
+        id="switchHidePrices" 
+        hidden="[[_hideSaveDelayed]]" 
+        hidden-animated$="[[_hideSave]]" 
+        disabled$="[[_disabledHidePrices]]"
+        class="hidden-animated" 
+        checked="{{store.hideprices}}">
+        [[localize('store-hideprices-switch')]]
+      </paper-toggle-button>
+
+      <paper-toggle-button 
+        id="switchInPublicCatalog" 
+        hidden="[[_hideSaveDelayed]]" 
+        hidden-animated$="[[_hideSave]]" 
+        disabled$="[[_disabledInPublicCatalog]]"
+        class="hidden-animated" 
+        checked="{{store.inpubliccatalog}}">
+        [[localize('store-inpubliccatalog-switch')]]
+      </paper-toggle-button>
+    </div>
+
+    <paper-icon-button 
+      icon="label" 
+      tooltip$="[[localize('stores-hint-isdefault')]]" tooltip-flow="down"
+      aria-label$="[[localize('store-isdefault-aria-label')]]"
+      hidden="[[_hideDefaultButton(store.isdefault,editing)]]" 
+      disabled="[[_disabled]]"
+      on-tap="_onMakeAsDefault">
+    </paper-icon-button>
+    <paper-icon-button 
+      class="default-icon"
+      icon="label-outline" 
+      tooltip$="[[localize('stores-hint-makedefault')]]" tooltip-flow="down"
+      aria-label$="[[localize('store-makedefault-aria-label')]]"
+      hidden="[[_hideMakeDefaultButton(store.isdefault,editing)]]" 
+      disabled="[[_disabled]]"
+      on-tap="_onMakeAsDefault">
+    </paper-icon-button>
+
+    <paper-icon-button 
+      hidden="[[_hideEditDelayed]]" 
+      hidden-animated$="[[_hideEdit]]" 
+      disabled="[[_disabled]]" 
+      class="edit-icon hidden-animated" 
+      cake="1w2" 
+      aria-label$="[[localize('store-modeedit-aria-label')]]"
+      tooltip$="[[localize('store-edit-tooltip')]]" tooltip-flow="down" 
+      icon="editor:mode-edit" 
+      on-tap="_startEdit">
+    </paper-icon-button>
+    
+    <paper-icon-button 
+      hidden="[[_hideGroupOrderDelayed]]" 
+      hidden-animated$="[[_hideGroupOrder]]" 
+      disabled$="[[_disabled]]" 
+      class="grouporder-icon hidden-animated" 
+      cake="1w2" 
+      aria-label$="[[localize('store-grouporder-aria-label')]]" 
+      tooltip$="[[localize('store-grouporder-hint')]]" tooltip-flow="down" 
+      icon="store:grouporder-archive" 
+      on-tap="_groupordersList">
+    </paper-icon-button>
+
+    <!-- <paper-icon-button 
+      hidden="[[_hideStoreMatrixDelayed]]" 
+      hidden-animated$="[[_hideStoreMatrix]]" 
+      disabled$="[[_disabled]]" 
+      class="grouporder-icon hidden-animated" 
+      cake="1w2" 
+      aria-label$="[[_storeMatrixName]]" 
+      tooltip$="[[_storeMatrixName]]" tooltip-flow="down" tooltip-flow-horiz="left"
+      icon="store:matrix" 
+      on-tap="_gotoMatrixTap">
+    </paper-icon-button> -->
+
+    <paper-icon-button 
+      hidden="[[_hideAdminsDelayed]]" 
+      hidden-animated$="[[_hideAdmins]]" 
+      disabled$="[[_disabled]]" 
+      class="admins-icon hidden-animated" 
+      cake="1w2" 
+      aria-label$="[[localize('store-admins-aria-label')]]" 
+      tooltip$="[[localize('store-admins-hint')]]" tooltip-flow="down" tooltip-flow-horiz="left"
+      icon="icons:supervisor-account" 
+      on-tap="_adminsList">
+    </paper-icon-button>
+
+    
+    <!-- <paper-icon-button 
+      hidden="[[_hideSaveDelayed]]" 
+      hidden-animated$="[[_hideSave]]" 
+      disabled$="[[_disabled]]" 
+      class="edit-icon hidden-animated" 
+      cake="1w2" 
+      aria-label$="[[localize('store-save-aria-label')]]"
+      icon="device:sd-storage" 
+      on-tap="_saveEdit">
+    </paper-icon-button> -->
+  </h1> 
+
+  <p class="groupshipping-confirming-alert" hidden$="[[_isGroupConfirming]]">
+    <span>[[localize('store-groupshipping-confirming-title', 'first', store.shipping.ShipFirstName, 'last', store.shipping.ShipLastName)]]</span> <br />
+    <!-- <span no-wrap hidden$="[[!store.shipping.IsConfirmingAccountEmail]]">[[localize('store-groupshipping-confirming-email')]]</span> <br />
+    <span no-wrap hidden$="[[!store.shipping.IsConfirmingAccountPhone]]">[[localize('store-groupshipping-confirming-phone')]]</span> -->
+  </p>
+
+  <p class="groupshipping-active-block" hidden$="[[_isGroupDeadline]]">
+    <span no-wrap>[[localize('store-groupshippingdate-title')]]</span>
+    <teamatical-ui-date-time 
+      tooltip$="[[localize('groupshipping-count-down-title')]]"
+      show-count-down
+      visible="[[visible]]"
+      hour="numeric" minute="numeric" second="numeric"
+      datetime-obj="[[store.groupdeadline]]">
+    </teamatical-ui-date-time>
+    &nbsp;
+    <span no-wrap class="g-count" hidden="[[!_bool(store.shipping.OrderCount)]]">[[localize('store-groupshippingcount-title', 'count', store.shipping.OrderCount)]]</span>
+    
+    <a hidden$="[[_hideParticipantsLink]]" no-wrap href="[[viewParticipantsUrl(store.shipping.GroupShippingID)]]">[[localize('store-groupshippingcount-participantes-btn')]]</a>
+  </p>
+
+  <p class="groupshipping-done-block" hidden$="[[_isGroupDeadlineDone]]">
+    <span no-wrap>[[localize('store-groupshippingdate-done-title')]]</span>
+    <teamatical-ui-date-time 
+      tooltip$="[[localize('groupshipping-date-title')]]"
+      hour="numeric"
+      minute="numeric"
+      second="numeric"
+      datetime-obj="[[store.shippingarchived.groupdeadline]]">
+    </teamatical-ui-date-time>
+    &nbsp;
+    <span no-wrap class="g-count" hidden="[[!_bool(store.shippingarchived.OrderCount)]]">[[localize('store-groupshippingcount-title', 'count', store.shippingarchived.OrderCount)]]</span>
+    <a no-wrap href="[[viewParticipantsUrl(store.shippingarchived.GroupShippingID)]]">[[localize('store-groupshippingcount-participantes-btn')]]</a>
+  </p>
+
+
+  <!-- store-details -->
+  <paper-expansion-panel 
+    hidden$="[[!editing]]" 
+    opened="[[openedDetails]]"
+    header="[[localize('store-details-label')]]">
+    <paper-input 
+      id="title"
+      hidden$="[[!editing]]"
+      disabled$="[[!_editingMode]]"
+      name="title"
+      type="text"
+      label="[[localize('store-title-input')]]" 
+      placeholder="[[localize('store-title-placeholder')]]"
+      value="{{store.title}}" 
+      required
+      tabindex="0"
+      autocomplete="title">
+    </paper-input>
+
+    <dom-if if="[[_asBool(store.CurrencyRegions)]]">
+      <template>
+
+        <div>
+          <teamatical-ui-select 
+            id="CurrencyRegion" 
+            name="store.CurrencyRegion" 
+            class="hidden-animated" 
+            hidden$="[[_hideSaveDelayed]]" 
+            hidden-animated$="[[_hideSave]]" 
+            disabled$="[[_disabled]]" 
+            options="[[store.CurrencyRegions]]" 
+            value="{{store.CurrencyRegion}}" 
+            to-left
+            label="[[localize('store-currencyregion-label')]]"
+            text-property="title" 
+            value-property="id" 
+            aria-labelledby="storeCurrencyRegion"
+            aria-label$="[[localize('store-currencyregion-arialabel')]]">
+          </teamatical-ui-select>
+        </div>
+
+      </template>
+    </dom-if>
+  </paper-expansion-panel>
+
+  
+  <!-- store-banner -->
+  <paper-expansion-panel 
+    hidden$="[[!editing]]" 
+    opened="[[openedBanner]]" 
+    on-toggle="_onToggleBannerUpload"
+    header="[[localize('store-image-uploader-label')]]">
+    <teamatical-ui-image-uploader 
+      id="image-uploader" 
+      hidden$="[[_hideBannerBranded]]" 
+      api-path="/api/v1.0/store/upload-banner" 
+      website-url="[[websiteUrl]]" 
+      placeholder-url="/images/store/store-banner-sample.png"
+      visible="[[visible]]" 
+      files="{{storelogo}}"
+      accept="image/jpeg,image/png,image/webp"
+      drophere-message="[[localize('store-image-uploader-title')]]">
+    </teamatical-ui-image-uploader>
+  </paper-expansion-panel>
+
+  <!-- store-description -->
+  <paper-expansion-panel 
+    hidden$="[[!editing]]" 
+    opened="false" 
+    header="[[localize('store-desc-label')]]">
+    <teamatical-ui-richtext-editor
+      id="description"
+      name="description"
+      hidden$="[[!editing]]"
+      visible="[[editing]]"
+      disabled$="[[!_editingMode]]"
+      placeholder="[[localize('store-desc-placeholder')]]"
+      value-html="{{store.description}}"
+      on-value-changed="onInputChanged"
+      error-message="[[store.notvalid.description]]"
+      invalid="[[_asBool(store.notvalid.description)]]">
+    </teamatical-ui-richtext-editor>
+  </paper-expansion-panel>
+
+
+  <div class="top-buttons" hidden$="[[_hideTopButtons]]">
+    <teamatical-ui-button 
+      hidden$="[[_hideSave]]"
+      disabled$="[[_disabled]]"
+      on-tap="_cancelEdit">
+      [[localize('store-cancel-btn')]]
+    </teamatical-ui-button>
+
+    <teamatical-ui-button 
+      hidden$="[[_hideSave]]"
+      disabled$="[[_disabled]]"
+      on-tap="_saveEdit">
+      [[localize('store-save-btn')]]
+    </teamatical-ui-button>
+
+    <teamatical-ui-button 
+      responsive 
+      responsive-hide
+      hidden$="[[_hideSave]]"
+      disabled$="[[_disabled]]"
+      on-tap="_saveEdit">
+      [[localize('store-save-btn')]]
+    </teamatical-ui-button>
+  </div>
+
+
+  <p class="store-list-caption" hidden$="[[_hideListCaption]]">
+    <span no-wrap>
+      [[_getPluralizedQuantity(store.items.length)]]
+    </span>
+
+    <span hidden$="[[_hideGridSwitcher]]"> 
+      <paper-icon-button class="grid-switcher" icon="view-module" on-tap="gripSwitchTap" hidden$="[[isGrid]]" tooltip$="[[localize('store-viewmode-grid4-tooltip')]]" tooltip-flow="down"></paper-icon-button>
+      <paper-icon-button class="grid-switcher" icon="view-quilt" on-tap="gripSwitchTap" hidden$="[[!isGrid]]" tooltip$="[[localize('store-viewmode-grid3-tooltip')]]" tooltip-flow="down"></paper-icon-button>
+    </span>
+
+    <span hidden$="[[!editing]]"> 
+      <paper-icon-button 
+        class="add-separator" 
+        icon="av:playlist-add" 
+        on-tap="_addSeparatorTap" 
+        tooltip$="[[localize('store-add-separator-tooltip')]]">
+      </paper-icon-button>
+    </span>
+  </p>
+
+  
+
+  
+
+  <teamatical-ui-description 
+    class="store-description-html" 
+    hidden$="[[_hideStoreDesc]]"
+    ql-editor-view
+    html="[[store.description]]">
+  </teamatical-ui-description>
+</header>
+
+
+<teamatical-ui-loader hidden$="[[!_isConn]]"></teamatical-ui-loader>
+
+
+<div 
+  group-shipping$="[[_isEditingAndGroupShipping]]"
+  first-section$="[[firstSection]]"
+  class="section-container">
+  <!-- <div
+    id="groupShipping" 
+    draggable="false" 
+    class="hidden-animated"
+    hidden$="[[_hideShippingDelayed]]" 
+    hidden-animated$="[[_hideShipping]]">
+    <p>data input here</p>
+  </div> -->
+
+  <section
+    id="shipping"
+    class="shipping hidden-animated"
+    hidden$="[[_hideShippingDelayed]]" 
+    hidden-animated$="[[_hideShipping]]">
+    <div>
+
+      <h2 id="groupShippingDateHeading">[[localize('store-groupshippingdate-title')]]</h2>
+
+      <dom-if if="[[_isEditingAndGroupShipping]]">
+        <template>
+          <div class="date-picker-horiz">
+            <vaadin-date-picker 
+              id="groupdeadline"
+              disabled$="[[!store.isgroup]]"
+              class="groupdeadline"
+              min$="[[groupdeadlinemin]]"
+              max$="[[groupdeadlinemax]]"
+              error-message="[[store.notvalid.groupdeadline]]" 
+              invalid="[[_asBool(store.notvalid.groupdeadline)]]"
+              on-change="storeGroupdeadlineDateChangedEvent"
+              value="{{groupdeadlinedate}}">
+            </vaadin-date-picker>
+
+            <vaadin-time-picker 
+              id="groupdeadlinetime" 
+              class="groupdeadlinetime"
+              step="3600"
+              on-change="storeGroupdeadlineDateChangedEvent"
+              value="{{groupdeadlinetime}}">
+            </vaadin-time-picker>
+          </div>
+
+          <div class="date-picker-horiz">
+            <paper-checkbox 
+              id="IsAutorenewal"
+              name="IsAutorenewal" 
+              disabled="[[!store.isgroup]]"
+              checked="{{store.groupshippingautorenewal}}">
+              [[localize('store-groupshippingdate-autorenewal-title')]]
+            </paper-checkbox>
+          </div>
+          <div class="date-picker-horiz">
+            <vaadin-custom-field hidden$="[[!store.groupshippingautorenewal]]">
+              <vaadin-text-field 
+                id="AutorenewalValue"
+                name="AutorenewalValue"
+                prevent-invalid-input 
+                pattern="[0-9]*" 
+                maxlength="8" 
+                value="{{store.groupshippingautorenewalvalue}}">
+                [[localize('store-groupshippingdate-autorenewal-weeks')]]
+              </vaadin-text-field>
+              <vaadin-select id="AutorenewalUnits" name="AutorenewalUnits" style="width: 6em;" value="{{store.groupshippingautorenewalunits}}">
+                <template>
+                  <vaadin-list-box>
+                    <vaadin-item value="days">[[localize('store-groupshippingdate-autorenewal-days')]]</vaadin-item>
+                    <vaadin-item value="weeks">[[localize('store-groupshippingdate-autorenewal-weeks')]]</vaadin-item>
+                  </vaadin-list-box>
+                </template>
+              </vaadin-select>
+            </vaadin-custom-field>
+          </div>
+        </template>
+      </dom-if>
+      <div class="row input-row">
+        <paper-input id="groupmin" name="groupmin" type="text" required pattern=".{1,}" autocomplete="groupmin" label="[[localize('store-groupmin')]]" disabled$="[[!store.isgroup]]"
+          value="{{store.groupmin}}" aria-labelledby="groupShippingDateHeading" error-message="[[localize('store-groupmin-invalid')]]"></paper-input>
+
+        <paper-input id="GroupShippingOrderCount" name="groupordercount" type="text" disabled required pattern=".{1,}" autocomplete="groupordercount" label="[[localize('store-groupordercount')]]"
+          value="[[store.shipping.OrderCount]]" aria-labelledby="groupShippingDateHeading" error-message="[[localize('store-groupmin-invalid')]]"></paper-input>
+      </div>
+
+
+      <h2 id="paymentDetailsHeading" hidden$="[[_hideCheckoutCodeOnly]]">
+        [[localize('store-paymentdetails-title')]]
+      </h2>
+
+      <div class="row input-row" hidden$="[[_hideCheckoutCodeOnly]]">
+        <paper-toggle-button 
+          id="switchCheckoutCodeOnly" 
+          hidden="[[_hideSaveDelayed]]" 
+          hidden-animated$="[[_hideSave]]" 
+          disabled$="[[_disabledCheckoutCodeOnly]]"
+          class="hidden-animated" 
+          checked="{{store.checkoutcodeonly}}">
+          [[localize('store-checkoutcodeonly-toggle')]]
+        </paper-toggle-button>
+      </div>
+
+
+      <h2 id="customOptionsHeading">
+        [[localize('store-customoptions-title')]]
+      </h2>
+
+      <div class="row input-row">
+        <paper-checkbox name="CustomOptionsRequired" 
+          disabled="[[!store.isgroup]]"
+          checked="{{store.shipping.CustomOptionsRequired}}"
+          on-change="_storeServerErrorCustomOptions">
+          [[localize('store-customoptions-required')]]
+        </paper-checkbox>
+      </div>
+
+      <div class="row input-row">
+        <teamatical-ui-validation-summary 
+          id="CustomOptions" 
+          name="shipping.CustomOptions">
+        </teamatical-ui-validation-summary>
+      </div>
+
+      <div class="row input-row">
+        <paper-input 
+          id="CustomOptionsTitle" 
+          type="text" 
+          autocomplete="CustomOptionsTitle"
+          label="[[localize('store-customoptions-optiontitle')]]" 
+          disabled$="[[!store.isgroup]]"
+          value="{{store.shipping.CustomOptionsTitle}}" 
+          aria-labelledby="customOptionsHeading"
+          name="CustomOptionsTitle" 
+          error-message="[[store.notvalid.CustomOptionsTitle]]" 
+          invalid="[[_asBool(store.notvalid.CustomOptionsTitle)]]"
+          on-value-changed="onInputChanged">
+        </paper-input>
+      </div>
+
+      
+
+      <div class="row input-row">
+
+        <div class="customoptions-list">
+          <div class="table">
+            <div class="header vbottom">
+              <div>
+                #
+              </div>
+              <div>
+                [[localize('store-customoptions-optionname')]]
+              </div>
+              <div>
+                <!-- buttons -->
+              </div>
+            </div>
+        
+            <dom-repeat items="[[store.shipping.CustomOptions]]" as="custopti">
+              <template>
+                <div class="row vcenter">
+                  <div>
+                    [[_formatN(index)]]
+                  </div>
+                  <div>
+                    <paper-input 
+                      type="text" 
+                      autocomplete="CustomOptionName"
+                      label="[[localize('store-customoptions-optionname')]]"
+                      value="{{custopti.CustomOptionName::input}}" 
+                      error-message="[[custopti.notvalid.CustomOptionName]]" 
+                      invalid="[[_asBool(custopti.notvalid.CustomOptionName)]]"
+                      id$="CustomOptionName[[index]]" 
+                      name$="store.shipping.CustomOptions.[[index]].CustomOptionName" 
+                      on-value-changed="onInputChanged">
+                    </paper-input>
+                  </div>
+                  <div class="w10 right">
+                    <div class="buttons-container">
+                      <paper-icon-button 
+                        class="delete-button" 
+                        icon="close" 
+                        disabled="[[actionNotAllowed]]"
+                        tooltip$="[[localize('store-customoptions-remove-label')]]" 
+                        aria-label$="[[localize('store-customoptions-remove-label')]]" 
+                        on-tap="_removeCustOptTap">
+                      </paper-icon-button>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </dom-repeat>
+        
+            <div class="row vcenter">
+              <div>
+                <!-- new -->
+              </div>
+              <div>
+                <paper-input 
+                  name="CustomOptionName" 
+                  type="text" 
+                  label="[[localize('store-customoptions-optionname')]]"
+                  value="{{optionnew.CustomOptionName::input}}" 
+                  on-value-changed="onInputChanged"
+                  error-message="[[optionnew.notvalid.CustomOptionName]]" 
+                  invalid="[[_asBool(optionnew.notvalid.CustomOptionName)]]"
+                  autocomplete="CustomOptionName">
+                </paper-input>
+              </div>
+              <div class="w10 right">
+                <div class="buttons-container">
+                  <paper-icon-button slot="suffix" class="add-btn" icon="add-circle-outline"
+                    tooltip$="[[localize('store-customoptions-add-label')]]" on-tap="_addCustOptTap"></paper-icon-button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+
+
+      <h2 id="shipAddressHideHeading">
+        [[localize('store-groupshippingaddress-hide-title')]]
+      </h2>
+
+      <div class="row input-row">
+        <paper-checkbox 
+          disabled="[[!store.isgroup]]"
+          checked="{{store.shipping.DeliveryDetailsOnly}}"
+          name="DeliveryDetailsOnly" 
+          error-message="[[store.notvalid.DeliveryDetailsOnly]]" 
+          invalid="[[_asBool(store.notvalid.DeliveryDetailsOnly)]]"
+          on-value-changed="onInputChanged">
+          [[localize('store-groupshippingaddress-detailsonly')]]
+        </paper-checkbox>
+      </div>
+
+      <div class="row input-row"  hidden$="[[_hideDeliveryDetails]]">
+        <paper-textarea 
+          id="DeliveryDetails" 
+          type="text" 
+          autocomplete="delivery-details"
+          label="[[localize('store-groupshippingaddress-details')]]" 
+          aria-labelledby="shipAddressHideHeading" 
+          disabled$="[[!store.isgroup]]" 
+          value="{{store.shipping.DeliveryDetails}}"
+          name="DeliveryDetails" 
+          error-message="[[store.notvalid.DeliveryDetails]]" 
+          invalid="[[_asBool(store.notvalid.DeliveryDetails)]]"
+          on-value-changed="onInputChanged">
+        </paper-textarea>
+      </div>
+
+      
+
+      
+      <h2 id="shipAddressHeading">[[localize('store-groupshippingaddress-title')]]</h2>
+      
+      <div class="company-picker">
+        <paper-checkbox id="isCompany" name="isCompany" checked="{{store.shipping.IsCompany}}">
+          [[localize('checkout-is-company')]]
+        </paper-checkbox>
+      </div>
+
+      <div class="row input-row">
+        <paper-input id="ShipFirstName" name="firstName" type="text" autocomplete="firstname" label="[[localize('checkout-firstname')]]" disabled$="[[!store.isgroup]]"
+          value="{{store.shipping.ShipFirstName}}" aria-labelledby="shipAddressHeading" error-message="[[localize('checkout-firstname-invalid')]]"></paper-input>
+      </div>
+      <div class="row input-row">
+        <paper-input id="ShipLastName" name="lastName" type="text" autocomplete="lastname" label="[[localize('checkout-lastname')]]" disabled$="[[!store.isgroup]]"
+          value="{{store.shipping.ShipLastName}}" aria-labelledby="shipAddressHeading" error-message="[[localize('checkout-lastname-invalid')]]"></paper-input>
+      </div>
+
+
+      <div class="column">
+        <teamatical-ui-select id="ShipCountry" name="shipCountry" options="[[store.shipping.CountryList]]" to-left
+          label="[[localize('checkout-country')]]"
+          text-property="title" value-property="id" disabled$="[[!store.isgroup]]" autocomplete="shipping country"
+          value="{{store.shipping.ShipCountry}}" aria-labelledby="shipAddressHeading"
+          aria-label$="[[localize('checkout-country')]]"></teamatical-ui-select>
+      </div>
+
+      <div class="row input-row">
+        <teamatical-ui-validation-summary 
+          id="ShipAddressSummary" 
+          name="ShipAddressSummary">
+        </teamatical-ui-validation-summary>
+        <div id="IgnoreSuggestionValidation" name="IgnoreSuggestionValidation"></div>
+      </div>
+
+      <div class="row input-row">
+        <paper-input id="ShipAddress" name="shipAddress" type="text" autocomplete="shipping street-address" disabled$="[[!store.isgroup]]"
+          label="[[localize('checkout-address')]]" value="{{store.shipping.ShipAddress}}" aria-labelledby="shipAddressHeading" error-message="[[localize('checkout-address-invalid')]]"></paper-input>
+      </div>
+      <div class="row input-row">
+        <paper-input id="ShipAddress2" name="shipAddress2" type="text" autocomplete="shipping street-address2" disabled$="[[!store.isgroup]]"
+          label="[[localize('checkout-address2')]]" value="{{store.shipping.ShipAddress2}}" aria-labelledby="shipAddressHeading" error-message="[[localize('checkout-address-invalid')]]"></paper-input>
+      </div>
+      <div class="row input-row">
+        <paper-input id="ShipAddress3" name="shipAddress3" type="text" autocomplete="shipping street-address3" disabled$="[[!store.isgroup]]"
+          label="[[localize('checkout-address3')]]" value="{{store.shipping.ShipAddress3}}" aria-labelledby="shipAddressHeading" error-message="[[localize('checkout-address-invalid')]]"></paper-input>
+      </div>
+
+      <div class="row input-row">
+        <paper-input id="ShipCity" name="shipCity" type="text" autocomplete="shipping address-level2"
+          value="{{store.shipping.ShipCity}}" disabled$="[[!store.isgroup]]" label="[[localize('checkout-city')]]"
+          aria-labelledby="shipAddressHeading" error-message="[[localize('checkout-city-invalid')]]"></paper-input>
+      </div>
+      
+      <div class="row input-row">
+        <paper-input id="ShipState" name="shipState" type="text" autocomplete="shipping address-level1"
+          disabled$="[[!store.isgroup]]" value="{{store.shipping.ShipState}}"
+          label="[[localize(countryGroupProfile.ShipState)]]" aria-labelledby="shipAddressHeading"
+          error-message="[[localize('checkout-state-invalid')]]"></paper-input>
+      
+        <paper-input id="ShipZip" name="shipZip" type="text" autocomplete="shipping postal-code"
+          value="{{store.shipping.ShipZip}}" disabled$="[[!store.isgroup]]" label="[[localize(countryGroupProfile.ShipZip)]]"
+          aria-labelledby="shipAddressHeading" error-message="[[localize('checkout-zip-invalid')]]"></paper-input>
+      </div>
+
+
+      <!-- company -->
+      <div class="row input-row">
+        <paper-input id="ShipCompany" name="shipCompany" type="text" autocomplete="shipping company"
+          hidden$="[[!store.shipping.IsCompany]]"
+          disabled$="[[!store.isgroup]]" label="[[localize('checkout-company')]]" value="{{store.shipping.ShipCompany}}"
+          aria-labelledby="shipAddressHeading" error-message="[[localize('checkout-company-invalid')]]"></paper-input>
+      </div>
+      <div class="row input-row">
+        <paper-input id="ShipTaxID" name="shipTaxID" type="text" autocomplete="shipping tax"
+          hidden$="[[hidden_ShipTaxID]]"
+          disabled$="[[!store.isgroup]]" label="[[localize('checkout-tax')]]" value="{{store.shipping.ShipTaxID}}"
+          aria-labelledby="shipAddressHeading" error-message="[[localize('checkout-tax-invalid')]]"></paper-input>
+      </div>
+      <div class="row input-row">
+        <paper-input id="ShipEORI" name="shipEORI" type="text" autocomplete="shipping eori"
+        hidden$="[[hidden_ShipEORI]]"
+          disabled$="[[!store.isgroup]]" label="[[localize('checkout-eori')]]" value="{{store.shipping.ShipEORI}}"
+          aria-labelledby="shipAddressHeading" error-message="[[localize('checkout-eori-invalid')]]"></paper-input>
+      </div>
+
+      <!-- Residential Address -->
+      <div class="residential-picker">
+        <paper-checkbox id="isResidential" name="isResidential" checked="{{store.shipping.IsResidential}}">
+          [[localize('checkout-is-residential')]]
+        </paper-checkbox>
+      </div>
+
+
+
+      <h2 id="accountInfoHeading">[[localize('store-accountinfo-title')]]</h2>
+      <div class="row input-row">
+        <paper-input id="AccountEmail" name="email" type="email" label="[[localize('checkout-email')]]" value="{{store.shipping.AccountEmail}}" disabled$="[[_disabledLiveIsGroup]]"
+           required autocomplete="email" aria-labelledby="accountInfoHeading" error-message="[[localize('checkout-email-invalid')]]">
+          <div slot="suffix">
+            <paper-icon-button
+              hidden$="[[hideConfirm('confirming', store.shipping.IsConfirmedAccountEmail, store.shipping.IsConfirmingAccountEmail)]]"
+              icon="more-horiz" 
+              class="confirming" 
+              on-tap="confirmEmailDialog"
+              aria-label$="[[localize('store-email-confirming-aria-label')]]"
+              tooltip$="[[localize('store-email-confirming')]]">
+            </paper-icon-button>
+
+            <iron-icon
+              hidden$="[[hideConfirm('confirmed', store.shipping.IsConfirmedAccountEmail, store.shipping.IsConfirmingAccountEmail)]]" 
+              icon="check-circle" 
+              class="confirmed" 
+              tooltip$="[[localize('store-email-confirmed')]]">
+            </iron-icon>
+          </div>
+        </paper-input>
+
+        <simple-overlay 
+          id="AccountEmailConfirmDialog" 
+          restore-focus-on-close
+          scroll-action="cancel"
+          tabindex="-1">
+          <h2>
+            [[localize('store-email-confirm-title')]]
+          </h2>
+          
+          <paper-input id="AccountEmailConfirm" name="phone-confirm" type="string" label="[[localize('store-email-confirm')]]" 
+            value="{{store.shipping.AccountEmailConfirm}}"
+            autocomplete="off">
+            <div slot="suffix">
+              <paper-icon-button 
+                icon="av:replay-30" 
+                class="resend"
+                hidden$="[[hideConfirm('send', store.shipping.IsConfirmedAccountEmail, store.shipping.IsConfirmingAccountEmail)]]"
+                on-tap="resendEmailTap"
+                aria-label$="[[localize('store-email-resend-aria-label')]]"
+                alt="[[localize('store-email-resend-alt')]]" 
+                tooltip$="[[localize('store-email-resend-btn')]]">
+              </paper-icon-button>
+            </div>
+          </paper-input>
+        </simple-overlay>
+      </div>
+
+      <div class="row input-row">
+        <paper-input id="AccountPhone" name="phone" type="tel" pattern="[\+]?[\d\s\.\-\(\)]{10,}" label="[[localize('checkout-phone')]]" disabled$="[[_disabledLiveIsGroup]]"
+          value="{{store.shipping.AccountPhone}}" required autocomplete="tel" aria-labelledby="accountInfoHeading" error-message="[[localize('checkout-phone-invalid')]]">
+          <div slot="suffix">
+            <paper-icon-button 
+              hidden$="[[hideConfirm('confirming', store.shipping.IsConfirmedAccountPhone, store.shipping.IsConfirmingAccountPhone)]]"
+              icon="more-horiz" 
+              class="confirming" 
+              on-tap="confirmPhoneDialog"
+              aria-label$="[[localize('store-phone-confirming-aria-label')]]"
+              tooltip$="[[localize('store-phone-confirming')]]">
+            </paper-icon-button>
+            <iron-icon
+              hidden$="[[hideConfirm('confirmed', store.shipping.IsConfirmedAccountPhone, store.shipping.IsConfirmingAccountPhone)]]" 
+              icon="check-circle" 
+              class="confirmed" 
+              tooltip$="[[localize('store-phone-confirmed')]]">
+            </iron-icon>
+          </div>
+        </paper-input>
+        
+        <simple-overlay 
+          id="AccountPhoneConfirmDialog" 
+          restore-focus-on-close
+          scroll-action="cancel"
+          tabindex="-1">
+          <h2>
+            [[localize('store-phone-confirm-title')]]
+          </h2>
+          <paper-input id="AccountPhoneConfirm" name="phone-confirm" type="string" label="[[localize('store-phone-confirm')]]" 
+            value="{{store.shipping.AccountPhoneConfirm}}"
+            autocomplete="off">
+            <div slot="suffix">
+              <paper-icon-button 
+                icon="av:replay-30" 
+                class="resend"
+                hidden$="[[hideConfirm('send', store.shipping.IsConfirmedAccountPhone, store.shipping.IsConfirmingAccountPhone)]]"
+                on-tap="resendPhoneTap"
+                aria-label$="[[localize('store-phone-resend-aria-label')]]"
+                alt="[[localize('store-phone-resend-alt')]]" 
+                tooltip$="[[localize('store-phone-resend-btn')]]">
+              </paper-icon-button>  
+            </div>
+          </paper-input>
+        </simple-overlay>
+      </div>
+
+      <div class="row input-row" hidden$="[[_hideGroupAlert]]">
+        <div class="message-wrapper">
+          <div class="message-highlight"></div>
+          <p class="alert">[[localize('store-confirm-alert', 'email', store.shipping.AccountEmail, 'phone', store.shipping.AccountPhone)]]</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section
+    id="list"
+    class="list">
+
+    <div class="subsection hidden" visible$="[[_showEmpty]]">
+      <div>
+        <p class="empty-list">
+          [[localize('store-empty-1')]]
+          <iron-icon icon="store"></iron-icon>
+          [[localize('store-empty-2')]]
+        </p>
+      </div>
+      <teamatical-ui-button on-tap="_getMore" hidden$="[[!store.isdefault]]">[[localize('store-category-notfound-btn')]]</teamatical-ui-button>
+    </div>
+    
+    <teamatical-ui-sortable-list 
+      id="items" 
+      class="products hidden-animated" 
+      draggable="false" 
+      sortable="products-item" 
+      grabable="products-item" 
+      editing="[[editing]]" 
+      dragging="{{dragging}}"
+      hidden$="[[_hideListDelayed]]" 
+      hidden-animated$="[[_hideList]]" 
+      on-sort-finish="_onSortFinish">
+      <dom-repeat 
+        id="productsList" 
+        items="{{store.items}}" 
+        as="item" index-as="index">
+          <template>
+
+            <teamatical-ui-store-item
+              draggable="false" 
+              class="products-item" 
+              data-index$="[[index]]"
+              data-id$="[[item.id]]"
+              data-name$="[[item.name]]"
+              store-id="[[store.sid]]"
+              website-url="[[websiteUrl]]"
+              item="{{item}}" 
+              small-screen="[[smallScreen]]"
+              small-width="[[smallItemsWidth]]"
+              is-moving="[[isMoving]]"
+              is-organization="[[_allowEditOrganization]]"
+              is-separator="[[item.isseparator]]"
+              is-cutted="[[_isCutted(clipboardItems, item.id, clipboardItems.*)]]"
+              is-paste="[[_isPaste(clipboardItems, item.id, clipboardItems.*)]]"
+              can-nobadges="[[store.cannobadges]]"
+              hide-prices="[[store.hideprices]]"
+              editing="[[editing]]" 
+              on-tap="onListItem">
+            </teamatical-ui-store-item>
+
+          </template>
+      </dom-repeat>
+    </teamatical-ui-sortable-list>
+   
+  </section>
+
+</div>
+
+
+<footer>
+  <teamatical-ui-button 
+    hidden$="[[_hideSave]]"
+    disabled$="[[_disabled]]"
+    on-tap="_cancelEdit">
+    [[localize('store-cancel-btn')]]
+  </teamatical-ui-button>
+
+  <teamatical-ui-button 
+    hidden$="[[_hideSave]]"
+    disabled$="[[_disabled]]"
+    on-tap="_saveEdit">
+    [[localize('store-save-btn')]]
+  </teamatical-ui-button>
+  
+  <teamatical-ui-button 
+    responsive 
+    responsive-hide
+    hidden$="[[_hideSave]]"
+    disabled$="[[_disabled]]"
+    on-tap="_saveEdit">
+    [[localize('store-save-btn')]]
+  </teamatical-ui-button>
+</footer>
+
+<div 
+  id="notfound"
+  hidden$="[[_isFound]]">
+  <div>
+    <iron-icon icon="icons:find-in-page"></iron-icon>
+    <h1>[[localize('store-category-notfound-title')]]</h1>
+    <p>[[localize('store-category-notfound-msg')]]</p>
+  </div>
+  <teamatical-ui-button on-tap="_getMore">[[localize('store-category-notfound-btn')]]</teamatical-ui-button>
+</div>
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>
+
+<teamatical-ui-list-subcategory 
+  class="showen-animated"
+  showen-animated$="[[!_hideRecentlyViewed]]"
+  role="listbox"
+  subcategory-title="list-subcategory-recentproducts" 
+  subcategory-items="[[store.RecentProducts]]" 
+  no-collapsible
+  visible="[[visible]]">
+</teamatical-ui-list-subcategory>

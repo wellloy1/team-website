@@ -1,0 +1,179 @@
+<teamatical-rosters-data 
+  id="rosters-data" 
+  rosters="{{rosters}}" 
+  num-items="{{numItems}}"
+  query-params="{{queryParams}}"
+  searching-progress="{{searchingProgress}}"
+  user-info="{{userInfo}}" 
+  website-url="[[websiteUrl]]"
+  loading="{{loading}}" 
+  failure="{{failure}}"
+  visible="[[visible]]" 
+  saving="{{saving}}">
+</teamatical-rosters-data>
+
+<teamatical-ui-loader hidden$="[[_isNotConn]]"></teamatical-ui-loader>
+
+<div hidden$="[[_isNoRosters]]">
+  <div class="subsection" visible>
+    <header>
+      <h1>[[_accountTitle(userInfo.orgName, 'rosters-title', visible)]]</h1>
+      <span>
+        (
+        <span>[[_numItems]][[_numItemsApproximately]]</span>
+        <span hidden="[[!_single]]">[[localize('rosters-qty-item')]]</span>
+        <span hidden="[[!_many]]">[[localize('rosters-qty-items')]]</span>
+        )
+      </span>
+    </header>
+
+    <div id="add-button-container">
+      <paper-fab 
+        id="add-button" 
+        aria-label="add"
+        icon="add" 
+        disabled="[[actionNotAllowed]]"
+        mini
+        on-tap="_onAddTap">
+      </paper-fab>
+
+      <paper-spinner-lite 
+        id="search-progress"
+        active="[[searchingProgress]]">
+      </paper-spinner-lite>
+
+    </div>
+
+    <paper-input 
+      id="search"
+      name="search"
+      type="text"
+      label="[[localize('rosters-search-input')]]" 
+      aria-label$="[[localize('rosters-search-input')]]"
+      placeholder="[[localize('rosters-search-placeholder')]]"
+      value="{{rosters.search::input}}"
+      required
+      autocomplete="search"
+      error-message="[[localize('rosters-search-invalid')]]">
+    </paper-input>
+
+    <p class="empty-list" hidden$="[[_hasSearchedItems]]">
+      [[localize('rosters-search-empty')]]
+    </p>
+    
+    <div
+      id="list" 
+      class="roster-list" 
+      hidden$="[[!_hasSearchedItems]]"
+      draggable="false">
+
+      <iron-list 
+        id="gridList"
+        items="{{rosters.items}}" 
+        as="rosteri"
+        scroll-target="document"
+        default-physical-count="40">
+          <template>
+            <div 
+              class="roster drag-item" 
+              archive$="[[_bool(rosteri.IsArchive)]]">
+
+              <div class="roster-header">
+                
+                <div class="line-horizonal">
+                  <paper-icon-button 
+                    icon="label" 
+                    aria-label$="[[localize('rosters-isdefault-aria-label')]]"
+                    tooltip$="[[localize('rosters-hint-isdefault')]]" tooltip-flow="up" tooltip-flow-horiz="right"
+                    hidden="[[!rosteri.IsDefault]]" 
+                    disabled="[[actionNotAllowed]]">
+                  </paper-icon-button>
+              
+                  <paper-icon-button 
+                    icon="label-outline" 
+                    aria-label$="[[localize('rosters-makedefault-aria-label')]]"
+                    tooltip$="[[localize('rosters-hint-makedefault')]]" tooltip-flow="up" tooltip-flow-horiz="right"
+                    hidden="[[rosteri.IsDefault]]" 
+                    disabled="[[actionNotAllowed]]"
+                    on-tap="_onMakeAsDefault">
+                  </paper-icon-button>
+
+                  <iron-icon 
+                    hidden$="[[!rosteri.hidecustomize]]" 
+                    icon="lock" 
+                    tooltip$="[[localize('roster-customizelock-hint')]]" tooltip-flow="up" tooltip-flow-horiz="right"
+                    class="customize-lock">
+                  </iron-icon>
+
+                  <h3>
+                    [[_rosterItemTitle(rosteri.RosterID, rosteri.RosterTitle)]]
+                  </h3>
+
+                  <paper-icon-button 
+                    class="archive-button" 
+                    icon="icons:archive" 
+                    hidden$="[[_isarch(rosteri.IsArchive, rosteri.RosterID)]]"
+                    disabled="[[actionNotAllowed]]"
+                    tooltip$="[[localize('rosters-archive-label', 'item', rosteri.RosterTitle)]]" tooltip-flow="left"
+                    aria-label$="[[localize('rosters-archive-label', 'item', rosteri.RosterTitle)]]" 
+                    on-tap="_archiveItem">
+                  </paper-icon-button>
+
+                  <paper-icon-button 
+                    class="archive-button" 
+                    icon="icons:unarchive" 
+                    hidden$="[[_isnotarch(rosteri.IsArchive, rosteri.RosterID)]]"
+                    disabled="[[actionNotAllowed]]"
+                    tooltip$="[[localize('rosters-unarchive-label', 'item', rosteri.RosterTitle)]]" tooltip-flow="left"
+                    aria-label$="[[localize('rosters-unarchive-label', 'item', rosteri.RosterTitle)]]" 
+                    on-tap="_unarchiveItem">
+                  </paper-icon-button>                  
+                </div>
+                <ul>
+                  <li>[[localize('rosters-title-created')]] [[_formatDate(rosteri.Created)]]</li>
+                  <li>[[localize('rosters-title-itemscount')]] [[rosteri.ItemCount]]</li>
+                </ul>
+              </div>
+              
+              <div class="roster-footer">
+                <teamatical-ui-button 
+                  class="configure-btn" 
+                  href="[[_hrefAccountRoster(rosteri.RosterID)]]">
+                  [[localize('rosters-btn-edit')]]
+                </teamatical-ui-button>
+              </div>
+            </div>
+          </template>
+      </iron-list>
+
+    </div>
+
+    <footer class="progress-container">
+      <paper-spinner-lite 
+        id="loadMoreProgress"
+        class="progress-centered"
+        active="[[_loadMoreProgress(loading, loadingMore)]]">
+      </paper-spinner-lite>
+      
+      <teamatical-ui-button 
+        id="loadMoreBtn"
+        hidden$="[[rosters.plast]]"
+        class="hidden-animated slow"
+        hidden-animated$="[[_loadMoreProgress(loading, loadingMore)]]"
+        disabled$="[[loading]]"
+        on-tap="_loadMore">
+        [[localize('rosters-load-more-btn')]]
+      </teamatical-ui-button>
+
+      <div class="end-list" hidden$="[[!_hasNoMoreItems]]">[[localize('rosters-list-end')]]</div>
+    </footer>
+
+  </div>
+</div>
+
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

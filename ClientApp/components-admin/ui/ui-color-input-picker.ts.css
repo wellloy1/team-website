@@ -1,0 +1,79 @@
+:host {
+    display: block;
+    --background-accentcolor-shadow: #aaa;
+}
+
+:host([show-add-button]) .add-btn {
+    display: inline-block !important;
+}
+:host([spot-color-only]) .color-picker-button {
+    display: none;
+}
+:host([spot-color-only]) .color-swatch {
+    display: inline-block;
+    padding: 8px;
+}
+.add-btn {
+    display: none;
+}
+/* .color-picker-button {
+} */
+.color-swatch {
+    display: none;
+}
+
+.color-swatch,
+.color-pantone-button,
+.color-picker-button {	
+	-webkit-filter: drop-shadow( 0 0 0.45rem var(--background-accentcolor-shadow) );
+	filter: drop-shadow( 0 0 0.45rem var(--background-accentcolor-shadow) );
+}
+
+
+.search-progress {
+    margin-right: 16px;
+}
+/* .color-selection {
+    position: relative;
+} */
+.color-selection > paper-listbox {
+    z-index: 1;
+    position: absolute;
+    width: 770px;
+	background-color: white;
+	box-shadow: 0 0 5px 5px rgba(168, 168, 168, 0.2) !important;
+}
+
+.color-selection paper-item {
+    cursor: pointer;
+}
+
+
+#dialognew {
+	--tmladmin-ui-dialog-container: {
+		background: rgba(10, 10, 10, 0.3);
+	};
+	--tmladmin-ui-dialog-frame: {
+		max-width: 500px;
+	};
+}
+#dialognew div[slot="body"] {
+	min-height: 26em;
+}
+#dialognew .dialog-loading {
+	display: block;
+    position: absolute;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+
+
+
+@media (max-width: 767px) {
+    .color-selection > paper-listbox {
+        width: 570px;
+    }
+}

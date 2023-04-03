@@ -1,0 +1,51 @@
+<paper-input 
+  id="userInput"
+  label="[[label]]" 
+  value="{{search::input}}"
+  type="text"
+  maxlength="100">
+  <!-- on-change="onInputChanged"
+  error-message="[[orderi.notvalid.Title]]"
+  invalid="[[_asBool(orderi.notvalid.Title)]]" -->
+  <paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+  <paper-icon-button 
+    slot="suffix" 
+    class="add-btn" 
+    tabindex="-1"
+    disabled$="[[!_asBool(userSelected)]]"
+    icon="admin-icons:add-circle-outline"
+    on-tap="_addUserTap">
+  </paper-icon-button>
+</paper-input>
+
+
+<div class="user-selection" >
+    <paper-listbox 
+      hidden$="[[LenLess(users)]]"
+      slot="dropdown-content" 
+      class="dropdown-content" 
+      attr-for-selected="value"
+      selected="{{userSelected.UserID}}">
+      <dom-repeat items="[[users]]" as="useri">
+        <template>
+          <paper-item 
+            disabled$="[[disabledDueOrganization(checkOrganization, contextOrganization, useri.Organization)]]"
+            value$="[[useri.UserID]]" 
+            on-tap="_onItemTap">
+            <teamatical-ui-user-inline user="[[useri]]" show-as-line>
+            </teamatical-ui-user-inline>
+          </paper-item>
+        </template>
+      </dom-repeat>
+    </paper-listbox>
+</div>
+
+
+
+
+<!-- <paper-input id="newuser" label="New Users ID" type="string">
+  <paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+  <paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline"
+    oid$="[[order.OrganizationID]]" on-tap="_addUserTap">
+  </paper-icon-button>
+</paper-input> -->

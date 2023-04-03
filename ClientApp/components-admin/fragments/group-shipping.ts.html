@@ -1,0 +1,761 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Group Order #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.GroupShippingID]]</span>
+					- Store #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.StoreID]]</span>
+					<a href="[[_urlViewStore(order.StoreID)]]" class="iron-icon">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+					<a href="[[_urlConsumerViewStore(order.StoreID, order.BaseUrl)]]" target="_blank">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon>
+					</a>
+				</h3>
+
+				<div class="buttons">
+					<paper-button 
+						class="order-resnapshot-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveGroupOrderTap">
+						Save Group Order
+					</paper-button>
+				</div>
+
+
+				<div class="table group-order-details">
+					<div class="row"><div>Finish Time (Deadline)</div><div>[[_formatDate(order.FinishTime)]]</div></div>
+					<div class="row"><div>Accepted For Manufacturing</div><div><span highlighted$="[[order.AcceptedForManufacturing]]">[[order.AcceptedForManufacturing]]</span></div></div>
+					<div class="row"><div>Is Acceptable For Manufactoring</div><div><span highlighted$="[[order.IsAcceptableForManufactoring]]">[[order.IsAcceptableForManufactoring]]</span></div></div>
+					<div class="row"><div>Is Cancelable</div><div><span highlighted$="[[order.IsCancelable]]">[[order.IsCancelable]]</span></div></div>
+					<div class="row"><div>Is Canceled</div><div><span highlighted$="[[order.IsCanceled]]">[[order.IsCanceled]]</span></div></div>
+					<div class="row"><div>Is Archive</div><div><span highlighted$="[[order.IsArchive]]">[[order.IsArchive]]</span></div></div>
+					<div class="row"><div>Is Direct Shipping</div><div><span highlighted$="[[order.IsDirectShipping]]">[[order.IsDirectShipping]]</span></div></div>
+					<div class="row"><div>Is Autorenewal</div><div><span highlighted$="[[order.IsAutorenewal]]">[[order.IsAutorenewal]]</span></div></div>
+					<div class="row"><div>Account Email Is Confirmed</div><div><span highlighted$="[[order.AccountEmailIsConfirmed]]">[[order.AccountEmailIsConfirmed]]</span></div></div>
+					<div class="row"><div>Account Email Confirmation Requested</div><div>[[_formatDate(order.AccountEmailConfirmationRequested)]]</div></div>
+					<div class="row"><div>Account Phone Is Confirmed</div><div><span highlighted$="[[order.AccountPhoneIsConfirmed]]">[[order.AccountPhoneIsConfirmed]]</span></div></div>
+					<div class="row"><div>Account Phone Confirmation Requested</div><div>[[_formatDate(order.AccountPhoneConfirmationRequested)]]</div></div>
+					<!-- <div class="row warning" hidden$="[[!order.NeedRefund]]"><div>Amount need to refund</div><div>[[_formatPrice(order.AmountForRefund, order.Currency)]]</div></div> -->
+					<div class="row"><div>OrderIDs</div><div>
+						<dom-repeat items="[[order.OrderIDs]]" as="orderid">
+							<template>
+								<span>
+									<span class="copy-tap" on-tap="_copyTap">[[orderid]]</span>
+									<a href="[[_urlViewOrder(orderid)]]" class="iron-icon">
+										<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+									</a>
+								</span>
+							</template>
+						</dom-repeat>
+						
+
+						
+
+					</div></div>
+				</div>
+
+
+				<!-- <div class="buttons">
+					<div class="spinner">
+						<paper-button class="regular-shipping-btn"
+							disabled$="[[_disabled(loadingAny, !order.IsDirectShipping)]]" raised
+							on-tap="regularShippingTap">
+							Regular Shipping
+						</paper-button>
+						<paper-spinner-lite class="thick"></paper-spinner-lite>
+					</div>
+
+					<div class="spinner">
+						<paper-button class="direct-shipping-btn"
+							disabled$="[[_disabled(loadingAny, order.IsDirectShipping)]]" raised
+							on-tap="directShippingTap"
+							title="(wo AirFreight, Simple Labeling)">
+							Direct Shipping
+						</paper-button>
+						<paper-spinner-lite class="thick"></paper-spinner-lite>
+					</div>
+				</div> -->
+
+
+				<div class="buttons">
+					<div class="spinner">
+						<paper-button 
+							class="finish-now-btn hidden"
+							showen-flex$="[[!order.IsAutorenewal]]"
+							disabled$="[[_disabled(loadingAny, order.IsFinishable)]]" raised
+							on-tap="finishNowTap"
+							title="it finishing automaticaly by time">
+							Finish NOW
+						</paper-button>
+						<paper-spinner-lite class="thick"></paper-spinner-lite>
+
+						<paper-button 
+							class="finish-now-btn hidden"
+							showen-flex$="[[order.IsAutorenewal]]"
+							disabled$="[[_disabled(loadingAny, order.IsFinishable)]]" raised
+							on-tap="finishNowTap"
+							title="it finishing automaticaly by time">
+							Finish NOW <br /> Start NEW
+						</paper-button>
+						<paper-spinner-lite class="thick"></paper-spinner-lite>
+					</div>
+				</div>
+
+				<div class="buttons">
+					<div class="spinner">
+						<paper-button class="accept-for-manufactoring" raised
+							disabled$="[[_disabled(loadingAny, order.IsAcceptableForManufactoring)]]"  
+							on-tap="acceptForManufactoringTap">
+							Accept
+						</paper-button>
+						<paper-spinner-lite class="thick"></paper-spinner-lite>
+					</div>
+
+					<div class="spinner">
+						<paper-button class="cancel" raised
+							disabled$="[[_disabled(loadingAny, order.IsCancelable)]]" 
+							on-tap="cancelTap">
+							Cancel
+						</paper-button>
+						<paper-spinner-lite class="thick"></paper-spinner-lite>
+					</div>
+				</div>
+
+
+
+				<div class="order-inputs section-details">
+					<h4>
+						Details:
+					</h4>
+
+					<!-- <paper-checkbox checked="{{order.}}" readonly>
+						AcceptedForManufacturing
+					</paper-checkbox> -->
+
+					<div class="small-inputs">
+						<paper-input label="Account Email (readonly)" type="string" readonly
+									 value="{{order.AccountEmail}}"
+									 name="AccountEmail" 
+									 on-value-changed="onInputChanged" 
+									 error-message="[[order.notvalid.AccountEmail]]"
+									 invalid="[[_asBool(order.notvalid.AccountEmail)]]">
+						</paper-input>
+						
+						<paper-input label="Account Phone (readonly)" type="string" readonly
+									 value="{{order.AccountPhone}}"
+									 name="AccountPhone" 
+									 on-value-changed="onInputChanged" 
+									 error-message="[[order.notvalid.AccountPhone]]"
+									 invalid="[[_asBool(order.notvalid.AccountPhone)]]">
+						</paper-input>
+
+						<paper-input label="Order Count (readonly)" type="string" readonly 
+									 value="{{order.OrderCount}}"
+									 name="OrderCount" 
+									 on-value-changed="onInputChanged" 
+									 error-message="[[order.notvalid.OrderCount]]"
+									 invalid="[[_asBool(order.notvalid.OrderCount)]]">
+						</paper-input>
+
+						<paper-input label="Group Shipping Min Participants (readonly)" type="string" readonly 
+									 value="{{order.GroupShippingMinParticipants}}"
+									 name="GroupShippingMinParticipants" 
+									 on-value-changed="onInputChanged" 
+									 error-message="[[order.notvalid.GroupShippingMinParticipants]]"
+									 invalid="[[_asBool(order.notvalid.GroupShippingMinParticipants)]]">
+						</paper-input>
+
+						<div class="selection">
+							<tmladmin-ui-dropdown-menu 
+								style="width: 100%;"
+								vertical-align="top" 
+								horizontal-align="left"
+								id-property="ID"
+								title-property="Name"
+								label="Shipping Hub"
+								disabled$="[[_dis_ShippingHub(loading, order.ShippingHubs)]]" 
+								value="{{order.ShippingHub}}"
+								value-list="[[order.ShippingHubs]]"
+								error-message="[[order.CantSwitchShippingHubs]]"
+								invalid="[[_asBool(order.CantSwitchShippingHubs)]]">
+							</tmladmin-ui-dropdown-menu>
+						</div>
+
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+				</div>
+
+
+				<div class="order-inputs section-shippinghubs">
+					<h4>
+						Shipping Hubs
+						<dom-if if="[[_yesItems(order.ShippingHubsEx, order.ShippingHubsEx.*)]]">
+							<template>
+							([[order.ShippingHubsEx.length]])
+							</template>
+						</dom-if>
+					
+						<paper-button class="order-recalc-shiprates-btn"
+									  disabled$="[[_dis_recalcShiprates(loadingAny, order.CantSwitchShippingHubsEx)]]"
+									  raised
+									  on-tap="recalcShiprateOrderTap">
+							Request Shipping Rates
+						</paper-button>
+						<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+					</h4>
+	
+					<dom-if if="[[order.notvalid.ShippingHubsEx]]">
+						<template>
+							<div class="notvalid alert">
+								<pre>
+									[[order.notvalid.ShippingHubsEx]]
+								</pre>
+							</div>
+						</template>
+					</dom-if>
+	
+	
+					<div scrollable-x>
+						<div class="table">
+							<div class="header">
+								<div>
+									Manufacturer ID
+								</div>
+								<div>
+									Manufacturer Name
+								</div>
+								<div>
+									Shipping Hub / Method
+								</div>
+							</div>
+						
+							<dom-repeat items="[[order.ShippingHubsEx]]" as="shubi">
+								<template>
+									<div class="row vcenter">
+										<div>
+											[[shubi.ManufacturerID]]
+											<a href="[[_urlViewManufacturer(shubi.ManufacturerID)]]">
+												<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+											</a>
+										</div>
+										<div>
+											[[shubi.ManufacturerName]]
+										</div>
+										<div>
+											<div class="selection">
+												<tmladmin-ui-dropdown-menu 
+													style="width: 100%;"
+													vertical-align="top" 
+													horizontal-align="left"
+													id-property="ID"
+													title-property="Name"
+													label="Shipping Hub / Method"
+													disabled$="[[loading]]" 
+													value="{{shubi.ShippingHub}}"
+													on-change="shippingHubChanged"
+													value-list="[[shubi.ShippingHubs]]"
+													error-message="[[order.CantSwitchShippingHubs]]"
+													invalid="[[_asBool(order.CantSwitchShippingHubs)]]">
+												</tmladmin-ui-dropdown-menu>
+											</div>
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+						</div>
+					</div>
+					<!-- no items -->
+					<dom-if if="[[!LenMore(order.ShippingHubsEx)]]">
+						<template>
+							<div class="noitems">
+								[[localize('admin-list-noitems')]]
+							</div>
+						</template>
+					</dom-if>
+				</div>
+
+
+
+				<div class="order-inputs section-shipping-address">
+					<h4>
+						Group Shipment Address: <span title="Address Hash"><sup>[[order.AddressHash]]</sup></span>
+					</h4>
+
+					<div class="small-inputs">
+						<paper-input label="[[localize('order-title-firstname')]]" type="string" value="{{order.ShipFirstName}}"
+									 name="ShipFirstName" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipFirstName]]"
+									 invalid="[[_asBool(order.notvalid.ShipFirstName)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-lastname')]]" type="string" value="{{order.ShipLastName}}"
+									 name="ShipLastName" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipLastName]]"
+									 invalid="[[_asBool(order.notvalid.ShipLastName)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-address')]]" type="string" value="{{order.ShipAddress}}"
+									 name="ShipAddress" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipAddress]]"
+									 invalid="[[_asBool(order.notvalid.ShipAddress)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-address2')]]" type="string" value="{{order.ShipAddress2}}"
+									 name="ShipAddress2" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipAddress2]]"
+									 invalid="[[_asBool(order.notvalid.ShipAddress2)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-address3')]]" type="string" value="{{order.ShipAddress3}}"
+									 name="ShipAddress3" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipAddress3]]"
+									 invalid="[[_asBool(order.notvalid.ShipAddress3)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-city')]]" type="string" value="{{order.ShipCity}}" name="ShipCity"
+									 on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipCity]]"
+									 invalid="[[_asBool(order.notvalid.ShipCity)]]">
+						</paper-input>
+
+						<paper-input label="[[localizeByCountry('order-title-state', order.ShipCountryCode)]]" type="string" value="{{order.ShipState}}"
+									 name="ShipState" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipState]]"
+									 invalid="[[_asBool(order.notvalid.ShipState)]]">
+						</paper-input>
+
+						<paper-input label="[[localizeByCountry('order-title-zip', order.ShipCountryCode)]]"
+									 type="string" value="{{order.ShipZip}}" name="ShipZip"
+									 on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipZip]]"
+									 invalid="[[_asBool(order.notvalid.ShipZip)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-country')]]" type="string" value="{{order.ShipCountry}}"
+									 name="ShipCountry" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipCountry]]"
+									 invalid="[[_asBool(order.notvalid.ShipCountry)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-company')]]" type="string" value="{{order.ShipCompany}}"
+									 name="ShipCompany" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipCompany]]"
+									 invalid="[[_asBool(order.notvalid.ShipCompany)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-tax')]]" type="string" value="{{order.ShipTaxID}}" name="ShipTaxID"
+									 on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipTaxID]]"
+									 invalid="[[_asBool(order.notvalid.ShipTaxID)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-eori')]]" type="string" value="{{order.ShipEORI}}" name="ShipEORI"
+									 on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipEORI]]"
+									 invalid="[[_asBool(order.notvalid.ShipEORI)]]">
+						</paper-input>
+
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+				</div>
+			</div>
+
+			<!-- Order Shipment Containers & Packages -->
+			<div class="order-inputs section-containers">
+				<!-- Order Shipment Containers -->
+				<h4>
+					Order Shipment Containers
+					<paper-button class="order-more-details-btn" disabled$="[[loadingAny]]" hidden$="[[!order.IsMore]]" raised on-tap="moreDetailTap">
+						Load More ...
+					</paper-button>
+				</h4>
+
+				<div scrollable-x>
+					<div class="table">
+						<div class="header">
+							<div>
+								Container
+							</div>
+							<div>
+								Track Number
+							</div>
+						</div>
+
+						<dom-repeat items="[[order.Containers]]" as="conti">
+							<template>
+								<div class="row">
+									<div>
+										[[conti.ContainerID]]
+										<a hidden$="[[!_asBool(conti.ContainerID)]]" href="[[_urlViewShippingContainer(conti.ContainerID)]]">
+											<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+										</a>
+									</div>
+									<div>
+										[[conti.TrackNumber]]
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+						
+						<dom-if if="[[!LenMore(order.Containers)]]">
+							<template>
+								<div class="noitems">
+									[[localize('admin-list-noitems')]]
+								</div>
+							</template>
+						</dom-if>
+					</div>
+				</div>
+			</div>
+
+			<div class="order-inputs section-packages">				
+				<!-- Order Shipment Packages -->
+				<h4>
+					Order Shipment Packages
+					<paper-button class="order-more-details-btn" disabled$="[[loadingAny]]" hidden$="[[!order.IsMore]]" raised on-tap="moreDetailTap">
+						Load More ...
+					</paper-button>
+				</h4>
+				<div scrollable-x>
+					<div class="table">
+						<div class="header">
+							<div>
+								Package
+							</div>
+							<div>
+								Track Number
+							</div>
+						</div>
+
+						<dom-repeat items="[[order.Packages]]" as="packagei">
+							<template>
+								<div class="row">
+									<div>
+										[[packagei.PackageID]]
+										<!-- <a hidden$="[[!_asBool(packagei.ContainerID)]]" href="[[_urlViewShippingPackage(packagei.ContainerID)]]">
+											<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+										</a> -->
+									</div>
+									<div>
+										[[packagei.TrackNumber]]
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+
+						<dom-if if="[[!LenMore(order.Packages)]]">
+							<template>
+								<div class="noitems">
+									[[localize('admin-list-noitems')]]
+								</div>
+							</template>
+						</dom-if>
+					</div>
+				</div>
+			</div>
+
+			<div class="order-inputs section-tracking">				
+				<h4>
+					Order Shipment Tracking
+				</h4>
+
+				<div scrollable-x>
+					<div class="table">
+						<div class="header">
+							<div>
+								Carrier
+							</div>
+							<div>
+								Track Number
+							</div>
+							<div>
+								Place
+							</div>
+							<div>
+								# Products
+							</div>
+							<div>
+								Hidden For Consumer
+							</div>
+						</div>
+	
+						<dom-repeat items="[[order.Tracking]]" as="tracki">
+							<template>
+								<div class="row">
+									<div>
+										[[tracki.Carrier]]
+									</div>
+									<div>
+										[[tracki.TrackingNumber]]
+									</div>
+									<div>
+										[[tracki.Place]]
+									</div>
+									<div>
+										[[tracki.ShippedCount]]
+									</div>
+									<div>
+										<span highlighted$="[[tracki.HiddenForConsumer]]">
+											[[tracki.HiddenForConsumer]]
+										</span>
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+	
+						<dom-if if="[[!LenMore(order.Tracking)]]">
+							<template>
+								<div class="noitems">
+									[[localize('admin-list-noitems')]]
+								</div>
+							</template>
+						</dom-if>
+					</div>
+				</div>
+			</div>
+
+
+			
+			<!-- Shipping Rates -->
+			<div class="order-inputs">
+				<h4>
+					Shipping Rates
+					<dom-if if="[[_yesItems(order.ShippingRates, order.ShippingRates.*)]]">
+						<template>
+						([[order.ShippingRates.length]])
+						</template>
+					</dom-if>
+				</h4>
+				<div>
+					<paper-input id="newpm" class="small-input newinput" label="New Rate" type="string"
+						name="Rate" on-value-changed="onInputChanged"
+						disabled$="[[loadingAny]]"
+						error-message="[[order.notvalid.Rate]]"
+						invalid="[[_asBool(order.notvalid.Rate)]]">
+						<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+						<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline" on-tap="addRateTap">
+						</paper-icon-button>
+					</paper-input>
+				</div>
+
+				<dom-if if="[[order.notvalid.ShippingRates]]">
+					<template>
+						<div class="notvalid alert">
+							<pre>
+								[[order.notvalid.ShippingRates]]
+							</pre>
+						</div>
+					</template>
+				</dom-if>
+
+
+				<div scrollable-x>
+					<div class="table">
+						<div class="header">
+							<div>
+								&nbsp;
+							</div>
+							<div>
+								ID
+							</div>
+							<div>
+								Name
+							</div>
+							<div class="centered">
+								Amount (¢)
+							</div>
+							<div class="centered">
+								Currency
+							</div>
+							<div>
+								Description
+							</div>
+							<div>
+								&nbsp;
+							</div>
+						</div>
+					
+						<dom-repeat items="[[order.ShippingRates]]" as="ratei">
+							<template>
+								<div class="row">
+									<div class="w10">
+										<div class="buttons unset">
+											<paper-icon-button class="upward-btn" icon="admin-icons:arrow-upward" on-tap="upwardItemTap"></paper-icon-button>
+											<paper-icon-button class="downward-btn" icon="admin-icons:arrow-downward" on-tap="downwardItemTap"></paper-icon-button>
+										</div>
+									</div>
+									<div has-errors$="[[ratei.notvalid.ID]]" title="[[_asString(ratei.notvalid.ID)]]">
+										[[ratei.ID]]
+									</div>
+									<div has-errors$="[[ratei.notvalid.Name]]" title="[[_asString(ratei.notvalid.Name)]]">
+										[[ratei.Name]]
+									</div>
+									<div has-errors$="[[ratei.notvalid.Amount]]" title="[[_asString(ratei.notvalid.Amount)]]" class="centered">
+										[[ratei.Amount]]
+									</div>
+									<div has-errors$="[[ratei.notvalid.Currency]]" title="[[_asString(ratei.notvalid.Currency)]]" class="centered">
+										[[ratei.Currency.title]]
+									</div>
+									<div has-errors$="[[ratei.notvalid.Description]]" title="[[_asString(ratei.notvalid.Description)]]">
+										[[ratei.Description]]
+									</div>
+									<div class="w15">
+										<div class="buttons unset">
+											<paper-button raised1 on-tap="editItemTap" class="edit-btn" disabled$="[[loading]]">Edit</paper-button>
+											<paper-button raised1 on-tap="deleteItemTap" class="delete-btn" disabled$="[[loading]]">Delete</paper-button>
+										</div>
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+
+						<dom-if if="[[_noItems(order.ShippingRates, order.ShippingRates.*)]]">
+							<template>
+								<div class="noitems">
+									[[localize('admin-list-noitems')]]
+								</div>
+							</template>
+						</dom-if>
+					</div>
+				</div>
+			</div>
+
+
+			<tmladmin-ui-changes-history
+				class="order-history"
+				title="Group Order History"
+				items="[[order.History]]">
+			</tmladmin-ui-changes-history>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+<paper-dialog id="dialogcancel" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Cancelation and Refund</h2>
+	<paper-dialog-scrollable>
+		Cancel Group Order will be proceed with orders refund...are you sure?
+
+		<paper-textarea label="Cancelation reason" value="{{dialogcancel_reason}}"></paper-textarea>
+	</paper-dialog-scrollable>
+
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>Close</paper-button>
+		<paper-button dialog-confirm on-tap="cancelConfirmTap">Cancel And Refund</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogaccept" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Accept Order</h2>
+	<paper-dialog-scrollable>
+		Accept Group Order will be proceed with production its items ... are you sure?
+	</paper-dialog-scrollable>
+
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>Close</paper-button>
+		<paper-button dialog-confirm on-tap="acceptConfirmTap">Accept</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogfinishnow" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Finish Now</h2>
+	<paper-dialog-scrollable>
+		Finish now will stop group order ... are you sure?
+
+		<paper-textarea label="Finish reason" value="{{dialogfinish_reason}}"></paper-textarea>
+	</paper-dialog-scrollable>
+
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>Close</paper-button>
+		<paper-button dialog-confirm on-tap="finishNowConfirmTap">Finish Now</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialog_rate" class="dialog-wide-none" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>[[editTitle]]</h2>
+	<paper-dialog-scrollable>
+
+		<h4>#: [[editItem.ID]]</h4>
+
+		<paper-input label="Name" type="string" value="{{editItem.Name::input}}"
+			name="editItem.Name" on-value-changed="onInputChanged"
+			error-message="[[editItem.notvalid.Name]]"
+			invalid="[[_asBool(editItem.notvalid.Name)]]">
+		</paper-input>
+
+		<paper-input label="Amount (¢)" type="string" value="{{editItem.Amount::input}}"
+			name="editItem.Order" on-value-changed="onInputChanged"
+			error-message="[[editItem.notvalid.Amount]]"
+			invalid="[[_asBool(editItem.notvalid.Amount)]]">
+		</paper-input>
+
+		<div class="selection">
+			<tmladmin-ui-dropdown-menu 
+				style="width:calc(100% - 8px)"
+				vertical-align="top" 
+				horizontal-align="left"
+				label="Currency"
+				disabled$="[[loading]]" 
+				value="{{editItem.Currency}}"
+				value-list="[[order.Currencies]]"
+				error-message="[[editItem.notvalid.Currency]]"
+				invalid="[[_asBool(editItem.notvalid.Currency)]]">
+			</tmladmin-ui-dropdown-menu>
+		</div>
+
+		<paper-input label="Description" type="string" value="{{editItem.Description::input}}"
+			name="editItem.Description" on-value-changed="onInputChanged"
+			error-message="[[editItem.notvalid.Description]]"
+			invalid="[[_asBool(editItem.notvalid.Description)]]">
+		</paper-input>
+
+	</paper-dialog-scrollable>
+
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>Close</paper-button>
+		<paper-button dialog-confirm on-tap="saveRateTap">[[editBtn]]</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Confirm Save Group Order</h2>
+	<paper-dialog-scrollable>
+		Group Order #: [[order.GroupShippingID]] is going to be saved...are you sure?
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="saveGroupOrderConfirmTap">Save Group Order</paper-button>
+	</div>
+</paper-dialog>

@@ -1,0 +1,8 @@
+:host {
+	display: inline-block;
+	position: relative;
+}
+
+paper-ripple {
+	color: var(--app-accent-color);
+}

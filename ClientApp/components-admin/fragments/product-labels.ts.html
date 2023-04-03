@@ -1,0 +1,186 @@
+<app-localstorage-document key="admin-product-labels-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+				<paper-button class="new-product-view-btn indigo" raised on-tap="newProductLabelTap">
+					New Product Label
+				</paper-button>
+			</div>
+		</div>
+
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="ProductLabels" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ProductLabelID]]</span>
+					<a href="[[_urlViewProductLabel(item.ProductLabelID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="352px" resizable="true" id="ProductLabelID">
+				<template class="header">
+					Product Label ID
+					<vaadin-grid-filter aria-label="ProductLabelID" path="ProductLabelID" value="[[_filterProductLabelID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ProductLabelID]]</span>
+					<a href="[[_urlViewProductLabel(item.ProductLabelID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">
+					Product Label ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="280px" resizable="true" id="Disabled">
+				<template class="header">
+					Disabled
+					<vaadin-grid-filter class="hidden" aria-label="Disabled" aria-placeholder="Disabled" path="Disabled" value="[[_filterDisabled]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="DisabledCombo" style="width:80px;" value="{{_filterDisabled}}"></vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted$="[[item.Disabled]]">
+						[[item.Disabled]]
+					</span>
+				</template>
+				<template class="footer-off">
+					Disabled
+				</template>
+			</vaadin-grid-column>
+						
+			<vaadin-grid-column width="236px" resizable="true" id="Type">
+				<template class="header">
+					Type
+					<vaadin-grid-filter class="hidden" aria-label="Type" aria-placeholder="Type" path="Type" value="[[_filterType]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="TypeCombo" value="{{_filterType}}" style="width:220px;"></vaadin-combo-box>
+				</template>
+				<template>[[item.Type]]</template>
+				<template class="footer-off">
+					Type
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="380px" resizable="true" id="Name">
+				<template class="header">
+					Name
+					<vaadin-grid-filter aria-label="Name" path="Name" value="[[_filterName]]">
+					</vaadin-grid-filter>
+				</template>
+				<template>[[item.Name]]</template>
+				<template class="footer-off">Name</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="80px" resizable="true" id="Size">
+				<template class="header">
+					Size (in)
+				</template>
+				<template>
+					[[item.LabelWidth]]
+					x
+					[[item.LabelHeight]]
+				</template>
+				<template class="footer-off">
+					Size (in)
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="440px" flex-grow="0" resizable="true" id="Preview">
+				<template class="header">Preview</template>
+				<template>
+					<div class="preview-img">
+						<img src="[[item.PreviewImageUrl]]" alt="[[item.Name]]" on-load="_onPreviewLoaded" />
+					</div>
+				</template>
+				<template class="footer-off">Preview</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column resizable="true" id="ZPLBody">
+				<template class="header">
+					ZPLBody
+					<vaadin-grid-filter aria-label="ZPLBody" path="ZPLBody" value="[[_filterZPLBody]]">
+					</vaadin-grid-filter>
+				</template>
+				<template>[[formatZPLBody(item.ZPLBody)]]</template>
+				<template class="footer-off">ZPLBody</template>
+			</vaadin-grid-column>
+
+
+			<dom-if if="[[userInfo.isAdmin]]">
+				<template>
+
+					<vaadin-grid-column width="340px" resizable="true" id="ManufacturerID">
+						<template class="header">
+							ManufacturerID
+							<vaadin-grid-filter aria-label="ManufacturerID" path="ManufacturerID" value="[[_filterManufacturerID]]"></vaadin-grid-filter>
+						</template>
+						<template>
+							<span hidden$="[[!item.ManufacturerID]]">
+								<b>[[item.ManufacturerName]]</b><br /> 
+								#: <span class="copy-tap" on-tap="_copyTap">[[item.ManufacturerID]]</span>
+							</span>
+						</template>
+					</vaadin-grid-column>
+					
+				</template>
+			</dom-if>
+
+
+		</vaadin-grid>
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-product-labels-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

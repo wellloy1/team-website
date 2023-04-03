@@ -1,0 +1,13 @@
+<div hidden$="[[offline]]">
+  <h1>[[localize('nonetwork-cannotreach')]]</h1>
+</div>
+<div hidden$="[[!offline]]">
+  <iron-icon icon="perm-scan-wifi"></iron-icon>
+  <h1>[[localize('nonetwork-title')]]</h1>
+  <p>[[localize('nonetwork-msg')]]</p>
+</div>
+
+<teamatical-ui-button
+  on-tap="_tryReconnect">
+  [[localize('nonetwork-btn')]]
+</teamatical-ui-button>

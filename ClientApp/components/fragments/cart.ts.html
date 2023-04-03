@@ -1,0 +1,114 @@
+
+<app-route route="{{route}}" data="{{routeData}}">
+</app-route>
+
+<teamatical-ui-loader hidden$="[[_isNotConn(cart,failure,offline,loading)]]"></teamatical-ui-loader>
+
+<div hidden$="[[_isNoCart(cart,failure,offline)]]">
+  
+  <div class="subsection" visible$="[[!hasItems]]">
+    <p class="empty-list">[[localize('cart-empty-1')]]<iron-icon icon="shopping-cart"></iron-icon>[[localize('cart-empty-2')]]</p>
+  </div>
+
+  <div class="subsection" visible$="[[hasItems]]">
+    <header>
+      <h1>[[localize('cart-title')]]</h1>
+      <span>
+        (<span>[[numItems]]</span>
+        <span hidden="[[!_single]]">[[localize('cart-qty-item')]]</span>
+        <span hidden="[[!_many]]">[[localize('cart-qty-items')]]</span>)
+      </span>
+    </header>
+
+    <div id="list" class="list">
+      <dom-repeat items="[[cartvisible]]" as="storei">
+        <template>
+          <div class="store">
+            <h4>
+              [[_storeTitle(storei)]]
+
+              <dom-if if="[[storei.summary]]">
+                <template>
+                  <span> / </span>
+                  <span class="message">[[storei.summary.Message]]</span>
+                </template>
+              </dom-if>
+            </h4>
+            
+            <dom-repeat items="[[storei.items]]" as="entry">
+              <template>
+                <teamatical-ui-cart-item 
+                  entry="[[entry]]" 
+                  user-info="[[userInfo]]"
+                  action-disabled="[[loading]]">
+                </teamatical-ui-cart-item>
+              </template>
+            </dom-repeat>
+
+            
+            <dom-if if="[[_asBool(storei.Promos)]]">
+              <template>
+                <dom-repeat items="[[storei.Promos]]" as="promoi">
+                  <template>
+                    <div class="promos-container">
+                      <div class="promos-item">
+                        [[promoi.Message]]
+                      </div>
+                    </div>
+                  </template>
+                </dom-repeat>
+              </template>
+            </dom-if>
+
+            <div class="total-items">
+              <dom-repeat items="[[_computeTotalsVisible(storei.Totals)]]" as="totali">
+                <template>
+                  <div class$="row total-row {{totali.class}}" 
+                     title$="[[totali.detail]]" 
+                     hide-prices$="[[totali.hideprices]]">
+                    <div class="flex">[[totali.title]]</div>
+                    <div>[[_formatTotalsItem(totali.id, totali.amount, storei.Currency)]]</div>
+                  </div>
+                </template>
+              </dom-repeat>
+            </div>
+
+            <div class="store-total-box" hide-prices$="[[storei.hideprices]]">
+              <dom-if if="[[storei.OverflowMessage]]">
+                <template>
+                  <span class="subtotal error">[[storei.OverflowMessage]]</span>
+                </template>
+              </dom-if>
+
+              <teamatical-ui-button 
+                is-admin$="[[isCheckoutForcedByAdmin(userInfo.isAdmin, storei.summary.Key)]]"
+                class="checkout-btn"
+                disabled$="[[disabledCheckout(loading, userInfo.isAdmin, storei.summary.Key, storei.OverflowMessage)]]"
+                href="[[_hrefCheckout(storei.gid)]]">
+                [[localize('cart-checkout')]]
+              </teamatical-ui-button>
+            </div>
+            
+            <teamatical-ui-button 
+              is-admin$="[[isCheckoutForcedByAdmin(userInfo.isAdmin, storei.summary.Key)]]"
+              class="checkout-btn"
+              disabled$="[[disabledCheckout(loading, userInfo.isAdmin, storei.summary.Key, storei.OverflowMessage)]]"
+              responsive$="[[_allowPrimary]]"
+              responsive-hide
+              href="[[_hrefCheckout(storei.gid)]]">
+              [[localize('cart-checkout')]]
+            </teamatical-ui-button>
+
+          </div>
+        </template>
+      </dom-repeat>
+    </div>
+  </div>
+  
+</div>
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

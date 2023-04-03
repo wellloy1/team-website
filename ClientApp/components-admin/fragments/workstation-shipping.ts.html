@@ -1,0 +1,551 @@
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="shipping"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+
+<div class="maindiv horiz">
+	<div class="order-container sticky">
+		<div class="order">
+			<!-- Shipping -->
+			<div class="order-shipping" hidden$="[[!order]]">
+				<div class="sticky-container">
+					<h2>
+						<paper-icon-button 
+							class="refresh-btn" 
+							icon="admin-icons:refresh"
+							title="[[localize('admin-ws-refresh')]]" 
+							disabled="[[loadingAny]]"
+							on-tap="_reloadTap">
+						</paper-icon-button>
+
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+
+						[[localize('admin-ws-shipping-title')]]
+					</h2>
+
+					<paper-progress 
+						id="progress" 
+						indeterminate 
+						class="" 
+						disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+				
+				<div class="main">
+					<div class="first-line">
+						<tmladmin-ui-barcode-input
+							id="barcodeinput" 
+							label$="[[localize('admin-ws-qa-barcode-label')]]" 
+							name="barcode" 
+							class="barcode-input" 
+							type="string" 
+							disabled$="[[disabledBarcodeInput]]" 
+							loading$="[[loadingCmd]]" 
+							shipping-mode
+							scanned-barcodes="{{scannedBarcodes}}"
+							related-barcodes="[[relatedBarcodes]]"
+							on-barcode-changed="onInputChanged"
+							on-barcode-enter="onBarcodeInputEnter">
+						</tmladmin-ui-barcode-input>
+					
+						<dom-if if="[[showManufacturers]]">
+							<template>
+								<div class="man-selection" is-admin>
+									<tmladmin-ui-dropdown-menu 
+										vertical-align="top" 
+										horizontal-align="left"
+										id-property="ManufacturerID"
+										title-property="ManufacturerName"
+										label="[[localize('admin-ws-manufacturer')]]"
+										disabled$="[[loadingAny]]" 
+										value="{{order.Manufacturer}}"
+										value-list="[[order.Manufacturers]]"
+										on-value-changed="onInputChanged"
+										error-message="[[order.notvalid.Manufacturer]]"
+										invalid="[[_asBool(order.notvalid.Manufacturer)]]">
+									</tmladmin-ui-dropdown-menu>
+								</div>
+							</template>
+						</dom-if>
+					</div>
+
+					<dom-if if="[[order.Invalid]]">
+						<template>
+							<h3 class="invalid">
+								[[_formatInvalid(order.Invalid, order.InvalidMessage, 'admin-ws-shipping-item-invalid')]]
+							</h3>
+						</template>
+					</dom-if>
+
+					<!-- <dom-if if="[[!order.CurrentPack]]">
+						<template>
+							<div class="first-line">
+								<paper-input label="[[localize('admin-ws-shipping-bucketcount')]]" type="string" value="[[order.BucketCount]]"
+									readonly="true">
+								</paper-input>
+								<paper-input label="[[localize('admin-ws-shipping-packcount')]]" type="string" value="[[order.PackCount]]"
+									readonly="true">
+								</paper-input>
+								<paper-input label="[[localize('admin-ws-shipping-containercount')]]" type="string"
+									value="[[order.ContainerCount]]" readonly="true">
+								</paper-input>
+							</div>
+						</template>
+					</dom-if> -->
+
+					<div id="content">
+						<dom-if if="[[order.CurrentPack]]">
+							<template>
+								<div class="current-pack" is-completed$="[[order.CurrentPack.IsComplete]]">
+									<div class="order-currentpack-dispose-container">
+										<dom-if if="[[order.CurrentPack.IsDisposable]]">
+											<template>
+												<div class="spinner">
+													<!-- disabled$="[[!order.CurrentPack.IsDisposable]]" -->
+													<paper-button class="order-disposeparcel-btn" disabled$="[[loadingAny]]" raised on-tap="onDisposeShippingTap">
+														[[localize('admin-ws-shipping-btn-dispose')]]
+													</paper-button>
+													<paper-spinner-lite class="thick"></paper-spinner-lite>
+												</div>
+											</template>
+										</dom-if>
+									</div>
+
+									<h1>
+										<!-- <div class="hidden" showen$="[[order.CurrentPack.IsSingleItemsBucket]]">
+											[[localize('admin-ws-shipping-backet-issingle-title')]]
+										</div>
+										<div class="hidden" showen$="[[order.CurrentPack.IsComplete]]">
+											<span class="hidden" showen$="[[order.CurrentPack.IsSingleItemsBucket]]">|</span>
+											[[localize('admin-ws-shipping-backet-iscomplete-title')]]
+										</div>
+										<div showen>
+											| [[_formatDate(order.CurrentPack.Created)]]
+										</div> -->
+
+										<span class="hidden" showen$="[[order.Sandbox]]">
+											<iron-icon icon="admin-icons:warning" class="warning" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+											[[localize('admin-ws-test-item')]]
+										</span>
+									</h1>
+
+									<dom-if if="true">
+										<template>
+											<div class="parts-container push">
+												<div class="table">
+													<div class="header">
+														<!-- <div>
+															[[localize('admin-ws-shipping-backet-issingle-title')]]
+														</div> -->
+														<div>
+															[[localize('admin-ws-shipping-notpackeditems-title')]]
+														</div>
+														<div>
+															[[localize('admin-ws-shipping-packeditems-title')]]
+														</div>
+														<div>
+															[[localize('admin-ws-shipping-packagecount-title')]]
+														</div>
+														<div>
+															[[localize('admin-ws-shipping-package-weight')]]
+														</div>
+													</div>
+													<div class="row">
+														<!-- <div>
+															<iron-icon icon="admin-icons:check-box" class="single-bucket-icon hidden" showen-icon$="[[order.CurrentPack.IsSingleItemsBucket]]"></iron-icon>
+														</div> -->
+														<div>
+															[[order.CurrentPack.NotPackedItemCount]]
+														</div>
+														<div>
+															[[order.CurrentPack.PackedItemCount]]
+														</div>
+														<div>
+															[[order.CurrentPack.PackageCount]]
+														</div>
+														<div>
+															<div>
+																[[_formatWeightW(order.CurrentPack.Weight.Grams, 'kg')]]
+															</div>
+															<div class="small">
+																[[_formatWeight(order.CurrentPack.Weight.Grams, weightUnits)]]
+															</div>
+															<div class="small">
+																Estimated Weight: [[_formatWeight(order.CurrentPack.WeightEstimated.Grams, 'kg')]]
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</template>
+									</dom-if>
+
+									<div class="weight-section">
+										
+										
+										<div class="order-currentpack-buttons">
+											<div class="spinner" hidden$="[[!userInfo.isAdmin]]" is-admin>
+												<paper-button class="order-testscale-btn" disabled$="[[loadingAny]]" raised on-tap="onTestScaleTap">
+													Test Scale
+												</paper-button>
+												<paper-spinner-lite class="thick"></paper-spinner-lite>
+											</div>
+										
+										</div>
+									</div>
+
+								
+									<div hidden$="[[!order.CurrentPack.IsComplete]]">
+									
+										<div class="order-currentpack-buttons">
+											<dom-if if="[[order.CurrentPack.ShippingData]]">
+												<template>
+													<div class="spinner" hidden$="[[order.CurrentPack.IsSingleItemsBucket]]">
+														<paper-button class="order-cancelshipping-btn" disabled$="[[loadingAny]]" raised on-tap="onCancelShippingTap">
+															[[localize('admin-ws-shipping-btn-cancelshipping')]]
+														</paper-button>
+														<paper-spinner-lite class="thick"></paper-spinner-lite>
+													</div>
+												</template>
+											</dom-if>
+
+											<div class="spinner" hidden$="[[order.CurrentPack.IsSingleItemsBucket]]">
+												<paper-button class="order-printshipping-btn" disabled$="[[loadingAny]]" raised on-tap="onPrintShippingTap">
+													[[localize('admin-ws-shipping-btn-printshipping')]]
+												</paper-button>
+												<paper-spinner-lite class="thick"></paper-spinner-lite>
+											</div>
+										</div>
+
+									</div>
+
+
+									<dom-if if="[[LenMore(order.CurrentPack.Items, 10)]]">
+										<template>
+											<div class="order-currentpack-buttons">
+												<div class="spinner">
+													<paper-button 
+														hidden$="[[_hideFinishSingle]]"
+														disabled$="[[_disabledFinishSingle]]"
+														class="order-finishsingleshipping-btn" raised on-tap="onFinishSingleShippingTap">
+														[[localize('admin-ws-shipping-finishsingle-btn')]]
+													</paper-button>
+													<paper-spinner-lite class="thick"></paper-spinner-lite>
+
+													<paper-button 
+														hidden$="[[_hideFinish]]"
+														disabled$="[[_disabledFinish]]"
+														class="order-finishshipping-btn" raised on-tap="onFinishShippingTap">
+														[[localize('admin-ws-shipping-finish-btn')]]
+													</paper-button>
+													<paper-spinner-lite class="thick"></paper-spinner-lite>
+
+													<paper-button 
+														hidden$="[[_hideSplit]]"
+														disabled$="[[_disabledSplit]]"
+														class="order-splitshipping-btn" raised on-tap="onSplitShippingTap">
+														[[localize('admin-ws-shipping-split-btn')]]
+													</paper-button>
+													<paper-spinner-lite class="thick"></paper-spinner-lite>
+
+													<paper-button 
+														hidden$="[[_hideShippingDropCurrent]]"
+														disabled$="[[_disabledShippingDropCurrent]]"
+														class="order-shipping-drop-current-btn" raised on-tap="onShippingDropCurrentTap">
+														[[localize('admin-ws-shipping-drop-current-btn')]]
+													</paper-button>
+													<paper-spinner-lite class="thick"></paper-spinner-lite>
+												</div>
+											</div>
+										</template>
+									</dom-if>
+
+
+									<!-- Items -->
+									<div class="order-shipping-items">
+										<h4>
+											⮡ &nbsp;&nbsp;
+											[[localize('admin-ws-shipping-items-title')]]
+
+											- [[localize('admin-ws-shipping-item-packed')]]
+											<span>[[order.CurrentPack.CurrentPackedItemCount]]</span>
+										</h4>
+								
+										<div class="order-shipping-items-container">
+											<dom-repeat items="[[order.CurrentPack.Items]]" as="producti">
+												<template strip-whitespace>
+													<div class="order-shipping-items-item"
+														is-packed$="[[producti.IsPacked]]">
+														[[producti.Barcode]]
+
+														<paper-icon-button
+															tabindex="-1" 
+															class="help-btn" 
+															icon="admin-icons:help-outline" 
+															on-tap="_showBarcodeDetailsTap">
+														</paper-icon-button>
+													</div>
+												</template>
+											</dom-repeat>
+											<dom-if if="[[!LenMore(order.CurrentPack.Items)]]">
+												<template>
+													<div class="noitems">
+														[[localize('admin-ws-shipping-items-noitems')]]
+													</div>
+												</template>
+											</dom-if>
+										</div>
+									</div>
+									
+
+									<dom-if if="[[LenMore(order.CurrentPack.Items)]]">
+										<template>
+											<div class="order-currentpack-buttons">
+												<div class="spinner">
+													<paper-button 
+														hidden$="[[_hideFinishSingle]]"
+														disabled$="[[_disabledFinishSingle]]"
+														class="order-finishsingleshipping-btn" raised on-tap="onFinishSingleShippingTap">
+														[[localize('admin-ws-shipping-finishsingle-btn')]]
+													</paper-button>
+													<paper-spinner-lite class="thick"></paper-spinner-lite>
+
+													<paper-button 
+														hidden$="[[_hideFinish]]"
+														disabled$="[[_disabledFinish]]"
+														class="order-finishshipping-btn" raised on-tap="onFinishShippingTap">
+														[[localize('admin-ws-shipping-finish-btn')]]
+													</paper-button>
+													<paper-spinner-lite class="thick"></paper-spinner-lite>
+
+													<paper-button 
+														hidden$="[[_hideSplit]]"
+														disabled$="[[_disabledSplit]]"
+														class="order-splitshipping-btn" raised on-tap="onSplitShippingTap">
+														[[localize('admin-ws-shipping-split-btn')]]
+													</paper-button>
+													<paper-spinner-lite class="thick"></paper-spinner-lite>
+									
+													<paper-button 
+														hidden$="[[_hideShippingDropCurrent]]"
+														disabled$="[[_disabledShippingDropCurrent]]"
+														class="order-shipping-drop-current-btn" raised on-tap="onShippingDropCurrentTap">
+														[[localize('admin-ws-shipping-drop-current-btn')]]
+													</paper-button>
+													<paper-spinner-lite class="thick"></paper-spinner-lite>
+
+												</div>
+											</div>
+										</template>
+									</dom-if>
+								</div>
+							</template>
+						</dom-if>
+
+
+
+						<div class="package-list">
+							<dom-repeat items="[[order.PackageList]]" as="packagei">
+								<template>
+									<div class="package">
+										<div>
+											<h1>
+												# [[packagei.Number]]
+												- [[localize('admin-ws-shipping-item-packed')]]
+												<span>[[packagei.PackedItemCount]]</span>
+											</h1>
+											<h2>[[_formatWeight(packagei.Weight.Grams, weightUnits)]]
+											([[_formatWeight(packagei.Weight.Grams, 'kg')]])</h2>
+										
+											<!-- Items -->
+											<div class="order-shipping-items">
+												<h4>
+													⮡ &nbsp;&nbsp;
+													[[localize('admin-ws-shipping-items-title')]]
+												</h4>
+												<div class="order-shipping-items-container">
+													<dom-repeat items="[[packagei.Items]]" as="producti">
+														<template strip-whitespace>
+															<div class="order-shipping-items-item"
+																is-packed$="[[producti.IsPacked]]">
+																[[producti.Barcode]]
+
+																<paper-icon-button
+																	tabindex="-1" 
+																	class="help-btn" 
+																	icon="admin-icons:help-outline" 
+																	on-tap="_showBarcodeDetailsTap">
+																</paper-icon-button>
+															</div>
+														</template>
+													</dom-repeat>
+													<dom-if if="[[!LenMore(packagei.Items)]]">
+														<template>
+															<div class="noitems">
+																[[localize('admin-ws-shipping-items-noitems')]]
+															</div>
+														</template>
+													</dom-if>
+												</div>
+											</div>
+										
+											<div class="order-buttons">
+												<div class="spinner">
+													<paper-button class="order-disposepackage-btn" disabled$="[[loadingAny]]" raised on-tap="onDisposePackageTap">
+														[[localize('admin-ws-shipping-disposepackage-btn')]]
+													</paper-button>
+													<paper-spinner-lite class="thick"></paper-spinner-lite>
+												</div>
+		
+												<div class="spinner" hidden$="[[packagei.IsSingleItemsBucket]]">
+													<paper-button class="order-printlabel-btn" disabled$="[[loadingAny]]" raised on-tap="onPrintLabelPackageTap">
+														[[localize('admin-ws-shipping-printlabelpackage-btn')]]
+													</paper-button>
+													<paper-spinner-lite class="thick"></paper-spinner-lite>
+												</div>
+		
+		
+												<dom-if if="[[packagei.ShippingData]]">
+													<template>
+														<div class="spinner">
+															<paper-button class="order-cancelshipping-btn" disabled$="[[loadingAny]]" raised on-tap="onCancelShippingSingleTap">
+																[[localize('admin-ws-shipping-btn-cancelshipping')]]
+															</paper-button>
+															<paper-spinner-lite class="thick"></paper-spinner-lite>
+														</div>
+													</template>
+												</dom-if>
+
+												
+												<div class="spinner" hidden$="[[!packagei.IsSingleItemsBucket]]">
+													<paper-button class="order-printshipping-btn" disabled$="[[loadingAny]]" raised on-tap="onPrintShippingSingleTap">
+														[[localize('admin-ws-shipping-btn-printshipping')]]
+													</paper-button>
+													<paper-spinner-lite class="thick"></paper-spinner-lite>
+												</div>
+		
+											</div>
+										</div>
+
+										<dom-if if="[[_asBool(packagei.ShippingLabelImageUrl)]]">
+											<template>
+												<div class="zpl-image">
+													<div>
+														<img src="[[packagei.ShippingLabelImageUrl]]" />
+													</div>
+												</div>
+											</template>
+										</dom-if>
+										<dom-if if="[[packagei.ShippingLabelImageFailed]]">
+											<template>
+												<div class="zpl-image">
+													<div>
+														<img src="[[ShippingLabelImageFailedUrl]]" />
+													</div>
+												</div>
+											</template>
+										</dom-if>
+									</div>
+								</template>
+							</dom-repeat>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="order-buttons">
+				<!--  -->
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="shipping"
+	website-url="[[websiteUrl]]"
+	sticker-printer
+	barcode-scanner
+	weight-scale
+	weight-units="{{weightUnits}}"
+	loading="{{loadingWS}}"
+	visible="[[visible]]">
+</teamatical-ui-scanner-printer-settings>
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>
+
+
+
+
+<paper-dialog id="dialogsplit" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>[[localize('admin-ws-shipping-split-title')]]</h2>
+	<paper-dialog-scrollable>
+		[[localize('admin-ws-shipping-split-msg')]]
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>[[localize('admin-dialog-close')]]</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="onSplitShippingConfirmTap">
+			[[localize('admin-ws-shipping-split-btn')]]</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogdrop" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Drop Current</h2>
+	<paper-dialog-scrollable>
+		Are sure about to Drop Current Unpacked?
+	</paper-dialog-scrollable>
+
+	<div class="buttons">
+		<paper-button dialog-dismiss>[[localize('admin-dialog-close')]]</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="onShippingDropCurrentConfirmTap">Drop Current</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogcancel" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>[[localize('admin-ws-shipping-title-cancelshipping')]]</h2>
+	<paper-dialog-scrollable>
+		[[localize('admin-ws-shipping-msg-cancelshipping')]]
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>[[localize('admin-dialog-close')]]</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="onCancelShippingConfirmTap">  
+			[[localize('admin-ws-shipping-btn-cancelshipping')]]</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogdispose" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>[[localize('admin-ws-shipping-title-dispose')]]</h2>
+	<paper-dialog-scrollable>
+		[[localize('admin-ws-shipping-msg-dispose')]]
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>[[localize('admin-dialog-close')]]</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="onDisposeShippingConfirmTap">
+			[[localize('admin-ws-shipping-btn-dispose')]]</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogdisposepackage" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>[[localize('admin-ws-shipping-disposepackage-title')]]</h2>
+	<paper-dialog-scrollable>
+		[[localize('admin-ws-shipping-disposepackage-msg')]]
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>[[localize('admin-dialog-close')]]</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="onDisposePackageConfirmTap">
+			[[localize('admin-ws-shipping-disposepackage-btn')]]</paper-button>
+	</div>
+</paper-dialog>

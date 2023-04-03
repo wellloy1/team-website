@@ -1,0 +1,583 @@
+<app-route 
+  route="{{route}}" 
+  data="{{routeData}}" 
+  pattern="/:category/:item">
+</app-route>
+
+<teamatical-product-data 
+  id="productData" 
+  category-name="[[routeData.category]]" 
+  item-name="[[routeData.item]]"
+  item-model="{{item}}" 
+  item-redirected="{{itemRedirected}}"
+  query-params="{{queryParams}}"
+  customization-type="player" 
+  website-url="[[websiteUrl]]"
+  user-info="[[userInfo]]"
+  visible="{{visible}}"
+  failure="{{failure}}"
+  loading="{{loading}}"
+  loading-hires="{{loadingHires}}"
+  saving="{{saving}}"
+  debouncing="{{debouncing}}">
+</teamatical-product-data>
+
+<teamatical-ui-loader 
+  hidden$="[[_isNotConn(item,failure,offline,loading)]]">
+</teamatical-ui-loader>
+
+<teamatical-ui-product-notfound 
+  hidden$="[[_isFound(item,failure,offline,loading)]]">
+</teamatical-ui-product-notfound>
+
+<div id="content" class="content" hidden$="[[_isNoProduct(item,failure,offline)]]">
+  <div class="image-product-container">
+    <teamatical-ui-image-multiview-3d 
+      id="image-product" 
+      tooltip-overlow-mode
+      class="image-product" 
+      alt=""
+      views="{{item.ProductViews}}"
+      overlays="[[item.ProductOverlays]]"
+      pv="{{item.ProductPointOfView}}" 
+      pvs="[[item.ProductPointOfViewCount]]" 
+      has-dimensions="[[item.HasDimensions]]"
+      draw-dimensions="{{item.DrawDimensions}}"
+      loading-on-update="[[loadingOnUpdate]]"
+      visible="[[visible]]"
+      lazy-load 
+      allow-zoom
+      swipe-tip$="[[!userInfo.isAuth]]"
+      iszoom-mobile="{{iszoomMobile}}"
+      is-youth="[[item.ProductIsYouth]]"
+      is-reversible="[[item.ProductIsReversible]]">
+    </teamatical-ui-image-multiview-3d>
+  </div>
+
+  <div class="detail" has-content$="[[_isDefined(item)]]" role="main">
+    <h1>
+      <div class="product-patterns-disabled hidden" showen-inline-block$="[[item.Product.ProductPatternsDisabled]]">
+        <div>
+          <p>[[localize('detail-disabledpatterns-mark')]]</p>
+        </div>
+      </div>
+
+      [[item.Product.Title]]
+
+      <div class="product-disabled hidden" showen-inline-block$="[[item.Product.ProductDisabled]]">
+        <div>
+          <p>[[_stringOrLocalize(item.Product.ProductDisabledReason, 'detail-disabled-mark')]]</p>
+        </div>
+      </div>
+
+      <dom-if if="[[item.Product.ProductID]]">
+        <template strip-whitespace>
+          <a href="/admin/product?productid=[[item.Product.ProductID]]" aria-label="admin product">
+            <iron-icon 
+              icon="open-in-new" 
+              class="open-in-admin">
+            </iron-icon>
+          </a>
+        </template>
+      </dom-if>
+
+      <dom-if if="[[userInfo.isDesigner]]">
+        <template strip-whitespace>
+          <paper-icon-button slot="suffix" class="copy-pcid-btn" 
+            aria-label="copy-pcid-btn"
+            icon="icons:content-copy"
+            tooltip$="[[localize('detail-copy-tooltip')]]" tooltip-flow="down"
+            on-tap="copyProductConfiguraionIDTap">
+          </paper-icon-button>
+        </template>
+      </dom-if>
+
+      <dom-if if="[[item.SideBySideAvailible]]">
+        <template strip-whitespace>
+          <paper-icon-button 
+            slot="suffix" 
+            class="checkallviews-btn" 
+            aria-label="checkallviews-btn"
+            icon="image:burst-mode"
+            disabled$="[[loading]]"
+            tooltip$="[[localize('detail-checkallviews-tooltip')]]" tooltip-flow="down"
+            on-tap="checkAllViewsTap">
+          </paper-icon-button>
+        </template>
+      </dom-if>
+    </h1>
+
+
+    
+
+    <!-- info -->
+    <div class="info">
+
+      <div class="sku">
+        <span>
+          [[localize('detail-product-sku')]]
+        </span>
+        [[item.Product.ProductSKU]]
+        <span class="hidden" showen-inline-block$="[[item.Product.ProductPatternsDisabled]]">
+          | [[localize('detail-disabled-patterns')]]
+        </span>
+      </div>
+
+      
+      <dom-if if="[[priceDiscounts.length]]">
+        <template>
+          <div class="discount">
+            <div>
+              <dom-repeat items="[[priceDiscounts]]" as="disi">
+                <template>
+                  <p>[[disi]]</p>
+                </template>
+              </dom-repeat>
+            </div>
+          </div>
+        </template>
+      </dom-if>
+
+      <dom-if if="[[priceRegularShow]]">
+        <template>
+          <div class="price" is-org-related$="[[item.Price.DirectOrganizationPrice]]">
+            <span>[[priceRegular]]</span>
+            <dom-if if="[[isDealProfile]]">
+              <template strip-whitespace>
+                <a href="/admin/deal-profile-simulation?pconfigid=[[item.ProductConfigurationID]]" aria-label="admin dealprof">
+                  <iron-icon 
+                    icon="open-in-new" 
+                    class="open-in-admin">
+                  </iron-icon>
+                </a>
+              </template>
+            </dom-if>
+          </div>
+        </template>
+      </dom-if>
+      
+      <dom-if if="[[!priceRegularShow]]">
+        <template>
+          <div class="price" is-org-related$="[[item.Price.DirectOrganizationPrice]]">
+            <span class="price_new">[[priceSale]]</span>
+            <span class="price_old">[[priceList]]</span>
+
+            <dom-if if="[[isDealProfile]]">
+              <template strip-whitespace>
+                <a href="/admin/deal-profile-simulation?pconfigid=[[item.ProductConfigurationID]]" aria-label="admin dealprof">
+                  <iron-icon 
+                    icon="open-in-new" 
+                    class="open-in-admin">
+                  </iron-icon>
+                </a>
+              </template>
+            </dom-if>
+          </div>
+        </template>
+      </dom-if>
+
+      <div class="store" hidden$="[[!item.Store]]">
+        <a href="[[_hrefStore(item.Store.sid)]]">[[item.Store.title]]</a>
+        <teamatical-ui-date-time 
+          hidden$="[[!item.Store.isgroup]]"
+          hour="numeric" minute="numeric" second="numeric"
+          tooltip$="[[localize('groupshipping-date-title')]]"
+          datetime-obj="[[item.Store.groupdeadline]]">
+        </teamatical-ui-date-time>
+      </div>
+    </div>
+
+    <!-- small buttons -->
+    <paper-icon-button 
+      class="download-icon" 
+      disabled="[[isDisabledHiresDownload]]" 
+      hidden$="[[!item.HighResImageAvailible]]"
+      aria-label="download-icon" 
+      cake="1w2" icon="file-download"
+      tooltip$="[[localize('detail-hires-tooltip')]]" tooltip-flow="up" tooltip-flow-horiz="right"
+      on-tap="_highResImageTap">
+    </paper-icon-button>
+
+    <paper-icon-button
+      is-admin
+      class="download-icon" 
+      hidden$="[[!userInfo.isAdmin]]"
+      disabled="[[loading]]" 
+      aria-label="download-icon" 
+      cake="1w2" icon="file-download"
+      tooltip$="[[localize('detail-download-tooltip')]]" tooltip-flow="up" tooltip-flow-horiz="right"
+      on-tap="_downloadImageTap">
+    </paper-icon-button>
+
+    <teamatical-ui-button-share 
+      position-element="div#content" 
+      customization-type$="[[_shareType]]"
+      item-model="[[item]]"
+      route="[[route]]"
+      route-data="[[routeData]]"
+      query-params="[[queryParams]]"
+      website-url="[[websiteUrl]]"
+      app-title-default="[[appTitleDefault]]" 
+      visible="[[visible]]"
+      tooltip$="[[localize('detail-sharebutton-tooltip')]]" tooltip-flow="up" tooltip-flow-horiz="right"
+      sharing-picture="[[item.Product.ImageUrl]]">
+    </teamatical-ui-button-share>
+
+
+
+    <!-- sides-selector -->
+    <div class="sides-list"
+      hidden$="[[!item.ProductSides]]" >
+      <h2>
+        [[localize('customize-productsides-title')]]
+        <span class="desc">[[localize('customize-productsides-desc')]]</span>
+      </h2>
+      <teamatical-ui-carousel 
+          id="sides_list" 
+          image-ratio="0.65" 
+          image-height="156" 
+          tabindex="0"
+          visible="[[visible]]"
+          counter-hide
+          border-hide
+          options="{{item.ProductSides}}">
+      </teamatical-ui-carousel>
+    </div>
+
+
+    <!-- pickers -->
+    <div class="pickers">
+
+      <dom-if if="[[_asBool(item.Product.AccessoryVariants)]]">
+        <template>
+          <teamatical-ui-product-variants 
+            variant-title="[[item.Product.AccessoryVariantsName]]"
+            customization-type="player"
+            is-selectable-items
+            options="{{item.Product.AccessoryVariants}}"
+            loading="{{loading}}">
+          </teamatical-ui-product-variants>
+        </template>
+      </dom-if>
+
+
+      <teamatical-ui-player-info 
+        class="hidden" showen$="[[playerCustomize]]"
+        customization-type="player"
+        activity-options="[[item.PlayerActivityOptions]]" 
+        captain-options="[[item.PlayerCaptainOptions]]"
+        player-info="{{item.Player}}"
+        loading="{{loading}}">
+      </teamatical-ui-player-info>
+
+      <dom-if if="[[item.CanQuickCustomize]]">
+        <template>
+          <teamatical-ui-team-info 
+            hidden$="[[!item.Team]]"
+            customization-type="player"
+            colors-swatch-palette="[[item.ColorsPalette]]"
+            colors-pantone-palette="[[colorsPalette]]"
+            team-info="{{item.Team}}" 
+            loading="{{loading}}">
+          </teamatical-ui-team-info>
+        </template>
+      </dom-if>
+
+
+      <p 
+        hidden$="[[!item.HasDimensions]]" 
+        draw-dimensions$="[[item.DrawDimensions]]"
+        draggable="false" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+        <paper-icon-button 
+          id="sizemeter"
+          class="sizemeter"
+          aria-label="sizemeter"
+          icon="icons:size-meter" 
+          draggable="false" 
+          disabled="[[loading]]"
+          on-tap="onSizemeterTap" 
+          on-dragstart="eventNull" 
+          on-selectstart="eventNull">
+        </paper-icon-button>
+        <span class="sizemeter-text" disabled$="[[loading]]" on-tap="onSizemeterTap">
+          <dom-if if="[[!item.DrawDimensions]]">
+            <template>
+              [[localize('detail-dimensions-btn')]]
+            </template>
+          </dom-if>
+          <dom-if if="[[item.DrawDimensions]]">
+            <template>
+              [[localize('detail-dimensions-on-btn')]]
+            </template>
+          </dom-if>
+        </span>
+      </p>
+
+      <teamatical-ui-description 
+        html="[[item.Product.SizingTip]]">
+      </teamatical-ui-description>
+
+      
+      <teamatical-ui-select 
+        class="size-selector" 
+        hidden$="[[!LenMore(item.SizesSelected, 0)]]"
+        caption-text="[[_formatSizeTitle(item.Product.ProductManufacturers.0, item.Product.ProductManufacturers)]]" 
+        options="[[_formatTitleOfSizesList(item.Product.ProductManufacturers.0.Sizes, item.Price.Currency)]]" 
+        text-property="Name"
+        value-property="Code" 
+        value="{{item.SizesSelected.0.Size}}">
+          <iron-icon 
+            id="size-lock"
+            slot="prefix" 
+            icon="icons:link" 
+            class="linked hidden-animated">
+          </iron-icon>
+      </teamatical-ui-select> 
+      
+
+      <teamatical-ui-select 
+        class="size-selector" 
+        hidden$="[[!LenMore(item.SizesSelected, 1)]]"
+        caption-text="[[_formatSizeTitle(item.Product.ProductManufacturers.1, item.Product.ProductManufacturers)]]" 
+        options="[[_formatTitleOfSizesList(item.Product.ProductManufacturers.1.Sizes, item.Price.Currency)]]" 
+        text-property="Name"
+        value-property="Code" 
+        value="{{item.SizesSelected.1.Size}}">
+      </teamatical-ui-select>
+
+      <teamatical-ui-quantity
+        class="quantity-selector" 
+        is-admin$="[[isQtyForcedByAdmin]]"
+        caption-text="[[qtyCaption(item.QtyStep, item.Roster, item.RosterList)]]" 
+        value="{{quantity}}"
+        step-allow-decrease="[[item.QuantityNoLimits]]"
+        step="[[item.QtyStep]]"
+        debouncing="{{debouncing.quantity}}">
+      </teamatical-ui-quantity>
+
+
+      <teamatical-ui-select 
+        class="roster-selector" 
+        hidden$="[[!LenMore(item.RosterList, 1)]]"
+        caption-text="[[localize('detail-roster-caption')]]" 
+        options="[[item.RosterList]]" 
+        text-property="title"
+        value-property="id" 
+        value="{{item.Roster}}"
+        on-value-changed="onInputChanged"
+        error-message="[[item.notvalid.Roster]]"
+        invalid="[[_asBool(item.notvalid.Roster)]]">
+        <paper-icon-button 
+          disabled$="[[!_rosterSelected(item.Roster, item.RosterList)]]"
+          class="edit-icon" 
+          cake="1w2" 
+          slot="prefix" 
+          aria-label="roster"
+          icon="icons:view-list" 
+          tooltip$="[[localize('detail-roster-edit-btn')]]" tooltip-flow="up" tooltip-flow-horiz="right"
+          tooltip-visible$="[[showRosterEditTooltip]]"
+          on-tap="_rosterEdit">
+        </paper-icon-button>
+      </teamatical-ui-select>
+
+
+      <dom-if if="[[LenMore(item.CustomOptions)]]">
+        <template>
+          <teamatical-ui-select 
+            caption-text="[[item.CustomOptionsTitle]]"
+            options="[[item.CustomOptions]]" text-property="title" value-property="id"
+            value="{{item.CustomOption}}">
+          </teamatical-ui-select>
+        </template>
+      </dom-if>
+    </div>
+
+   
+    <!-- DESC -->
+    <paper-expansion-panel 
+      class="description"
+      no-toggle-header$="[[!smallScreen]]"
+      no-toggle-btn$="[[!smallScreen]]"
+      header="[[localize('detail-desc')]]" 
+      hidden$="[[_hiddenDesc(item.Product.Description)]]">
+      <teamatical-ui-description 
+        html="[[item.Product.Description]]">
+      </teamatical-ui-description>
+    </paper-expansion-panel>
+
+
+    <!-- discount-tier -->
+    <dom-if if="[[_asBool(item.Price.TierPrices)]]">
+      <template>
+        <paper-expansion-panel 
+            class="discount-tier"
+            header="[[userInfo.orgName]]" 
+            no-toggle-header
+            no-toggle-btn$="[[!smallScreen]]">
+            <div class="chart-countainer">
+              <paper-progress 
+                indeterminate
+                class="loading-chartjs-progress"
+                hidden$="[[chartjsLoaded]]">
+              </paper-progress>
+              <canvas 
+                id="discountTierChart" 
+                preparing$="[[!chartjsLoaded]]">
+              </canvas>
+            </div>
+        </paper-expansion-panel>
+      </template>
+    </dom-if>
+
+
+    
+    
+    <dom-if if="[[!hideCustomizeDesc]]">
+      <template>
+        <div class="customize-description">
+          [[localize('detail-customize-desc', 'count', item.CustomizeCount)]]
+        </div>
+      </template>
+    </dom-if>
+
+    
+
+    <!-- BUTTONS -->
+    <div class="detail-buttons">
+      <teamatical-ui-button 
+        aria-label$="[[localize('detail-customize-label')]]" 
+        class="customize-btn hidden"
+        showen-flex-inline$="[[item.CanCustomize]]"
+        on-tap="_customizeTap">
+        [[localize('detail-customize-btn')]]
+      </teamatical-ui-button>
+
+      <teamatical-ui-button
+        aria-label$="[[localize('detail-create-store-label')]]"
+        class="addtocustomstore-btn hidden"
+        showen-flex-inline$="[[item.CanAddToStore]]"
+        disabled$="[[isDisabledStore(loading, userInfo.isAuth)]]"
+        on-tap="_addToStore">
+        [[localize('detail-create-store-btn')]]
+      </teamatical-ui-button>
+    
+      <teamatical-ui-button 
+        aria-label$="[[localize('detail-addcart-label')]]" 
+        disabled$="[[isDisabledAddToCart]]" 
+        class="shopping-cart"
+        is-admin$="[[isAddToCartForcedByAdmin]]"
+        on-tap="_addToCart">
+        <span>
+          <iron-icon icon="shopping-cart"></iron-icon>
+          [[localize('detail-addcart')]]
+        </span>
+      </teamatical-ui-button>
+      
+      <teamatical-ui-button 
+        responsive
+        responsive-hide
+        aria-label$="[[localize('detail-addcart-label')]]" 
+        disabled$="[[isDisabledAddToCart]]" 
+        class="shopping-cart"
+        is-admin$="[[isAddToCartForcedByAdmin]]"
+        on-tap="_addToCart">
+        <span>
+          <iron-icon icon="shopping-cart"></iron-icon>
+          [[localize('detail-addcart')]]
+        </span>
+      </teamatical-ui-button>
+    </div>
+
+
+    <!-- custom-design-request button -->
+    <dom-if if="[[showCustomDesignRequestBtn]]">
+      <template>
+        <div class="custom-design-request">
+          <a href="/custom-design-request/[[item.ProductConfigurationID]]" tabindex="-1">
+            <button class="green">[[localize('detail-custom-design-request-btn')]]</button>
+          </a>
+        </div>
+      </template>
+    </dom-if>
+    
+    
+  </div>
+</div>
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>
+
+
+<teamatical-ui-list-subcategory 
+  class="showen-animated"
+  showen-animated$="[[!_hideRecentlyViewed]]"
+  subcategory-title="list-subcategory-recentproducts" 
+  subcategory-items="[[recentProducts]]" 
+  role="list"
+  aria-label="list"
+  visible="[[visible]]">
+</teamatical-ui-list-subcategory>
+
+
+<!-- dialogcheckallviews -->
+<dom-if if="[[item.SideBySideAvailible]]">
+  <template strip-whitespace>
+    <teamatical-ui-dialog id="dialogcheckallviews" disabled$="[[dialogcheckallviews.loading]]">
+      <div slot="header">
+        <paper-icon-button 
+          class="close-dialog-small-btn" 
+          icon="close"
+          dialog-dismiss>
+        </paper-icon-button>
+        
+        <div class="dialog-loading-container">
+          <paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogcheckallviews.loading]]"
+            hidden$="[[!dialogcheckallviews.loading]]">
+          </paper-progress>
+        </div>
+        
+        <h2>
+          [[dialogcheckallviews.title]]
+          #: [[dialogcheckallviews.ProductConfigurationID]] 
+        </h2>
+      </div>
+    
+      <div slot="body">
+        <div class="image-product-grid">
+          <dom-repeat items="[[dialogcheckallviews.ProductViews]]" as="viewsi">
+            <template>
+              <a class="link-over-object">
+                <teamatical-ui-image-multiview-3d 
+                  tooltip-overlow-mode
+                  alt="product-view-[[index]]"
+                  class="product-view bigger" 
+                  caption$="[[viewsi.0.SizesSelected.0.Size.Name]]"
+                  views="{{viewsi}}"
+                  pv="{{dialogcheckallviews.ProductPointOfView}}" 
+                  pvs="[[dialogcheckallviews.ProductPointOfViewCount]]" 
+                  visible="[[visible]]"
+                  lazy-load>
+                </teamatical-ui-image-multiview-3d>
+              </a>
+            </template>
+          </dom-repeat>
+        </div>
+      </div>
+
+      <div slot="footer">
+        <teamatical-ui-button 
+          dialog-dismiss 
+          autofocus
+          class="close-dialog-btn"
+          on-tap="_closeDialogCheckallviewsTap">
+          [[localize('detail-dialogcheckallviews-close-btn')]]
+        </teamatical-ui-button>
+      </div>
+    </teamatical-ui-dialog>
+  </template>
+</dom-if>

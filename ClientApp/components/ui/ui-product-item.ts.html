@@ -1,0 +1,99 @@
+<iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
+
+<div id="image-product-grid" class="image-product-grid">
+  <dom-repeat items="[[productImages]]" as="imgi">
+    <template>
+      
+      <a class="link-over-object" href="[[_buildProductUrl(entry)]]">
+        <teamatical-ui-image
+          class="product-view" 
+          src="[[imgi.imgUrl]]" 
+          alt="[[imgi.title]]" 
+          lazy-load 
+          lazy-observe=[[lazyObserve]]>
+        </teamatical-ui-image>
+      </a>
+
+    </template>
+  </dom-repeat>
+
+  <!-- <dom-repeat items="[[productViews]]" as="viewi">
+    <template>
+      <a class="link-over-object" href="[[_buildProductUrl(entry)]]">
+        <teamatical-ui-image-multiview-3d 
+          tooltip-overlow-mode
+          alt=""
+          class="product-view bigger" 
+          views="{{viewi}}"
+          pv="{{entry.ProductPointOfView}}" 
+          pvs="[[entry.ProductPointOfViewCount]]" 
+          visible="[[visible]]"
+          lazy-load 
+          allow-zoom>
+        </teamatical-ui-image-multiview-3d>
+      </a>
+    </template>
+  </dom-repeat> -->
+
+</div>
+
+
+
+
+<dom-if if="[[entry.Product.Title]]">
+  <template>
+
+    <div class="detail-container">
+      <div class="name">
+        <a href$="[[_buildProductUrl(entry)]]">[[entry.Product.Title]]</a>
+      </div>
+    
+      <div class="detail">
+    
+        <dom-if if="[[priceDiscounts.length]]">
+          <template>
+            <div class="discount">
+              <div>
+                <dom-repeat items="[[priceDiscounts]]" as="disi">
+                  <template>
+                    <p>[[disi]]</p>
+                  </template>
+                </dom-repeat>
+              </div>
+            </div>
+          </template>
+        </dom-if>
+    
+        <dom-if if="[[priceRegularShow]]">
+          <template>
+            <div class="price">[[priceRegular]]</div>
+          </template>
+        </dom-if>
+    
+        <dom-if if="[[!priceRegularShow]]">
+          <template>
+            <div class="price">
+              <span class="price_new">[[priceSale]]</span>
+              <span class="price_old">[[priceList]]</span>
+            </div>
+          </template>
+        </dom-if>
+    
+    
+        <dom-if if="[[entry.Player]]">
+          <template>
+            <div class="player">[[localize('products-player')]]
+              [[_formatPlayer(entry.Player)]]
+            </div>
+          </template>
+        </dom-if>
+    
+    
+        <div class="store" hidden$="[[!entry.Store]]">
+          <a href="[[_hrefStore(entry.Store.sid)]]">[[entry.Store.title]]</a>
+        </div>
+      </div>
+    </div>
+
+  </template>
+</dom-if>

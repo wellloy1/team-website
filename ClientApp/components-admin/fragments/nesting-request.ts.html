@@ -1,0 +1,134 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Nesting Request #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.ID]]</span>
+				</h3>
+
+				<div class="buttons">
+					<paper-button 
+						class="order-save-btn" 
+						disabled$="[[loadingAny]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveOrderTap">
+						Save Nesting Request Store
+					</paper-button>
+
+					<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm Nesting Request to Save</h2>
+						<paper-dialog-scrollable>
+							Nesting Request #: [[order.ID]] is going to be saved...are you sure?
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss>Close</paper-button>
+							<paper-button dialog-confirm autofocus on-tap="saveOrderConfirmTap">Save Nesting Request</paper-button>
+						</div>
+					</paper-dialog>
+				</div>
+
+				<div class="buttons">
+					<div class="order-dangersection-btn">
+						
+					</div>
+				</div>
+				
+				<div class="order-inputs">
+					<h4>
+						Details:
+					</h4>
+
+					<div class="spinner">
+						<paper-checkbox 
+							class=""
+							checked="{{order.IsBroken}}" 
+							disabled$="[[loadingAny]]">
+							Is Broken
+						</paper-checkbox>
+						<!-- <paper-spinner-lite class="thick"></paper-spinner-lite> -->
+					</div>
+
+					<paper-input 
+						label="RequestSource (readonly)" 
+						type="string" 
+						readonly
+						value="{{order.RequestSource}}"
+						name="RequestSource"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.RequestSource]]" 
+						invalid="[[_asBool(order.notvalid.RequestSource)]]">
+					</paper-input>
+				</div>
+
+			</div>
+
+
+			
+			<div class="order-nestingorders">
+				<div scrollable-x>
+					<div class="table">
+						<div class="header">
+							<div>
+								Nesting Order ID
+							</div>
+							<div>
+								Response Source
+							</div>
+						</div>
+
+						<dom-repeat items="[[order.Orders]]" as="nestingorderi">
+							<template>
+								<div class="row vcenter">
+									<div>
+										<span has-errors$="[[nestingorderi.notvalid.NestingOrderID]]" class="copy-tap" on-tap="_copyTap">[[nestingorderi.NestingOrderID]]</span>
+									</div>
+									<div>
+										<span has-errors$="[[nestingorderi.notvalid.ResponseSource]]" class="copy-tap" on-tap="_copyTap">[[nestingorderi.ResponseSource]]</span>
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+					</div>
+
+					<dom-if if="[[!LenMore(order.Orders)]]">
+						<template>
+							<div class="noitems">
+								[[localize('admin-list-noitems')]]
+							</div>
+						</template>
+					</dom-if>
+				</div>
+			</div>
+
+			<div class="order-resultsvgs">
+				<h4>SVG</h4>
+				<dom-repeat items="[[order.SVG]]" as="svgi">
+					<template>
+						<teamatical-ui-image-svg class="nesting-resultsvg" svg-src="[[svgi]]"></teamatical-ui-image-svg>
+					</template>
+				</dom-repeat>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,17 @@
+<div hidden$="[[offline]]">
+  <div>
+    <iron-icon icon="icons:build"></iron-icon>
+    <h1>We are sorry for the inconvenience but service is down for maintenance and will back soon ...</h1>
+  </div>
+  <teamatical-ui-button 
+    on-tap="_reloadPage">
+    Reload Page
+  </teamatical-ui-button>
+</div>
+
+
+<teamatical-ui-network-warning 
+  hidden$="[[!offline]]"
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--app-secondary-color);
+}
+
+iron-icon {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+}
+
+h1 {
+  margin: 50px 0 10px 0;
+  font-weight: 300;
+}
+
+p {
+  margin: 0;
+}
+
+teamatical-ui-button {
+  margin-top: 50px;
+}

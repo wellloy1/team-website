@@ -1,0 +1,155 @@
+:host {
+  @apply --layout-vertical;
+  @apply --layout-center-justified;
+  
+  text-align: center;
+  transition: all 0.2s cubic-bezier(.36,-0.64,.34,1.76);
+  opacity: 1;
+  background-color: var(--primary-background-color);
+  
+  overflow: hidden;
+}
+
+:host([deleting]) {
+  opacity: 0;
+}
+
+
+/* :host([editing]) {
+  border: 1px dashed var(--divider-color);
+  border-radius: 5px;
+  -moz-transform: scale(0.8);
+  -webkit-transform: scale(0.8);
+  transform: scale(0.8);
+
+  
+  cursor: move;
+  cursor: grabbing;
+} */
+
+/* :host([editing]) .frame {
+  border: 1px dashed var(--divider-color);
+  border-radius: 5px;
+} */
+
+:host([editing]) teamatical-ui-image {
+  -moz-transform: scale(0.75);
+  -webkit-transform: scale(0.75);
+  transform: scale(0.75);
+  transition: all 0.2s cubic-bezier(.36,-0.64,.34,1.76);
+  cursor: move;
+  cursor: grabbing;
+}
+:host([editing]) .price_line {
+  visibility: hidden;
+}
+
+teamatical-ui-image {
+  margin: 0px 0px 4px;
+
+  --teamatical-ui-image-img: {
+    border-radius: 6px;
+  };
+}
+
+teamatical-ui-image::before {
+  content: "";
+  display: block;
+  padding-top: 133%;
+}
+
+.title {
+  color: var(--app-primary-color);
+  font-weight: bold;
+  text-overflow: ellipsis;
+  /* overflow:hidden; */
+  margin: 0 15px;
+  margin-bottom: 15px;
+  white-space: nowrap;
+}
+
+.price {
+  color: var(--app-secondary-color);
+  margin: 0 15px;
+}
+
+.price_old {
+  color: var(--app-secondary-color);
+  text-decoration: line-through;
+}
+
+.price_new {
+  color: var(--app-discount-color);
+  font-weight: bold;
+}
+
+.discount {
+  position: relative;
+}
+.discount div {
+  position: absolute;
+  bottom: 16px;
+  left: 16%;
+}
+
+
+.product-disabled {
+  display: inline-block;
+}
+.product-disabled p {
+  pointer-events: none;
+
+  background-color: var(--app-disabled-color-bkg);
+  background: linear-gradient(43deg, var(--app-disabled-color-bkg) 27%, var(--app-disabled-color-bkg-gradient-light) 77%);
+  opacity: 0.85;
+  color: var(--app-disabled-color-text);
+
+  padding: 0px 8px;
+  margin: 2px;
+  border-radius: 3px;
+
+  font-weight: bold;
+  letter-spacing: 0.001em;
+  text-transform: uppercase;
+
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  
+  white-space: normal;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+
+.close-container {
+  position: relative;
+  z-index: 1;
+}
+
+.close-container .add-btn {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.close-container .close-icon {
+  position: absolute;
+  /* right: -3px;
+  top: -3px; */
+  right: 0px;
+  top: 0px;
+}
+
+.close-container .grab-icon {
+  position: absolute;
+  left: 3px;
+  top: 3px;
+
+  cursor: move;
+  cursor: grabbing;
+}
+
+
+/* .title {
+  margin: 0 15px;
+} */

@@ -1,0 +1,27 @@
+<script>
+    var Teamatical;
+    (function (Teamatical)
+    {
+        'use strict';
+        var ts = Date.now()
+        window.polymerSkipLoadingFontRoboto = true
+        var addScript = Teamatical.addScript
+        var evilishere = Teamatical._browser.evilishere
+        var tmadmin = document.getElementById("tmadmin");
+
+        if (evilishere) 
+        {
+            if (tmadmin) { tmadmin.setAttribute("evilbrowser", "") }
+        }
+        else
+        {
+            document.addEventListener("WebComponentsReady", function componentsReady(e)
+            {
+                document.removeEventListener("WebComponentsReady", componentsReady, false);
+                ts = Date.now() - ts;
+                if (tmadmin) { addScript("/teamatical-admin.js", true) }
+            });
+        }
+
+    })(Teamatical || (Teamatical = {}))
+</script>

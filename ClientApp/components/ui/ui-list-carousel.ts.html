@@ -1,0 +1,70 @@
+﻿<dom-if if="[[LenLess(items)]]">
+    <template>
+        <p class="noitems">[[localize('list-subcategory-noitems')]]</p>
+    </template>
+</dom-if>
+
+<div id="track" 
+        class="track" 
+        draggable="false" 
+        on-track="_ontrack" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+
+    <ul id="slides" class="slides" draggable="false" role="listbox">
+        <dom-repeat items="[[items]]">
+            <template>
+                <li class="panel" role="option" on-tap="_ontap">
+                    <a href$="[[_getItemHref(item)]]" 
+                       tabindex="-1"
+                       rel$="[[_classBool(item.ProductDisabled, 'nofollow', undefined)]]"
+                       on-mouseup="_onAnchorMouse" 
+                       on-click="_onAnchorMouse">
+                        <teamatical-ui-list-item 
+                            class="main" 
+                            item="[[item]]"
+                            draggable="false" 
+                            add-background
+                            responsive-title="none"
+                            on-dragstart="eventNull" 
+                            on-selectstart="eventNull">
+                        </teamatical-ui-list-item>
+                    </a>
+                </li>
+            </template>
+        </dom-repeat>
+        <li class="panel-end"></li>
+    </ul>
+
+    <div class="scroll-container">
+        <div class="scroll-bkg" active$="[[activeScroll]]">
+            <div id="scroll-tick" class="scroll-tick animate"></div>
+        </div>
+    </div>
+
+    <div class="buttons-container">
+        <paper-icon-button 
+            id="image-before-btn" 
+            class="image-before-btn"
+            aria-label="image-before-btn"
+            icon="image:navigate-before" 
+            disabled="[[disabledImageBefore]]"
+            draggable="false" 
+            on-tap="onImageBefore" 
+            on-dragstart="eventNull" 
+            on-selectstart="eventNull">
+        </paper-icon-button>
+
+        <paper-icon-button 
+            id="image-next-btn" 
+            class="image-next-btn"
+            aria-label="image-next-btn"
+            icon="image:navigate-next" 
+            disabled="[[disabledImageNext]]"
+            draggable="false" 
+            on-tap="onImageNext" 
+            on-dragstart="eventNull" 
+            on-selectstart="eventNull">
+        </paper-icon-button>
+    </div>
+</div>

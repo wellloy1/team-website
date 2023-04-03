@@ -1,0 +1,378 @@
+:host {
+	display: block;
+
+	/* margin: 0 auto; */
+	/* max-width: var(--app-page-width); */
+}
+
+/* .po-order-details {
+	margin: 16px;
+} */
+
+teamatical-ui-description {
+	font-size: 1.3em;
+	border-radius: 4px;
+	border: 1px dashed gray;
+	padding: 4px;
+	margin: 16px;
+	margin-top: 0px;
+}
+
+paper-button {
+	--paper-button: {
+		padding: 0.5em 0.37em;
+	};
+}
+
+.finish-now-btn {
+	--paper-button: {
+		background: var(--paper-red-900);
+		color: white;
+	};
+}
+paper-button.accept-for-manufactoring {
+	--paper-button: {
+		background: var(--paper-green-600);
+		color: white;
+	};
+}
+paper-button.cancel {
+	--paper-button: {
+		background: var(--paper-red-600);
+		color: white;
+	};
+}
+
+/* .regular-shipping-btn {
+	--paper-button: {
+		background: var(--paper-blue-600);
+		color: white;
+	};
+}
+
+.direct-shipping-btn {
+	--paper-button: {
+		background: var(--paper-blue-600);
+		color: white;
+	};
+} */
+
+paper-button {
+	--paper-button: {
+		padding: 0.5em 0.37em;
+	};
+}
+paper-button.accept-for-manufactoring {
+	--paper-button: {
+		background: var(--paper-green-600);
+		color: white;
+	};
+}
+paper-button.cancel {
+	--paper-button: {
+		background: var(--paper-red-600);
+		color: white;
+	};
+}
+
+paper-icon-button.remove-btn {
+	color: var(--paper-red-600);
+}
+
+paper-input#newadmin {
+	max-width: 340px;
+}
+
+:host([should-show-tabs]) header {
+	display: none;
+}
+
+vaadin-grid vaadin-text-field {
+	width: 100%;
+}
+
+vaadin-grid vaadin-button {
+	margin-left: 5px;
+}
+
+paper-radio-button {
+	margin: 8px;
+}
+
+[part~="cell"].notvalid {
+	background: rgb(255, 240, 240);
+}
+.notvalid,
+[has-errors] {
+    background-color: red;
+}
+.alert {
+	/* padding: 8px;
+    margin: 16px; */
+    color: white;
+    border-radius: 8px;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+	padding: 0px 8px;
+}
+.alert pre {
+	white-space: pre-line;
+}
+
+#search {
+	margin: 0 10px;
+}
+
+#search-progress {
+	margin: 22px;
+	float: right;
+}
+
+#dialogdump paper-dialog-scrollable pre {
+	max-width: 1100px;
+	max-height: 900px;
+}
+
+.spinner paper-spinner-lite {
+	margin-top: 18px;
+}
+    
+.order {
+	margin-bottom: 35px;
+	border-bottom: 4px double var(--light-theme-divider-color);
+}
+
+.order-cancel-btn {
+	--paper-button: {
+		background: var(--paper-red-600);
+		color: white;
+	};
+}
+
+.edit-btn {
+	--paper-button: {
+		background: var(--paper-indigo-600);
+		color: white;
+	};
+}
+
+.delete-btn {
+	--paper-button: {
+		background: var(--paper-red-600);
+		color: white;
+	};
+}
+
+.order-resnapshot-btn {
+	--paper-button: {
+		background: var(--paper-indigo-600);
+		color: white;
+	};
+}
+
+.order-header h3 {
+	padding-left: 15px;
+	border-bottom: 1px solid var(--light-theme-divider-color);
+}
+.order-header > .buttons,
+.order-header > .group-order-details {
+	margin: 16px;
+}
+.order-header > .group-order-details {
+    /* width: 100%;
+    max-width: 950px;
+	width: calc(100% - 32px); */
+	/* min-width: 500px; */
+}
+.order-header {
+	margin-right: 5px;
+	/* margin: 0px 15px; */
+
+	/* background-color: #cccccc;
+	border-radius: 8px; 
+	border: 1px solid #ccc;*/
+	/* padding: 0px 5px; */
+}
+
+.order-payment-history {
+	margin: 24px 0px 24px 0px;
+}
+.order-inputs h4,
+.assets-list h4,
+.order-shipment h4,
+.order-payment-history h4 {
+	padding-left: 16px;
+	margin: 24px 0px 0px 0px;
+	border-bottom: 3px solid var(--paper-green-600);
+}
+/*
+.order-payment-history table tr {
+	border-bottom: 1px solid var(--divider-color);
+} */
+.order-payment-history .table {
+	margin: 16px;
+	width:100%;
+	max-width:950px;
+}
+
+.order-payment-history .table paper-button {
+	display: block;
+	text-align: center;
+}
+/* .order-payment-history .row {
+	cursor: pointer;
+} */
+
+.order-history {
+	margin: 24px 0px 24px 0px;
+}
+.order-history h4 {
+	padding-left: 16px;
+	margin: 24px 0px 0px 0px;
+	border-bottom: 1px solid var(--light-theme-divider-color);
+}
+.order-history .table {
+	margin: 16px;
+	width:100%;
+	max-width:1250px;
+}
+
+
+.order-inputs > * {
+	padding-left: 16px;
+}
+
+.order-inputs,
+.assets-list,
+.order-shipment {
+	margin: 24px 0px 24px 0px;
+}
+.order-inputs .table,
+.assets-list .table,
+.order-shipment .table {
+	width: calc(100% - 16px);
+	max-width:1250px;
+}
+
+.order-inputs paper-checkbox {
+	margin: 8px 8px 8px 0px;
+}
+
+
+.table { 
+	display: table; 
+}
+.table .row, .table .header { display: table-row;}
+.table .row > *, .table .header > * { 
+	display: table-cell; 
+	padding: 0.25em;
+}
+.table .header > * { 
+	font-weight: bold;
+}
+.table .header > * { 
+	border-bottom: 1px solid var(--divider-color);
+}
+.table .row > * {
+	border-bottom: 1px dashed var(--divider-color);
+}
+.table .centered {
+	text-align: center;
+}
+
+/* .assets-list li span {
+	width: 900px;
+} */
+
+.order-list {
+	margin-top: 10px;
+}
+
+.order-shipping-hubs {
+	margin: 16px 0px;
+}
+.order-shipping-hubs > * {
+	padding-left: 16px;
+	margin: 24px 0px 0px 0px;
+}
+.order-shipping-hubs > h4 {
+	/* border-bottom: 1px solid var(--light-theme-divider-color); */
+	border-bottom: 3px solid var(--paper-green-600);
+}
+
+.order-shipping-hubs .table {
+    width: 100%;
+	width: calc(100% - 16px);
+}
+
+.order-shipping-hubs teamatical-ui-order-item {
+	border-top: 1px dashed var(--divider-color);
+}
+
+.order-shipping-hubs teamatical-ui-order-item:first-of-type {
+	border-top: 1px solid var(--divider-color);
+}
+
+.order-shipping-hubs teamatical-ui-order-item:last-of-type {
+	border-bottom: 1px solid var(--divider-color);
+}
+
+.order-footer {
+	margin: 0px 15px;
+	margin-bottom: 30px;
+}
+
+.order-not-cancelable {
+	border-radius: 5px;
+	border: 1px dashed var(--app-secondary-color);
+	padding: 8px;
+	display: inline;
+}
+
+.empty-list {
+	text-align: center;
+	white-space: nowrap;
+	color: var(--app-secondary-color);
+}
+
+ui-loader {
+	padding-top: 0px;
+	display: block;
+	margin-top: 40px;
+}
+
+.checkout-box {
+	font-weight: bold;
+	text-align: right;
+	margin-right: 10px;
+}
+
+.subtotal {
+	margin: 0 64px 0 24px;
+}
+
+.main-frame {
+	padding: 0 8px 48px 8px;
+}
+
+
+
+@media (max-width: 767px) {
+
+	.subtotal {
+	margin: 0 0 0 24px;
+	}
+
+	#checkout {
+	margin-left: 20px;
+	}
+
+	#checkout[responsive] {
+	margin-left: 0px;
+	}
+
+	.main-frame {
+	padding: 0 1px 6px 1px;
+	}
+}

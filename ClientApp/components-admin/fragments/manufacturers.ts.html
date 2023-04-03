@@ -1,0 +1,141 @@
+<app-localstorage-document key="admin-manufacturers-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+
+				<paper-button class="create-new-manufacturer-btn indigo" disabled$="[[loadingCmd]]" hidden$="[[!userInfo.isAdmin]]" raised on-tap="createNewManufacturerConfirmTap">
+					Create New Manufacturer
+				</paper-button>
+			</div>
+		</div>
+
+		<paper-dialog id="dialogconfirm" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+			<h2>Confirmation</h2>
+			<paper-dialog-scrollable>
+				Are you sure you'd like to Create New Manufacturer?
+			</paper-dialog-scrollable>
+			<div class="buttons">
+				<paper-button dialog-dismiss autofocus>Close</paper-button>
+				<paper-button dialog-confirm on-tap="createNewManufacturerTap">Create</paper-button>
+			</div>
+		</paper-dialog>
+
+
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="Manufacturers" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ManufacturerID]]</span>
+					<a href="[[_urlViewManufacturer(item.ManufacturerID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="220px" resizable="true" id="ManufacturerID">
+				<template class="header">
+					ManufacturerID
+					<vaadin-grid-filter aria-label="ManufacturerID" path="ManufacturerID" value="[[_filterManufacturerID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ManufacturerID]]</span>
+					<a href="[[_urlViewManufacturer(item.ManufacturerID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">ManufacturerID</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="280px" resizable="true" id="Name">
+				<template class="header">
+					Name
+					<vaadin-grid-filter aria-label="Name" path="Name" value="[[_filterName]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.Name]]</template>
+				<template class="footer-off">Name</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="80px" resizable="true" id="Priority">
+				<template class="header">
+					<vaadin-grid-sorter path="Priority">Priority</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Priority" path="Priority" value="[[_filterPriority]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.Priority]]</template>
+				<template class="footer-off">Priority</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="380px" resizable="true" id="Users">
+				<template class="header">
+					Users
+					<vaadin-grid-filter aria-label="Users" path="Users" value="[[_filterUsers]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<dom-if if="[[LenMore(item.Users, 0)]]">
+						<template>
+							<span>[[item.Users.length]] users ...</span>
+						</template>
+					</dom-if>
+					<dom-if if="[[LenLess(item.Users, 1)]]">
+						<template>
+							<span>None</span>
+						</template>
+					</dom-if>
+				</template>
+				<template class="footer-off">Users</template>
+			</vaadin-grid-column>
+
+		</vaadin-grid>
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-manufacturers-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

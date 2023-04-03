@@ -1,0 +1,184 @@
+<iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
+
+<!-- tooltip$="[[entry.item.Product.Title]]" -->
+<div id="image-product-grid" class="image-product-grid" >
+  <dom-repeat items="[[productImages]]" as="imgi">
+    <template>
+      <a class="link-over-object" href="[[_buildProductUrl(entry)]]">
+      <teamatical-ui-image 
+        src="[[imgi.imgUrl]]" 
+        alt="[[imgi.title]]" 
+        label="[[imgi.title]]" 
+        lazy-load>
+      </teamatical-ui-image>
+      </a>
+    </template>
+  </dom-repeat>
+</div>
+
+<div class="detail-container">
+  <div class="name">
+    <a href$="[[_buildProductUrl(entry)]]">[[entry.item.Product.Title]]</a>
+
+    <div class="product-disabled" hidden$="[[!entry.notAvailable]]">
+      <div>
+        <p>[[entry.notAvailableReason]]</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail">
+
+    <dom-if if="[[priceDiscounts.length]]">
+      <template>
+        <div class="discount">
+          <div>
+            <dom-repeat items="[[priceDiscounts]]" as="disi">
+              <template>
+                <p>[[disi]]</p>
+              </template>
+            </dom-repeat>
+          </div>
+        </div>
+      </template>
+    </dom-if>
+    
+    <dom-if if="[[priceRegularShow]]">
+      <template>
+        <div class="price" is-org-related$="[[entry.price.DirectOrganizationPrice]]">[[priceRegular]]</div>
+      </template>
+    </dom-if>
+    
+    <dom-if if="[[!priceRegularShow]]">
+      <template>
+        <div class="price" is-org-related$="[[entry.price.DirectOrganizationPrice]]">
+          <span class="price_new">[[priceSale]]</span>
+          <span class="price_old">[[priceList]]</span>
+        </div>
+      </template>
+    </dom-if>
+
+
+    <dom-if if="[[entry.item.Player]]">
+      <template>
+        <div class="player">[[localize('cart-player')]]
+          [[_formatPlayer(entry.item.Player)]]
+        </div>
+      </template>
+    </dom-if>
+
+    <dom-if if="[[entry.item.SizesSelected]]">
+      <template>
+        <div class="size">[[localize('cart-size')]]
+          <span>[[_formatSize(entry.item.SizesSelected)]]</span>
+        </div>
+      </template>
+    </dom-if>
+
+
+    <!-- <div class="roster">
+      <teamatical-ui-select 
+        hidden$="[[!LenMore(entry.item.RosterList, 0)]]"
+        caption-text="[[localize('cart-item-roster-caption')]]" 
+        options="[[entry.item.RosterList]]" 
+        readonly
+        text-property="title"
+        value-property="id" 
+        value="[[entry.item.Roster]]">
+        <paper-icon-button 
+          class="edit-icon" 
+          disabled
+          cake="1w2" 
+          slot="prefix" 
+          aria-label="roster"
+          icon="icons:view-list">
+        </paper-icon-button>
+      </teamatical-ui-select>
+    </div> -->
+    <dom-if if="[[entry.item.Roster]]">
+      <template>
+        <div class="roster">[[localize('cart-item-roster-caption')]]
+          <paper-icon-button 
+            class="edit-icon"
+            disabled
+            cake="1w2" 
+            slot="prefix" 
+            aria-label="roster"
+            icon="icons:view-list">
+          </paper-icon-button>
+          <span>[[entry.item.Roster.title]]</span>
+        </div>
+        <dom-if if="[[entry.item.Roster]]">
+          <template>
+            <div class="roster qty">
+            [[localize('orders-roster-qty')]] 
+            [[_rosterCount(entry.item.Roster.count, entry.quantity)]]
+            </div>
+          </template>
+        </dom-if>
+      </template>
+    </dom-if>
+
+    <div class="quantity">
+      <teamatical-ui-quantity
+        is-admin$="[[isQtyForcedByAdmin(userInfo.isAdmin, entry.qtyStep, entry.quantity)]]"
+        caption-text="[[qtyCaption(entry.qtyStep, entry.item.Roster)]]" 
+        value="{{entry.quantity}}"
+        step-allow-decrease="[[entry.qtyNoLimits]]"
+        step="[[entry.qtyStep]]"
+        error-message="[[localize('ui-qty-invalid', 'step', entry.qtyStep)]]"
+        invalid="[[entry.qtyStepMismatch]]"
+        on-change="_quantityChange">
+      </teamatical-ui-quantity>
+
+      <!-- <teamatical-ui-select 
+        micro 
+        caption-text="[[localize('cart-qty')]]" 
+        aria-label$="[[localize('cart-qty-selector')]]" 
+        options="[[_optionList]]"
+        value="{{entry.quantity}}" 
+        on-change="_quantityChange">
+      </teamatical-ui-select> -->
+    </div>
+    
+
+
+    <div class="store" hidden$="[[!entry.item.Store]]">
+      <a href="[[_hrefStore(entry.item.Store.sid)]]">[[entry.item.Store.title]]</a>
+      <p class="hidden" showen-block$="[[entry.item.Store.IsGroupFreeShipping]]">
+        [[localize('groupshipping-desc1')]]
+        <teamatical-ui-date-time 
+          tooltip$="[[localize('groupshipping-date-title')]]"
+          hour="numeric"  minute="numeric" second="numeric" 
+          datetime-obj="[[entry.item.Store.groupdeadline]]">
+        </teamatical-ui-date-time>
+        [[localize('groupshipping-desc2')]]
+      </p>
+    </div>
+
+    <div class="accessory-variant" hidden$="[[!entry.item.Product.AccessoryVariants]]">
+      [[entry.item.Product.AccessoryVariantsName]]:
+      <span>
+        [[entry.item.Product.AccessoryVariants.0.Name]]
+      </span>
+    </div>
+
+    <div class="customoptions" hidden$="[[!entry.item.CustomOption]]">
+      [[entry.item.CustomOptionsTitle]]:
+      <span>
+        [[entry.item.CustomOption.title]]
+      </span>
+    </div>
+
+  </div>
+</div>
+
+<div class="delete-container">
+  <paper-icon-button 
+    class="delete-button" 
+    icon="close"
+    aria-label$="[[localize('cart-delete-label', 'item', entry.item.Product.Title)]]" 
+    tooltip$="[[localize('cart-item-delete-hint')]]" tooltip-flow$="[[tooltipDirection]]" tooltip-flow-horiz="left"
+    on-tap="_removeItem">
+  </paper-icon-button>
+</div>

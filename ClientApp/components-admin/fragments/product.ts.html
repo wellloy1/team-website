@@ -1,0 +1,910 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Marketing Product #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.id]]</span>
+					| SKU #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.SKU]]</span>
+					<span class="hidden" showen$="[[!order.Enabled]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> DISABLED
+					</span>
+
+					| Manufacturer Product #:
+					<span class="copy-tap" on-tap="_copyTap">[[order.ProductManufacturerID]]</span>
+					<a href="[[_urlViewProductManufacturer(order.ProductManufacturerID, order.id)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</h3>
+
+				<div class="locale-flag">
+					<span>[[editCurrencyRegionTitle]]</span> | 
+					<dom-if if="[[_asBool(order.PriceTables)]]">
+						<template>
+							<span>[[editPriceTableTitle]]</span> | 
+						</template>
+					</dom-if>
+					<span>[[editLocale]]</span>
+					<img class="flag-img" alt="locale-flag" src="[[_svgFlagUrlByList(editLocale, order.Locales)]]"/>
+				</div>
+
+				<!-- <dom-if if="[[order.notvalid.Tiers]]">
+					<template>
+						<div class="notvalid alert">
+							<pre>
+								[[order.notvalid.Tiers]]
+							</pre>
+						</div>
+					</template>
+				</dom-if> -->
+
+				<div class="buttons">
+					<paper-button 
+						class="order-save-product-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveProductTap">
+						Save Product
+					</paper-button>
+				
+					<div class="quick-anchors hide-on-print">
+						<dom-repeat items="[[anchorTabs]]" as="tabi">
+							<template>
+								<div class="order-details" style$="[[anchorTabStyle(tabi)]]">
+									<h2 on-tap="gotoAnchor" anchor$="[[anchorSelector(tabi)]]">
+										[[localizep('admin-product-anchortab-', tabi)]]
+										<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+									</h2>
+								</div>
+							</template>
+						</dom-repeat>
+					</div>
+				</div>
+				
+				
+				<dom-if if="[[_asBool(order.ProductConfiguration)]]">
+					<template>
+						<div class="order-inputs order-items">
+							<h4>
+								<a id="product-views"></a>
+								Product Views
+							</h4>
+							<dom-if if="[[!LenMore(order.ProductConfiguration.Product.ImageUrls)]]">
+								<template>
+									<div class="noitems">
+										no views
+									</div>
+								</template>
+							</dom-if>
+							<dom-if if="[[!_asBool(order.ProductConfiguration)]]">
+								<template>
+									<div>
+										<p class="note-alt">Under Construction</p>
+									</div>
+								</template>
+							</dom-if>
+							<tmladmin-ui-product-item 
+								entry="[[order.ProductConfiguration]]" 
+								visible="[[visible]]"
+								action-disabled="[[loading]]" 
+								lazy-observe="[[lazyObserve]]"
+								scroll-target="[[scrollTarget]]">
+							</tmladmin-ui-product-item>
+						</div>
+					</template>
+				</dom-if>
+				
+
+
+				<div class="order-inputs details-section">
+					<h4>
+						<a id="details"></a>
+						Details:
+						<div class="product-disabled" hidden$="[[order.Enabled]]">
+							<div>
+								<p>[[localize('detail-disabled-mark')]]</p>
+							</div>
+						</div>
+					</h4>
+
+					<div>
+						<paper-checkbox 
+							checked="{{order.Enabled}}"
+							name="Enabled"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.Enabled]]" 
+							invalid="[[_asBool(order.notvalid.Enabled)]]">
+							Enabled Marketing Product 
+						</paper-checkbox>
+
+						<paper-checkbox 
+							checked="{{order.DisabledPattern}}"
+							name="DisabledPattern"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.DisabledPattern]]" 
+							invalid="[[_asBool(order.notvalid.DisabledPattern)]]">
+							Disabled Pattern
+						</paper-checkbox>
+					</div>
+					
+
+					<div class="small-inputs">
+						<paper-input label="Product Manufacturer ID" type="string"
+							value="{{order.ProductManufacturerID}}"
+							name="ProductManufacturerID" 
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.ProductManufacturerID]]"
+							invalid="[[_asBool(order.notvalid.ProductManufacturerID)]]">
+
+							<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+							<paper-icon-button slot="suffix" class="syncpm-btn" icon="admin-icons:autorenew" 
+								on-tap="_syncpmTap" 
+								disabled$="[[_dis_syncpm(loading, order.ProductManufacturerID)]]">
+							</paper-icon-button>
+						</paper-input>
+
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+							<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+							<paper-icon-button slot="suffix"></paper-icon-button>
+						</paper-input>
+					</div>
+
+					<div class="small-inputs">
+						<div>
+							<tmladmin-ui-dropdown-menu 
+								style="width:calc(100% - 8px)"
+								name$="[[order.SizeCategory]]"
+								vertical-align="top" 
+								horizontal-align="left"
+								id-property="id"
+								title-property="title"
+								label="Size Category"
+								disabled$="[[loading]]" 
+								value="{{order.SizeCategory}}"
+								value-list="[[order.SizeCategories]]"
+								on-value-changed="onInputChanged"
+								error-message="[[order.notvalid.SizeCategory]]"
+								invalid="[[_asBool(order.notvalid.SizeCategory)]]">
+							</tmladmin-ui-dropdown-menu>
+						</div>
+
+						<div class="selection">
+							<tmladmin-ui-dropdown-menu 
+								style="width:calc(100% - 8px)"
+								vertical-align="top" 
+								horizontal-align="left"
+								id-property="id"
+								title-property="title"
+								label="Factory Currency"
+								disabled$="[[loading]]" 
+								value="{{order.CurrencyFactory}}"
+								value-list="[[order.Currencies]]"
+								on-value-changed="onInputChanged"
+								error-message="[[order.notvalid.CurrencyFactory]]"
+								invalid="[[_asBool(order.notvalid.CurrencyFactory)]]">
+							</tmladmin-ui-dropdown-menu>
+						</div>
+
+						
+
+						<paper-input 
+							label="Step Qty (min count)" 
+							type="number" 
+							value="{{order.QtyStep}}"
+							name="QtyStep"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.QtyStep]]" 
+							invalid="[[_asBool(order.notvalid.QtyStep)]]">
+						</paper-input>
+
+						<!-- GroupQuantityID -->
+						<paper-input label="Quantity Group ID" type="string" value="{{order.GroupQuantityID}}" name="GroupQuantityID"
+							on-value-changed="onInputChanged" error-message="[[order.notvalid.GroupQuantityID]]"
+							invalid="[[_asBool(order.notvalid.GroupQuantityID)]]">
+						</paper-input>
+
+						
+
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+
+
+					<multiselect-combo-box 
+						id="SupportedCurrencyRegions"
+						items="[[order.AvailableCurrencyRegions]]"
+						item-id-path="id" 
+						item-value-path="id" 
+						item-label-path="title"
+						selected-items="{{order.CurrencyRegions}}"
+						disabled$="[[loadingAny]]"
+						label="Supported Currency Regions" 
+						placeholder="Add" 
+						on-change="onCurrencyRegionsChanged"
+						on-blur="onCurrencyRegionsBlur"
+						on-item-removed="onCurrencyRegionsRemoved"
+						on-remove-all-items="onCurrencyRegionsRemovedAll"
+						error-message="[[order.notvalid.CurrencyRegions]]" 
+						invalid="[[_asBool(order.notvalid.CurrencyRegions)]]"
+						clear-button-visible
+						allow-custom-values-off>
+						<template>
+							[[item.title]]
+						</template>
+					</multiselect-combo-box>
+				</div>
+
+				<!-- PriceLinks -->
+				<dom-if if="[[_asBool(order.PriceLinks)]]">
+					<template>
+						<div class="order-inputs pricemodel-section">
+							<h4>
+								<a id="pricelinks"></a>
+								Price Links:
+							</h4>
+
+							<div scrollable-x>
+								<div class="table">
+									<div class="header">
+										<div>
+											Variant
+										</div>
+										<div>
+											Size Links
+										</div>
+
+										<dom-repeat items="[[_buildTitles(order.PriceLinks.0.SizeLinks.0.CurrencyRegions)]]" as="curregi">
+											<template>
+												<div class="centered">
+													[[curregi.title]]
+												</div>
+											</template>
+										</dom-repeat>
+									</div>
+			
+									<dom-repeat items="[[order.PriceLinks]]" as="plinki" index-as="plinkinx">
+										<template>
+
+											<dom-repeat items="[[plinki.SizeLinks]]" as="slinki" index-as="slinkinx">
+												<template>
+													<div class="row">
+														<div class="variant-name">
+															<dom-if if="[[_firstPriceLink(plinkinx, slinkinx)]]">
+																<template>
+																	[[plinki.title]]
+																</template>
+															</dom-if>
+														</div>
+
+														<div>
+															<div class="horiz-container" style="align-items: end;">
+																<multiselect-combo-box 
+																	items="[[_sizesFilter(slinki.Sizes, order.Sizes, plinki, slinkinx, plinki.SizeLinks)]]"
+																	item-id-path="Code" 
+																	item-value-path="Code" 
+																	item-label-path="Name"
+																	selected-items="{{slinki.Sizes}}"
+																	disabled$="[[loadingAny]]"
+																	label="Sizes" 
+																	placeholder="Add" 
+																	on-change="onSizesChanged"
+																	on-blur="onSizesBlur"
+																	on-item-removed="onSizesRemoved"
+																	on-remove-all-items="onSizesRemovedAll"
+																	error-message="[[slinki.notvalid.Sizes]]" 
+																	invalid="[[_asBool(slinki.notvalid.Sizes)]]"
+																	clear-button-visible
+																	allow-custom-values-off>
+																	<template>
+																		[[item.Name]]
+																	</template>
+																</multiselect-combo-box>
+
+																<dom-if if="[[_showRemoveSize(plinki.SizeLinks.length, slinkinx)]]">
+																	<template>
+																		<paper-icon-button 
+																			class="remove-btn" 
+																			disabled$="[[loadingAny]]"
+																			icon="admin-icons:remove"
+																			on-tap="_removeSizeLinkTap">
+																		</paper-icon-button>
+																	</template>
+																</dom-if>
+
+																<dom-if if="[[!_notLast(plinki.SizeLinks, slinkinx)]]">
+																	<template>
+																		<paper-icon-button 
+																			class="add-btn" 
+																			disabled$="[[loadingAny]]"
+																			icon="admin-icons:add-circle-outline" 
+																			on-tap="_addSizeLinkTap">
+																		</paper-icon-button>
+																	</template>
+																</dom-if>
+															</div>
+														</div>
+			
+														<dom-repeat items="[[slinki.CurrencyRegions]]" as="curregi">
+															<template>
+																<div class="centered">
+																	<div hidden$="[[_hiddenNAAlert(curregi.PriceTable.id)]]">
+																		<p class="note-alt warning">N/A Price Link</p>
+																	</div>
+																	<teamatical-ui-select 
+																		micro
+																		class="price-table-selector"
+																		options="[[_priceTablesAddNA(order.PriceTables)]]" 
+																		text-property="title"
+																		value-property="id" 
+																		value="{{curregi.PriceTable}}"
+																		on-change="onInputChanged"
+																		error-message="[[curregi.notvalid.PriceTable]]"
+																		invalid="[[_asBool(curregi.notvalid.PriceTable)]]">
+																	</teamatical-ui-select>
+																</div>
+															</template>
+														</dom-repeat>
+													</div>
+												</template>
+											</dom-repeat>
+
+										</template>
+									</dom-repeat>
+
+			
+									<dom-if if="[[!LenMore(order.PriceLinks)]]">
+										<template>
+											<div class="noitems">
+												[[localize('admin-list-noitems')]]
+											</div>
+										</template>
+									</dom-if>
+								</div>
+							</div>
+
+						</div>
+					</template>
+				</dom-if>
+
+
+
+				<!-- Price Tables -->
+				<dom-if if="[[_asBool(order.PriceTables)]]">
+					<template>
+						<div class="order-inputs pricetables-section">
+							<h4>
+								<a id="pricetables"></a>
+								Price Tables:
+
+								<dom-if if="[[_asBool(order.notvalid.PriceTables)]]">
+									<template>
+										<div class="notvalid alert">
+											<pre>
+												[[order.notvalid.PriceTables]]
+											</pre>
+										</div>
+									</template>
+								</dom-if>
+							</h4>
+
+							<div class="horiz-container">
+								<paper-input id="newpt" type="string" 
+									class="newinput small-input" 
+									label="Add New Price Table" 
+									name="PriceTableTitle"
+									on-value-changed="onInputChanged">
+									<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+									<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline" on-tap="_addPriceTableTap"></paper-icon-button>
+								</paper-input>
+
+								<paper-button class="remove-pricetable-btn" disabled$="[[_disRemovePriceTable(order.PriceTables.length, loading)]]" raised
+									on-tap="_removePriceTableTap">
+									Remove Recent Table
+								</paper-button>
+							</div>
+		
+							<div>
+								<label id="labelTables">
+									Recent Price Table:
+								</label>
+								<paper-radio-group 
+									class="pricetables-radiogroup"
+									aria-labelledby="labelTables" 
+									selected="{{editPriceTable}}" 
+									name="editPriceTable"
+									on-value-changed="onInputChanged">
+									<dom-repeat items="[[order.PriceTables]]" as="ptablei" index-as="ptableindex">
+										<template>
+											<paper-radio-button 
+												name="[[ptablei.id]]" 
+												label="[[ptablei.title]]">
+												<span>[[ptablei.title]]</span>
+												<span class="notvalid alert" 
+													hidden$="[[!_notvalidPriceTables(order.notvalid, order.notvalid.*, ptableindex)]]">
+													<pre>
+														[[_notvalidPriceTables(order.notvalid, order.notvalid.*, ptableindex)]]
+													</pre>
+												</span>
+											</paper-radio-button>
+										</template>
+									</dom-repeat>
+								</paper-radio-group>
+							</div>
+		
+							<iron-pages 
+								selected="[[editPriceTable]]" 
+								attr-for-selected="table" 
+								fallback-selection="USD">
+								<dom-repeat items="[[order.PriceTables]]" as="ptablei" index-as="ptableindex">
+									<template>
+										<div table$="[[ptablei.id]]">
+											<div class="selection">
+												<tmladmin-ui-dropdown-menu 
+													style="width:calc(100% - 8px)"
+													vertical-align="top" 
+													horizontal-align="left"
+													id-property="id"
+													title-property="title"
+													label="Currency [[[editPriceTableTitle]]]"
+													disabled$="[[loading]]" 
+													value="{{ptablei.Currency}}"
+													value-list="[[order.Currencies]]"
+													on-value-changed="onInputChanged"
+													error-message="[[ptablei.notvalid.Currency]]"
+													invalid="[[_asBool(ptablei.notvalid.Currency)]]">
+												</tmladmin-ui-dropdown-menu>
+											</div>
+										</div>
+									</template>
+								</dom-repeat>
+							</iron-pages>
+		
+
+							<div class="chart-countainer">
+								<canvas id="priceTableChart"></canvas>
+							</div>
+		
+		
+							<iron-pages 
+								selected="[[editPriceTable]]" 
+								attr-for-selected="table" 
+								fallback-selection="USD">
+								<dom-repeat items="[[order.PriceTables]]" as="ptablei" index-as="ptableindex">
+									<template>
+		
+										<div table$="[[ptablei.id]]">
+				
+											<div class="buttons">
+												<paper-button class="paste-tiermodel-btn" raised
+													disabled$="[[loading]]"
+													on-tap="pastePriceTableModelTap">
+													Paste Price Table
+												</paper-button>
+				
+												<paper-button class="copy-tiermodel-btn" raised
+													disabled$="[[_disable_PriceTable(ptablei.Tiers, loading)]]" 
+													on-tap="copyPriceTableModelTap">
+													Copy Price Table
+												</paper-button>
+
+												<paper-button class="export-sewinginstruction-btn" raised 
+													disabled$="[[_disable_PriceTable(ptablei.Tiers, loading)]]" 
+													on-tap="_exportPriceTableTap">
+													Download Price Table
+												</paper-button>
+											</div>
+
+											<div class="tier-model-import">
+												<teamatical-ui-csv-import 
+													id="csv-import" 
+													website-url="[[websiteUrl]]" 
+													visible="[[visible]]"
+													items="{{importedItems}}" 
+													mapping="{{importedMapping}}"
+													mapping-keys="[[importMappingKeys]]">
+												</teamatical-ui-csv-import>
+											</div>
+				
+											<div class="buttons center">
+												<paper-button class="import-tiermodel-btn" raised 
+													disabled$="[[_disableImportPriceTableTiers(importedItems, loading)]]" 
+													on-tap="_importPriceTableTap">
+													Import Tier Model
+												</paper-button>
+											</div>
+				
+											
+											<dom-if if="[[ptablei.notvalid.Tiers]]">
+												<template>
+													<div class="notvalid alert">
+														<pre>
+															[[ptablei.notvalid.Tiers]]
+														</pre>
+													</div>
+												</template>
+											</dom-if>
+									
+				
+											<dom-repeat items="[[ptablei.Tiers]]" as="tieri">
+												<template>
+													<h3>
+														<span class="tier-hightlight" tier-type$="[[_tierType(tieri.ID)]]">
+															[[_tierTitle(tieri.ID, tieri.ProductManufacturerID)]]
+															[[[editPriceTableTitle]]]
+														</span>
+													</h3>
+				
+													<div class="buttons">
+														<paper-button class="add-new-discount-btn" raised
+															disabled$="[[loading]]"
+															on-tap="addNewPriceTableItemTap">
+															Add New Price Item
+														</paper-button>
+													</div>
+													
+
+													<vaadin-grid 
+														id$="grid_[[ptableindex]]_[[index]]" 
+														hidden$="[[!LenMore(tieri.Values)]]" 
+														aria-label="DiscountTiers"
+														theme="no-border column-borders wrap-cell-content row-stripes compact" 
+														items="[[tieri.Values]]"
+														cell-class-name-generator="[[gridCellClassNameGenerator]]" 
+														column-reordering-allowed 
+														height-by-rows>
+													
+														<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+															<template class="header">#</template>
+															<template>[[_formatN(index, item)]]</template>
+														</vaadin-grid-column>
+													
+														<vaadin-grid-column width="120px" resizable="true" id="Quantity">
+															<template class="header">
+																Quantity
+															</template>
+															<template>
+																<span has-errors$="[[item.notvalid.Quantity]]">&gt;=[[item.Quantity]]</span>
+															</template>
+														</vaadin-grid-column>
+													
+														<vaadin-grid-column width="120px" resizable="true" id="Price">
+															<template class="header">
+																[[_subunitCurrencyWithTitle('Price ({subunit}) [{curid}]', ptablei.Currency.id, order.CurrencyFactory.id, tieri.ID)]]
+															</template>
+															<template>
+																<span has-errors$="[[item.notvalid.Price]]">[[item.Price]]</span>
+															</template>
+														</vaadin-grid-column>
+				
+														<vaadin-grid-column width="300px" resizable="true" id="Description">
+															<template class="header">
+																Description
+															</template>
+															<template>
+																<span has-errors$="[[item.notvalid.Description]]">[[item.Description]]</span>
+															</template>
+														</vaadin-grid-column>
+														
+														<vaadin-grid-column width="300px" resizable="true" id="DescriptionApplied">
+															<template class="header">
+																Description Applied
+															</template>
+															<template>
+																<span has-errors$="[[item.notvalid.DescriptionApplied]]">[[item.DescriptionApplied]]</span>
+															</template>
+														</vaadin-grid-column>
+				
+														<vaadin-grid-column width="250px" flex-grow="0" resizable="true" id="_buttons2">
+															<template class="header"></template>
+															<template>
+																<div class="buttons unset">
+																	<paper-button raised on-tap="editPriceTablePointTap" class="edit-btn" disabled$="[[loading]]">Edit</paper-button>
+																	<paper-button raised on-tap="deletePriceTablePointTap" class="delete-btn" disabled$="[[loading]]">Delete</paper-button>
+																</div>
+															</template>
+														</vaadin-grid-column>
+													
+													</vaadin-grid>
+				
+													<dom-if if="[[!LenMore(tieri.Values)]]">
+														<template>
+															<div class="noitems">
+																no items
+															</div>
+														</template>
+													</dom-if>
+													
+												</template>
+											</dom-repeat>
+										</div>
+		
+									</template>
+								</dom-repeat>
+							</iron-pages>
+						</div>
+					</template>
+				</dom-if>
+
+
+				<!-- Locales -->
+				<div class="order-inputs locales-section">
+					<h4>
+						<a id="locales"></a>
+						Locales:
+					</h4>
+					
+					<div>
+						<label id="labelLocales">Locales:</label>
+						<paper-radio-group 
+							class="locales-radiogroup"
+							aria-labelledby="labelLocales" 
+							selected="{{editLocale}}" 
+							name="editLocale"
+							on-value-changed="onInputChanged">
+							<dom-repeat items="[[order.Locales]]" as="loci">
+								<template>
+									<paper-radio-button 
+										name="[[loci.id]]" 
+										label="[[loci.title]]">
+										<span>[[loci.title]]</span>
+										<img class="flag-img" alt="locale-flag" src="[[_svgFlagUrl(loci.country)]]"/>
+									</paper-radio-button>
+								</template>
+							</dom-repeat>
+						</paper-radio-group>
+					</div>
+
+					<multiselect-combo-box 
+						id="Supported Locales"
+						items="[[order.AvailableLocales]]"
+						item-id-path="id" 
+						item-value-path="id" 
+						item-label-path="title"
+						selected-items="{{order.Locales}}"
+						disabled$="[[loadingAny]]"
+						label="Supported Locales" 
+						placeholder="Add" 
+						on-item-removed="onLocalesRemoved"
+						on-remove-all-items="onLocalesRemovedAll"
+						error-message="[[order.notvalid.Locales]]" 
+						invalid="[[_asBool(order.notvalid.Locales)]]"
+						clear-button-visible
+						allow-custom-values-off>
+						<template>
+							[[localizep('country-', item.country)]] - [[item.title]]
+						</template>
+					</multiselect-combo-box>
+
+					<iron-pages id="locales" 
+						selected="[[editLocale]]" 
+						attr-for-selected="locale" 
+						fallback-selection="en-US">
+						<dom-repeat items="[[order.Locales]]" as="loci" index-as="locindex">
+							<template>
+								<!-- hidden$="[[_selectedLocale(editLocale, loci)]]" -->
+								<div class="locale-page" locale$="[[loci.id]]">
+									<paper-input 
+										label="Title [[[loci.id]]]" 
+										type="string" 
+										value="{{loci.Name}}"
+										name="Name"
+										on-value-changed="onInputChanged"
+										error-message="[[loci.notvalid.Name]]" 
+										invalid="[[_asBool(loci.notvalid.Name)]]">
+									</paper-input>
+	
+									<paper-textarea 
+										label="Keywords [[[loci.id]]]" 
+										value="{{loci.Keywords}}"
+										name="Keywords"
+										on-value-changed="onInputChanged"
+										error-message="[[loci.notvalid.Keywords]]" 
+										invalid="[[_asBool(loci.notvalid.Keywords)]]">
+									</paper-textarea>
+	
+									<tmladmin-ui-richtext-editor
+										label="Description [[[loci.id]]]" 
+										value="[[loci.DescriptionHtml]]" 
+										value-html="{{loci.Description}}" 
+										value-delta="{{loci.DescriptionSrc}}" 
+										name="Description" 
+										on-value-changed="onInputChanged" 
+										error-message="[[loci.notvalid.Description]]" 
+										invalid="[[_asBool(loci.notvalid.Description)]]">
+									</tmladmin-ui-richtext-editor>
+
+									<tmladmin-ui-richtext-editor
+										label="Sizing Tip [[[loci.id]]]" 
+										value="[[loci.SizingTipHtml]]" 
+										value-html="{{loci.SizingTip}}" 
+										value-delta="{{loci.SizingTipSrc}}" 
+										name="SizingTip"
+										on-value-changed="onInputChanged"
+										error-message="[[loci.notvalid.SizingTip]]" 
+										invalid="[[_asBool(loci.notvalid.SizingTip)]]">
+									</tmladmin-ui-richtext-editor>
+									
+
+									<dom-repeat items="[[loci.ManufacturerElements]]" as="minputi">
+										<template>
+											<paper-input 
+												label="Title of [[minputi.ID]] [[[loci.id]]]" 
+												type="string" 
+												value="{{minputi.Title}}"
+												name="Title"
+												on-value-changed="onInputChanged"
+												error-message="[[minputi.notvalid.Title]]" 
+												invalid="[[_asBool(minputi.notvalid.Title)]]">
+											</paper-input>
+										</template>
+									</dom-repeat>
+								</div>
+							</template>
+						</dom-repeat>
+					</iron-pages>
+				</div>
+
+			</div>
+			
+
+
+			<a id="product-history"></a>
+			<tmladmin-ui-changes-history
+				class="order-history"
+				title="Product History"
+				items="[[order.History]]">
+			</tmladmin-ui-changes-history>
+
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+<tmladmin-ui-dialog id="dialog_tier" disabled$="[[dialog_tier.loading]]" scroll-target="[[scrollTarget]]" on-tmladmin-ui-dialog-closed="onCloseSaveDialogTier">
+	<div slot="header">
+		<paper-icon-button 
+			class="close-dialog-small-btn" 
+			icon="admin-icons:close"
+			dialog-dismiss>
+		</paper-icon-button>
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialog_tier.loading]]"
+				hidden$="[[!dialog_tier.loading]]">
+			</paper-progress>
+		</div>
+
+		<h2>
+			[[dialog_tier.editTierTitle]]
+		</h2>
+	</div>
+
+	<div slot="body">
+		<label id="labelTier">Tier:</label>
+		<dom-if if="[[dialog_tier.editTierType]]">
+			<template>
+				<paper-radio-button 
+					name="[[dialog_tier.editTierItem.ID]]" 
+					checked
+					label="[[_tierTitle(dialog_tier.editTierItem.ID)]]">
+					<span 
+						class="tier-hightlight" 
+						tier-type$="[[_tierType(dialog_tier.editTierItem.ID)]]">
+						[[_tierTitle(dialog_tier.editTierItem.ID)]]
+					</span>
+				</paper-radio-button>
+			</template>
+		</dom-if>
+
+		<dom-if if="[[!dialog_tier.editTierType]]">
+			<template>
+				<paper-radio-group 
+					name="ID"
+					aria-labelledby="labelTier" 
+					aria-readonly="true"
+					selected="{{dialog_tier.editTierItem.ID}}" 
+					on-value-changed="onInputChanged" 
+					error-message="[[dialog_tier.editTierItem.notvalid.ID]]" 
+					invalid="[[_asBool(dialog_tier.editTierItem.notvalid.ID)]]">
+					<dom-repeat items="[[dialog_tier.editTierItemTiersList]]" as="tieri">
+						<template>
+							<paper-radio-button 
+								name="[[tieri.ID]]" 
+								label="[[_tierTitle(tieri.ID, tieri.ProductManufacturerID)]]">
+								<span 
+									class="tier-hightlight" 
+									tier-type$="[[_tierType(tieri.ID)]]">
+									[[_tierTitle(tieri.ID, tieri.ProductManufacturerID)]]
+								</span>
+							</paper-radio-button>
+						</template>
+					</dom-repeat>
+				</paper-radio-group>
+			</template>
+		</dom-if>
+
+
+		<paper-input label="Quantity" type="string" 
+			value="{{dialog_tier.editTierItem.Quantity::input}}"
+			name="dialog_tier.editTierItem.Quantity" 
+			on-value-changed="onInputChanged"
+			error-message="[[dialog_tier.editTierItem.notvalid.Quantity]]"
+			invalid="[[_asBool(dialog_tier.editTierItem.notvalid.Quantity)]]">
+			<div slot="prefix">&gt;=</div>
+		</paper-input>
+
+		<paper-input 
+			label="[[_subunitCurrencyWithTitle('Price ({subunit}) [{curid}]', dialog_tier.editTierItem_AP.Currency.id, order.CurrencyFactory.id, dialog_tier.editTierItem.ID)]]" 
+			type="string" 
+			value="{{dialog_tier.editTierItem.Price::input}}" 
+			name="dialog_tier.editTierItem.Price"
+			on-value-changed="onInputChanged" 
+			error-message="[[dialog_tier.editTierItem.notvalid.Price]]"
+			invalid="[[_asBool(dialog_tier.editTierItem.notvalid.Price)]]">
+		</paper-input>
+
+		<paper-textarea label="Description (%percent%, %value%, %count%)" type="string"
+			value="{{dialog_tier.editTierItem.Description::input}}" name="dialog_tier.editTierItem.Description"
+			on-value-changed="onInputChanged" 
+			error-message="[[dialog_tier.editTierItem.notvalid.Description]]"
+			invalid="[[_asBool(dialog_tier.editTierItem.notvalid.Description)]]">
+		</paper-textarea>
+
+		<paper-textarea label="DescriptionApplied (%percent%, %value%, %count%)" type="string"
+			value="{{dialog_tier.editTierItem.DescriptionApplied::input}}" 
+			name="dialog_tier.editTierItem.DescriptionApplied"
+			on-value-changed="onInputChanged" 
+			error-message="[[dialog_tier.editTierItem.notvalid.DescriptionApplied]]"
+			invalid="[[_asBool(dialog_tier.editTierItem.notvalid.DescriptionApplied)]]">
+		</paper-textarea>
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>Close</paper-button>
+		<paper-button dialog-confirm on-tap="saveDialogTierTap">[[dialog_tier.editTierBtn]]</paper-button>
+	</div>
+</tmladmin-ui-dialog>
+
+
+<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Confirm Product to Save</h2>
+	<paper-dialog-scrollable>
+		Marketing Product #: [[order.id]] is going to be saved...are you sure?
+		<!-- <paper-textarea label="Refund reason" value="{{dialogcancel_reason}}"></paper-textarea> -->
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="saveProductConfirm">Save Product</paper-button>
+	</div>
+</paper-dialog>

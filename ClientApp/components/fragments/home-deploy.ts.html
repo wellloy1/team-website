@@ -1,0 +1,92 @@
+<div class="customization-container">
+	<!-- 1 -->
+	<section class="customization">
+		<teamatical-ui-image 
+			class="image" 
+			is-smooth-update
+			src="[[imagesPath]]/home-deploy/Deploy_Teamwear_Banner_01.png" lazy-load background-dark alt="home-customization">
+		</teamatical-ui-image>
+	</section>
+
+	<!-- 2 -->
+	<section class="customization slide">
+		<teamatical-ui-image 
+			class="image" 
+			is-smooth-update
+			src="[[imagesPath]]/home-deploy/Deploy_Teamwear_Banner_02.png" use-webp1 lazy-load background-dark alt="home-customization">
+		</teamatical-ui-image>
+	</section>
+
+    <!-- 3 -->
+	<section class="customization slide">
+		<teamatical-ui-image 
+		  class="image" 
+		  is-smooth-update
+		  src="[[imagesPath]]/home-deploy/Deploy_Teamwear_Banner_03.png" use-webp1 lazy-load background-dark alt="home-customization">
+		</teamatical-ui-image>
+	</section>
+
+	<!-- 4 -->
+	<section class="customization slide">
+		<teamatical-ui-image 
+		  class="image" 
+		  is-smooth-update
+		  src="[[imagesPath]]/home-deploy/Deploy_Teamwear_Banner_04.png" use-webp1 lazy-load background-dark alt="home-customization">
+		</teamatical-ui-image>
+	</section>
+
+	<!-- F -->
+	<div class="customization-foreground">
+		<ul class="view-selector">
+			<dom-repeat items="[[slidesItems]]" as="slidei">
+				<template>
+					<li selected$="[[slidei.Selected]]">
+					<button 
+						type="button" 
+						data-role="none" 
+						role="button" 
+						on-click="_onSelectorTap"
+						tabindex="0">[[index]]</button>
+					</li>
+				</template>
+			</dom-repeat>
+		</ul>
+	</div>
+</div>
+
+
+<!-- <div class="red-line"></div> -->
+
+
+<div class="shops-banners">
+	<div class="shop baseball">
+		<div class="shop-content">
+			<teamatical-ui-image 
+				class="image small-banner"
+				is-smooth-update
+				src$="[[imagesPath]]/home-deploy/Shop-Baseball.png" use-webp1 lazy-load background-dark alt="home-customization">
+			</teamatical-ui-image>
+		</div>
+	</div>
+	<div class="shop basketball">
+		<div class="shop-content">
+			<teamatical-ui-image 
+				class="image small-banner"
+				is-smooth-update
+				src$="[[imagesPath]]/home-deploy/Shop-Basketball.png" use-webp1 lazy-load background-dark alt="home-customization">
+			</teamatical-ui-image>
+		</div>
+	</div>
+	<div class="shop football">
+		<div class="shop-content">
+			<teamatical-ui-image 
+				class="image small-banner"
+				is-smooth-update
+				src$="[[imagesPath]]/home-deploy/Shop-Football.png" use-webp1 lazy-load background-dark alt="home-customization">
+			</teamatical-ui-image>
+		</div>
+	</div>
+</div>
+
+
+

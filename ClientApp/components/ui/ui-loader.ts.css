@@ -1,0 +1,111 @@
+/* .loader_container {
+	position: relative;
+	margin: 0 auto;
+} */
+
+.loader {
+	position: relative; 
+	/* position: absolute; */
+	margin: 0 auto;
+
+	top: 0px;
+	left: -60px;
+
+	pointer-events: none;
+
+	width: 40px;
+}
+
+.loader p {
+	text-align: center;
+	padding-left: 60px;
+	font-size: 1.6em;
+	    white-space: nowrap;
+}
+
+
+
+
+
+.loader .circle {
+	position: absolute;
+	width: 38px;
+	height: 38px;
+	opacity: 0;
+	transform: rotate(225deg);
+	animation-iteration-count: infinite;
+	animation-name: orbit;
+	animation-duration: 5.5s;
+	animation-delay: 3000ms;
+}
+
+.loader .circle:after {
+	content: '';
+	position: absolute;
+	width: 5px;
+	height: 5px;
+	border-radius: 5px;
+	background: #111;
+}
+
+.loader .circle:nth-child(1) {
+	animation-delay: 1000ms;
+}
+
+.loader .circle:nth-child(2) {
+	animation-delay: 1240ms;
+}
+
+.loader .circle:nth-child(3) {
+	animation-delay: 1480ms;
+}
+
+.loader .circle:nth-child(4) {
+	animation-delay: 1720ms;
+}
+
+.loader .circle:nth-child(5) {
+	animation-delay: 1960ms;
+}
+
+@keyframes orbit {
+	0% {
+		transform: rotate(225deg);
+		opacity: 1;
+		animation-timing-function: ease-out;
+	}
+	7% {
+		transform: rotate(345deg);
+		animation-timing-function: linear;
+	}
+	30% {
+		transform: rotate(455deg);
+		animation-timing-function: ease-in-out;
+	}
+	39% {
+		transform: rotate(690deg);
+		animation-timing-function: linear;
+	}
+	70% {
+		transform: rotate(815deg);
+		opacity: 1;
+		animation-timing-function: ease-out;
+	}
+	75% {
+		transform: rotate(945deg);
+		animation-timing-function: ease-out;
+	}
+	76% {
+		transform: rotate(945deg);
+		opacity: 0;
+	}
+	100% {
+		transform: rotate(945deg);
+		opacity: 0;
+	}
+}
+
+
+@media (max-width: 360px) {
+	
+}

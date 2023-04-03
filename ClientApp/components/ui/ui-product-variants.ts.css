@@ -1,0 +1,124 @@
+:host {
+    display: block;
+}
+:host([disabled]) {
+	opacity: 0.6;
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+    
+    pointer-events: none;
+}
+:host([rectangle]) .optionlist iron-icon {
+    border-radius: 4px;
+}
+
+h2 {
+    margin: 16px 0;
+    font-size: 1.1em;
+}
+
+
+.optionlist ul {
+    padding: 0;
+    border: 1px solid transparent;
+}
+.optionlist ul:focus {
+    /* outline: 1px dashed var(--app-primary-color); */
+    outline: 1px dashed transparent;
+    border-radius: 8px;
+}
+.optionlist ul:focus:not(:active) {
+    border-left: 1px dashed var(--app-primary-color);
+    border-right: 1px dashed var(--app-primary-color);
+}
+
+/*
+border: 1px solid transparent;
+border-radius: 8px;
+
+:host(:focus) {
+    outline: 1px dashed transparent;
+}
+:host(:focus:not(:active)) {
+} */
+
+
+.optionlist li {
+    list-style: none;
+    display: inline-block;
+    position: relative;
+}
+
+.optionlist li[selected] button {
+    border: 2px solid var(--divider-color);
+    /* transform: scale(1.07); */
+}
+
+/* .optionlist button:hover {
+    transform: scale(1.05);
+} */
+
+.optionlist button:focus {
+	-webkit-filter: drop-shadow( 0 0 0.15rem #999 );
+	filter: drop-shadow( 0 0 0.15rem #999 );
+}
+.optionlist button {
+    outline: none;
+	will-change: filter;
+
+    cursor: pointer;
+
+    background-color: white;
+    box-shadow: inset 0 0 0 6px #f6f6f6;
+    
+    -webkit-transition: all .15s ease-in;
+            transition: all .15s ease-in;
+
+    display: inline-block;
+    /* width: 38px; */
+    min-width: 160px;
+    height: 44px;
+    border-radius: 16px;
+    border: 2px solid #fff;
+    margin: 2px;
+    padding: 12px;
+}
+
+@media (max-width: 415px) {
+    .optionlist li,
+    .optionlist button {
+        width: 100%;
+        width: calc(100% - 2px);
+    }
+}
+
+
+
+
+
+/* paper-input[readonly='true'] iron-icon.color-picker-button  {
+    cursor: default;
+}
+.color-picker-button {
+    cursor: pointer;
+
+    --iron-icon-height: 30px;
+    --iron-icon-width: 30px;
+    --iron-icon: {
+        -webkit-filter: drop-shadow( -2px -2px 2px #c0c0c0 ); 
+                filter: drop-shadow( -2px -2px 2px #c0c0c0 );
+    }
+
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+    -webkit-backface-visibility:hidden;
+}
+.select-row {
+    @apply --layout-vertical;
+    margin: 8px 0;
+}
+label { 
+    color: var(--paper-input-container-color); 
+} */

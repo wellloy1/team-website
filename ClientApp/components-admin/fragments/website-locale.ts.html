@@ -1,0 +1,216 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Locale Item #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.i]]</span>
+				</h3>
+
+				<div class="buttons">
+					<paper-button 
+						class="order-save-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveItemConfirmTap">
+						<span hidden$="[[!isApplyLocale(queryParams.wlocaleid, queryParams.backurl)]]">Apply Item</span>
+						<span hidden$="[[isApplyLocale(queryParams.wlocaleid, queryParams.backurl)]]">Save Item</span>
+					</paper-button>
+				
+					<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm Locale Item to Save</h2>
+						<paper-dialog-scrollable>
+							Locale Item #: [[order.i]] is going to be saved...are you sure?
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss>Close</paper-button>
+							<paper-button dialog-confirm autofocus on-tap="saveItemTap">Save Item</paper-button>
+						</div>
+					</paper-dialog>
+
+					<div class="order-dangersection-btn">
+						<paper-checkbox 
+						  is-almighty
+						  class="hidden"
+						  showen$="[[userInfo.isAlmighty]]"
+						  checked="{{order.SkipSubstitutionValidation}}">
+						  Skip Substitution Validation
+						</paper-checkbox>
+					</div>
+				</div>
+				<div class="order-inputs">
+					<h4>
+						Details:
+					</h4>
+
+					<div class="small-inputs">
+						<paper-input 
+							label="Type (readonly)" 
+							type="text" 
+							value="{{order.Type}}"
+							name="Type"
+							readonly
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.Type]]" 
+							invalid="[[_asBool(order.notvalid.Type)]]">
+						</paper-input>
+
+						<!-- <div class="selection">
+							<tmladmin-ui-dropdown-menu 
+								vertical-align="top"
+								horizontal-align="left" 
+								label="Type"
+								no-animations
+								disabled$="[[loading]]" 
+								value="{{order.Type.title}}" 
+								style="width:calc(100% - 8px)"
+								on-value-changed="onInputChanged"
+								error-message="[[order.notvalid.Type]]" 
+								invalid="[[_asBool(order.notvalid.Type)]]">
+								<paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="value"
+									selected="{{order.Type.id}}">
+									<dom-repeat items="[[order.TypeList]]" as="typei">
+										<template>
+											<paper-item value$="[[typei.id]]">
+												[[typei.title]]
+											</paper-item>
+										</template>
+									</dom-repeat>
+								</paper-listbox>
+							</tmladmin-ui-dropdown-menu>
+						</div> -->
+
+						<paper-input 
+							label="Default en-US (readonly)" 
+							type="text" 
+							value="{{order.Default}}"
+							name="Default"
+							readonly
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.Default]]" 
+							invalid="[[_asBool(order.notvalid.Default)]]">
+						</paper-input>
+
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+
+					<paper-textarea 
+						label="Description" 
+						value="{{order.Description}}"
+						name="Description"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.Description]]" 
+						invalid="[[_asBool(order.notvalid.Description)]]">
+					</paper-textarea>
+				</div>
+
+
+				<div class="order-inputs">
+					<h4>
+						Locales:
+					</h4>
+
+					<div class="table">
+						<div class="header">
+							<div>
+								Language
+							</div>
+							<div>
+								Country
+							</div>
+							<div>
+								NA
+							</div>
+							<div class="centered">
+								Translation
+							</div>
+							<div>
+								&nbsp;
+							</div>
+						</div>
+
+						<dom-repeat items="[[order.Locales]]" as="loci">
+							<template>
+								<div class="row vcenter">
+									<div class="w10">
+										<span has-errors$="[[loci.notvalid.lang]]">[[loci.lang]]</span>
+									</div>
+									<div class="w15">
+										<span class="country-code" has-errors$="[[loci.notvalid.country]]">
+											[[loci.country]]
+										</span>
+										<img class="flag-img" alt="[[localizep('country-', loci.country)]]" src="[[_svgFlagUrl(loci.country)]]"/>
+									</div>
+									<div>
+										<paper-checkbox 
+											class="is-empty" 
+											checked="[[_NAvalue(loci.value)]]"
+											on-change="emptyChangeHandler">
+										  </paper-checkbox>
+									</div>
+									<div>
+										<paper-textarea 
+											type="text" 
+											value="{{loci.value}}"
+											name="value"
+											on-value-changed="onInputChanged"
+											error-message="[[loci.notvalid.value]]" 
+											invalid="[[_asBool(loci.notvalid.value)]]">
+										</paper-textarea>
+									</div>
+									<div class="right">
+										<!-- <paper-icon-button class="remove-btn" icon="admin-icons:close" 
+											lid$="[[loci.lang]]"
+											cid$="[[loci.country]]"
+											on-tap="_removeItemTap">
+										</paper-icon-button> -->
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+					</div>
+
+					<dom-if if="[[!LenMore(order.Locales)]]">
+						<template>
+							<div class="noitems">
+								[[localize('admin-list-noitems')]]
+							</div>
+						</template>
+					</dom-if>
+				</div>
+
+				<tmladmin-ui-changes-history
+					class="order-history"
+					title="Locale Item History"
+					items="[[order.History]]">
+				</tmladmin-ui-changes-history>
+
+			</div>
+		</div>
+	</div>
+</div>

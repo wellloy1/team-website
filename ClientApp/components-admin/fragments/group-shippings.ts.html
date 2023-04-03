@@ -1,0 +1,244 @@
+<app-localstorage-document key="admin-group-shippings-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+			
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+
+				<!-- <paper-button class="refresh-btn" disabled$="[[loadingCmd]]" raised on-tap="refreshTap">
+					Refresh
+				</paper-button> -->
+			</div>
+		</div>
+		
+
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+		
+		<vaadin-grid
+			id="grid"
+			aria-label="GroupShippings" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.GroupShippingID]]</span>
+					<a href="[[_urlViewGroupShipping(item.GroupShippingID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="340px" resizable="true" id="GroupShippingID">
+				<template class="header">
+					Group Shipping ID
+					<vaadin-grid-filter aria-label="GroupShippingID" path="GroupShippingID" value="[[_filterGroupShippingID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.GroupShippingID]]</span>
+					<a href="[[_urlViewGroupShipping(item.GroupShippingID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">
+					Group Shipping ID
+				</template>
+
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" resizable="true" id="FinishTime">
+				<template class="header">
+					<vaadin-grid-sorter path="FinishTime">Deadline</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="FinishTime" aria-placeholder="FinishTime" path="FinishTime" value="[[_filterFinishTime]]"></vaadin-grid-filter>
+				</template>
+				<template>[[_formatDate(item.FinishTime)]]</template>
+				<template class="footer-off">Deadline</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="360px" resizable="true" id="UserID">
+				<template class="header">
+					User ID
+					<vaadin-grid-filter aria-label="UserID" path="UserID" value="[[_filterUserID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<teamatical-ui-user-inline user="[[item.User]]">
+					</teamatical-ui-user-inline>
+				</template>
+				<template class="footer-off">
+					User ID
+				</template>
+			</vaadin-grid-column>
+						
+
+			<vaadin-grid-column width="120px" resizable="true" id="StoreID">
+				<template class="header">
+					Store ID
+					<vaadin-grid-filter aria-label="StoreID" path="StoreID" value="[[_filterStoreID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span hidden$="[[!item.StoreID]]">
+						<b>[[item.StoreName]]</b><br /> 
+						#: <span class="order-id copy-tap" on-tap="_copyTap">[[item.StoreID]]</span>
+						<a href="[[_urlViewStore(item.StoreID)]]">
+							<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+						</a>
+					</span>
+				</template>
+				<template class="footer-off">
+					Store ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" resizable="true" id="OrderCount">
+				<template class="header">
+					Order Count
+					<vaadin-grid-filter aria-label="OrderCount" aria-placeholder="OrderCount" path="OrderCount" value="[[_filterOrderCount]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.OrderCount]]</template>
+				<template class="footer-off">
+					Order Count
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" resizable="true" id="GroupShippingMinParticipants">
+				<template class="header">
+					Min Participants
+					<vaadin-grid-filter aria-label="GroupShippingMinParticipants" aria-placeholder="GroupShippingMinParticipants" path="GroupShippingMinParticipants" value="[[_filterGroupShippingMinParticipants]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.GroupShippingMinParticipants]]</template>
+				<template class="footer-off">Min Participants</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" resizable="true" id="AcceptedForManufacturing">
+				<template class="header">
+					Accepted For Manufacturing
+					<vaadin-grid-filter class="hidden" aria-label="AcceptedForManufacturing" aria-placeholder="AcceptedForManufacturing" path="AcceptedForManufacturing" value="[[_filterAcceptedForManufacturing]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="AcceptedForManufacturingCombo" style="width:80px;" value="{{_filterAcceptedForManufacturing}}"></vaadin-combo-box>
+				</template>
+				<template>
+					[[item.AcceptedForManufacturing]]
+				</template>
+				<template class="footer-off">Accepted For Manufacturing</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" resizable="true" id="IsArchive">
+				<template class="header">
+					Is Archive
+					<vaadin-grid-filter class="hidden" aria-label="IsArchive" aria-placeholder="Is Archive"
+					 path="IsArchive" value="[[_filterIsArchive]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="IsArchiveCombo" style="width:80px;" value="{{_filterIsArchive}}"></vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted$="[[item.IsArchive]]">
+						[[item.IsArchive]]
+					</span>
+				</template>
+				<template class="footer-off">
+					Is Archive
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" resizable="true" id="IsAcceptableForManufactoring">
+				<template class="header">
+					Is Acceptable For Manufactoring
+					<vaadin-grid-filter class="hidden" aria-label="IsAcceptableForManufactoring" aria-placeholder="IsAcceptableForManufactoring"
+						path="IsAcceptableForManufactoring" value="[[_filterIsAcceptableForManufactoring]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="IsAcceptableForManufactoringCombo" style="width:80px;" value="{{_filterIsAcceptableForManufactoring}}"></vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted$="[[item.IsAcceptableForManufactoring]]">
+						[[item.IsAcceptableForManufactoring]]
+					</span>
+				</template>
+				<template class="footer-off">
+					Is Acceptable For Manufactoring
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" resizable="true" id="IsCanceled">
+				<template class="header">
+					Is Canceled
+					<vaadin-grid-filter class="hidden" aria-label="IsCanceled" aria-placeholder="Is Canceled" path="IsCanceled" value="[[_filterIsCanceled]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="IsCanceledCombo" style="width:80px;" value="{{_filterIsCanceled}}"></vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted$="[[item.IsCanceled]]">
+						[[item.IsCanceled]]
+					</span>
+				</template>
+				<template class="footer-off">
+					Is Canceled
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" resizable="true" id="IsAutorenewal">
+				<template class="header">
+					Is Autorenewal
+					<vaadin-grid-filter class="hidden" aria-label="IsAutorenewal" aria-placeholder="IsAutorenewal" path="IsAutorenewal" value="[[_filterIsAutorenewal]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="IsAutorenewalCombo" style="width:80px;" value="{{_filterIsAutorenewal}}"></vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted$="[[item.IsAutorenewal]]">
+						[[item.IsAutorenewal]]
+					</span>
+					<!-- <dom-if if="[[item.IsAutorenewal]]">
+						<template>
+							<span>[[item.AutorenewalValue]]</span>
+							<span>[[localizep('store-groupshippingdate-autorenewal-', item.AutorenewalUnits)]]</span>
+						</template>
+					</dom-if> -->
+				</template>
+				<template class="footer-off">
+					Is Autorenewal
+				</template>
+			</vaadin-grid-column>
+		</vaadin-grid>
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				fixed
+				localstorage-key="admin-group-shippings-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+		
+	</div>
+</div>
+

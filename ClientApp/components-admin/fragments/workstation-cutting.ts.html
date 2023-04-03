@@ -1,0 +1,252 @@
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="cutting"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+
+<div class="maindiv horiz">
+	<div class="order-container sticky">
+		<div class="order">
+			<!-- Cutting -->
+			<div class="order-cutting" hidden$="[[!order]]">
+				<div class="sticky-container">
+					<h2>
+						<paper-icon-button 
+							class="refresh-btn" 
+							icon="admin-icons:refresh"
+							title="[[localize('admin-ws-refresh')]]" 
+							disabled="[[loadingAny]]"
+							on-tap="_reloadTap">
+						</paper-icon-button>
+
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+
+						[[localize('admin-ws-cutting-title')]]
+					</h2>
+
+					<paper-progress 
+						id="progress" 
+						indeterminate 
+						class="" 
+						disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+				
+				<div class="main">
+					<paper-input id="newbarcode" label="[[localize('admin-ws-cutting-barcode-label')]]" name="barcode" class="barcode-input" type="string" disabled="[[loadingAny]]" on-value-changed="onInputChanged"
+						on-keydown="_barcodeEnter">
+						<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+						<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:arrow-downward" on-tap="_barcodeTap">
+						</paper-icon-button>
+					</paper-input>
+
+
+					<dom-if if="[[order.BatchID]]">
+						<template>
+								<h1>
+									#[[order.BatchID]] - [[localize('admin-ws-cutting-item-fabric')]] [[order.FabricName]] - [[order.ManufactureOrderID]]
+									<span class="hidden" showen$="[[order.Sandbox]]">
+										<iron-icon icon="admin-icons:warning" class="warning" title="[[localize('admin-ws-test-item')]]"></iron-icon> [[localize('admin-ws-test-item')]]
+									</span>
+								</h1>
+
+
+
+								<div class="table stripe">
+									<div class="header">
+										<div>
+											[[localize('admin-ws-cutting-item-title')]]
+										</div>
+										<!-- <div>
+											[[localize('admin-ws-cutting-item-filename')]] 
+										</div> -->
+										<div>
+											[[localize('admin-ws-cutting-item-cutlength')]]
+										</div>
+									</div>
+								
+									<div class="row">
+										<div class="pdf-title">
+											[[order.PDFFileTitle]]
+										</div>
+										<!-- <div class="pdf-filename">
+											[[order.PDFFileName]]
+										</div> -->
+										<div class="pdf-meters">
+											[[_formatMeters(order.CutsLengthMeters, 'yd')]]
+										</div>
+									</div>
+
+									<dom-if if="[[_asBool(order.SandwichBack)]]">
+										<template>
+											<div class="row sandwich-back">
+												<div class="pdf-title">
+													↳ Sandwich Back:<br />
+													[[order.SandwichBack.PDFFileTitle]] 
+												</div>
+												<!-- <div class="pdf-filename">
+													[[order.PDFFileName]]
+												</div> -->
+												<div class="pdf-meters">
+													<!-- [[_formatMeters(order.SanwichBack.CutsLengthMeters, 'yd')]] -->
+												</div>
+											</div>
+										</template>
+									</dom-if>
+								</div>
+
+						</template>
+					</dom-if>
+
+					<dom-if if="[[order.Invalid]]">
+						<template>
+							<h3 class="invalid">
+								[[localize('admin-ws-cutting-item-invalid')]]
+							</h3>
+						</template>
+					</dom-if>
+
+				</div>
+
+			</div>
+
+
+			<div class="order-buttons">
+				<!-- <div class="spinner">
+					<paper-button 
+						class="order-download-btn" 
+						raised 
+						mo-id$="[[order.ManufactureOrderID]]" 
+						batch-id$="[[order.BatchID]]" 
+						pdf-id$="[[order.PDFFileName]]"
+						disabled="[[disabledDownload]]"
+						on-tap="_onDownloadTap">
+						[[localize('admin-ws-cutting-btn-download')]]
+					</paper-button>
+					<paper-spinner-lite id="download-progress" class="thick"></paper-spinner-lite>
+				</div> -->
+			</div>
+
+			<paper-spinner-lite active="[[fileProgress]]" class="thick"></paper-spinner-lite>
+			<div class="table stripe width100">
+				<div class="header">
+					<div>
+						[[localize('admin-ws-cutting-file-name')]]
+					</div>
+					<div>
+						[[localize('admin-ws-cutting-file-progress')]]
+					</div>
+					<div>
+						[[localize('admin-ws-cutting-file-finished')]]
+					</div>
+				</div>
+			
+				<dom-repeat items="[[fileProgressListArr]]" as="filei">
+					<template>
+						<div class="row">
+							<div>
+								[[filei.FileName]]
+							</div>
+							<div>
+								<paper-progress class="executing-progress" hidden$="[[filei.Finished]]"
+									value="[[_formatProgress(filei.Progress)]]"></paper-progress>
+							</div>
+							<div>
+								[[filei.Finished]]
+							</div>
+						</div>
+					</template>
+				</dom-repeat>
+			</div>
+			<dom-if if="[[!LenMore(fileProgressListArr)]]">
+				<template>
+					<div class="noitems">
+						[[localize('admin-list-noitems')]]
+					</div>
+				</template>
+			</dom-if>
+
+
+			<dom-if if="[[_asBool(order.SandwichBack)]]">
+				<template>
+					<paper-toggle-button 
+						checked="{{showSandwichBack}}">
+						Sandwich Back
+					</paper-toggle-button>
+				</template>
+			</dom-if>
+
+			<div class="preview-pages-container">
+
+				<div id="preview-pages" class="preview-pages hidden-animated" hidden-animated$="[[showSandwichBack]]">
+					<dom-repeat items="[[order.Pages]]" as="pagei">
+						<template>
+							<dom-repeat items="[[pagei.Images]]" as="imagei" index-as="imageindex">
+								<template>
+									<img src="[[imagei]]" style$="[[_pageStyle(imagei)]]" />
+								</template>
+							</dom-repeat>
+						</template>
+					</dom-repeat>
+	
+					<dom-if if="[[!_asBool(order.Pages.0.Images)]]">
+						<template>
+							<div class="nopreviews">
+								[[localize('admin-ws-printing-dlg-no-previews')]]
+							</div>
+						</template>
+					</dom-if>
+				</div>
+	
+
+				<dom-if if="[[_asBool(order.SandwichBack)]]">
+					<template>
+						<div id="preview-pages-back" class="preview-pages sandwich-back hidden-animated" hidden-animated$="[[!showSandwichBack]]">
+							<dom-repeat items="[[order.SandwichBack.Pages]]" as="pagei">
+								<template>
+									<dom-repeat items="[[pagei.Images]]" as="imagei" index-as="imageindex">
+										<template>
+											<img src="[[imagei]]" style$="[[_pageStyle(imagei)]]" />
+										</template>
+									</dom-repeat>
+								</template>
+							</dom-repeat>
+			
+							<dom-if if="[[!_asBool(order.SandwichBack.Pages.0.Images)]]">
+								<template>
+									<div class="nopreviews">
+										[[localize('admin-ws-printing-dlg-no-previews')]]
+									</div>
+								</template>
+							</dom-if>
+						</div>
+					</template>
+				</dom-if>
+
+			</div>
+
+
+			
+		</div>
+	</div>
+</div>
+
+
+
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="cutting"
+	website-url="[[websiteUrl]]"
+	sticker-printer
+	barcode-scanner
+	loading="{{loadingWS}}"
+	visible="[[visible]]">
+</teamatical-ui-scanner-printer-settings>
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>

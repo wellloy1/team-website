@@ -1,0 +1,136 @@
+<div class="popup-container">
+    <ul class="help-menu">
+        <li class="avatar-caption">
+            <dom-if if="[[!_asBool(_avatarCaption)]]">
+                <template>[[localize('app-title-account-tooltip')]]</template>
+            </dom-if>
+            <dom-if if="[[_showOrgName(userInfo.isAuth, userInfo.orgUser, userInfo.orgUserSelected, userInfo.orgName)]]">
+                <template>[[userInfo.orgName]]<br /></template>
+            </dom-if>
+            <dom-if if="[[userInfo.isAuth]]">
+                <template>[[_avatarCaption]]</template>
+            </dom-if>
+        </li>
+
+        <dom-repeat items="[[menuList]]" as="menui">
+            <template>
+                <li>
+                    <dom-if if="[[!menui.external]]">
+                        <template>
+                            <a href$="[[menui.href]]"
+								tabindex="-1" 
+							>[[menui.title]]</a>
+                        </template>
+                    </dom-if>
+
+                    <dom-if if="[[menui.external]]">
+                        <template>
+                            <a	href$="[[menui.href]]" 
+								tabindex="-1" 
+                                rel$="[[menui.rel]]"
+                                target$="[[menui.target]]"
+							>
+								[[menui.title]]
+								<iron-icon icon="open-in-new" class="open-in-here"></iron-icon>
+                            </a>
+                        </template>
+                    </dom-if>
+                </li>
+            </template>
+        </dom-repeat>
+
+        
+        <dom-if if="[[userInfo.isAuth]]">
+            <template>
+                <li>
+                    <teamatical-ui-button
+                        on-tap="_signoutTap">
+                        [[localize('account-tab-signout')]]
+                    </teamatical-ui-button>
+                </li>
+            </template>
+        </dom-if>
+        <dom-if if="[[!userInfo.isAuth]]">
+            <template>
+                <li>
+                    <teamatical-ui-button
+                        on-tap="_signinTap">
+                        [[localize('account-tab-signin')]]
+                    </teamatical-ui-button>
+                </li>
+            </template>
+        </dom-if>
+    </ul>
+</div>
+
+
+<a href="[[accountUrl]]" 
+   tabindex="-1" 
+   on-tap="_accountTap"
+   draggable="false" 
+   on-dragstart="eventNull" 
+   on-selectstart="eventNull">
+
+    <teamatical-ui-image 
+          class="profile-avatar hidden-animated" 
+          hidden-animated$="[[!isAuthAsPersonPictureBtn]]"
+          is-admin$="[[userInfo.isAdmin]]"
+          aria-label="SignIn-Account"
+          draggable="false" 
+          on-dragstart="eventNull" 
+          on-selectstart="eventNull"
+          src="[[userInfo.profile.picture]]" 
+          alt="profile-avatar"
+          use-webp1 
+          lazy-load 
+          background-dark>
+    </teamatical-ui-image>
+
+    <paper-icon-button 
+        class="signin-btn avatar hidden-animated"
+        hidden-animated$="[[!isAuthAsPersonPictureBtn]]"
+        disabled$="[[!isAuthAsPersonPictureBtn]]"
+        icon=""
+        aria-label="SignIn-Account"
+        draggable="false" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+    </paper-icon-button>
+
+    <paper-icon-button 
+        class="signin-btn unauth hidden-animated"
+        hidden-animated$="[[!isUnauthenticatedBtn]]"
+        disabled$="[[!isUnauthenticatedBtn]]"
+        is-admin$="[[userInfo.isAdmin]]"
+        icon="social:person-outline"
+        aria-label="SignIn-Account"
+        draggable="false" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+    </paper-icon-button>
+
+
+    <paper-icon-button 
+        class="signin-btn avatar-unknown hidden-animated"
+        hidden-animated$="[[!isAuthAsPersonBtn]]"
+        disabled$="[[!isAuthAsPersonBtn]]"
+        is-admin$="[[userInfo.isAdmin]]"
+        icon="social:person"
+        aria-label="SignIn-Account"
+        draggable="false" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+    </paper-icon-button>
+
+    <paper-icon-button 
+        class="signin-btn avatar-org hidden-animated"
+        hidden-animated$="[[!isAuthAsOrganizationBtn]]"
+        disabled$="[[!isAuthAsOrganizationBtn]]"
+        is-admin$="[[userInfo.isAdmin]]"
+        icon="social:domain"
+        aria-label="SignIn-Account"
+        draggable="false" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+    </paper-icon-button>
+</a>

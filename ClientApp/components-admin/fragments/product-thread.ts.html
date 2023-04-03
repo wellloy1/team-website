@@ -1,0 +1,96 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Product Thread #: <span class="copy-tap" on-tap="_copyTap">[[order.ProductThreadID]]</span>
+
+					<br/>
+					<!-- <span class="barcode-as-text">
+						Barcode: [[order.Barcode]]
+					</span>
+					<span class="barcode">
+						*[[order.Barcode]]*
+					</span> -->
+				</h3>
+
+				<div class="buttons">
+					<paper-button 
+						class="order-resnapshot-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveThreadConfirmTap">
+						Save Thread
+					</paper-button>
+				
+					<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm Thread to Save</h2>
+						<paper-dialog-scrollable>
+							Product Thread #: [[order.ProductThreadID]] is going to be saved...are you sure?
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss>Close</paper-button>
+							<paper-button dialog-confirm autofocus on-tap="saveThreadTap">Save Thread</paper-button>
+						</div>
+					</paper-dialog>
+
+					<!-- <paper-button 
+						class="order-clone-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideCloneBtn(order)]]" 
+						raised
+						on-tap="cloneViewTap">
+						Clone View
+					</paper-button> -->
+				</div>
+				
+				<div class="order-inputs">
+					<h4>
+						Details:
+					</h4>
+					<paper-input 
+						label="Quality" 
+						type="string" 
+						value="{{order.Quality}}"
+						name="Quality"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.Quality]]" 
+						invalid="[[_asBool(order.notvalid.Quality)]]">
+					</paper-input>
+					
+					<tmladmin-ui-color-input-picker
+						label="Thread Color" 
+						website-url="[[websiteUrl]]"
+						selected-color="{{order.Color}}"
+						colors-swatch-palette="[[order.ColorsPalette]]" 
+						colors-pantone-palette="[[colorsPalette]]"
+						name="Color"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.Quality]]" 
+						invalid="[[_asBool(order.notvalid.Quality)]]">
+					</tmladmin-ui-color-input-picker>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

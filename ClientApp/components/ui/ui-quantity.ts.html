@@ -1,0 +1,48 @@
+<!-- <div class="row input-row"> -->
+  <paper-input 
+      id="input"
+      label="[[captionText]]" 
+      value="{{valueProperty}}" 
+      type="text" 
+      inputmode="numeric"
+      aria-label$="[[name]]"
+      aria-labelledby$="[[_ariaLabelledby('elLabel', ariaLabelledby)]]" 
+      name$="[[name]]"
+      disabled$="[[disabled]]"
+      autocomplete$="[[autocomplete]]"
+      required$="[[required]]"
+      maxlength="[[maxlength]]" 
+      allowed-pattern="[[pattern]]"
+      error-message="[[errorMessage]]"
+      invalid="[[invalid]]"
+      focused="{{focused}}"
+      on-blur="onBlur"
+      on-focus="onFocus"
+      on-value-changed="onInputChange">
+      <!-- 
+        char-counter
+        auto-validate
+      -->
+
+      <paper-icon-button 
+        slot="prefix"
+        tabindex="-1" 
+        on-tap="minusTap" 
+        disabled="[[minusDisabled]]"
+        icon="remove" 
+        alt="minus" 
+        tooltip$="[[localize('ui-qty-minus')]]" tooltip-flow="up" tooltip-flow-horiz="right">
+      </paper-icon-button>
+
+      <paper-icon-button 
+        slot="suffix" 
+        tabindex="-1" 
+        on-tap="plusTap" 
+        disabled="[[plusDisabled]]"
+        icon="add" 
+        alt="plus" 
+        tooltip$="[[localize('ui-qty-plus')]]" tooltip-flow="up" tooltip-flow-horiz="left">
+      </paper-icon-button>
+
+  </paper-input>
+<!-- </div> -->

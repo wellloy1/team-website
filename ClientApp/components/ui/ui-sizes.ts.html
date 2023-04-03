@@ -1,0 +1,30 @@
+<label id="elLabel" for="select" prefix>[[captionText]]</label>
+<div class="invalid">[[errorMessage]]</div>
+
+<ul id="select">
+	<dom-repeat items="[[options]]" as="sizei">
+		<template>
+			<li 
+				class="item"
+				draggable="false" 
+				unselectable="on"
+				on-selectstart="eventNull"
+				on-dragstart="eventNull" 
+				selected$="[[sizei.Selected]]"
+				data-id$="[[sizei.Code]]">
+				
+				<paper-checkbox 
+					tabindex$="[[_tabIndex(readonly)]]"
+					checked="{{sizei.Selected}}" 
+					disabled="[[disabled]]" 
+					readonly="[[readonly]]"
+					on-change="_toggle">
+					[[sizei.Name]]
+				</paper-checkbox>
+
+				
+			</li>
+		</template>
+	</dom-repeat>
+</ul>
+

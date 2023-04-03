@@ -1,0 +1,1239 @@
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="printing"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+<div class="maindiv">
+	<div class="order-container sticky">
+		<div class="order">
+			<!-- Printing -->
+			<div class="order-printing">
+				<div class="sticky-container">
+					<h2>
+						<paper-icon-button 
+							class="refresh-btn" 
+							icon="admin-icons:refresh"
+							title="[[localize('admin-ws-refresh')]]" 
+							disabled="[[loadingAny]]"
+							on-tap="_reloadTap">
+						</paper-icon-button>
+
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+
+						[[localize('admin-ws-printing-title')]] 
+						|
+						[[localize('admin-ws-printing-batch-qty')]]: [[order.ManufactureOrders.length]]
+						<span class="hidden" showen$="[[order.ManufactureOrdersHasMore]]">+</span>
+						<!-- - Order #: [[order.CurrentBatch.ManufactureOrderID]] -->
+						- [[localize('admin-ws-printing-title2')]] #: [[order.CurrentBatch.BatchID]]
+
+						| [[_formatDate(order.CurrentBatch.Created)]]
+					</h2>
+
+					<paper-progress id="progress" indeterminate class="" disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+
+				<div class="horiz menu-fixed" hidden$="[[showPreviewPrinting]]">
+
+					<div class="menu">
+						<div class="menu-top">
+							<div class="batch-selection">
+								<tmladmin-ui-dropdown-menu 
+									id="batch-selector"
+									vertical-align="top" 
+									horizontal-align="left"
+									id-property="id"
+									title-property="title"
+									label="Filter"
+									disabled$="[[loadingAny]]" 
+									value="{{batchFilter}}"
+									value-list="[[batchFilterList]]">
+								</tmladmin-ui-dropdown-menu>
+								<paper-icon-button icon="admin-icons:search" disabled$="[[loadingAny]]" tabindex="-1" on-tap="_searchBatchTap"></paper-icon-button>
+							</div>
+							<dom-if if="[[_searchStart]]">
+								<template>
+									<div class="batch-search-text">
+										<iron-icon icon="admin-icons:search"></iron-icon>
+										<span tabindex="-1">[[_searchableStr]]</span>
+									</div>
+								</template>
+							</dom-if>							
+						</div>
+
+						<paper-listbox 
+							id="menu"
+							attr-for-selected="id" 
+							selected="[[order.CurrentBatch.ManufacturePrintingTuningID1]]"
+							on-selected-item-changed="onSelectedBatch">
+
+							<dom-repeat items="[[batchMenu]]" as="batchi">
+								<template>
+									<paper-item id="[[batchi.ManufacturePrintingTuningID]]" on-tap="selectBatchTap" 
+										disabled="[[loadingAny]]" 
+										replacement$="[[_batchReplacement(batchi.BatchID, batchi.ReplacementIteration)]]"
+										printed$="[[_asBool(batchi.PrintStatus.IsCompleted)]]">
+										<!-- <span class="order-name">[[batchi.ManufactureOrderID]]</span> -->
+										<span class="batch-name" 
+											title$="[[batchi.ManufactureOrderID]]"
+											replacement$="[[_batchReplacement(batchi.BatchID, batchi.ReplacementIteration)]]">
+											[[batchi.title]]
+										</span>
+										<span class="batch-date" 
+											replacement$="[[_batchReplacement(batchi.BatchID, batchi.ReplacementIteration)]]">
+											[[_formatDate(batchi.Created)]]
+										</span>
+
+										<iron-icon icon="admin-icons:warning" class="warning hidden" showen-icon$="[[batchi.Sandbox]]" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+
+										<iron-icon icon="admin-icons:status-spotcolors" class="spotcolors hidden" showen-icon$="[[_asBool(batchi.SpotColors)]]" title$="[[localize('admin-printstatus-spotcolors')]]"></iron-icon>
+
+										<tmladmin-ui-progress-icon type="freeze" status="[[batchi.FreezeStatus]]"></tmladmin-ui-progress-icon>
+										<tmladmin-ui-progress-icon type="pushed to ftp" status="[[batchi.PushStatus]]"></tmladmin-ui-progress-icon>
+										<tmladmin-ui-progress-icon type="rasterize" status="[[batchi.RasterizeStatus]]"></tmladmin-ui-progress-icon>
+										<tmladmin-ui-progress-icon type="printing" status="[[batchi.PrintStatus]]"></tmladmin-ui-progress-icon>
+										<tmladmin-ui-progress-icon type="transferring" status="[[batchi.TransferringStatus]]"></tmladmin-ui-progress-icon>
+										<tmladmin-ui-progress-icon type="cutting" status="[[batchi.CuttingStatus]]"></tmladmin-ui-progress-icon>
+									</paper-item>
+								</template>
+							</dom-repeat>
+
+							<dom-if if="[[LenLess(batchMenu)]]">
+								<template>
+									<div class="noitems">
+										no batches found
+									</div>
+								</template>
+							</dom-if>
+					
+
+						</paper-listbox>
+					</div>
+
+
+
+					<div class="current-batch">
+					
+						<dom-if if="[[showManufacturers]]">
+							<template>
+								<div class="man-selection" is-admin>
+									<tmladmin-ui-dropdown-menu 
+										vertical-align="top" 
+										horizontal-align="left"
+										id-property="ManufacturerID"
+										title-property="ManufacturerName"
+										label="[[localize('admin-ws-manufacturer')]]"
+										disabled$="[[loadingAny]]" 
+										value="{{order.Manufacturer}}"
+										value-list="[[order.Manufacturers]]"
+										on-value-changed="onInputChanged"
+										error-message="[[order.notvalid.Manufacturer]]"
+										invalid="[[_asBool(order.notvalid.Manufacturer)]]">
+									</tmladmin-ui-dropdown-menu>
+								</div>
+							</template>
+						</dom-if>
+					
+					
+						<div class="hidden" showen$="[[_asBool(order.CurrentBatch)]]">
+
+							<h5>
+							<div class="horiz-marks">
+								<span class="replacement-title hidden" showen$="[[_morethen(order.CurrentBatch.ReplacementIteration, 0)]]">
+									Replacement-[[order.CurrentBatch.ReplacementIteration]]
+								</span>
+
+								<span class="hidden" showen$="[[order.CurrentBatch.Sandbox]]">
+									<iron-icon class="warning" icon="admin-icons:warning"></iron-icon>
+									[[localize('admin-ws-test-item')]]
+								</span>
+
+								<!-- statuses -->
+								<iron-icon icon="admin-icons:status-spotcolors" class="spotcolors hidden" showen-icon$="[[_asBool(order.CurrentBatch.SpotColors)]]" title$="[[localize('admin-printstatus-spotcolors')]]"></iron-icon>
+								<tmladmin-ui-progress-icon type="freeze" status="[[order.CurrentBatch.FreezeStatus]]"></tmladmin-ui-progress-icon>
+								<span class="hidden" showen$="[[_asBoolStatus(order.CurrentBatch.PushStatus)]]">
+									<tmladmin-ui-progress-icon type="pushed to ftp" status="[[order.CurrentBatch.PushStatus]]"></tmladmin-ui-progress-icon>
+									[[_formatPrintStatus(order.CurrentBatch.PushStatus, order.CurrentBatch.RasterizeStatus, order.CurrentBatch.PrintStatus)]]
+								</span>
+								<tmladmin-ui-progress-icon type="rasterize" status="[[order.CurrentBatch.RasterizeStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="printing" status="[[order.CurrentBatch.PrintStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="transferring" status="[[order.CurrentBatch.TransferringStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="cutting" status="[[order.CurrentBatch.CuttingStatus]]"></tmladmin-ui-progress-icon>
+
+
+								<dom-if if="[[order.CurrentBatch.IsReplacementOrder]]">
+									<template>
+										<span class="is-replacement">[[localize('admin-ws-replacement-item')]]</span>
+									</template>
+								</dom-if>
+							</div>
+							</h5>
+							
+							<div class="select-all">
+								<paper-checkbox class="hide-on-print" 
+									disabled="[[disabledPapers]]" 
+									checked="{{checkboxAll}}"
+									on-change="selectAllPagesForAllHandler">
+									[[localize('admin-ws-printing-select-all')]]
+								</paper-checkbox>
+
+								<paper-button class="order-pages-reset-btn" raised
+									disabled="[[loadingAny]]" on-tap="_onPagesResetTap">
+									[[localize('admin-ws-printing-btn-pagesreset')]]
+								</paper-button>
+
+								<paper-button class="order-pages-restore-btn" raised
+									disabled="[[loadingAny]]" on-tap="_onPagesRestoreTap">
+									[[localize('admin-ws-printing-btn-pagesrestore')]]
+								</paper-button>
+							</div>
+	
+							<!-- Fabrics -->
+							<dom-repeat items="[[order.CurrentBatch.Fabrics]]" as="fabrici" index-as="fabricindex">
+								<template>
+									<h3>
+										[[localize('admin-ws-printing-fabric')]]
+										[[fabrici.FabricName]]
+									</h3>
+					
+									<!-- <p class="note-alt">
+										Nesting algorithm will optimize length of roll files by specified roll lengths (if any),
+										but use unfitted space by default roll length [[fabrici.DefaultRollLengthsMeters]] (m).
+									</p> -->
+					
+									<!-- <dom-if if="[[!LenMore(fabrici.PreferedRollLengthsMeters, 0)]]">
+										<template>
+											No Rolls - Default Value: [[fabrici.DefaultRollLengthsMeters]] (m)
+										</template>
+									</dom-if> -->
+					
+									
+					
+									<div class="table-container-scroll">
+										<div class="table stripe-off">
+											<div class="header">
+												<div class="centered" style="max-width: 40px;">
+													<!--  -->
+												</div>
+												<div class="w20 centered" style="min-width: 190px;">
+													[[localize('admin-ws-printing-rolllen-title')]]
+												</div>
+												<div class="centered" style="max-width: 40px;">
+													<!-- preview -->
+												</div>
+												<div class="centered">
+													[[localize('admin-ws-printing-rolllen-filename')]]
+												</div>
+												<div class="centered">
+													[[localize('admin-ws-printing-paper')]]
+												</div>
+												<div class="centered">
+													[[localize('admin-ws-printing-rolllen-pagescopies-title')]]
+												</div class="centered">
+												<div class="centered">
+													[[localize('admin-ws-printing-rolllen-width')]]
+												</div>
+												<div class="centered"> 
+													[[localize('admin-ws-printing-rolllen-length')]]
+												</div>
+												<div class="centered">
+													[[localize('admin-ws-printing-rolllen-partsarea')]]
+												</div>
+												<div class="centered">
+													[[localize('admin-ws-printing-rolllen-yield')]]
+												</div>
+												<div class="centered">
+													[[localize('admin-ws-printing-rolllen-printstatus-title')]]
+												</div>
+											</div>
+										
+
+											<dom-repeat items="[[fabrici.Files]]" as="printingi" index-as="printingindex">
+												<template strip-whitespace>
+
+													<div class="row vcenter">
+														<div class="centered">
+															<paper-checkbox 
+																class="hide-on-print"
+																disabled="[[disabledPapers]]"
+																checked="{{printingi.selected}}"
+																on-change="selectAllPagesHandler">
+															</paper-checkbox>
+														</div>
+														<div class="centered pdf-title">
+															[[printingi.PDFTitle]] 
+														</div>
+														<div class="centered">
+															<paper-icon-button class="preview-btn" icon="admin-icons:find-in-page" disabled="[[loadingAny]]"
+																on-tap="showPreviewTap">
+															</paper-icon-button>
+														</div>
+														<div class="centered pdf-filename">
+															[[printingi.PDFFileName]]
+														</div>
+														<div class="centered">
+															<div class="paper-selection">
+																<!-- <tmladmin-ui-dropdown-menu 
+																	name="printingi.Paper" 
+																	vertical-align="top" 
+																	horizontal-align="left"
+																	id-property="id"
+																	title-property="PaperName"
+																	disabled$="[[disabledPapers]]"
+																	value="{{printingi.Paper}}"
+																	value-list="[[order.CurrentBatch.Papers]]"
+																	on-value-changed="onInputChanged"
+																	error-message="[[printingi.notvalid.Paper]]"
+																	invalid="[[_asBool(printingi.notvalid.Paper)]]">
+																	<span slot="item-template">
+																		[[itemi.PaperName]] - [[_formatMeters(itemi.PaperRollWidthMeters, 'in')]]  (in)
+																	</span>
+																</tmladmin-ui-dropdown-menu> -->
+
+																<paper-dropdown-menu-light vertical-align="top" horizontal-align="left" no-label-float1 no-animations
+																	disabled="[[disabledPapers]]"
+																	value="{{printingi.Paper.PaperName::input}}" 
+																	name="printingi.Paper" 
+																	on-value-changed="onInputChanged" 
+																	error-message="[[printingi.notvalid.Paper]]"
+																	invalid="[[_asBool(printingi.notvalid.Paper)]]">
+																	<paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="value"
+																		selected="{{printingi.Paper.id}}">
+																		<dom-repeat items="[[order.CurrentBatch.Papers]]" as="paperi">
+																			<template>
+																				<paper-item value$="[[paperi.id]]">
+																					[[paperi.PaperName]]
+																					<dom-if if="[[paperi.PaperRollWidthMeters > 0]]">
+																						<template>
+																							- [[_formatMeters(paperi.PaperRollWidthMeters, 'in')]]  (in)
+																						</template>
+																					</dom-if>
+																				</paper-item>
+																			</template>
+																		</dom-repeat>
+																	</paper-listbox>
+																</paper-dropdown-menu-light>
+															</div>
+														</div>
+
+														<div class="centered">
+															<div>
+																[[_formathPagesLength(printingi.Pages.length)]]
+															</div>
+
+															<dom-if if="[[!_inputPagesInline(printingi.Pages.length)]]">
+																<template>
+																	<paper-icon-button class="preview-btn" icon="admin-icons:dashboard" disabled="[[loadingAny]]"
+																		on-tap="showDialogPageCopiesTap">
+																	</paper-icon-button>
+																</template>
+															</dom-if>
+
+															<dom-if if="[[_inputPagesInline(printingi.Pages.length)]]">
+																<template>
+																	<dom-repeat items="[[printingi.Pages]]" as="pagei" index-as="pageindex">
+																		<template strip-whitespace>
+																			<div hidden$="[[!_allowEditCopies(pageindex, printingi.Pages.length)]]">
+																				<paper-input 
+																					label="#[[_formatPageIndex(pageindex)]]:"
+																					type="string"
+																					data-fabricindex$="[[fabricindex]]"
+																					data-printingindex$="[[printingindex]]"
+																					value="{{pagei.Copies::input}}" name="pagei.Copies" 
+																					on-value-changed="onInputPageCopiesChanged" 
+																					error-message="[[pagei.notvalid.Copies]]"
+																					invalid="[[_asBool(pagei.notvalid.Copies)]]">
+																				</paper-input>
+																			</div>
+																		</template>
+																	</dom-repeat>
+																</template>
+															</dom-if>
+														</div>
+
+
+
+														<div class="centered pdf-meters">
+															[[_formatMeters(printingi.WidthMeters, 'in')]]
+														</div>
+														<div class="centered pdf-meters">
+															[[_formatMeters(printingi.LengthMeters, 'yd')]]
+														</div>
+														<div class="centered pdf-meters">
+															[[_formatMeters(printingi.PrintedAreaSquareMeters, 'yd^2', 3)]]
+														</div>
+														<div class="centered pdf-meters">
+															[[_formatDouble(printingi.FinalYieldPercentage, 1)]]
+														</div>
+														<div class="centered" >
+															<!-- PRINT STATUS -->
+															[[_formatPrintStatus(printingi.PushStatus, printingi.RasterizeStatus, printingi.PrintStatus)]]
+															<br/>
+
+															<iron-icon icon="admin-icons:status-spotcolors" class="spotcolors hidden" showen-icon$="[[_asBool(printingi.SpotColors)]]" title$="[[localize('admin-printstatus-spotcolors')]]"></iron-icon>
+															<tmladmin-ui-progress-icon type="freeze" status="[[printingi.FreezeStatus]]"></tmladmin-ui-progress-icon>
+															<tmladmin-ui-progress-icon type="pushed to ftp" status="[[printingi.PushStatus]]"></tmladmin-ui-progress-icon>
+															<tmladmin-ui-progress-icon type="rasterize" status="[[printingi.RasterizeStatus]]"></tmladmin-ui-progress-icon>
+															<tmladmin-ui-progress-icon type="printing" status="[[printingi.PrintStatus]]"></tmladmin-ui-progress-icon>
+															<tmladmin-ui-progress-icon type="transferring" status="[[printingi.TransferringStatus]]"></tmladmin-ui-progress-icon>
+															<tmladmin-ui-progress-icon type="cutting" status="[[printingi.CuttingStatus]]"></tmladmin-ui-progress-icon>
+
+															<dom-if if="[[_asBool(printingi.PrintPrinterName)]]">
+																<template>
+																	[[printingi.PrintPrinterName]]
+																</template>
+															</dom-if>
+														</div>
+														
+													</div>
+
+													<dom-if if="[[printingi.SandwichBack]]">
+														<template>
+															<div class="row vcenter sandwich-back">
+																<div class="centered">
+																</div>
+																<div class="centered pdf-title">
+																	↳ Sandwich Back:<br />
+																	[[printingi.SandwichBack.PDFTitle]] 
+																</div>
+																<div class="centered">
+																	<paper-icon-button class="preview-btn" icon="admin-icons:find-in-page" disabled="[[loadingAny]]"
+																		on-tap="showBackPreviewTap">
+																	</paper-icon-button>
+																</div>
+																<div class="centered pdf-filename">
+																	[[printingi.SandwichBack.PDFFileName]]
+																</div>
+																<div class="centered">
+																	<div class="paper-selection">
+																		<paper-dropdown-menu-light vertical-align="top" horizontal-align="left" no-label-float1 no-animations
+																			disabled="[[disabledPapers]]"
+																			value="{{printingi.SandwichBack.Paper.PaperName::input}}" 
+																			name="printingi.SandwichBack.Paper" 
+																			on-value-changed="onInputChanged" 
+																			error-message="[[printingi.SandwichBack.notvalid.Paper]]"
+																			invalid="[[_asBool(printingi.SandwichBack.notvalid.Paper)]]">
+																			<paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="value"
+																				selected="{{printingi.SandwichBack.Paper.id}}">
+																				<dom-repeat items="[[order.CurrentBatch.Papers]]" as="paperi">
+																					<template>
+																						<paper-item value$="[[paperi.id]]">
+																							[[paperi.PaperName]]
+																							<dom-if if="[[paperi.PaperRollWidthMeters > 0]]">
+																								<template>
+																									- [[_formatMeters(paperi.PaperRollWidthMeters, 'in')]]  (in)
+																								</template>
+																							</dom-if>
+																						</paper-item>
+																					</template>
+																				</dom-repeat>
+																			</paper-listbox>
+																		</paper-dropdown-menu-light>
+																	</div>
+																</div>
+
+																<div class="centered">
+																	<!-- page copies - mock  -->
+																</div>
+
+
+																<div class="centered pdf-meters">
+																</div>
+																<div class="centered pdf-meters">
+																</div>
+																<div class="centered pdf-meters">
+																</div>
+																<div class="centered pdf-meters">
+																</div>
+																<!-- <div class="centered pdf-meters">
+																	<span hidden$="[[!_asBool(printingi.SandwichBack.PrintCompletedLengthMeters)]]">
+																		[[_formatMeters(printingi.SandwichBack.PrintCompletedLengthMeters, 'yd')]]
+																	</span>
+																</div> -->
+																<div class="centered">
+																	<!-- PRINT STATUS -->
+																	[[_formatPrintStatus(printingi.SandwichBack.PushStatus, printingi.SandwichBack.RasterizeStatus, printingi.SandwichBack.PrintStatus)]]
+																	<br/>
+		
+																	<iron-icon icon="admin-icons:status-spotcolors" class="spotcolors hidden" showen-icon$="[[_asBool(printingi.SandwichBack.SpotColors)]]" title$="[[localize('admin-printstatus-spotcolors')]]"></iron-icon>
+																	<tmladmin-ui-progress-icon type="freeze" status="[[printingi.SandwichBack.FreezeStatus]]"></tmladmin-ui-progress-icon>
+																	<tmladmin-ui-progress-icon type="pushed to ftp" status="[[printingi.SandwichBack.PushStatus]]"></tmladmin-ui-progress-icon>
+																	<tmladmin-ui-progress-icon type="rasterize" status="[[printingi.SandwichBack.RasterizeStatus]]"></tmladmin-ui-progress-icon>
+																	<tmladmin-ui-progress-icon type="printing" status="[[printingi.SandwichBack.PrintStatus]]"></tmladmin-ui-progress-icon>
+																	<tmladmin-ui-progress-icon type="transferring" status="[[printingi.SandwichBack.TransferringStatus]]"></tmladmin-ui-progress-icon>
+																	<tmladmin-ui-progress-icon type="cutting" status="[[printingi.SandwichBack.CuttingStatus]]"></tmladmin-ui-progress-icon>
+		
+																	<dom-if if="[[_asBool(printingi.SandwichBack.PrintPrinterName)]]">
+																		<template>
+																			[[printingi.SandwichBack.PrintPrinterName]]
+																		</template>
+																	</dom-if>
+																</div>
+															</div>
+														</template>
+													</dom-if>
+															
+												</template>
+											</dom-repeat>
+
+											<div class="row total">
+												<div class="centered">
+													<!-- checkbox -selected -->
+												</div>
+												<div class="centered pdf-title">
+													<!-- pdf title -->
+												</div>
+												<div class="centered">
+													<!-- preview -->
+												</div>
+												<div class="centered pdf-filename">
+													<!-- pdf file -->
+												</div>
+												<div class="centered">
+													<!-- paper -->
+												</div>
+												<div class="centered">
+													<!-- pages copies -->
+												</div>
+
+												<div class="centered pdf-meters">
+													[[_formatMeters(fabrici.TotalWidthMeters, 'in')]]
+												</div>
+												<div class="centered pdf-meters">
+													[[_formatMeters(fabrici.TotalLengthMeters, 'yd')]]
+												</div>
+												<div class="centered pdf-meters">
+													[[_formatMeters(fabrici.TotalPrintedAreaSquareMeters, 'yd^2', 3)]]
+												</div>
+												<div class="centered pdf-meters">
+													[[_formatDouble(fabrici.TotalFinalYieldPercentage, 1)]]
+												</div>
+												<div class="centered">
+													<!-- PrintCompletedLengthMeters -->
+												</div>
+												<div class="centered">
+													<!-- LastPrintStatus -->
+												</div>
+												
+											</div>
+										</div>
+									</div>
+
+									<!-- PreferedRollLengthsMeters -->
+									<!-- <dom-repeat items="[[fabrici.PreferedRollLengthsYards]]" as="rolli" index-as="rollinx">
+										<template>
+											<div class="horiz">
+												<paper-input 
+													label="[[rollinx]] - [[localize('admin-ws-printing-roll-width')]]"
+													class="roll-input" type="string"
+													value="{{rolli.Width::input}}" name="rolli.Width" 
+													disabled="[[disabledGenerate]]"
+													on-value-changed="onInputChanged" error-message="[[rolli.notvalid.Width]]"
+													invalid="[[_asBool(rolli.notvalid.Width)]]">
+													<paper-icon-button slot="suffix" class="remove-btn" icon="admin-icons:close1">
+													</paper-icon-button>
+												</paper-input>
+												<paper-input 
+													label="[[rollinx]] - [[localize('admin-ws-printing-roll-length')]]"
+													class="roll-input" type="string"
+													value="{{rolli.Length::input}}" name="rolli.Length" 
+													disabled="[[disabledGenerate]]"
+													on-value-changed="onInputChanged" error-message="[[rolli.notvalid.Length]]"
+													invalid="[[_asBool(rolli.notvalid.Length)]]">
+													<paper-icon-button slot="suffix" class="remove-btn" icon="admin-icons:close"
+														on-tap="_removeRollTap">
+													</paper-icon-button>
+												</paper-input>
+											</div>
+										</template>
+									</dom-repeat> -->
+					
+									<!-- <div class="horiz">
+										<paper-input id="newrollw" label="[[localize('admin-ws-printing-roll-width')]]" value="[[_convertM2In(fabrici.TotalWidthMeters)]]" class="roll-input" type="string"
+											disabled="[[disabledGenerate]]">
+											<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+											<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline1">
+											</paper-icon-button>
+										</paper-input>
+										<paper-input id="newroll" label="[[localize('admin-ws-printing-roll-length')]]" class="roll-input" type="string"
+											disabled="[[disabledGenerate]]">
+											<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+											<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline"
+												on-tap="_addRollTap">
+											</paper-icon-button>
+										</paper-input>
+									</div> -->
+
+								</template>
+							</dom-repeat>
+					
+					
+							
+
+							<div class="order-buttons">
+								<!-- <p hidden="[[hiddenNestingQuality]]">[[localize('admin-ws-printing-btn-nestingquality')]]</p>
+								<paper-slider hidden="[[hiddenNestingQuality]]" disabled="[[disabledGenerate]]"
+									pin snaps editable1 max-markers="10"
+									min="[[order.CurrentBatch.NestingQualityMin]]" max="[[order.CurrentBatch.NestingQualityMax]]"
+									step="[[order.CurrentBatch.NestingQualityStep]]" value="{{order.CurrentBatch.NestingQualityValue}}">
+								</paper-slider> -->
+					
+								<!-- <paper-button class="order-generate-btn" raised 
+									disabled="[[disabledGenerate]]"
+									on-tap="_onGenerateConfirmTap">
+									[[localize('admin-ws-printing-btn-applyrolls')]]
+								</paper-button> -->
+					
+
+								<!-- <paper-dialog id="dialoggenerate" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+									<h2>[[localize('admin-ws-printing-dlg-generate')]]</h2>
+									<paper-dialog-scrollable>
+										[[localize('admin-ws-printing-dlg-generate-msg')]]
+									</paper-dialog-scrollable>
+									<div class="buttons">
+										<paper-button dialog-dismiss>[[localize('admin-ws-printing-btn-close')]]</paper-button>
+										<paper-button dialog-confirm autofocus on-tap="_onGenerateTap">[[localize('admin-ws-printing-btn-generate')]]</paper-button>
+									</div>
+								</paper-dialog> -->
+					
+								<paper-button class="order-freeze-btn" 
+									raised 
+									disabled="[[disabledFreeze]]" 
+									hidden="[[hiddenFreeze]]"
+									on-tap="_onFreezeConfirmTap">
+									[[localize('admin-ws-printing-btn-freezebatch')]]
+								</paper-button>
+					
+								<paper-dialog id="dialogfreeze" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+									<h2>[[localize('admin-ws-printing-dlg-freeze')]]</h2>
+									<paper-dialog-scrollable>
+										[[localize('admin-ws-printing-dlg-freeze-msg')]]
+									</paper-dialog-scrollable>
+									<div class="buttons">
+										<paper-button dialog-dismiss>[[localize('admin-ws-printing-btn-close')]]</paper-button>
+										<paper-button dialog-confirm autofocus on-tap="_onFreezeTap">[[localize('admin-ws-printing-btn-freeze')]]</paper-button>
+									</div>
+								</paper-dialog>
+					
+								<paper-button class="order-unfreeze-btn" 
+									raised 
+									disabled="[[disabledUnfreeze]]" 
+									hidden="[[hiddenUnfreeze]]"
+									on-tap="_onUnfreezeConfirmTap">
+									[[localize('admin-ws-printing-btn-unfreezebatch')]]
+								</paper-button>
+
+								<paper-dialog id="dialogunfreeze" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+									<h2>[[localize('admin-ws-printing-dlg-unfreeze')]]</h2>
+									<paper-dialog-scrollable>
+										[[localize('admin-ws-printing-dlg-unfreeze-msg')]]
+
+										<paper-textarea label="[[localize('admin-ws-printing-dlg-unfreeze-reason')]]" value="{{dialogunfreeze_reason}}"></paper-textarea>
+					
+									</paper-dialog-scrollable>
+									<div class="buttons">
+										<paper-button dialog-dismiss>[[localize('admin-ws-printing-btn-close')]]</paper-button>
+										<paper-button dialog-confirm autofocus on-tap="_onUnfreezeTap">[[localize('admin-ws-printing-btn-unfreeze')]]</paper-button>
+									</div>
+								</paper-dialog>
+					
+								<paper-button class="order-papers-btn" raised 
+									disabled="[[disabledPapers]]"
+									on-tap="_onPapersTap">
+									[[localize('admin-ws-printing-btn-applypapers')]]
+								</paper-button>
+
+								<div class="spinner">
+									<paper-button class="order-download-btn" raised 
+										d-id$="[[order.CurrentBatch.ManufacturePrintingTuningID]]" 
+										disabled="[[disabledDownload]]" 
+										on-tap="_onDownloadTap">
+										[[localize('admin-ws-printing-btn-downloadbatch')]]
+									</paper-button>
+									<paper-spinner-lite class="thick"></paper-spinner-lite>
+								</div>
+
+								<!-- <paper-icon-button 
+									slot="suffix" 
+									class="print-paper-report-btn" 
+									icon="admin-icons:print" 
+									disabled="[[!pushi.Success]]"
+									on-tap="_printReportTap">
+								</paper-icon-button> -->
+
+
+								<div class="spinner">
+									<paper-dialog id="dialogpushreprint" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+										<h2>[[localize('admin-ws-printing-dlg-pushreprint')]]</h2>
+										<paper-dialog-scrollable>
+											[[localize('admin-ws-printing-dlg-pushreprint-msg')]]
+											# [[localize('admin-ws-printing-pages')]]: [[orderCurrentBatchPagesCount]]
+										</paper-dialog-scrollable>
+										<div class="buttons">
+											<paper-button dialog-dismiss>[[localize('admin-ws-printing-btn-close')]]</paper-button>
+											<paper-button dialog-confirm autofocus 
+												disabled="[[disabledPushToPrinter]]" 
+												on-tap="_onPushReprintToManufacturerTap">[[localize('admin-ws-printing-dlg-pushreprint')]]
+											</paper-button>
+										</div>
+									</paper-dialog>
+
+									<paper-button class="order-push-reprint-btn" raised 
+										d-id$="[[order.CurrentBatch.ManufacturePrintingTuningID]]" 
+										disabled="[[disabledPushToPrinter]]" 
+										on-tap="_onPushReprintToManufacturerConfirmTap">
+										[[localize('admin-ws-printing-btn-push-reprint')]]
+										<!-- <iron-icon style="margin-left: 8px;" icon="admin-icons:cloud-upload"></iron-icon> -->
+									</paper-button>
+									<paper-spinner-lite class="thick"></paper-spinner-lite>
+								</div>
+
+
+								<div class="spinner">
+									<paper-dialog id="dialogpush" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+										<h2>[[localize('admin-ws-printing-dlg-push')]]</h2>
+										<paper-dialog-scrollable>
+											[[localize('admin-ws-printing-dlg-push-msg')]]
+											# [[localize('admin-ws-printing-pages')]]: [[orderCurrentBatchPagesCount]]
+										</paper-dialog-scrollable>
+										<div class="buttons">
+											<paper-button dialog-dismiss>[[localize('admin-ws-printing-btn-close')]]</paper-button>
+											<paper-button dialog-confirm autofocus 
+												disabled="[[disabledPushToPrinter]]" 
+												on-tap="_onPushToManufacturerTap">[[localize('admin-ws-printing-dlg-push')]]
+											</paper-button>
+										</div>
+									</paper-dialog>
+
+									<paper-button class="order-push-btn" raised 
+										d-id$="[[order.CurrentBatch.ManufacturePrintingTuningID]]" 
+										disabled="[[disabledPushToPrinter]]" 
+										on-tap="_onPushToManufacturerConfirmTap">
+										[[localize('admin-ws-printing-btn-push2printer')]]
+										<iron-icon style="margin-left: 8px;" icon="admin-icons:cloud-upload"></iron-icon>
+									</paper-button>
+									<paper-spinner-lite class="thick"></paper-spinner-lite>
+								</div>
+
+
+								<dom-if if="[[LenMore(order.CurrentBatch.PrintLocations)]]">
+									<template>
+										<div class="printlocation-selection">
+											<tmladmin-ui-dropdown-menu 
+												vertical-align="top" 
+												horizontal-align="left"
+												id-property="id"
+												title-property="title"
+												label="[[localize('admin-ws-printing-printlocation')]]"
+												disabled="[[loadingAny]]"
+												value="{{order.CurrentBatch.PrintLocation}}"
+												value-list="[[order.CurrentBatch.PrintLocations]]"
+												on-value-changed="onInputChanged"
+												error-message="[[order.CurrentBatch.notvalid.PrintLocation]]"
+												invalid="[[_asBool(order.CurrentBatch.notvalid.PrintLocation)]]">
+											</tmladmin-ui-dropdown-menu>
+										</div>
+									</template>
+								</dom-if>
+
+								<paper-button class="order-papers-report-btn" raised 
+									disabled$="[[disabledPapersReport]]"
+									on-tap="_onPapersReportTap">
+									[[localize('admin-ws-printing-btn-papersreport')]]
+									<iron-icon style="margin-left: 8px;" icon="admin-icons:print"></iron-icon>
+								</paper-button>
+
+							</div>
+
+
+							<!-- Push List -->
+							<div class="order-tasks hidden" showen-block$="[[_asBool(order.CurrentBatch.PushList)]]">
+							
+								<h3>
+									<paper-icon-button class="refresh-btn" icon="admin-icons:refresh" title="[[localize('admin-ws-refresh')]]" on-tap="_reloadTap"
+										disabled="[[loadingAny]]"></paper-icon-button>
+									[[localize('admin-ws-printing-pushlist-title')]]
+								</h3>
+							
+							
+								<div class="table-container-scroll">
+									<div class="table stripe">
+										<div class="header">
+											<div>
+												[[localize('admin-ws-printing-printlocation')]]
+											</div>
+											<div>
+												[[localize('admin-ws-printing-pushlist-dest')]]
+											</div>
+											<div>
+												[[localize('admin-ws-printing-pushlist-jsonname')]]
+											</div>
+											<div>
+												[[localize('admin-ws-printing-pushlist-timestamp')]]
+											</div>
+											<div>
+												[[localize('admin-ws-printing-pushlist-user')]]
+											</div>
+											<div>
+												[[localize('admin-ws-printing-pushlist-success')]]
+											</div>
+										</div>
+
+										<dom-repeat items="[[order.CurrentBatch.PushList]]" as="pushi">
+											<template>
+												<div class="row" is-failed$="[[!pushi.Success]]">
+													<div>
+														[[pushi.PrintLocation]]
+													</div>
+													<div>
+														[[pushi.Destination]]
+													</div>
+													<div>
+														[[_formatProgress(pushi.JsonName)]]
+													</div>
+													<div>
+														[[_formatDate(pushi.TimeStamp)]]
+													</div>
+													<div>
+														<teamatical-ui-user-inline user="[[pushi.User]]">
+														</teamatical-ui-user-inline>
+													</div>
+													<div>
+														<span highlighted$="[[pushi.Success]]">
+															[[localizep('admin-', pushi.Success)]]
+														</span>
+													</div>
+												</div>
+											</template>
+										</dom-repeat>
+									</div>
+								</div>
+							</div>
+					
+							<!-- Tasks -->
+							<div class="order-tasks hidden" showen-block$="[[_asBool(order.CurrentBatch.Tasks)]]">
+								
+								<h3>
+									<paper-icon-button class="refresh-btn" icon="admin-icons:refresh" title="[[localize('admin-ws-refresh')]]" on-tap="_reloadTap" disabled="[[loadingAny]]"></paper-icon-button>
+									[[localize('admin-ws-printing-preparations-title')]]
+								</h3> 
+								
+					
+								<div class="table-container-scroll">
+									<div class="table stripe">
+										<div class="header">
+											<div>
+												[[localize('admin-ws-printing-preparations-type')]]
+											</div>
+											<div>
+												[[localize('admin-ws-printing-preparations-progress')]]
+											</div>
+											<div>
+												[[localize('admin-ws-printing-preparations-time')]]
+											</div>
+											<div>
+												[[localize('admin-ws-printing-preparations-operation')]]
+											</div>
+										</div>
+									
+										<dom-repeat items="[[order.CurrentBatch.Tasks]]" as="taski">
+											<template>
+												<div class="row">
+													<div>
+														[[taski.Type]]
+													</div>
+													<div>
+														<paper-progress class="executing-progress"
+															value="[[_formatProgress(taski.ExecutingOperationProgress)]]"></paper-progress>
+													</div>
+													<div>
+														[[_formatTaskTime(taski.ExecutingTimeMiliseconds)]]
+													</div>
+													<div>
+														[[taski.ExecutingOperation]]
+													</div>
+												</div>
+											</template>
+										</dom-repeat>
+									</div>
+								</div>
+							</div>
+					
+						</div>
+					
+						<div hidden$="[[hiddenNoBatch]]" class="no-batch">
+							<span>[[localize('admin-ws-printing-no-batch')]]</p>
+						</div>
+					
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- <paper-dialog id="dialogpreview" class="dialog-wide90" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+		<h2>[[localize('admin-ws-printing-dlg-preview')]]</h2>
+		<paper-dialog-scrollable>
+			<dom-if if="[[_asBool(previewPrinting.Pages.0.Image)]]">
+				<template>
+					<div class="preview-pages">
+						<dom-repeat items="[[previewPrinting.Pages]]" as="pagei">
+							<template>
+								<img src="[[pagei.Image]]" style$="[[_pageStyle(pagei)]]" title$="[[_pageTitle(pagei)]]" />
+							</template>
+						</dom-repeat>
+					</div>
+				</template>
+			</dom-if>
+			<dom-if if="[[!_asBool(previewPrinting.Pages.0.Image)]]">
+				<template>
+					<div class="nopreviews">
+						[[localize('admin-ws-printing-dlg-no-previews')]]
+					</div>
+				</template>
+			</dom-if>
+		</paper-dialog-scrollable>
+		<div class="buttons">
+			<paper-button dialog-dismiss>[[localize('admin-ws-printing-btn-close')]]</paper-button>
+		</div>
+	</paper-dialog> -->
+
+</div>
+
+
+<div id="preview-pages-container" class="preview-pages-container hidden" showen$="[[showPreviewPrinting]]">
+	<h2 on-tap="closePreviewTap">
+		[[localize('admin-ws-printing-dlg-preview')]]
+		- [[previewPrinting.PDFTitle]]
+		| # [[localize('admin-ws-printing-pages')]]: [[previewPrinting.Pages.length]]
+	</h2>
+
+	<div class="preview-pages img-zoom-container">
+		<dom-repeat items="[[previewPrinting.Pages]]" as="pagei" index-as="pageindex">
+			<template>
+				<div class="preview-page-input-container" 
+					hidden$="[[!_allowEditCopies(pageindex, previewPrinting.Pages.length)]]">
+					<div>
+						<paper-input label="[[localize('admin-ws-printing-copies-title')]]: [[_formatPageIndex(pageindex)]]"
+									 class=""
+									 type="string"
+									 value="{{pagei.Copies::input}}"
+									 on-value-changed="onInputPageCopiesChanged"
+									 error-message="[[pagei.notvalid.Copies]]"
+									 invalid="[[_asBool(pagei.notvalid.Copies)]]"
+									 disabled="[[loadingAny]]">
+						</paper-input>
+					</div>
+				</div>
+
+				<dom-repeat items="[[pagei.PreviewImages]]" as="imagei" index-as="imageindex">
+					<template>
+						<img 
+							loading="lazy"
+							src$="[[imagei.Source]]" 
+							width$="[[_imgWidth(previewPrintingSize)]]"
+							height$="[[_imgHeight(previewPrintingSize, imagei)]]"
+							class="page-image"
+							title$="[[_pageTitle(pagei)]]" 
+							on-tap="_tapLens"
+							on-transitionend="_lensImageTransitionend"
+						/>
+					</template>
+				</dom-repeat>
+				
+			</template>
+		</dom-repeat>
+	</div>
+
+
+	<dom-if if="[[!_asBool(previewPrinting.Pages.0.PreviewImages)]]">
+		<template>
+			<div class="nopreviews">
+				[[localize('admin-ws-printing-dlg-no-previews')]]
+			</div>
+		</template>
+	</dom-if>
+</div>
+
+
+
+<!-- <paper-button class="order-papers-report-btn" raised on-tap="_onPapersReportTap">
+	[[localize('admin-ws-printing-btn-papersreport')]]
+	<iron-icon style="margin-left: 8px;" icon="admin-icons:print"></iron-icon>
+</paper-button> -->
+
+<div id="papers-report-print" class="papers-report-print">
+	<p class="hidden" showen$="[[!_asBool(printReport)]]">[[localize('admin-ws-printing-paperreport-noitems')]]</p>
+
+	<div class="papers-report">
+		<h1>[[localize('admin-ws-printing-paperreport-title')]]</h1>
+
+		<div class="two-columns-header">
+			<div class="hidden" showen$="[[_asBool(printReport)]]">
+				<!-- papers summary -->
+				<div class="table-container-scroll">
+					<div class="table stripe">
+						<div class="header">
+							<div>[[localize('admin-ws-printing-paperreport-papername')]]</div>
+							<div>[[localize('admin-ws-printing-paperreport-paperwidth')]]</div>
+							<div>[[localize('admin-ws-printing-paperreport-papertotallength')]]</div>
+						</div>
+						<dom-repeat items="[[printReport]]" as="paperi">
+							<template>
+								<div class="row">
+									<div>
+										[[paperi.PaperName]]
+									</div>
+									<div>
+										[[_formatMeters(paperi.PaperRollWidthMeters, 'in')]]  (in)
+									</div>
+									<div>
+										[[_formatMeters(paperi.TotalLengthMeters, 'yd')]] (yd)
+									</div>
+								</div>
+								<!-- <div class="order-paper">
+									<h3>
+									</h3>
+									<div class="">
+										<dom-repeat items="[[paperi.Files]]" as="filei">
+											<template>
+												<div class="">
+													<dom-repeat items="[[filei.Pages]]" as="pagei">
+														<template>
+															<div>
+																<dom-repeat items="[[pagei.Images]]" as="imagei" index-as="imageindex">
+																	<template>
+																		<img 
+																			class="page-image"
+																			src="[[imagei]]" 
+																		/>
+																	</template>
+																</dom-repeat>
+															</div>
+														</template>
+													</dom-repeat>
+												</div>
+											</template>
+										</dom-repeat>
+									</div>
+								</div> -->
+							</template>
+						</dom-repeat>
+					</div>
+				</div>
+			</div>
+			<div class="hidden" showen$="[[_asBool(order.CurrentBatch.Fabrics)]]">
+				<!-- fabrics summary -->
+				<div class="table-container-scroll">
+					<div class="table stripe">
+						<div class="header">
+							<div>[[localize('admin-ws-printing-paperreport-fabricname')]]</div>
+							<div>[[localize('admin-ws-printing-paperreport-fabricwidth')]]</div>
+							<div>[[localize('admin-ws-printing-paperreport-fabrictotallength')]]</div>
+						</div>
+						<dom-repeat items="[[order.CurrentBatch.Fabrics]]" as="fabrici">
+							<template>
+								<div class="row">
+									<div>
+										[[fabrici.FabricName]]
+									</div>
+									<div>
+										[[_formatMeters(fabrici.TotalWidthMeters, 'in')]]  (in)
+									</div>
+									<div>
+										[[_formatMeters(fabrici.TotalLengthMeters, 'yd')]] (yd)
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+
+		<!-- images -->
+		<dom-repeat items="[[printReport]]" as="paperi">
+			<template>
+				<div class="order-paper">
+					<h2>
+						[[paperi.PaperName]]
+						[[_formatMeters(paperi.PaperRollWidthMeters, 'in')]]  (in)
+						[[_formatMeters(paperi.TotalLengthMeters, 'yd')]] (yd)
+					</h2>
+					<div class="order-paper-filelist">
+						<dom-repeat items="[[paperi.Files]]" as="filei" index-as="fileinx">
+							<template>
+								<div class="order-paper-file">
+									<div class="two-columns-header">
+										<div>
+											<h2>
+												[[localize('admin-ws-printing-paperreport-fabric')]]: [[filei.FabricName]]
+												<br />[[localize('admin-ws-printing-paperreport-file')]]: [[filei.PDFFileName]]
+											</h2>
+										</div>
+										<div>
+											<h2>
+												[[localize('admin-ws-printing-paperreport-length')]]: [[_formatMeters(filei.LengthMeters, 'yd')]] (yd)
+												<br />[[localize('admin-ws-printing-paperreport-lengthactual')]]: ______________ (yd)
+											</h2>
+										</div>
+									</div>
+									
+									<dom-repeat items="[[filei.Pages]]" as="pagei" index-as="pageinx">
+										<template>
+											<div class="order-paper-page">
+												<dom-if if="[[_notFirstOrLast(pageinx, filei.Pages, filei.FabricName)]]">
+													<template>
+														<h3>[[localize('admin-ws-printing-copies-title')]]: <span>[[pagei.Copies]]</span> | [[localize('admin-ws-printing-copies-actual-title')]]: ______________ </h3>
+													</template>
+												</dom-if>
+												
+												<dom-repeat items="[[pagei.ImagesBegin]]" as="imagei" index-as="imageindex">
+													<template>
+														<img 
+															class="page-image"
+															src="[[imagei.Source]]" 
+															on-load="onPaperLoaded"
+															on-error="onPaperLoadError"
+														/>
+													</template>
+												</dom-repeat>
+
+												<dom-if if="[[_asBool(pagei.ImagesBreak)]]">
+													<template>
+														<div class="paper-breaker">
+															<div>
+																<p>~ [[_formatMeters(pagei.ImagesBreak, 'yd')]] (yd) ~</p>
+															</div>
+														</div>
+													</template>
+												</dom-if>
+
+												<dom-repeat items="[[pagei.ImagesEnd]]" as="imagei" index-as="imageindex">
+													<template>
+														<img 
+															class="page-image"
+															src="[[imagei.Source]]" 
+															on-load="onPaperLoaded"
+															on-error="onPaperLoadError"
+														/>
+													</template>
+												</dom-repeat>
+											</div>
+										</template>
+									</dom-repeat>
+								</div>
+							</template>
+						</dom-repeat>
+					</div>
+				</div>
+			</template>
+		</dom-repeat>
+	</div>
+</div>
+
+
+
+
+
+<!-- top buttons -->
+<div class="replacements-count">
+	<paper-fab 
+		class="button"
+		hidden$="[[showPreviewPrinting]]"
+		label="[[countReplacements]]"
+		disabled$="[[loadingAny]]"
+		title$="[[localize('admin-ws-printing-replacementscount-tooltip')]]"
+		mini
+		on-tap="findReplacementsTap">
+	</paper-fab>
+
+	<paper-fab 
+		class="button-preview-close"
+		hidden$="[[!showPreviewPrinting]]"
+		icon="admin-icons:check"
+		disabled$="[[loadingAny]]"
+		title$="[[localize('admin-ws-printing-btn-close')]]"
+		mini
+		on-tap="applyPreviewTap">
+	</paper-fab>
+</div>
+
+
+<!-- 
+CAUTION: Fabric printing ONLY
+
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="printing"
+	website-url="[[websiteUrl]]"
+	sticker-printer
+	barcode-scanner
+	loading="{{loadingWS}}"
+	visible="[[visible]]">
+</teamatical-ui-scanner-printer-settings>
+
+-->
+
+<teamatical-ui-locale-switcher 
+	hidden$="[[showPreviewPrinting]]"
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>
+
+
+
+
+
+
+
+<tmladmin-ui-dialog id="dialogpagecopies" disabled$="[[dialogpagecopies.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button class="close-dialog-small-btn" icon="admin-icons:close" dialog-dismiss></paper-icon-button>		
+		<!-- <div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogpagecopies.loading]]" hidden$="[[!dialogpagecopies.loading]]"></paper-progress>
+		</div> -->
+		<h3>Pages Copies</h3>
+		<div class="pdf-title">
+			[[dialogpagecopies.printingi.PDFTitle]] 
+		</div>
+		<div class="pdf-filename">
+			[[dialogpagecopies.printingi.PDFFileName]]
+		</div>
+	</div>
+
+	<div slot="body">
+		<div class="input-container">
+			<dom-repeat items="[[dialogpagecopies.printingi.Pages]]" as="pagei" index-as="pageindex">
+				<template strip-whitespace>
+					<div hidden$="[[!_allowEditCopies(pageindex, dialogpagecopies.printingi.Pages.length)]]">
+						<paper-input 
+							label="#[[_formatPageIndex(pageindex)]]:"
+							type="string"
+							data-fabricindex$="[[dialogpagecopies.fabricindex]]"
+							data-printingindex$="[[dialogpagecopies.printingindex]]"
+							value="{{pagei.Copies::input}}" name="pagei.Copies" 
+							on-value-changed="onInputPageCopiesChanged" 
+							error-message="[[pagei.notvalid.Copies]]"
+							invalid="[[_asBool(pagei.notvalid.Copies)]]">
+						</paper-input>
+					</div>
+				</template>
+			</dom-repeat>
+		</div>
+	</div>
+
+	<div slot="footer">
+		<!-- <paper-button dialog-dismiss autofocus>
+			[[localize('admin-ws-aggregation-btn-close')]]
+		</paper-button> -->
+		<paper-button dialog-confirm class="order-items-reprocess-btn" on-tap="applyDialogpagecopiesTap">
+			Apply
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>

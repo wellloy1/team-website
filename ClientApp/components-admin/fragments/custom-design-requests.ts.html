@@ -1,0 +1,188 @@
+<app-localstorage-document key="admin-custom-design-requests-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+
+				<!-- <paper-button class="new-custom-design-request-btn indigo" raised on-tap="customDesignRequestTap">
+					New Custom Design Request
+				</paper-button> -->
+			</div>
+		</div>
+		
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="CustomDesignRequests" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.id]]</span>
+					<a href="[[_urlViewCustomDesignRequest(item.id)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="id">
+				<template class="header">
+					id
+					<vaadin-grid-filter aria-label="id" path="id" value="[[_filterid]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.id]]</span>
+					<a href="[[_urlViewCustomDesignRequest(item.id)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">id</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="220px" flex-grow="0" resizable="true" id="Created">
+				<template class="header">
+					<vaadin-grid-sorter path="Created">Created</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Created" aria-placeholder="Created" path="Created" value="[[_filterCreated]]">
+					</vaadin-grid-filter>
+				</template>
+				<template>[[_formatDate(item.Created)]]</template>
+				<template class="footer-off">Created</template>
+			</vaadin-grid-column>
+			
+			<vaadin-grid-column width="170px" resizable="true" id="Name">
+				<template class="header">
+					Name
+					<vaadin-grid-filter aria-label="Name" path="Name" value="[[_filterName]]">
+					</vaadin-grid-filter>
+				</template>
+				<template>[[item.Name]]</template>
+				<template class="footer-off">Name</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="240px" resizable="true" id="Email">
+				<template class="header">
+					Email
+					<vaadin-grid-filter aria-label="Email" aria-placeholder="Email" path="Email" value="[[_filterEmail]]">
+					</vaadin-grid-filter>
+				</template>
+				<template>[[item.Email]]</template>
+				<template class="footer-off">Email</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="240px" resizable="true" id="Phone">
+				<template class="header">
+					Phone
+					<vaadin-grid-filter aria-label="Phone" aria-placeholder="Phone" path="Phone" value="[[_filterPhone]]">
+					</vaadin-grid-filter>
+				</template>
+				<template>[[item.Phone]]</template>
+				<template class="footer-off">Phone</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="Company">
+				<template class="header">
+					Company
+					<!-- <vaadin-grid-filter aria-label="Company" path="Company" value="[[_filterCompany]]"></vaadin-grid-filter> -->
+				</template>
+				<template>
+					<pre>[[item.Company]]</pre>
+				</template>
+				<template class="footer-off">
+					Company
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" resizable="true" id="QuantityNeeded">
+				<template class="header">
+					Quantity
+					<vaadin-grid-filter aria-label="QuantityNeeded" path="QuantityNeeded" value="[[_filterQuantityNeeded]]">
+					</vaadin-grid-filter>
+				</template>
+				<template>
+					<pre>[[item.QuantityNeeded]]</pre>
+				</template>
+				<template class="footer-off">
+					Quantity
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="350px" resizable="true" id="UserID">
+				<template class="header">
+					User ID
+					<vaadin-grid-filter aria-label="UserID" path="UserID" value="[[_filterUserID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<teamatical-ui-user-inline user="[[item.User]]">
+					</teamatical-ui-user-inline>
+				</template>
+				<template class="footer-off">
+					User ID
+				</template>
+			</vaadin-grid-column>
+			
+			<vaadin-grid-column width="340px" resizable="true" id="ProductConfigurationID">
+				<template class="header">
+					ProductConfigurationID
+					<vaadin-grid-filter aria-label="ProductConfigurationID" path="ProductConfigurationID" value="[[_filterProductConfigurationID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="copy-tap" on-tap="_copyTap">[[item.ProductConfigurationID]]</span>
+					<a href="[[_urlConsumerViewPConfiguration(item, item.BaseUrl)]]" target="_blank">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">ProductConfigurationID</template>
+			</vaadin-grid-column>
+		</vaadin-grid>
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				fixed
+				localstorage-key="admin-custom-design-requests-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

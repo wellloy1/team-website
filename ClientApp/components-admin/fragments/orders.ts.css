@@ -1,0 +1,19 @@
+:host {
+	display: block;
+	padding: 0px;
+	height: 100%;
+}
+
+.order-items {
+	background-color: white;
+	border-radius: 6px;
+}
+
+[archive] {
+	background-color: var(--paper-yellow-600);
+	border-radius: 6px;
+}
+
+[refunded] {
+	color: var(--paper-red-600);
+}

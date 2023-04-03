@@ -1,0 +1,183 @@
+:host {
+    --panel-width: 249px;
+    --label-font-size: 17px;
+}
+
+:host([disabled]) {
+    pointer-events: none;
+}
+
+:host([disabled]) .counter {
+    color: var(--disabled-text-color);
+}
+:host([disabled]) .slides {
+    opacity: 0.6;
+}
+:host([selection-only]) .panel .main {
+    box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1) !important;
+}
+:host([selection-only]) .panel.selected .main {
+    /* box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.3) !important; */
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1) !important;
+}
+
+
+.track {
+    overflow: hidden;
+    padding: 0px;
+    margin: 0px;
+    position: relative;
+    width: 100%;
+    text-align: center;
+}
+
+.slides {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    /* display: inline-block; */
+    /* will-change: transform; */
+    /* white-space: nowrap; */
+    backface-visibility: hidden;
+
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-drag: none; 
+    -webkit-user-drag: none;
+}
+
+/* .slides[dragging] {
+    background-color: rgba(243, 243, 243, 0.3);
+    border-radius: 6px;
+} */
+
+.slides:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+
+.panel {
+    overflow: hidden;
+    height: 334px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    box-sizing: border-box;
+    display: inline-block;
+    -webkit-transition: inherit;
+    position: relative;
+
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-drag: none; 
+    -webkit-user-drag: none;
+
+    background-color: var(--primary-background-color);
+    transition: transform 0.2s cubic-bezier(0.333, 0, 0, 1), opacity 0.2s ease-out;
+}
+.panel.deleting {
+    opacity: 0;
+}
+.panel.deleted {
+    display: none;
+}
+.panel:not([editing]) .close-icon {
+    display: none;
+}
+.panel:not([editing]) .main {
+    cursor: default;
+}
+
+.panel .main {
+    transition: inherit;
+    display: inline-block;
+    position: relative;
+    height: 100%;
+    border-radius: 6px;
+    /* box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.3); */
+    box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.1) !important;
+    transform: scale(0.95);
+    width: var(--panel-width);
+    
+    cursor: grab;
+}
+:host([dragging]) .panel,
+:host([dragging]) .panel .main {
+    cursor: grabbing !important;
+}
+
+.panel.selected .main {
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1) !important;
+}
+
+.panel > .main {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-drag: none; 
+    -webkit-user-drag: none;
+}
+
+.panel-end {
+    clear:both; 
+    visibility:hidden;
+}
+
+.name {
+    position: absolute;
+    font-size: var(--label-font-size);
+    text-align: center;
+    font-family: var(--paper-font-caption_-_font-family);
+    bottom: 3%;
+    font-weight: 50;
+
+    width: 94%;
+    margin-left: 3%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+.name paper-input {
+    margin-top: -21px;
+}
+
+
+.counter {
+    position: absolute;
+    text-align: center;
+    font-weight: 600;
+    bottom: 1%;
+    width: 100%;
+    font-size: var(--label-font-size);
+}
+
+.close-container {
+  position: relative;
+  z-index: 1;
+}
+
+.close-container .close-icon {
+  position: absolute;
+  right: -1px;
+  top: 3px;
+  
+  transition: opacity 0.2s ease-out;
+}
+
+.panel.item--dragged .close-container .close-icon {
+    opacity: 0;
+}
+.panel.item--dragged .main {
+    box-shadow: none !important;
+}

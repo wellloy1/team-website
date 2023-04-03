@@ -1,0 +1,236 @@
+<app-localstorage-document key="admin-purchase-orders-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+				<!-- <paper-button class="refresh-btn" disabled$="[[loadingCmd]]" raised on-tap="refreshTap">
+					Refresh
+				</paper-button> -->
+			</div>
+		</div>
+
+
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+		
+		<vaadin-grid
+			id="grid"
+			aria-label="PurchaseOrders" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.PurchaseOrderID]]</span>
+					<a href="[[_urlViewPurchaseOrder(item.PurchaseOrderID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="PurchaseOrderID">
+				<template class="header">
+					Checkout Code
+					<vaadin-grid-filter aria-label="Checkout Code" path="PurchaseOrderID" value="[[_filterPurchaseOrderID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.PurchaseOrderID]]</span>
+					<a href="[[_urlViewPurchaseOrder(item.PurchaseOrderID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">Checkout Code</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="260px" flex-grow="0" resizable="true" id="Status">
+				<template class="header">
+					Status
+					<vaadin-grid-filter class="hidden" aria-label="Status" aria-placeholder="Status" path="Status" value="[[_filterStatus]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="StatusCombo" style="width:220px;" value="{{_filterStatus}}"></vaadin-combo-box>
+				</template>
+				<template>
+					[[item.Status]]
+				</template>
+				<template class="footer-off">
+					Status
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="160px" flex-grow="0" resizable="true" id="Sandbox">
+				<template class="header">
+					Sandbox
+					<vaadin-grid-filter class="hidden" aria-label="Sandbox" aria-placeholder="Sandbox" path="Sandbox" value="[[_filterSandbox]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="SandboxCombo" value="{{_filterSandbox}}" style="width:140px;"></vaadin-combo-box>
+				</template>
+				<template>
+					<span class="hidden" showen$="[[item.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('order-testmark')]]
+					</span>
+				</template>
+				<template class="footer-off">Sandbox</template>
+			</vaadin-grid-column>
+			
+			<vaadin-grid-column width="220px" resizable="true" id="Title">
+				<template class="header">
+					Purchase Order Name
+					<vaadin-grid-filter aria-label="Title" path="Title" value="[[_filterTitle]]">
+					</vaadin-grid-filter>
+				</template>
+				<template>
+					<span>[[item.Title]]</span>
+				</template>
+				<template class="footer-off">Purchase Order Name</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="110px" resizable="true" id="Currency">
+				<template class="header">
+					Currency
+					<vaadin-grid-filter class="hidden" aria-label="Currency"
+						aria-placeholder="Currency" path="Currency"
+						value="[[_filterCurrency]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="CurrencyCombo" style="width:80px;" value="{{_filterCurrency}}">
+					</vaadin-combo-box>
+				</template>
+				<template>
+					[[_formatCurrencyID3(item.Currency)]]
+				</template>
+				<template class="footer-off">Currency</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" flex-grow="0" resizable="true" id="OrderCount">
+				<template class="header">Order Count</template>
+				<template>[[item.OrderCount]]</template>
+				<template class="footer-off">Order Count</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="115px" resizable="true" id="InvoiceID">
+				<template class="header">
+					InvoiceID
+					<vaadin-grid-filter aria-label="InvoiceID" path="InvoiceID" value="[[_filterInvoiceID]]">
+					</vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id">[[item.InvoiceID]]</span>
+				</template>
+				<template class="footer-off">InvoiceID</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="115px" resizable="true" id="Created">
+				<template class="header">
+					<vaadin-grid-sorter path="Created">Created</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Created" aria-placeholder="Created" path="Created" value="[[_filterCreated]]"></vaadin-grid-filter>
+				</template>
+				<template>[[_formatDate(item.Created)]]</template>
+				<template class="footer-off">Created</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="360px" resizable="true" id="IssuerUserID">
+				<template class="header">
+					Issuer User ID
+					<vaadin-grid-filter aria-label="IssuerUserID" aria-placeholder="IssuerUserID" path="IssuerUserID" value="[[_filterIssuerUserID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<teamatical-ui-user-inline user="[[item.IssuerUser]]">
+					</teamatical-ui-user-inline>
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="360px" resizable="true" id="IssuerOrganizationID">
+				<template class="header">
+					Issuer Organization ID
+					<vaadin-grid-filter aria-label="IssuerOrganizationID" aria-placeholder="IssuerOrganizationID" path="IssuerOrganizationID" value="[[_filterIssuerOrganizationID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span hidden$="[[!item.IssuerOrganizationID]]">
+						<b>[[item.IssuerOrganizationName]]</b><br /> 
+						#: <span class="copy-tap" on-tap="_copyTap">[[item.IssuerOrganizationID]]</span>
+						<a href="[[_urlViewOrganization(item.IssuerOrganizationID)]]">
+							<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+						</a>
+					</span>
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="Description">
+				<template class="header">
+					Purchase Order Description
+					<!-- <vaadin-grid-filter aria-label="Description" path="Description"
+						value="[[_filterDescription]]">
+					</vaadin-grid-filter> -->
+				</template>
+				<template>
+					<span>[[item.Description]]</span>
+				</template>
+				<template class="footer-off">
+					Purchase Order Description
+				</template>
+			</vaadin-grid-column>
+
+			<!-- <vaadin-grid-column width="480px" resizable="true" id="_buttons">
+				<template class="header"></template>
+				<template>
+					<div class="buttons unset">
+						<div class="spinner">
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+							<paper-button class="create-invoice-btn" disabled$="[[_createInvoiceDisabled(loadingAny, item.InvoiceID, item.OrderCount)]]" raised on-tap="createInvoiceTap">Create Invoice</paper-button>
+						</div>
+						<div class="spinner">
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+							<paper-button class="payment-approve" disabled$="[[_disabled(loadingAny, item.IsApprovable)]]" raised on-tap="payApproveTap">Payment Accepted</paper-button>
+						</div>
+						<div class="spinner">
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+							<paper-button class="need-refund" disabled$="[[_disabled(loadingAny, item.NeedRefund)]]" raised on-tap="needRefundTap">Mark as Refunded</paper-button>
+						</div>
+					</div>
+				</template>
+				<template class="footer-off"></template>
+			</vaadin-grid-column> -->
+		</vaadin-grid>
+
+
+		
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				fixed
+				localstorage-key="admin-purchase-orders-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

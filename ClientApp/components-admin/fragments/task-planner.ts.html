@@ -1,0 +1,317 @@
+<app-localstorage-document key="admin-planner-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress id="progress" indeterminate class="" disabled$="[[!loadingAny]]">
+			</paper-progress>
+	
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+			
+				<!-- <paper-button class="planner-start-process-btn indigo" disabled$="[[loadingCmd]]" raised on-tap="startDlgTap">
+					Request Batch Order
+				</paper-button>
+	
+				<paper-button class="planner-start-process-test-btn" disabled$="[[loadingCmd]]" raised on-tap="startTestTap">
+					Request Batch Order [TEST ORDERS]
+				</paper-button> -->
+			</div>
+
+		</div>
+
+		<div class="dialogs">
+			<paper-dialog id="dialogconfirm"  proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+				<h2>Confirmation</h2>
+				<paper-dialog-scrollable>
+					Are you sure you'd like to Request Batch Order?
+				</paper-dialog-scrollable>
+				<div class="buttons">
+					<paper-button dialog-dismiss autofocus>Close</paper-button>
+					<paper-button dialog-confirm on-tap="startTap">Request</paper-button>
+				</div>
+			</paper-dialog>
+
+			<paper-dialog id="dialogcancel" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+				<h2>Confirmation</h2>
+				<paper-dialog-scrollable>
+					Are you sure you'd like to terminate the task?
+					<!-- <paper-textarea label="Refund reason" value="{{dialogcancel_reason}}"></paper-textarea> -->
+				</paper-dialog-scrollable>
+				<div class="buttons">
+					<paper-button dialog-dismiss autofocus>Close</paper-button>
+					<paper-button dialog-confirm on-tap="removeTap">TERMINATE</paper-button>
+				</div>
+			</paper-dialog>
+		</div>
+
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid id="grid"
+					 aria-label="Planner"
+					 theme="no-border column-borders wrap-cell-content row-stripes compact"
+					 data-provider="[[dataProvider]]"
+					 loading="{{loading}}"
+					 page-size="[[pageSize]]"
+					 column-reordering-allowed
+					 height-by-rows
+					 on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<json-viewer json="[[item.RawData]]"></json-viewer>
+				</div>
+			</template>
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">
+					#
+				</template>
+				<template>
+					[[_formatPageN(index, item)]]
+				</template>
+				<template class="footer-off">
+					#
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="220px" resizable="true" id="ID">
+				<template class="header">
+					ID
+					<vaadin-grid-filter aria-label="ID" path="ID" value="[[_filterID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="copy-tap" on-tap="_copyTap">[[item.ID]]</span>
+				</template>
+				<template class="footer-off">
+					ID
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="220px" flex-grow="0" resizable="true" id="Created">
+				<template class="header">
+					<vaadin-grid-sorter path="Created">Created</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Created" aria-placeholder="Created" path="Created" value="[[_filterCreated]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[_formatDate(item.Created)]]
+				</template>
+				<template class="footer-off">
+					Created
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="210px" flex-grow="0" resizable="true" id="State">
+				<template class="header">
+					State
+					<vaadin-grid-filter class="hidden" aria-label="State" aria-placeholder="State" path="State" value="[[_filterState]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="StateCombo" value="{{_filterState}}"></vaadin-combo-box>
+				</template>
+				<template>
+					[[item.State]]
+				</template>
+				<template class="footer-off">
+					State
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="210px" resizable="true" id="Type">
+				<template class="header">
+					Type
+					<vaadin-grid-filter class="hidden" aria-label="Type" aria-placeholder="Type" path="Type" value="[[_filterType]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="TypeCombo" value="{{_filterType}}"></vaadin-combo-box>
+				</template>
+				<template>
+					[[item.Type]]
+				</template>
+				<template class="footer-off">
+					Type
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column resizable="true" id="ShortInfo">
+				<template class="header">
+					Short Info
+				</template>
+				<template>
+					<span class="copy-tap" on-tap="_copyTap">[[item.ShortInfo]]</span>
+				</template>
+				<template class="footer-off">
+					Short Info
+				</template>
+			</vaadin-grid-column>
+
+
+
+
+			<vaadin-grid-column width="220px" flex-grow="0" resizable="true" id="WaitUntil">
+				<template class="header">
+					<vaadin-grid-sorter path="WaitUntil">Wait Until</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="WaitUntil" aria-placeholder="WaitUntil" path="WaitUntil" value="[[_filterWaitUntil]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[_formatDate(item.WaitUntil)]]
+				</template>
+				<template class="footer-off">
+					Wait Until
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="220px" flex-grow="0" resizable="true" id="Finished">
+				<template class="header">
+					<vaadin-grid-sorter path="Finished">Finished</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Finished" aria-placeholder="Finished" path="Finished" value="[[_filterFinished]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[_formatDate(item.Finished)]]
+				</template>
+				<template class="footer-off">
+					Finished
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="120px" flex-grow="0" resizable="true" id="FailedCount">
+				<template class="header">
+					<vaadin-grid-sorter path="FailedCount">Failed Count</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="FailedCount" aria-placeholder="FailedCount" path="FailedCount" value="[[_filterFailedCount]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.FailedCount]]
+				</template>
+				<template class="footer-off">
+					Failed Count
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="120px" flex-grow="0" resizable="true" id="Priority">
+				<template class="header">
+					<vaadin-grid-sorter path="Priority">Priority</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Priority" aria-placeholder="Priority" path="Priority" value="[[_filterPriority]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.Priority]]
+				</template>
+				<template class="footer-off">
+					Priority
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="180px" resizable="true" id="ExecutingOperation">
+				<template class="header">
+					Executing Operation
+				</template>
+				<template>
+					[[item.ExecutingOperation]]
+				</template>
+				<template class="footer-off">
+					Executing Operation
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="180px" resizable="true" id="ExecutingOperationProgress">
+				<template class="header">
+					Executing Progress
+				</template>
+				<template>
+					<div hidden$="[[!allowProgress]]">
+						<paper-progress class="executing-progress"
+										value="[[_formatProgress(item.ExecutingOperationProgress)]]">
+						</paper-progress>
+					</div>
+					<div hidden$="[[allowProgress]]">
+						<dom-if if="[[isNumber(item.ExecutingOperationProgress)]]">
+							<template>
+								[[item.ExecutingOperationProgress]] %
+							</template>
+						</dom-if>
+					</div>
+				</template>
+				<template class="footer-off">
+					Executing Progress
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="80px" flex-grow="0" resizable="true" id="IsExecuting">
+				<template class="header">
+					Executing
+					<!-- <vaadin-grid-filter aria-label="IsExecuting" aria-placeholder="IsExecuting" path="IsExecuting" value="[[_filterIsExecuting]]"></vaadin-grid-filter> -->
+				</template>
+				<template>
+					[[item.IsExecuting]]
+				</template>
+				<template class="footer-off">
+					Executing
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="180px" flex-grow="0" resizable="true" id="IsExecutingTimeMiliseconds">
+				<template class="header">
+					Executing Time (ms)
+				</template>
+				<template>
+					[[item.IsExecutingTimeMiliseconds]]
+				</template>
+				<template class="footer-off">
+					Executing Time (ms)
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="340px" resizable="true" id="_buttons">
+				<template class="header">
+				</template>
+				<template>
+					<div class="buttons unset">
+						<div class="spinner" hidden$="[[!item.IsForcible]]">
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+							<paper-button raised on-tap="runForceTap" class="run-force">RunForce</paper-button>
+						</div>
+						<div class="spinner" hidden$="[[!item.IsRetriable]]">
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+							<paper-button raised on-tap="retryTap" class="retry">Retry</paper-button>
+						</div>
+						<div class="spinner" hidden$="[[!item.IsRemovable]]">
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+							<paper-button raised on-tap="removeDialogTap" class="cancel">Cancel</paper-button>
+						</div>
+					</div>
+				</template>
+				<template class="footer-off">
+				</template>
+			</vaadin-grid-column>
+
+		</vaadin-grid>
+
+		
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				fixed
+				localstorage-key="admin-planner-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

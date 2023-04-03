@@ -1,0 +1,54 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+		
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					Image URL
+				</h3>
+
+				<div>
+					<paper-input id="urlInput" label="URL" type="string" value="{{order.Url}}">
+						<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+						<!-- <paper-icon-button slot="suffix" class="add-btn" icon="add-circle-outline" sid$="[[item.StoreID]]" on-tap="_addTap"></paper-icon-button> -->
+					</paper-input>
+				</div>
+
+				<div class="buttons">
+					<paper-button
+							class="decode-btn" 
+							disabled$="[[loading]]" 
+							raised 
+							on-tap="decodeTap">
+							Decode
+					</paper-button>
+
+					<paper-button
+							class="encode-btn" 
+							disabled$="[[loading]]" 
+							raised 
+							on-tap="encodeTap">
+							Encode
+					</paper-button>
+				</div>
+
+				<div class="urlimage-info">
+					<h4>
+						URL Image Info - Decoded
+					</h4>
+	
+					<paper-textarea label="Decoded URL Object" value="{{order.Decoded}}"></paper-textarea>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+</div>

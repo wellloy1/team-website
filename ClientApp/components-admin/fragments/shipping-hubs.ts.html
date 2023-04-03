@@ -1,0 +1,304 @@
+<app-localstorage-document key="admin-shipping-hubs-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+
+				<paper-button class="new-shipping-hub-btn indigo" raised on-tap="newShippingHubTap">
+					New Shipping Hub
+				</paper-button>
+			</div>
+		</div>
+
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="shipping-hubs" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ID]]</span>
+					
+					<a href="[[_urlViewShippingHub(item.ID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="ID">
+				<template class="header">
+					ID
+					<vaadin-grid-filter aria-label="ID" path="ID" value="[[_filterID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ID]]</span>
+					<a href="[[_urlViewShippingHub(item.ID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">
+					ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="140px" flex-grow="0" resizable="true" id="Disabled">
+				<template class="header">
+					Disabled
+					<vaadin-grid-filter class="hidden" aria-label="Disabled" aria-placeholder="Disabled" path="Disabled" value="[[_filterDisabled]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="DisabledCombo" value="{{_filterDisabled}}" style="width:80px;"></vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted$="[[item.Disabled]]">
+						[[item.Disabled]]
+					</span>
+				</template>
+				<template class="footer-off">Disabled</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" flex-grow="0" resizable="true" id="Name">
+				<template class="header">
+					Hub Name
+					<vaadin-grid-filter aria-label="Name" aria-placeholder="Name" path="Name" value="[[_filterName]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="copy-tap" on-tap="_copyTap">[[item.Name]]</span>
+				</template>
+				<template class="footer-off">
+					Hub Name
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="SupportedProviders">
+				<template class="header">
+					Supported Providers
+				</template>
+				<template>
+					[[item.SupportedProviders]]
+				</template>
+				<template class="footer-off">
+					Supported Providers
+				</template>
+			</vaadin-grid-column>			
+
+			<vaadin-grid-column width="340px" resizable="true" id="SupportedCountries">
+				<template class="header">
+					Supported Countries
+				</template>
+				<template>
+					[[item.SupportedCountries]]
+				</template>
+				<template class="footer-off">
+					Supported Countries
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="340px" resizable="true" id="ShipFirstName">
+				<template class="header">
+					First Name
+					<vaadin-grid-filter aria-label="ShipFirstName" path="ShipFirstName" value="[[_filterShipFirstName]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.ShipFirstName]]
+				</template>
+				<template class="footer-off">
+					First Name
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="ShipLastName">
+				<template class="header">
+					Last Name
+					<vaadin-grid-filter aria-label="ShipLastName" path="ShipLastName" value="[[_filterShipLastName]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.ShipLastName]]
+				</template>
+				<template class="footer-off">
+					Last Name
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="AccountEmail">
+				<template class="header">
+					Email
+					<vaadin-grid-filter aria-label="AccountEmail" path="AccountEmail" value="[[_filterAccountEmail]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.AccountEmail]]
+				</template>
+				<template class="footer-off">
+					Email
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="AccountPhone">
+				<template class="header">
+					Phone
+					<vaadin-grid-filter aria-label="AccountPhone" path="AccountPhone" value="[[_filterAccountPhone]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.AccountPhone]]
+				</template>
+				<template class="footer-off">
+					Phone
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="340px" resizable="true" id="ShipAddress">
+				<template class="header">
+					Address
+					<vaadin-grid-filter aria-label="ShipAddress" path="ShipAddress" value="[[_filterShipAddress]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.ShipAddress]]
+				</template>
+				<template class="footer-off">
+					Address
+				</template>
+			</vaadin-grid-column>
+
+			<!-- <vaadin-grid-column width="340px" resizable="true" id="ShipAddress2">
+				<template class="header">
+					Address 2
+					<vaadin-grid-filter aria-label="ShipAddress2" path="ShipAddress2" value="[[_filterShipAddress2]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.ShipAddress2]]
+				</template>
+				<template class="footer-off">
+					Address 2
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="ShipAddress3">
+				<template class="header">
+					Address 3
+					<vaadin-grid-filter aria-label="ShipAddress3" path="ShipAddress3" value="[[_filterShipAddress3]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.ShipAddress3]]
+				</template>
+				<template class="footer-off">
+					Address 3
+				</template>
+			</vaadin-grid-column> -->
+
+			<vaadin-grid-column width="340px" resizable="true" id="ShipCountry">
+				<template class="header">
+					Country
+					<vaadin-grid-filter aria-label="ShipCountry" path="ShipCountry" value="[[_filterShipCountry]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.ShipCountry]] ([[item.ShipCountryCode]])
+				</template>
+				<template class="footer-off">
+					Country
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="ShipState">
+				<template class="header">
+					State Province Code
+					<vaadin-grid-filter aria-label="ShipState" path="ShipState" value="[[_filterShipState]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.ShipState]]
+				</template>
+				<template class="footer-off">
+					State Province Code
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="ShipCity">
+				<template class="header">
+					City
+					<vaadin-grid-filter aria-label="ShipCity" path="ShipCity" value="[[_filterShipCity]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.ShipCity]]
+				</template>
+				<template class="footer-off">
+					City
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="ShipZip">
+				<template class="header">
+					Postal Code
+					<vaadin-grid-filter aria-label="ShipZip" path="ShipZip" value="[[_filterShipZip]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.ShipZip]]
+				</template>
+				<template class="footer-off">
+					Postal Code
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="ShipCompany">
+				<template class="header">
+					Company
+					<vaadin-grid-filter aria-label="ShipCompany" path="ShipCompany" value="[[_filterShipCompany]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.ShipCompany]]
+				</template>
+				<template class="footer-off">
+					Company
+				</template>
+			</vaadin-grid-column>
+
+		</vaadin-grid>
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-shipping-hubs-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

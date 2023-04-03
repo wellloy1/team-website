@@ -1,0 +1,138 @@
+<app-localstorage-document key="admin-brands-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+
+				<dom-if if="[[!isManufacturer]]">
+					<template>
+						<paper-button class="new-brand-btn indigo" raised on-tap="newBrandTap">
+							New Brand
+						</paper-button>
+					</template>
+				</dom-if>
+			</div>
+		</div>
+		
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="Brands" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.BrandID]]</span>
+					<a href="[[_urlViewBrand(item.BrandID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="220px" flex-grow="0" resizable="true" id="Created">
+				<template class="header">
+					<vaadin-grid-sorter path="Created">Created</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Created" aria-placeholder="Created" path="Created" value="[[_filterCreated]]"></vaadin-grid-filter>
+				</template>
+				<template>[[_formatDate(item.Created)]]</template>
+				<template class="footer-off">Created</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="340px" resizable="true" id="BrandID">
+				<template class="header">
+					Brand ID
+					<vaadin-grid-filter aria-label="BrandID" path="BrandID" value="[[_filterBrandID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.BrandID]]</span>
+					<a href="[[_urlViewBrand(item.BrandID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">BrandID</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="380px" resizable="true" id="Name">
+				<template class="header">
+					Name
+					<vaadin-grid-filter aria-label="Name" path="Name" value="[[_filterName]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.Name]]</template>
+				<template class="footer-off">Name</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="BrandOrganizationID">
+				<template class="header">
+					Brand Organization
+					<vaadin-grid-filter aria-label="BrandOrganizationID" path="BrandOrganizationID" value="[[_filterBrandOrganizationID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span hidden$="[[!item.BrandOrganization]]">
+						<b>[[item.BrandOrganization.Name]]</b><br /> 
+						#: <span class="order-id copy-tap" on-tap="_copyTap">[[item.BrandOrganization.OrganizationID]]</span>
+						<dom-if if="[[!isManufacturer]]">
+							<template>
+								<a href="[[_urlViewOrganization(item.BrandOrganization.OrganizationID)]]">
+									<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+								</a>
+							</template>
+						</dom-if>
+					</span>
+				</template>
+				<template class="footer-off">
+					Brand Organization
+				</template>
+			</vaadin-grid-column>
+
+		</vaadin-grid>
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-brands-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

@@ -1,0 +1,557 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+		
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<span highlighted hidden$="[[hidden_tasksFlag(order.Tasks)]]">
+						[[localize('admin-tasks')]]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh" 
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					<dom-if if="[[!order.PartialResult]]">
+						<template>
+							Production Order #: 
+							<span class="copy-tap" on-tap="_copyTap">[[order.id]]</span>
+						</template>
+					</dom-if>
+
+					<dom-if if="[[order.PartialResult]]">
+						<template>
+							Production Order Item #: 
+							<span class="copy-tap" on-tap="_copyTap">[[order.ProductionItems.0.id]]</span>
+							| Production Order #: 
+							<span class="copy-tap" on-tap="_copyTap">[[order.id]]</span>
+							<a href="[[_urlViewOrderProduction(order.id)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+						</template>
+					</dom-if>
+
+					([[_formatDate(order.Created)]])
+
+					<span class="status-bar">
+						<tmladmin-ui-progress-icon type="printing" status="[[order.PrintStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="transferring" status="[[order.TransferringStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="cutting" status="[[order.CuttingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="sewing" status="[[order.SewingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="qa" status="[[order.QAStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="aggregation" status="[[order.AggregationStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-labels" status="[[order.ShippingLabelsStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-rfid" status="[[order.ShippingRFIDStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping" status="[[order.ShippingStatus]]"></tmladmin-ui-progress-icon>
+					</span>
+
+					- <span>Order #: <span class="copy-tap" on-tap="_copyTap">[[order.OrderID]]</span></span>
+					<dom-if if="[[userInfo.isAdmin]]">
+						<template>
+							<a href="[[_urlViewOrder(order.OrderID)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+						</template>
+					</dom-if>
+
+					<span class="hidden" showen$="[[order.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> TEST
+					</span>
+				</h3>
+
+				<dom-if if="[[!order.PartialResult]]">
+					<template>
+						<div class="buttons">
+							<paper-button class="order-save-btn" raised on-tap="saveConfirmTap" disabled$="[[_dis(loadingAny, !order.CanBeSaved)]]">
+								Save Order
+							</paper-button>
+						</div>
+		
+		
+						<div class="buttons gap">
+							<dom-if if="[[userInfo.isAdmin]]">
+								<template>
+									<div class="selection">
+										<paper-checkbox 
+											checked="{{order.GrabForProduction}}" 
+											is-admin>
+											Grab for Production
+										</paper-checkbox>
+									</div>
+								</template>
+							</dom-if>
+							
+		
+							<div class="selection">
+								<tmladmin-ui-dropdown-menu 
+									class$="[[_className(order.Status.id, 'status')]]"
+									class-item="status"
+									vertical-align="top" 
+									horizontal-align="left"
+									id-property="id"
+									title-property="title"
+									label="Production Order Status"
+									disabled$="[[loading]]" 
+									value="{{order.Status}}"
+									value-list="[[order.StatusList]]"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.Status]]"
+									invalid="[[_asBool(order.notvalid.Status)]]">
+								</tmladmin-ui-dropdown-menu>
+							</div>
+		
+							<div class="selection">
+								<div class="table">
+									<div class="header">
+										<div>
+										</div>
+										<div>
+										</div>
+									</div>
+		
+		
+									<div class="row" hidden$="[[!_asBool(order.GroupShippingID)]]">
+										<div>
+											[[localize('admin-ws-planning-grouporder')]]
+										</div>
+										<div>
+											<span class="copy-tap" on-tap="_copyTap">[[order.GroupShippingID]]</span>
+										</div>
+									</div>
+		
+									<div class="row" hidden$="[[!_asBool(order.GroupShippingStoreID)]]">
+										<div>
+											Group Order Store ID
+										</div>
+										<div>
+											<span class="copy-tap" on-tap="_copyTap">[[order.GroupShippingStoreID]]</span>
+										</div>
+									</div>
+		
+		
+									<div class="row" hidden$="[[!_asBool(order.PurchaseOrderID)]]">
+										<div>
+											[[localize('admin-ws-planning-purchaseorder')]]
+										</div>
+										<div>
+											<span class="copy-tap" on-tap="_copyTap">[[order.PurchaseOrderID]]</span>
+											<a href="[[_urlViewPurchaseOrder(order.PurchaseOrderID)]]" target="_blank" hidden$="[[!userInfo.isAdmin]]"
+												title="View Purchase Order">
+												<iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon>
+											</a>
+										</div>
+									</div>
+		
+									<div class="row" hidden$="[[!_asBool(order.PlanningUnavailableReason)]]">
+										<div>
+											Planning Unavailable Reason
+										</div>
+										<div>
+											<span highlighted>[[order.PlanningUnavailableReason]]</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+		
+		
+						<div class="buttons">
+							<paper-button class="order-reprocess-btn" raised disabled$="[[_dis(loadingAny, !order.CanBeReprocessed)]]" on-tap="reprocessTap">
+								Reprocess Order
+							</paper-button>
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+		
+							<paper-button class="order-pushtobatch-btn purple" raised disabled$="[[loadingAny]]" on-tap="pushtobatchConfirmTap">
+								Push Order to Batch
+							</paper-button>
+						</div>
+		
+						
+						<!-- Production Order History -->
+						<tmladmin-ui-changes-history
+							class="order-history"
+							title="Production Order History"
+							items="[[order.History]]">
+						</tmladmin-ui-changes-history>
+
+					</template>
+				</dom-if>
+
+				
+			</div>
+		
+			<!-- Production Order Items -->
+			<div class="order-items" id="order-items">
+				<h2 hidden$="[[order.PartialResult]]">
+					<span>
+						Production Order Items 
+						- Qty: <span class="count">[[order.QuantityOfItems]]</span>
+					</span>
+				</h2>
+
+				<!-- <dom-repeat items="[[order.ProductManufacturers]]" as="pmani" scroll-target="[[scrollTarget]]" default-physical-count="40">
+					<template>
+						<h4>
+							Manufacturer Product #: [[pmani.ProductManufacturerID]]<a 
+							href="[[_urlViewProductManufacturer(pmani.ProductManufacturerID)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>,
+							SKU #: [[pmani.SKU]], 
+							Type: [[pmani.Type]],
+							Manufacturer SKU # [[pmani.ManufactureProductInternalID]]
+						</h4>
+
+						<div class="selection">
+							<tmladmin-ui-dropdown-menu 
+								vertical-align="top" 
+								horizontal-align="left"
+								label="Appointed Manufacturer" 
+								disabled$="[[disableManSelection(loading, order.CanBeSaved, pmani.Manufacturer.IsPending)]]"
+								value="{{pmani.Manufacturer.ManufacturerName}}"
+								no-label-float1
+								no-animations>
+								<paper-listbox 
+									slot="dropdown-content" 
+									class="dropdown-content" 
+									attr-for-selected="value"
+									selected="{{pmani.Manufacturer.ManufacturerID}}">
+									<dom-repeat items="[[pmani.Manufacturers]]" as="mani">
+										<template>
+											<paper-item value$="[[mani.ManufacturerID]]">
+												[[mani.ManufacturerName]]
+											</paper-item>
+										</template>
+									</dom-repeat>
+								</paper-listbox>
+							</tmladmin-ui-dropdown-menu>
+
+							<span hidden$="[[!pmani.Manufacturer.IsPending]]">[SAVING PENDING]</span>
+						</div> 
+						<iron-list items="[[pmani.Items]]" as="itemi" scroll-target="[[scrollTarget]]" default-physical-count="40">
+						-->
+
+						<iron-list items="[[order.ProductionItems]]" as="itemi" scroll-target="[[scrollTarget]]" default-physical-count="40" suppress-focus>
+							<template>
+								<tmladmin-production-order-item 
+									entry="[[itemi]]" 
+									website-url="[[websiteUrl]]" 
+									user-info="[[userInfo]]"
+									action-disabled="[[loadingAny]]">
+								</tmladmin-production-order-item>
+							</template>
+						</iron-list>
+
+					<!-- </template>
+				</dom-repeat> -->
+			</div>
+
+			
+
+
+			<!-- Tasks -->
+			<div class="order-tasks" hidden$="[[!order.Tasks]]" hidden2$="[[order.PartialResult]]">
+				<h2>
+					Tasks
+				</h2>
+			
+				<div scrollable-x>
+					<div class="table nostripe">
+						<div class="header">
+							<div>
+								[[localize('admin-morder-type-title')]]
+							</div>
+							<div>
+								[[localize('admin-morder-created-title')]]
+							</div>
+							<div>
+								[[localize('admin-morder-progress-title')]]
+							</div>
+							<div>
+								[[localize('admin-morder-time-ms-title')]]
+							</div>
+							<div>
+								[[localize('admin-morder-operation-title')]]
+							</div>
+							<div>
+								[[localize('admin-morder-finished-title')]]
+							</div>
+						</div>
+				
+						<dom-repeat items="[[order.Tasks]]" as="taski">
+							<template>
+								<div class="row" is-task-finished$="[[_asBool(taski.FinishedTimestamp)]]">
+									<div>
+										[[taski.Type]]
+									</div>
+									<div>
+										[[_formatDate(taski.CreatedTimestamp)]]
+									</div>
+									<div>
+										<paper-progress class="executing-progress"
+											value="[[_formatProgress(taski.ExecutingOperationProgress)]]"></paper-progress>
+									</div>
+									<div>
+										[[_formatTaskTime(taski.ExecutingTimeMiliseconds)]]
+									</div>
+									<div>
+										[[taski.ExecutingOperation]]
+									</div>
+									<div>
+										<span hidden$="[[!_asBool(taski.FinishedSuccessfully)]]">
+											<iron-icon icon="admin-icons:check" alt="check" class="approved"></iron-icon>
+										</span>
+										[[_formatDate(taski.FinishedTimestamp)]]
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+	
+						<dom-if if="[[!LenMore(order.Tasks)]]">
+							<template>
+								<div class="noitems">
+									[[localize('admin-list-noitems')]]
+								</div>
+							</template>
+						</dom-if>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Confirm to Save</h2>
+	<paper-dialog-scrollable>
+		Production Order #: [[order.id]] is going to be saved...are you sure?
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="saveTap">Save</paper-button>
+	</div>
+</paper-dialog>
+
+
+
+<paper-dialog id="dialogreprocess" proceed no-overlap dynamic-align vertical-align="middle"
+	horizontal-align="center">
+	<h2>Confirm to Reprocess Order</h2>
+	<paper-dialog-scrollable>
+		<!-- <paper-checkbox checked="{{CanBeReprocessed_CombinedPreview}}" disabled$="[[!order.CanBeReprocessed]]">Combined Preview</paper-checkbox>
+		<br />
+		<br /> -->
+		Are you sure to Reprocess Order?
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>Close</paper-button>
+		<paper-button dialog-confirm  class="order-reprocess-btn" on-tap="reprocessConfirmTap">Reprocess Order</paper-button>
+	</div>
+</paper-dialog>
+
+
+
+<paper-dialog id="dialogrequestbatch" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Confirm to Push Order to Batch</h2>
+	<paper-dialog-scrollable>
+		<div class="checkbox-container">
+			<paper-checkbox class="hide-on-print" checked="{{dialogrequestbatch.ProductionOnHold}}">
+				<iron-icon class="production-hold" icon="admin-icons:pan-tool"></iron-icon>
+				Create but keep it on HOLD
+			</paper-checkbox>
+
+			<paper-checkbox class="hide-on-print" checked="{{dialogrequestbatch.SpotColors}}">
+				Spot Colors
+			</paper-checkbox>
+
+			<paper-checkbox class="hide-on-print" checked="{{dialogrequestbatch.IsDraft}}">
+				Is Draft
+			</paper-checkbox>
+
+			<paper-input 
+				class="max-items-per-batch-input" 
+				label="Max Items per Batch" 
+				type="string" 
+				value="{{dialogrequestbatch.MaxItemsPerBatch}}"
+				disabled$="[[loadingAny]]">
+			</paper-input>
+		</div>
+		
+		<div>
+			Process Type
+		<paper-menu-button no-animations class="processtype-selection" disabled$="[[loadingAny]]">
+			<div slot="dropdown-trigger">
+				<paper-button raised>
+					<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(dialogrequestbatch.ProcessType.id, 'Bulk')]]"></iron-icon>
+					<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(dialogrequestbatch.ProcessType.id, 'Bulk2')]]"></iron-icon>
+					<iron-icon icon="admin-image:filter" class="stacking hidden" showen-icon$="[[_equal(dialogrequestbatch.ProcessType.id, 'Stacking')]]"></iron-icon>
+					<span>[[localizep('admin-morder-processtype-', dialogrequestbatch.ProcessType.id)]]</span>
+				</paper-button>
+			</div>
+		
+			<paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="value"
+				selected="{{dialogrequestbatch.ProcessType.id}}" no-animations>
+				<dom-repeat items="[[dialogrequestbatch.ProcessTypeList]]" as="processtypei">
+					<template>
+						<paper-item value$="[[processtypei.id]]">
+							<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(processtypei.id, 'Bulk')]]"></iron-icon>
+							<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(processtypei.id, 'Bulk2')]]"></iron-icon>
+							<iron-icon icon="admin-image:filter" class="stacking hidden" showen-icon$="[[_equal(processtypei.id, 'Stacking')]]"></iron-icon>
+							[[localizep('admin-morder-processtype-', processtypei.id)]]
+						</paper-item>
+					</template>
+				</dom-repeat>
+			</paper-listbox>
+		</paper-menu-button>
+		</div>
+		<p>Order is going to be manufactured...are you sure?</p>
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>Close</paper-button>
+		<paper-button dialog-confirm class="order-pushtobatch-btn purple" on-tap="pushtobatchTap">Push</paper-button>
+	</div>
+</paper-dialog>
+
+
+
+<paper-dialog id="dialogpackingoptions" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Packing Options</h2>
+	<paper-dialog-scrollable>
+		<p>Enter prefered packing quantity and custom QA label if required</p>
+
+		<div class="horiz">
+			<div>
+				<paper-input 
+					type="text"
+					label="Packing Quantity"
+					value="{{dialogpackingoptions.qty::input}}">
+				</paper-input>
+		
+				<div class="selection">
+					<tmladmin-ui-dropdown-menu 
+						vertical-align="top" 
+						horizontal-align="left"
+						id-property="id"
+						title-property="title"
+						label="QA Label"
+						disabled$="[[loadingAny]]" 
+						value="{{dialogpackingoptions.QALabel}}"
+						value-list="[[dialogpackingoptions.QALabelList]]"
+						on-value-changed="onInputChanged"
+						error-message="[[dialogpackingoptions.notvalid.QALabel]]"
+						invalid="[[_asBool(dialogpackingoptions.notvalid.QALabel)]]">
+					</tmladmin-ui-dropdown-menu>
+				</div>
+
+				<div class="table nostripe">
+					<!-- <div class="header">
+						<div>
+							Property
+						</div>
+						<div>
+							Value
+						</div>
+					</div> -->
+					<dom-repeat items="[[dialogpackingoptions.QALabel.properties]]" as="propi">
+						<template>
+							<div class="row">
+								<!-- <div class="property-name">
+									[[propi.name]]
+								</div> -->
+								<div>
+									<paper-input 
+										type="text"
+										label="[[propi.name]]"
+										value="{{propi.val::input}}">
+									</paper-input>
+								</div>
+							</div>
+						</template>
+					</dom-repeat>
+
+					<dom-if if="[[!LenMore(dialogpackingoptions.QALabel.properties)]]">
+						<template>
+							<div class="noitems">
+								[no custom properties found]
+							</div>
+						</template>
+					</dom-if>
+				</div>
+			</div>
+
+			<div>
+				<div class="preview-img">
+					<img src="[[dialogpackingoptions.QALabel.imageUrl]]" alt="[[dialogpackingoptions.QALabel.title]]" />
+				</div>
+			</div>
+		</div>
+	</paper-dialog-scrollable>
+
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>Close</paper-button>
+		<paper-button dialog-confirm on-tap="preferedPackingQuantityTap">Set</paper-button>
+	</div>
+</paper-dialog>
+
+
+
+<paper-dialog id="dialogbarcodes" class="dialog-wide-max98" proceed no-overlap dynamic-align vertical-align="middle"
+	horizontal-align="center">
+	<h2>[[localize('admin-ws-printing-dlg-barcodes')]]</h2>
+	<paper-dialog-scrollable>
+		<dom-if if="[[_asBool(previewPrinting.Barcode0)]]">
+			<template>
+				<h4>
+					<span class="copy-tap" on-tap="_copyTap">[[previewPrinting.Barcode0]]</span>
+				</h4>
+			</template>
+		</dom-if>
+		<dom-if if="[[_asBool(previewPrinting.Barcode1)]]">
+			<template>
+				<h4>
+					<span class="copy-tap" on-tap="_copyTap">[[previewPrinting.Barcode1]]</span>
+				</h4>
+			</template>
+		</dom-if>
+
+		<p>
+			<dom-if if="[[!previewPrinting.Content.length]]">
+				<template>
+					[[localize('admin-array-none')]]
+				</template>
+			</dom-if>
+			<dom-repeat items="[[previewPrinting.Content]]" as="itemi">
+				<template>
+					<span class="copy-tap" on-tap="_copyTap">[[itemi.Barcode]]</span><dom-if if="[[_notLast(previewPrinting.Content, index)]]"><template>, </template></dom-if>
+				</template>
+			</dom-repeat>
+		</p>
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>[[localize('admin-ws-printing-btn-close')]]</paper-button>
+	</div>
+</paper-dialog>
+
+
+
+<paper-dialog id="dialogconfirm" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>[[dialogconfirm.title]]</h2>
+	<paper-dialog-scrollable>
+		[[dialogconfirm.msg]]
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>[[dialogconfirm.btnClose]]</paper-button>
+		<paper-button dialog-confirm on-tap="dialogconfirmTap">[[dialogconfirm.btnConfirm]]</paper-button>
+	</div>
+</paper-dialog>

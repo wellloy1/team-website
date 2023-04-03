@@ -1,0 +1,46 @@
+﻿
+<array-selector id="selector" items="{{options}}"></array-selector>
+
+<div id="track" 
+        class="track" 
+        draggable="false" 
+        on-track="_ontrack" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+
+    <div class="checkmark-virtual-cont">
+        <iron-icon 
+            id="checkmark-virtual" 
+            icon="icons:restore" 
+            draggable="false"
+            hidden$="[[!virtualShow]]">
+        </iron-icon> 
+    </div>
+
+    <ul id="slides" class="slides" draggable="false">
+        <dom-repeat items="[[options]]">
+            <template>
+                <li class$="[[_panelClass(item)]]" on-tap="_ontap">
+                    <teamatical-ui-image 
+                        class="main" 
+                        src="[[_imageUrl(item.ImageUrl,item.ImageUrlSwap,isSwap)]]" 
+                        alt="" 
+                        draggable="false" 
+                        lazy-load 
+                        hover-effect-off
+                        on-dragstart="eventNull" 
+                        on-selectstart="eventNull">
+                    </teamatical-ui-image> 
+                    <div class="name" draggable="false">[[item.OptionName]]</div>
+                    <iron-icon class="checkmark" icon="icons:check-circle" draggable="false"></iron-icon>
+                </li>
+            </template>
+        </dom-repeat>
+        <li class="panel-end"></li>
+    </ul>
+
+    <div class="checkmark-virtual-frame"></div>
+    
+    <div class="counter" draggable="false">[[_counterLabel]]</div>
+
+</div>

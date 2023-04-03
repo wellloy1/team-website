@@ -1,0 +1,120 @@
+<h4>
+	[[title]] 
+
+	<dom-if if="[[_yesItems(items, items.*)]]">
+		<template>
+		([[items.length]])
+		</template>
+	</dom-if>
+
+	<!-- <paper-button class="order-sync-btn" disabled$="[[loading]]" hidden$="[[hideSyncBtn(order)]]" raised on-tap="syncOrderTap">
+		[[localize('order-button-sync', 'oid', order.id)]]
+	</paper-button>
+	<span hidden$="[[!order.Sandbox]]">
+		<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> TEST
+	</span> -->
+</h4>
+
+<div scrollable-x>
+	<div class="table">
+		<div class="header">
+			<div>
+				Date
+			</div>
+			<div>
+				Author
+			</div>
+			<div>
+				Reason
+			</div>
+			<div class="centered">
+				Details
+			</div>
+			<div>
+				Description
+			</div>
+		</div>
+
+		<dom-repeat items="[[items]]" as="histi">
+			<template>
+			<div class="row">
+				<div>
+				[[_formatDate(histi.Timestamp)]]
+				</div>
+				<div>
+				[[histi.Author]]
+				</div>
+				<div>
+				[[histi.Reason]]
+				</div>
+				<div class="centered">
+				<dom-if if="[[histi.Details]]">
+					<template>
+					<paper-button raised on-tap="showDetailsTap" style="white-space:nowrap;">View Details</paper-button>
+					</template>
+				</dom-if>
+				<dom-if if="[[!histi.Details]]">
+					<template>
+					OK
+					</template>
+				</dom-if>
+				</div>
+				<div>
+				[[histi.Description]]
+				</div>
+			</div>
+			</template>
+		</dom-repeat>
+
+		
+		<dom-if if="[[LenLess(items)]]">
+			<template>
+			<div class="noitems">
+				[[localize('admin-list-noitems')]]
+			</div>
+			</template>
+		</dom-if>
+	</div>
+</div>
+
+
+
+
+
+<tmladmin-ui-dialog id="dialogdetails" disabled$="[[dialogdetails.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button 
+			class="close-dialog-small-btn" 
+			icon="admin-icons:close"
+			dialog-dismiss>
+		</paper-icon-button>		
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogdetails.loading]]"
+				hidden$="[[!dialogdetails.loading]]">
+			</paper-progress>
+		</div>
+		<div class="dialog-title">
+			<h3 style="margin-right: auto;">Details of History Item</h3>
+
+			<paper-icon-button slot="suffix" class="copy-json-btn" style="margin: -7px 12px;"
+				aria-label="copy-json-btn"
+				icon="icons:content-copy"
+				on-tap="copyJsonDetailsTap">
+			</paper-icon-button>
+			<paper-toggle-button checked="{{viewasjson}}">JSON Viewer</paper-toggle-button>
+		</div>
+	</div>
+
+	<div slot="body">
+		<div class="details-cell white">
+			<pre hidden$="[[viewasjson]]">[[dialogdetails.Details]]</pre>
+			<json-viewer hidden$="[[!viewasjson]]" json="[[dialogdetails.Details]]"></json-viewer>
+		</div>
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			Close
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>

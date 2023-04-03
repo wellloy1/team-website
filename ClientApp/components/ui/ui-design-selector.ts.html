@@ -1,0 +1,80 @@
+﻿<app-localstorage-document 
+    key="design-selectors" 
+    data="{{designSelectors}}">
+</app-localstorage-document>
+
+
+<iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
+
+<paper-expansion-panel 
+    id="panel" 
+    class="panel-styled" 
+    header="[[localizeSelectorTitle(selectorTitle, customizationType, wizardReadonly)]]" 
+    opened="{{opened}}"
+    focused="{{focused}}"
+    disabled="[[disabled]]"
+    no-toggle-header-focusable
+    no-toggle-header
+    no-toggle-btn
+    on-toggle="_onToggle">
+
+    <div class="swap-container" hidden="[[isSwapHidden]]">
+        <paper-fab 
+            id="swap" 
+            aria-label="swap"
+            icon="[[_icon(isSwap)]]" 
+            disabled="[[disabled]]"
+            mini
+            tooltip$="[[localize('ui-designselector-swap')]]" tooltip-flow="right"
+            draggable="false" 
+            on-tap="onSwap" 
+            on-dragstart="eventNull" 
+            on-selectstart="eventNull">
+        </paper-fab>
+    </div>
+
+    <!-- 
+        class="hidden-animated"
+        hidden-animated$="[[!showCarousel]]"
+        hidden$="[[!showCarousel_Delayed]]"
+    -->
+    <dom-if if="[[showCarousel]]">
+        <template>
+            <teamatical-ui-carousel 
+                id="plist" 
+                visible="[[visibleSelector]]"
+                focused="[[focused]]"
+                disabled="[[disabled]]"
+                braces-hide-onblur
+                image-ratio="0.65" 
+                image-height="384" 
+                options="{{selectorOptions}}" 
+                is-swap="{{isSwap}}">
+            </teamatical-ui-carousel>
+        </template>
+    </dom-if>
+
+    <!--  
+        class="hidden-animated"
+        hidden-animated$="[[!showWizard]]"
+        hidden$="[[!showWizard_Delayed]]"
+    -->
+    <dom-if if="[[showWizard]]">
+        <template>
+            <teamatical-ui-wizard-sortable 
+                id="wlist" 
+                visible="[[visibleWizard]]"
+                disabled="[[disabled]]"
+                editing="[[wizardEditing]]"
+                selection-only="[[wizardReadonly]]"
+                title-readonly="[[wizardReadonly]]"
+                image-ratio="0.65" 
+                image-height="[[wizardPanelSize]]" 
+                options="{{selectorOptions}}" 
+                is-swap="{{isSwap}}">
+            </teamatical-ui-wizard-sortable>
+        </template>
+    </dom-if>
+    
+
+</paper-expansion-panel>

@@ -1,0 +1,236 @@
+<app-route  
+  route="{{route}}"  
+  data="{{routeData}}"  
+  pattern="/:category/:item">
+</app-route>
+
+
+<teamatical-product-data 
+  id="productData" 
+  category-name="[[routeData.category]]" 
+  item-name="[[routeData.item]]" 
+  item-model="{{item}}" 
+  query-params="{{queryParams}}"
+  customization-type="{{customizationType}}" 
+  website-url="[[websiteUrl]]"
+  visible="{{visible}}" 
+  failure="{{failure}}" 
+  loading="{{loading}}"
+  saving="{{saving}}">
+</teamatical-product-data>
+
+<teamatical-ui-loader hidden$="[[_isNotConn(item,failure,offline,loading)]]"></teamatical-ui-loader>
+<teamatical-ui-product-notfound hidden$="[[_isFound(item,failure,offline,loading)]]"></teamatical-ui-product-notfound>
+
+<div id="content" class="content" hidden$="[[_isNoProduct(item,failure,offline)]]">
+
+  <teamatical-ui-image-multiview-3d
+    id="image-product" 
+    tooltip-overlow-mode
+    class="image-product" 
+    alt="" 
+    views="{{item.ProductViews}}"
+    overlays="[[item.ProductOverlays]]"
+    pv="{{item.ProductPointOfView}}" 
+    pvs="[[item.ProductPointOfViewCount]]" 
+    loading-on-update="[[loadingOnUpdate]]"
+    visible="[[visible]]"
+    lazy-load
+    allow-zoom
+    is-youth="[[item.ProductIsYouth]]"
+    is-reversible="[[item.ProductIsReversible]]">
+  </teamatical-ui-image-multiview-3d>
+  
+
+  <div class="detail" has-content$="[[_isDefined(item)]]">
+    
+    <h1>[[item.Product.Title]]</h1>
+    
+    <div class="pickers">
+
+      <dom-if if="[[_asBool(item.Product.AccessoryVariants)]]">
+        <template>
+          <teamatical-ui-product-variants 
+            variant-title="[[item.Product.AccessoryVariantsName]]"
+            customization-type="player"
+            is-selectable-items
+            options="{{item.Product.AccessoryVariants}}"
+            loading="{{loading}}">
+          </teamatical-ui-product-variants>
+        </template>
+      </dom-if>
+
+      <teamatical-ui-team-info 
+        team-info="{{item.Team}}" 
+        colors-swatch-palette="[[item.ColorsPalette]]"
+        colors-pantone-palette="[[colorsPalette]]"
+        is-pantone-picker="[[!item.NoPantoneColors]]"
+        loading="{{loading}}">
+      </teamatical-ui-team-info>
+
+      <teamatical-ui-player-info
+        activity-options="[[item.PlayerActivityOptions]]"  
+        captain-options="[[item.PlayerCaptainOptions]]"
+        player-info="{{item.Player}}"
+        loading="{{loading}}">
+      </teamatical-ui-player-info>
+
+      <!-- <div 
+        hidden$="[[allowPhotosHidden]]"
+        class="image-uploader-section">
+        <h2>[[localize('detail-image-uploader-section')]]</h2>
+        <teamatical-ui-image-uploader 
+          id="image-uploader" 
+          hidden$="[[allowPhotosHidden]]"
+          website-url="[[websiteUrl]]"
+          visible="[[visible]]"
+          images-ids="{{item.Photos}}">
+        </teamatical-ui-image-uploader>
+      </div> -->
+
+      <div hidden$="[[!item.ProductSides]]" class="sides-list">
+        <h2>
+          [[localize('customize-productsides-title')]]
+          <span class="desc">[[localize('customize-productsides-desc')]]</span>
+        </h2>
+        
+        <teamatical-ui-carousel 
+            id="sides_list" 
+            tabindex="0"
+            image-ratio="0.65" 
+            image-height="156" 
+            visible="[[visible]]"
+            counter-hide
+            border-hide
+            options="{{item.ProductSides}}">
+        </teamatical-ui-carousel>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="content-line2" class="content-line2" hidden$="[[_isNoProduct(item,failure,offline)]]">
+
+  <div class="detail-wide" has-content$="[[_isDefined(item)]]">
+
+    <dom-if if="[[allowModeSwitcher]]">
+      <template>
+        <h1>
+          <span class="switcher-label" disabled$="[[!allowModeSwitching]]" active$="[[!editingWizard]]" on-tap="switchMode">[[localize('customize-design-switch')]]</span>
+          <div class="switchers-container">
+            <paper-toggle-button 
+              id="switchCustomize" 
+              class="hidden-animated" 
+              disabled$="[[!allowModeSwitching]]" 
+              checked="{{editingWizard}}"
+              active$="[[editingWizard]]">
+              [[localize('customize-wizard-switch')]]
+            </paper-toggle-button>
+          </div>
+        </h1>
+
+      </template>
+    </dom-if>
+    
+    <div class="designset-loader-container">
+      <teamatical-ui-loader 
+        class="designset-loader"
+        loading-msg="[[localize('customize-wizard-switching')]]"
+        hidden$="[[!loadingDesignSet]]">
+      </teamatical-ui-loader>
+    </div>
+    
+
+    <div class="designset-list">
+      <dom-repeat items="{{item.DesignOptionSetList}}" as="designi" index-as="index">
+        <template strip-whitespace>
+          <teamatical-ui-design-selector 
+            disabled="[[loadingDesignSet]]"
+            product-id="[[item.ProductConfigurationID]]" 
+            aria-label$="[[designi.SetName]]"
+            selector-id="[[designi.SetName]]" 
+            selector-title="[[designi.LocalizedSetName]]" 
+            selector-options="{{designi.DesignOptions}}" 
+            selector-group="design" 
+            wizard-readonly="[[designi.Generated]]"
+            customization-type="[[customizationTypeSelector]]" 
+            is-swap-allow="[[designi.IsSwapAllow]]" 
+            on-toggle="_onToggle"
+            visible="[[visible]]">
+          </teamatical-ui-design-selector>
+        </template>
+      </dom-repeat>
+    </div>
+
+
+    <div class="detail-buttons">
+      <teamatical-ui-button 
+        aria-label$="[[localize('customize-back-label')]]"
+        on-tap="_back">
+        [[localize('customize-back-btn')]]
+      </teamatical-ui-button>
+
+
+
+      <teamatical-ui-button 
+        hidden$="[[_cloneBtnHide]]"
+        aria-label$="[[localize('customize-clone-label')]]"
+        on-tap="_cloneProductConfiguration">
+        [[_cloneBtnTitle]]
+      </teamatical-ui-button>
+
+      <teamatical-ui-button 
+        hidden$="[[_cloneBtnHide]]"
+        responsive$="[[!_cloneBtnHide]]"
+        responsive-hide
+        aria-label$="[[localize('customize-clone-label')]]"
+        on-tap="_cloneProductConfiguration">
+        [[_cloneBtnTitle]]
+      </teamatical-ui-button>
+      
+
+
+      <teamatical-ui-button 
+        hidden$="[[_saveBtnHide]]"
+        aria-label$="[[localize('customize-save-label')]]"
+        on-tap="_saveProductConfiguration">
+        [[_saveBtnTitle]]
+      </teamatical-ui-button>
+
+      <teamatical-ui-button 
+        hidden$="[[_saveBtnHide]]"
+        responsive$="[[!_saveBtnHide]]"
+        responsive-hide
+        aria-label$="[[localize('customize-save-label')]]"
+        on-tap="_saveProductConfiguration">
+        [[_saveBtnTitle]]
+      </teamatical-ui-button>
+
+
+
+      <teamatical-ui-button 
+        hidden$="[[_applyBtnHide]]"
+        aria-label$="[[localize('customize-apply-label')]]"
+        on-tap="_apply">
+        [[_applyBtnTitle]]
+      </teamatical-ui-button>
+
+      <teamatical-ui-button 
+        hidden$="[[_applyBtnHide]]"
+        responsive$="[[!_applyBtnHide]]"
+        responsive-hide
+        aria-label$="[[localize('customize-apply-label')]]"
+        on-tap="_apply">
+        [[_applyBtnTitle]]
+      </teamatical-ui-button>
+    </div>
+
+  </div>
+</div>
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

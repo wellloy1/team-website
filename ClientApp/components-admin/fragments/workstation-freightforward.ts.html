@@ -1,0 +1,203 @@
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="freightforward"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+
+<div class="maindiv horiz">
+	<div class="order-container sticky">
+		<div class="order">
+			<!-- freightforward -->
+			<div class="order-freightforward" hidden$="[[!order]]">
+				<div class="sticky-container">
+					<h2>
+						<paper-icon-button 
+							class="refresh-btn" 
+							icon="admin-icons:refresh"
+							title="[[localize('admin-ws-refresh')]]" 
+							disabled="[[loadingAny]]"
+							on-tap="_reloadTap">
+						</paper-icon-button>
+
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+
+						[[localize('admin-ws-freightforward-title')]]
+					</h2>
+
+					<paper-progress 
+						id="progress" 
+						indeterminate 
+						class="" 
+						disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+				
+				<div class="main">
+					<div class="first-line">
+						<paper-input id="newbarcode" label="[[localize('admin-ws-freightforward-barcode-label')]]" name="barcode"
+							class="barcode-input" type="string" disabled="[[loadingAny]]" on-value-changed="onInputChanged"
+							on-keydown="_barcodeEnter">
+							<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+							<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:arrow-downward" on-tap="_barcodeTap">
+							</paper-icon-button>
+						</paper-input>
+				
+						<dom-if if="[[showManufacturers]]">
+							<template>
+								<div class="man-selection" is-admin>
+									<tmladmin-ui-dropdown-menu 
+										vertical-align="top" 
+										horizontal-align="left"
+										id-property="ManufacturerID"
+										title-property="ManufacturerName"
+										label="[[localize('admin-ws-manufacturer')]]"
+										disabled$="[[loadingAny]]" 
+										value="{{order.Manufacturer}}"
+										value-list="[[order.Manufacturers]]"
+										on-value-changed="onInputChanged"
+										error-message="[[order.notvalid.Manufacturer]]"
+										invalid="[[_asBool(order.notvalid.Manufacturer)]]">
+									</tmladmin-ui-dropdown-menu>
+								</div>
+							</template>
+						</dom-if>
+					</div>
+
+					<dom-if if="[[order.Invalid]]">
+						<template>
+							<h3 class="invalid">
+								[[_formatInvalid(order.Invalid, order.InvalidMessage, 'admin-ws-freightforward-item-invalid')]]
+							</h3>
+						</template>
+					</dom-if>
+
+
+					<div class="order-container-list">
+						<h4 hidden$="[[!order.Containers.length]]">
+							[[localize('admin-ws-freightforward-containers-title')]]
+						</h4>
+						<dom-repeat items="[[order.Containers]]" as="conti">
+							<template>
+
+								<div class="order-continer-info">
+									<dom-if if="[[_asBool(conti.Label.ImageUrl)]]">
+										<template>
+											<div class="zpl-image">
+												<div>
+													<img src="[[conti.Label.ImageUrl]]" />
+												</div>
+											</div>
+		
+										</template>
+									</dom-if>
+									
+									<div>
+										<h4>
+											[[localize('admin-ws-freightforward-container-title')]] 
+											<dom-if if="[[_morethen(conti.Packages.length, 0)]]">
+												<template>
+													([[conti.Packages.length]])
+												</template>
+											</dom-if>
+		
+											<span class="hidden" showen$="[[conti.Sandbox]]">
+												<iron-icon icon="admin-icons:warning" class="warning" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+												[[localize('admin-ws-test-item')]]
+											</span>
+										</h4>
+		
+		
+										<h1>[[conti.ID]]</h1>
+										<p class="barcode">[[conti.Barcode]]</p>
+										<p>[[conti.Barcode]]</p>
+		
+										
+		
+										<div class="order-buttons">
+											<div class="spinner">
+												<paper-button class="order-printcontainer-dispose-btn" raised disabled
+													on-tap="onDisposeContainerTap">
+													[[localize('admin-ws-freightforward-tags-disposecontainer')]]
+												</paper-button>
+												<paper-spinner-lite class="thick"></paper-spinner-lite>
+											</div>
+		
+											<div class="spinner">
+												<paper-button class="order-printcontainer-btn" raised disabled
+													on-tap="onPrintContainerTap">
+													[[localize('admin-ws-freightforward-tags-printcontainer')]]
+												</paper-button>
+												<paper-spinner-lite class="thick"></paper-spinner-lite>
+											</div>
+										</div>
+									</div>
+		
+									<div class="order-continer-packages">
+										<h4 hidden$="[[!conti.Packages.length]]">
+											[[localize('admin-ws-freightforward-container-packed-title')]]
+										</h4>
+										<dom-repeat items="[[conti.Packages]]" as="packagei">
+											<template>
+												<div class="package" package-missing$="[[packagei.Missing]]">
+													<span>([[packagei.Items.length]])</span>
+													<p class="barcode">[[packagei.Barcode]]</p>
+													<p>[[packagei.Barcode]]</p>
+			
+													<dom-repeat items="[[packagei.Items]]" as="itemi">
+														<template>
+															<div class="package-item" item-missing$="[[itemi.Missing]]" item-invalid$="[[itemi.Invalid]]">
+																<p>[[itemi.RFID]]</p>
+															</div>
+														</template>
+													</dom-repeat>
+										
+													<div class="zpl-image" hidden$="[[!_asBool(packagei.ShippingLabelImageUrl)]]">
+														<div>
+															<img src="[[packagei.ShippingLabelImageUrl]]" />
+														</div>
+													</div>
+												</div>
+											</template>
+										</dom-repeat>
+									</div>
+									
+								</div>
+
+							</template>
+						</dom-repeat>
+
+					</div>
+
+				</div>
+			</div>
+
+			<div class="order-buttons">
+				<!--  -->
+			</div>
+			
+		</div>
+	</div>
+</div>
+
+
+
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="freightforward"
+	website-url="[[websiteUrl]]"
+	
+	rfid-off
+	barcode-scanner-off
+	sticker-printer
+
+	loading="{{loadingWS}}"
+	visible="[[visible]]">
+</teamatical-ui-scanner-printer-settings>
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>

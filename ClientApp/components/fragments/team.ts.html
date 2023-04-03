@@ -1,0 +1,90 @@
+<app-route 
+  active="{{routeActive}}" 
+  data="{{routeData}}" 
+  route="[[route]]" 
+  pattern="/:state">
+</app-route>
+
+<teamatical-product-data 
+  id="productData" 
+  item-name="href:team-create" 
+  item-model="{{item}}" 
+  query-params="{{queryParams}}"
+  customization-type="team" 
+  website-url="[[websiteUrl]]"
+  visible="{{visible}}" 
+  failure="{{failure}}" 
+  loading="{{loading}}"
+  saving="{{saving}}">
+</teamatical-product-data>
+
+<teamatical-ui-loader hidden$="[[_isNotConn(item,failure,offline,loading)]]"></teamatical-ui-loader>
+<teamatical-ui-product-notfound hidden$="[[_isFound(item,failure,offline,loading)]]"></teamatical-ui-product-notfound>
+
+<header hidden$="[[!_isDefined(item)]]">
+  <h1>[[localize('create-team-title')]]</h1>
+  <div class="title_small">[[localize('create-team-text')]]</div>
+</header>
+
+<div id="content" hidden$="[[_isNoProduct(item,failure,offline)]]">
+
+  <div class="detail" has-content$="[[_isDefined(item)]]">
+
+    <div class="pickers">
+      <teamatical-ui-team-info 
+        team-info="{{item.Team}}" 
+        loading="{{loading}}"
+        colors-swatch-palette="[[item.ColorsPalette]]"
+        colors-pantone-palette="[[colorsPalette]]"
+        sports-list="[[item.SportsList]]">
+      </teamatical-ui-team-info>
+
+      <teamatical-ui-player-info 
+        activity-options="[[item.PlayerActivityOptions]]" 
+        captain-options="[[item.PlayerCaptainOptions]]" 
+        player-info="{{item.Player}}" 
+        loading="{{loading}}">
+      </teamatical-ui-player-info>
+    </div>
+
+    <div class="description">
+      <h2>[[localize('create-team-desc-title')]]</h2>
+      <p id="desc">[[localize('create-team-desc-text')]]</p>
+    </div>
+  </div>
+
+  <teamatical-ui-image-multiview-3d
+    id="image-product" 
+    tooltip-overlow-mode
+    class="image-product" 
+    alt="[[item.Product.Title]]" 
+    views="{{item.ProductViews}}" 
+    pv="{{item.ProductPointOfView}}" 
+    pvs="[[item.ProductPointOfViewCount]]" 
+    loading-on-update="[[loadingOnUpdate]]" 
+    visible="[[visible]]" 
+    lazy-load>
+    <!-- icon-3d-left -->
+  </teamatical-ui-image-multiview-3d>
+</div>
+
+<div id="content-line2" hidden$="[[_isNoProduct(item,failure,offline)]]">
+  <div class="detail-wide" has-content$="[[_isDefined(item)]]">
+    <div class="detail-buttons">
+      <teamatical-ui-button 
+        aria-label$="[[localize('create-team-save-label')]]"
+        on-tap="_saveProductConfiguration">
+        [[localize('create-team-save')]]
+      </teamatical-ui-button>
+      <teamatical-ui-button 
+        responsive
+        responsive-hide
+        aria-label$="[[localize('create-team-save-label')]]"
+        on-tap="_saveProductConfiguration">
+        [[localize('create-team-save')]]
+      </teamatical-ui-button>
+    </div>
+  </div>
+</div>
+
+<teamatical-ui-network-warning hidden$="[[!failure]]" offline="[[offline]]" on-try-reconnect="_tryReconnect"></teamatical-ui-network-warning>

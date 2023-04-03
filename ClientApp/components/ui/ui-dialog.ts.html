@@ -1,0 +1,23 @@
+<div id="container" class="container">
+  <div class="backdrop-container">
+    <div class="backdrop"></div>
+
+    <div id="frame" class="frame" tabindex="-1">
+
+      <div class="header">
+        <slot name="header"></slot>
+      </div>
+      
+      <div class="body">
+        <slot name="body"></slot>
+      </div>
+
+      <div class="footer">
+        <input class="focus-trap-input" value="focus trap" tabindex="0" />
+        <slot name="footer"></slot>
+      </div>
+
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,130 @@
+<app-localstorage-document key="admin-locales-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+
+				<div class="spinner hidden" showen-flex$="[[showenBuildReportBtn]]">
+					<paper-button class="download-report-btn indigo" disabled$="[[loadingAny]]" raised on-tap="downloadReportTap">
+						Build Locales
+					</paper-button>
+					<paper-spinner-lite class="thick"></paper-spinner-lite>
+				</div>
+			</div>
+
+		</div>
+
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="Locales" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			
+
+			<vaadin-grid-column width="220px" resizable="true" id="ID">
+				<template class="header">
+					ID
+					<vaadin-grid-filter aria-label="ID" path="i" value="[[_filterID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.i]]</span>
+					<a href="[[_urlViewLocale(item.i)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">ID</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="220px" flex-grow="0" resizable="true" id="Type">
+				<template class="header">
+					Type
+					<vaadin-grid-filter class="hidden" aria-label="Type" aria-placeholder="Type" path="Type" value="[[_filterType]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="TypeCombo" value="{{_filterType}}" style="width:120px;"></vaadin-combo-box>
+				</template>
+				<template>
+					[[item.Type]]
+				</template>
+				<template class="footer-off">
+					Type
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="380px" resizable="true" id="Default">
+				<template class="header">
+					Default (en-US)
+					<vaadin-grid-filter aria-label="Default" path="Default" value="[[_filterDefault]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[_stringShort(item.Default, 100)]]
+				</template>
+				<template class="footer-off">
+					Default en-US
+				</template>
+			</vaadin-grid-column>
+			
+
+
+			<vaadin-grid-column resizable="true" id="Description">
+				<template class="header">
+					Description
+					<!-- <vaadin-grid-filter aria-label="Description" path="Description" value="[[_filterDescription]]"></vaadin-grid-filter> -->
+				</template>
+				<template>
+					[[_stringShort(item.Description, 100)]]
+				</template>
+			</vaadin-grid-column>
+
+		</vaadin-grid>
+
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-locales-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

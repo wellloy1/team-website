@@ -1,0 +1,319 @@
+:host {
+    --label-font-size: "14px";
+    --panel-width: "101.06200000000001px";
+    --ui-carousel-checkmark-frame-left: "253.36715698242188px";
+    --ui-carousel-checkmark-frame-width: "101.06200000000001px";
+    --ui-carousel-checkmark-gap: "12px";
+    --ui-carousel-checkmark-top: "13px";
+    --ui-carousel-checkmark-width: "12px";
+    outline: none;
+}
+:host([counter-hide]) .counter {
+    display: none;
+}
+:host([border-hide]) .panel .main {
+    box-shadow: none;
+}
+
+:host([disabled]) {
+    pointer-events: none;
+}
+
+:host([disabled]) .counter {
+    color: var(--disabled-text-color);
+}
+:host([disabled]) .slides {
+    opacity: 0.6;
+}
+
+
+.track {
+    overflow: hidden;
+    padding: 0px;
+    margin: 0px;
+    margin-left: 0px;
+    position: relative;
+    width: 100%;
+    cursor: ew-resize;
+
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-drag: none; 
+    -webkit-user-drag: none;
+}
+.track:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 2em;
+  z-index: 1;
+  background-image: linear-gradient(to right, 
+    rgba(255, 255, 255, 0), 
+    rgba(255, 255, 255, 1) 100%);
+}
+.track:before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2em;
+  background-image: linear-gradient(to left, 
+    rgba(255, 255, 255, 0), 
+    rgba(255, 255, 255, 1) 100%);
+}
+
+
+.slides {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 15000%;
+    display: inline-block;
+    will-change: transform;
+    white-space: nowrap;
+    backface-visibility: hidden;
+
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-drag: none; 
+    -webkit-user-drag: none;
+}
+
+.slides:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+
+.panel {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-sizing: border-box;
+    display: inline-block;
+    transition: inherit;
+    -webkit-transition: inherit;
+    height: 100%;
+    position: relative;
+
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-drag: none; 
+    -webkit-user-drag: none;
+}
+
+.panel .main {
+    transition: inherit;
+    display: inline-block;
+    position: relative;
+    height: 92%;
+    border-radius: 6px;
+    box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.3);
+    transform: scale(0.95);
+    width: var(--panel-width);
+}
+
+.panel > .main {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-drag: none; 
+    -webkit-user-drag: none;
+}
+
+.panel-end {
+    clear:both; 
+    visibility:hidden;
+}
+
+.checkmark-virtual-cont {
+    position:relative;
+}
+
+#checkmark-virtual {
+    position: absolute;
+    top: var(--ui-carousel-checkmark-top);
+    margin: 0 auto;
+    z-index: 1;
+    user-select: none;
+    -webkit-user-select: none;
+    fill:var(--app-secondary-color);
+    width: var(--ui-carousel-checkmark-width);
+
+
+    -moz-animation: blink normal 1s infinite ease-in-out; /* Firefox */
+    -webkit-animation: blink normal 1s infinite ease-in-out; /* Webkit */
+    -ms-animation: blink normal 1s infinite ease-in-out; /* IE */
+    animation: blink normal 1s infinite ease-in-out; /* Opera and prob css3 final iteration */
+}
+
+
+
+.checkmark {
+    top: var(--ui-carousel-checkmark-top);
+    right: 5%;
+    right: var(--ui-carousel-checkmark-gap);
+    display: none;
+    width: 8%;
+    width: var(--ui-carousel-checkmark-width);
+}
+
+:host(:not([focused])[braces-hide-onblur]) .checkmark-virtual-frame,
+:host([braces-hide]) .checkmark-virtual-frame {
+    display: none;
+}
+:host(:not([braces-hide-onblur])[focused]) .checkmark-virtual-frame {
+    border-left: 1px dashed var(--app-accent-color);
+    border-right: 1px dashed var(--app-accent-color);
+}
+:host([braces-hide-onblur][tracking]) .checkmark-virtual-frame {
+    opacity: 1;
+}
+:host([braces-hide-onblur]) .checkmark-virtual-frame {
+    opacity: 0;
+}
+.checkmark-virtual-frame {
+    /* transition: transform 0.3s cubic-bezier(.36,-0.64,.34,1.76), opacity 0.3s; */
+    transition: transform 0.3s ease-out, opacity 0.3s;
+    -webkit-transition: transform 0.3s ease-out, opacity 0.3s;
+
+    position: absolute;
+
+    top: 0px;
+    bottom: 0px;
+    left: 200px;
+    left: var(--ui-carousel-checkmark-frame-left);
+    width: 150px;
+    width: var(--ui-carousel-checkmark-frame-width);
+    border-radius: 8px;
+    margin: 0 auto;
+
+    border-top: 1px dashed var(--app-accent-color);
+    border-bottom: 1px dashed var(--app-accent-color);
+
+    /* box-shadow: 0 0 1px 1px rgba(180, 0, 0, 0.3); */
+
+    z-index: 2;
+    user-select: none;
+    -webkit-user-select: none;
+    pointer-events: none;
+}
+/* .checkmark-virtual-frame:after{content:"]"} */
+/* .checkmark-virtual-frame:before{content:"["} */
+
+.notvalid > .main {
+    opacity:0.4;
+}
+.notvalid .name {
+    color:gray;
+}
+
+.selected .checkmark {
+    position: absolute;
+    display: block;
+}
+
+.selected .name {
+    /*color: red;*/
+    text-decoration: underline;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.name {
+    position: absolute;
+    font-size: var(--label-font-size);
+    text-align: center;
+    font-family: var(--paper-font-caption_-_font-family);
+    font-weight: 50;
+    bottom: 11%;
+    /* width: 100%; */
+    width: 94%;
+    margin-left: 3%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.counter {
+    position: absolute;
+    text-align: center;
+    font-weight: 600;
+    bottom: 1%;
+    width: 100%;
+    font-size: var(--label-font-size);
+}
+
+.animate {
+    transition: transform 0.3s ease-out;
+    -webkit-transition: transform 0.3s ease-out;
+}
+
+
+/* Firefox old*/
+@-moz-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+} 
+
+@-webkit-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+
+/* IE */
+@-ms-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+} 
+
+/* Opera and prob css3 final iteration */
+@keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}

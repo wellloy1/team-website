@@ -1,0 +1,359 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+		
+
+		<div class="catalog">
+			<div class="catalog-header">
+
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<span highlighted hidden$="[[!order.IsDumping]]">
+						is dumping
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Product Catalog 
+					
+					<span hidden$="[[_equal(order.Catalog.id, '<default>')]]">→ [[order.Catalog.Name]]</span>
+
+					<span hidden$="[[!order.CurrentCategoryID]]">→ [[order.CurrentCategoryID]]</span>
+				</h3>
+
+				<div class="buttons">
+					<paper-button 
+						class="catalog-save-btn" 
+						disabled$="[[disabledSaveBtn(loading, changedModel)]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveCatalogTap">
+						Save Product Catalog
+					</paper-button>
+
+					<paper-button 
+						class="catalog-dump-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSyncDumpBtn(env, order, userInfo.isAlmighty, userInfo.profile)]]" 
+						raised
+						on-tap="dumpCatalogTap">
+						Dump Catalog to BLOB (Production)
+					</paper-button>
+
+					<paper-button 
+						class="catalog-sync-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSyncApplyBtn(env, order, userInfo.isAlmighty, userInfo.profile)]]" 
+						raised
+						on-tap="syncCatalogTap">
+						Apply Catalog from BLOB (Development / Staging)
+					</paper-button>
+
+					<div class="order-dangersection-btn">
+						<tmladmin-ui-dropdown-menu 
+							class="catalog-selector"
+							vertical-align="top" 
+							horizontal-align="left"
+							id-property="id"
+							title-property="Name"
+							label="Catalog Name" 
+							disabled$="[[loadingAny]]"
+							value="{{order.Catalog}}"
+							value-list="[[order.Catalogs]]"
+							on-value-changed="onInputChanged"
+							error-message="[[editMPItem.notvalid.Catalog]]"
+							invalid="[[_asBool(editMPItem.notvalid.Catalog)]]">
+						</tmladmin-ui-dropdown-menu>
+
+					</div>
+				</div>
+
+				<!-- <p class="note-alt">Note: </p> -->
+
+				<div class="category-controls">
+					<paper-input 
+						name="NewCategoryID"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.NewCategoryID]]" 
+						invalid="[[_asBool(order.notvalid.NewCategoryID)]]"
+						class="new-category-input" 
+						label="New Category ID" 
+						type="string" 
+						disabled$="[[loading]]" >
+						<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+						<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline" on-tap="_addCategoryTap" title="Category title get from LOCALE by category-id ..."></paper-icon-button>
+					</paper-input>
+
+					
+
+					
+
+					<paper-input 
+						class="new-product-input hidden-animated" 
+						hidden-animated$="[[_hide_products(draggingTabs, productNotAllowed)]]"
+						label="New Product ID" 
+						type="string" 
+						disabled$="[[loading]]"
+						name="ID"
+						on-value-changed="onInputChanged"
+						on-keydown="_addProductEnter"
+						error-message="[[order.notvalid.ID]]" 
+						invalid="[[_asBool(order.notvalid.ID)]]">
+						<!-- <span slot="prefix">#: </span> -->
+						<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+						<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline" on-tap="_addProductTap" title="Add new ProductConfigurationID to catalog makes clean all custom data and fallback to original design colors/styles ...">
+						</paper-icon-button>
+					</paper-input>
+
+					<paper-checkbox 
+						class="hidden-animated" 
+						hidden-animated$="[[_hide_products(draggingTabs, productNotAllowed)]]"
+						checked="{{keepProductColors}}"
+						title="(by default - used to use team info)">
+						Keep Product Colors
+					</paper-checkbox>
+
+				</div>
+
+				<span class="error">[[order.notvalid.Entries]]</span>
+
+				<div class="edit-tabs">
+					<div class="edit-tabs-list">
+						<paper-tabs 
+							slot="dropdown-content" 
+							attr-for-selected="value"
+							selected="{{order.CurrentCategoryID}}"
+							class="dropdown-content"
+							disabled$="[[loading]]" 
+							hidden$="[[draggingTabs]]"
+							scrollable
+							noink1>
+							<dom-repeat items="[[order.Entries]]" as="cati">
+								<template>
+									<paper-tab value$="[[cati.Category]]">
+										#: [[cati.Category]]
+										<dom-if if="[[_asBool(cati.StoreID)]]">
+											<template>
+												([[cati.StoreID]])
+											</template>
+										</dom-if>
+
+										<paper-icon-button 
+											class="remove-btn hidden-animated" 
+											icon="admin-icons:close" 
+											hidden-animated$="[[!draggingTabs]]"
+											on-tap="_removeCategoryTap">
+										</paper-icon-button>
+										<iron-icon icon="admin-icons:error" class="error" hidden$="[[!_asBool(cati.notvalid.Category)]]" title="[[cati.notvalid.Category]]"></iron-icon>
+									</paper-tab>
+								</template>
+							</dom-repeat>
+						</paper-tabs>
+
+						<div class="dropdown-content-edit" hidden$="[[!draggingTabs]]">
+							<teamatical-ui-sortable-list 
+								id="catList"
+								class="categories hidden-animated" 
+								draggable="false" 
+								sortable="categories-item" 
+								grabable="categories-item" 
+								editing="[[draggingTabs]]"
+								on-sort-finish="_onTabsSortFinish">
+								<dom-repeat 
+									id="catListRepeat"
+									items="{{order.Entries}}" 
+									as="cati">
+									<template>
+										<paper-tab
+											drag-handler
+											class="categories-item" 
+											data-index$="[[index]]"
+											value$="[[cati.Category]]">
+											<span>
+												#: [[cati.Category]]
+												<dom-if if="[[_asBool(cati.StoreID)]]">
+													<template>
+														([[cati.StoreID]])
+													</template>
+												</dom-if>
+											</span>
+											<paper-icon-button 
+												class="edit-btn hidden-animated" 
+												icon="admin-editor:mode-edit" 
+												hidden-animated$="[[!draggingTabs]]"
+												on-tap="_editCategoryTap">
+											</paper-icon-button>
+											<paper-icon-button 
+												class="remove-btn hidden-animated" 
+												icon="admin-icons:close" 
+												hidden-animated$="[[!draggingTabs]]"
+												on-tap="_removeCategoryTap">
+											</paper-icon-button>
+										</paper-tab>
+									</template>
+								</dom-repeat>
+							</teamatical-ui-sortable-list>
+						</div>
+					</div>
+					
+					<div class="edit-tabs-btns">
+						<paper-icon-button 
+							class="edit-btn" 
+							hidden$="[[draggingTabs]]"
+							icon="admin-editor:mode-edit" 
+							title="Edit Categories List"
+							on-tap="_editCategoriesTap">
+						</paper-icon-button>
+						<paper-icon-button 
+							class="edit-btn" 
+							hidden$="[[!draggingTabs]]"
+							icon="admin-icons:done" 
+							title="Apply Categories List"
+							on-tap="_editCategoriesTap">
+						</paper-icon-button>
+					</div>
+				</div>
+			</div>
+		
+			<div class="catalog-items">
+				<teamatical-ui-sortable-list 
+					id="catItems"
+					class="products hidden-animated" 
+					draggable="false" 
+					sortable="products-item" 
+					grabable="products-item" 
+					editing="[[editing]]"
+					on-sort-finish="_onListSortFinish">
+					<dom-repeat 
+						id="catItemsRepeat"
+						items="{{category.ProductConfigurations}}" 
+						as="item">
+						<template>
+							<tmladmin-catalog-products-item 
+								class="products-item" 
+								data-index$="[[index]]"
+								item="{{item}}" 
+								editing="[[editing]]" 
+								website-url="[[websiteUrl]]"
+								category-id="[[order.CurrentCategoryID]]"
+								on-tap="onListItem">
+							</tmladmin-catalog-products-item>
+						</template>
+					</dom-repeat>
+				</teamatical-ui-sortable-list>
+
+				<div showen$="[[isEmpty(category, category.ProductConfigurations.length)]]" class="empty-list">
+					Empty Category
+				</div>
+				<div showen$="[[needSelectCategory(order.CurrentCategoryID, draggingTabs)]]" class="empty-list">
+					Select Category
+				</div>
+			</div>
+		
+		
+			<div class="catalog-footer">
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+<paper-dialog id="dialogremove" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Confirm Category Deleting</h2>
+	<paper-dialog-scrollable>
+		Category #: «[[dialogremove_id]]» with <b>[[dialogremove_list.length]]</b> items is going to be removed...are
+		you sure?
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="_removeCategoryConfirmTap">Remove Category</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogaddproduct" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Add New Product</h2>
+	<paper-dialog-scrollable>
+		<paper-input 
+			class="new-product-input" 
+			label="New Product ID" 
+			type="string" 
+			disabled$="[[loading]]"
+			name="ID"
+			on-value-changed="onInputChanged"
+			on-keydown="_addProductEnter"
+			error-message="[[order.notvalid.ID]]" 
+			invalid="[[_asBool(order.notvalid.ID)]]">
+			<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+			<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline" on-tap="_addProductTap">
+			</paper-icon-button>
+		</paper-input>
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>CLOSE</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Confirm to Save</h2>
+	<paper-dialog-scrollable>
+		Website Catalog is going to be saved...are you sure?
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="saveCatalogConfirmTap">Save Catalog</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogeditcategory" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Edit Category</h2>
+	<paper-dialog-scrollable>
+		<paper-checkbox checked="{{dialogeditcategory.IsLocalized}}">
+			Is Localized
+		</paper-checkbox>
+		
+		<paper-input 
+			label="Category Title" 
+			type="string" 
+			disabled$="[[_dis_cat_title(loading, dialogeditcategory.IsLocalized)]]"
+			value="{{dialogeditcategory.CategoryTitle}}"
+			on-value-changed="onInputChanged"
+			error-message="[[dialogeditcategory.notvalid.CategoryTitle]]" 
+			invalid="[[_asBool(dialogeditcategory.notvalid.CategoryTitle)]]">
+		</paper-input>
+
+		<paper-input 
+			label="Category as Store" 
+			type="string" 
+			disabled$="[[loading]]"
+			value="{{dialogeditcategory.StoreID}}"
+			on-value-changed="onInputChanged"
+			error-message="[[dialogeditcategory.notvalid.StoreID]]" 
+			invalid="[[_asBool(dialogeditcategory.notvalid.StoreID)]]">
+		</paper-input>
+
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>CLOSE</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="_applyCategoryTap">Apply Category</paper-button>
+	</div>
+</paper-dialog>

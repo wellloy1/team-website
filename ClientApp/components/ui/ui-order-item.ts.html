@@ -1,0 +1,144 @@
+<iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
+
+<!-- tooltip$="[[entry.item.Product.Title]]" -->
+<div id="image-product-grid" class="image-product-grid">
+  <dom-repeat items="[[productImages]]" as="imgi">
+    <template>
+      <a class="link-over-object" href="[[_buildProductUrl(entry, accessToken)]]">
+      <teamatical-ui-image 
+        src="[[imgi.imgUrl]]" 
+        alt="[[imgi.title]]" 
+        label="[[imgi.title]]" 
+        lazy-load 
+        lazy-observe=[[lazyObserve]]>
+      </teamatical-ui-image>
+      </a>
+    </template>
+  </dom-repeat>
+</div>
+
+<div class="detail-container">
+  <div class="name">
+    <!-- <a href$="[[_buildProductUrl(entry)]]">[[entry.item.Product.Title]]</a> -->
+    [[entry.item.Product.Title]]
+
+    <dom-if if="[[userInfo.isAdmin]]">
+      <template strip-whitespace>
+        <a href="[[_hrefAdminProduct(entry.item.Product.ProductID)]]">
+          <iron-icon icon="open-in-new" class$="[[_classBool(isAdminConsole, 'open-in-here', 'open-in-admin')]]"></iron-icon>
+        </a>
+      </template>
+    </dom-if>
+
+  </div>
+
+  <div class="detail">
+
+    <dom-if if="[[priceDiscounts.length]]">
+      <template>
+        <div class="discount">
+          <div>
+            <dom-repeat items="[[priceDiscounts]]" as="disi">
+              <template>
+                <p>[[disi]]</p>
+              </template>
+            </dom-repeat>
+          </div>
+        </div>
+      </template>
+    </dom-if>
+    
+    <dom-if if="[[priceRegularShow]]">
+      <template>
+        <div class="price">[[priceRegular]]</div>
+      </template>
+    </dom-if>
+    
+    <dom-if if="[[!priceRegularShow]]">
+      <template>
+        <div class="price">
+          <span class="price_new">[[priceSale]]</span>
+          <span class="price_old">[[priceList]]</span>
+        </div>
+      </template>
+    </dom-if>
+
+
+    <dom-if if="[[entry.item.Player]]">
+      <template>
+        <div class="player">[[localize('orders-player')]]
+          [[_formatPlayer(entry.item.Player)]]
+        </div>
+      </template>
+    </dom-if>
+
+    <dom-if if="[[entry.item.SizesSelected]]">
+      <template>
+        <div class="size">[[localize('orders-size')]]
+          <span>[[_formatSize(entry.item.SizesSelected)]]</span>
+        </div>
+      </template>
+    </dom-if>
+
+    <dom-if if="[[entry.item.Roster]]">
+      <template>
+        <div class="roster">[[localize('orders-roster')]]
+          <paper-icon-button 
+            class="edit-icon"
+            disabled
+            cake="1w2" 
+            slot="prefix" 
+            aria-label="roster"
+            icon="icons:view-list">
+            <!-- tooltip$="[[localize('orders-roster-edit-btn')]]"
+            on-tap="_rosterEdit" -->
+          </paper-icon-button>
+          <span>[[entry.item.Roster.title]]</span>
+        </div>
+      </template>
+    </dom-if>
+
+    <dom-if if="[[entry.item.Roster]]">
+      <template>
+        <div class="quantity roster">
+          [[localize('orders-roster-qty')]]
+          [[entry.quantity]]
+        </div>
+      </template>
+    </dom-if>
+
+    <dom-if if="[[!entry.item.Roster]]">
+      <template>
+        <div class="quantity">
+          [[localize('orders-qty')]]
+          [[entry.quantity]]
+        </div>
+      </template>
+    </dom-if>
+
+    <div class="store" hidden$="[[!entry.item.Store]]">
+      <a href="[[_hrefStore(entry.item.Store.sid)]]">[[entry.item.Store.title]]</a>
+    </div>
+
+    <dom-if if="[[entry.item.Store.organization]]">
+      <template>
+        <a href="[[_hrefAdminOrganization(entry.item.Store.organization.OrganizationID)]]">[[entry.item.Store.organization.OrganizationName]]</a>
+      </template>
+    </dom-if>
+
+    
+    <div class="accessory-variant" hidden$="[[!entry.item.Product.AccessoryVariants]]">
+      [[entry.item.Product.AccessoryVariantsName]]:
+      <span>
+        [[entry.item.Product.AccessoryVariants.0.Name]]
+      </span>
+    </div>
+
+    <div class="customoptions" hidden$="[[!entry.item.CustomOption]]">
+      [[entry.item.CustomOptionsTitle]]:
+      <span>
+        [[entry.item.CustomOption.title]]
+      </span>
+    </div>
+  </div>
+</div>

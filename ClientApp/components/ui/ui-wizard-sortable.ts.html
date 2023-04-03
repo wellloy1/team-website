@@ -1,0 +1,64 @@
+﻿<array-selector id="selector" items="{{options}}"></array-selector>
+
+<div id="track" class="track">
+    <dom-if if="[[visible]]">
+        <template>
+
+            <teamatical-ui-sortable-list 
+                id="slides" 
+                class="slides" 
+                editing="[[editing]]"
+                sortable="panel" 
+                grabable="panel" 
+                dragging="{{dragging}}"
+                on-sort-finish="_onSortFinish"
+                draggable="false">
+                <dom-repeat items="{{options}}" as="item" id="designsList">
+                    <template>
+                        <li
+                            class$="[[_panelClass(item.Selected)]]"
+                            data-index$="[[index]]"
+                            editing$="[[editing]]"
+                            on-tap="_ontap">
+                            <div class="close-container">
+                                <paper-icon-button class="close-icon"
+                                    disabled="[[disabled]]"
+                                    aria-label="close-icon" cake="1w2" icon="close" on-tap="_deleteTap">
+                                </paper-icon-button>
+                            </div>
+
+                            <teamatical-ui-image 
+                                class="main" 
+                                src="[[_imageUrl(item.ImageUrl,item.ImageUrlSwap,isSwap)]]" 
+                                alt="" 
+                                draggable="false" 
+                                drag-handler
+                                lazy-load
+                                hover-effect-off
+                                on-dragstart="eventNull" 
+                                on-selectstart="eventNull">
+                            </teamatical-ui-image>
+
+                            <div class="name" draggable="false">
+                                <paper-input 
+                                    name="title"
+                                    disabled="[[disabled]]"
+                                    readonly="[[titleReadonly]]"
+                                    type="text"
+                                    on-touchstart="_onEditTitleTouchStart"
+                                    on-tap="_onEditTitleTap"
+                                    maxlength="30"
+                                    placeholder="[[localize('customize-optionname-title')]]"
+                                    value="{{item.OptionName}}" 
+                                    autocomplete="OptionName">
+                                </paper-input>
+                            </div>
+                        </li>
+                    </template>
+                </dom-repeat>
+                <li class="panel-end"></li>
+            </teamatical-ui-sortable-list>
+
+        </template>
+    </dom-if>
+</div>

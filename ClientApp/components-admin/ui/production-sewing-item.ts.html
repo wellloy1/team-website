@@ -1,0 +1,506 @@
+<iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
+
+<h1>
+  [[localize('admin-ws-sewing-info-product')]] 
+  , [[_sku(entry.Product.ManufactureProductInternalID, entry.Product.SKU)]] 
+  , [[entry.Product.Size]] 
+  , [[entry.Product.Type]]
+  <dom-if if="[[entry.ProductConfiguration.Product.AccessoryVariantsName]]">
+    <template>/ [[entry.ProductConfiguration.Product.AccessoryVariantsName]]</template>
+  </dom-if>
+  
+  <span hidden$="[[!_asBool(entry.BatchID)]]">, [[localize('admin-ws-sewing-info-batch')]] [[entry.BatchID]]</span>
+  <span class="hidden" showen$="[[entry.Sandbox]]">
+    <iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('admin-ws-test-item')]]
+  </span>
+</h1>
+
+<div class="image-product-grid-container">
+  <div id="image-product-grid" class="image-product-grid">
+    <dom-repeat items="[[productImages]]" as="imgi">
+      <template>
+        <teamatical-ui-image 
+          src="[[imgi.imgUrl]]" 
+          alt="[[imgi.title]]" 
+          lazy-load 
+          lazy-observe=[[lazyObserve]]
+          title$="[[entry.Product.Title]]"
+          clickable$="[[_asBool(entry.ProductConfiguration.ProductViews)]]"
+          on-tap="onProductImageTap">
+        </teamatical-ui-image>
+      </template>
+    </dom-repeat>
+
+    <dom-if if="[[productDimsImages]]">
+      <template>
+        <dom-repeat items="[[productDimsImages]]" as="imgdimsi">
+          <template>
+            <teamatical-ui-image 
+              src="[[imgdimsi.imgUrl]]" 
+              alt="[[imgdimsi.title]]" 
+              lazy-load 
+              lazy-observe=[[lazyObserve]]
+              title$="[[entry.Product.Title]]"
+              clickable$="[[_asBool(entry.ProductConfiguration.ProductViews)]]"
+              on-tap="onProductImageTap">
+            </teamatical-ui-image>
+          </template>
+        </dom-repeat>
+      </template>
+    </dom-if>
+        
+  </div>
+</div>
+
+<dom-if if="[[asQa]]">
+  <template>
+    <div class="accessories-added">
+      <div>
+        <div class="order-accessories">
+          <h4>
+            [[localize('admin-ws-sewing-info-accessories-added')]]
+          </h4>
+
+          <dom-if if="[[entry.AccessoriesAdded.length]]">
+            <template>
+              <div class="order-accessories-list">
+                <dom-repeat items="[[entry.AccessoriesAdded]]" as="accessi">
+                  <template>
+                    <div class="order-accessories-item">
+                      <teamatical-ui-image 
+                        class="clickable" 
+                        on-tap="onAccessoryImageTap"
+                        src="[[accessi.ImageUrl]]" 
+                        alt="[[accessi.Name]]" 
+                        lazy-load 
+                        lazy-observe=[[lazyObserve]]
+                        title$="[[accessi.Name]]">
+                      </teamatical-ui-image>
+                      <div class="size" hidden$="[[!accessi.IsContinous]]">
+                        <div><span>
+                          [[accessi.Size]]
+                        </span>
+                        [[accessi.Units]]</div>
+                      </div>
+                      <div class="color-container">
+                        <div class="color" style$="[[_convertBkgColor(accessi.Color.h)]]">
+                          [[accessi.Color.n]]
+                        </div>
+                      </div>
+                      <div class="qty">
+                        [[accessi.Quantity]]
+                      </div>
+                      <div class="label">
+                        [[accessi.Name]]
+                      </div>
+                    </div>
+                  </template>
+                </dom-repeat>
+              </div>
+            </template>
+          </dom-if>
+          <dom-if if="[[!LenMore(entry.AccessoriesAdded)]]">
+            <template>
+              <div class="noitems">
+                [[localize('admin-list-noitems')]]
+              </div>
+            </template>
+          </dom-if>
+      </div>
+    
+    
+        <!-- <dom-if if="[[entry.AccessoriesAdded]]">
+          <template>
+            <div class="accessories">
+              <dom-if if="[[entry.AccessoriesAdded.length]]">
+                <template>
+                  <h4>
+                    [[localize('admin-ws-sewing-info-accessories-added')]]
+                  </h4>
+                </template>
+              </dom-if>
+    
+              <div class="table width100">
+                <dom-repeat items="[[entry.AccessoriesAdded]]" as="accessi">
+                  <template>
+                    <div class="row vcenter">
+    
+                      <dom-if if="[[accessi.ImageUrl]]">
+                        <template>
+                          <div class="centered">
+                                <teamatical-ui-image 
+                                  src="[[accessi.ImageUrl]]" 
+                                  alt="[[accessi.Name]]" 
+                                  class="clickable"
+                                  on-tap="onAccessoryImageTap"
+                                  lazy-load
+                                  lazy-observe=[[lazyObserve]] 
+                                  title$="[[accessi.Name]]">
+                                </teamatical-ui-image>
+                          </div>
+                        </template>
+                      </dom-if>
+    
+                      <div>
+                        <div class="label">[[accessi.Name]]</div>
+                      </div>
+                      <div>
+                        <div class="qty">[[accessi.Quantity]]</div>
+                      </div>
+                      <div>
+                        <span hidden$="[[!accessi.IsContinous]]">
+                          [[accessi.Size]]
+                        </span>
+                        [[accessi.Units]]
+                      </div>
+                      <div>
+                        <dom-if if="[[accessi.Color]]">
+                          <template>
+                              <div class="color" style$="[[_convertBkgColor(accessi.Color.h)]]">
+                                [[accessi.Color.n]]
+                              </div>
+                          </template>
+                        </dom-if>
+                      </div>
+                    </div>
+                  </template>
+                </dom-repeat>
+              </div>
+            </div>
+          </template>
+        </dom-if> -->
+      </div>
+      
+      <div>
+        <slot name="slot-first" slot="slot-first"></slot>
+      </div>
+    
+      <div>
+        <div class="order-cameraresults">
+          <h4>
+            [[localize('admin-ws-sewing-info-cameraresultlist')]]
+          </h4>
+    
+          <div class="order-cameraresults-list">
+    
+            <div class="order-cameraresults-item">
+              <!-- <slot name="slot-camera-result" slot="slot-camera-result"></slot> -->
+              <teamatical-ui-image 
+                class="clickable" 
+                on-tap="onCameraResultTap"
+                src="[[cameraResultImage]]" 
+                disabled$="[[actionDisabled]]"
+                lazy-load 
+                lazy-observe=[[lazyObserve]]
+                title="Camera Result">
+              </teamatical-ui-image>
+            </div>
+    
+        
+    
+            <dom-repeat items="[[entry.Pictures]]" as="camerai">
+              <template>
+                <div class="order-cameraresults-item">
+                  <teamatical-ui-image 
+                    class="clickable" 
+                    on-tap="onCameraResultImageTap"
+                    src="[[camerai.ImageUrl]]" 
+                    alt="[[camerai.Name]]" 
+                    lazy-load 
+                    lazy-observe=[[lazyObserve]]
+                    title$="[[camerai.Name]]">
+                  </teamatical-ui-image>
+                  <!-- <div class="size" hidden$="[[!camerai.IsContinous]]">
+                    <div><span>
+                      [[camerai.Size]]
+                    </span>
+                    [[camerai.Units]]</div>
+                  </div>
+                  <div class="color-container">
+                    <div class="color" style$="[[_convertBkgColor(camerai.Color.h)]]">
+                      [[camerai.Color.n]]
+                    </div>
+                  </div>
+                  <div class="qty">
+                    [[camerai.Quantity]]
+                  </div>
+                  <div class="label">
+                    [[camerai.Name]]
+                  </div> -->
+                </div>
+              </template>
+            </dom-repeat>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </template>
+</dom-if>
+
+
+
+<div class="detail-container">
+  <div class="name">
+    <!-- #: [[entry.id]] -->
+    <!-- <paper-spinner-lite class="thick"></paper-spinner-lite>
+    <paper-button class="order-item-reprocess-btn" raised on-tap="reprocessTap" disabled$="[[!entry.CanBeValidated]]">Validate Order Item</paper-button> -->
+  </div>
+
+  <div class="detail">
+
+    <dom-if if="[[entry.ThreadColor]]">
+      <template>
+        <div class="thread-color">
+          <div class="table width100">
+            <div class="row vcenter">
+              <div>
+                <div class="label">[[localize('admin-ws-sewing-info-threadcolor')]]</div>
+              </div>
+              <div>
+                <div class="color" style$="[[_convertBkgColor(entry.ThreadColor.h)]]">
+                  [[entry.ThreadColor.n]]
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </dom-if>
+
+    <!-- <dom-if if="[[entry.SewingPartsCount]]">
+      <template>
+        <div>
+          [[localize('admin-ws-sewing-info-partscount')]] [[entry.SewingPartsCount]]
+        </div>
+      </template>
+    </dom-if> -->
+
+    <dom-if if="[[entry.ThreadQuality]]">
+      <template>
+        <div>
+          [[localize('admin-ws-sewing-info-threadqty')]] [[entry.ThreadQuality]]
+        </div>
+      </template>
+    </dom-if>
+
+
+
+    <dom-if if="[[entry.Accessories.length]]">
+      <template>
+
+        <div class="order-accessories">
+          <h4>
+            [[localize('admin-ws-sewing-info-accessories')]]
+          </h4>
+        
+          <div class="order-accessories-list">
+            <dom-repeat items="[[entry.Accessories]]" as="accessi">
+              <template>
+                <div class="order-accessories-item">
+                  <teamatical-ui-image 
+                    class="clickable" 
+                    on-tap="onAccessoryImageTap"
+                    src="[[accessi.ImageUrl]]" 
+                    alt="[[accessi.Name]]" 
+                    lazy-load 
+                    lazy-observe=[[lazyObserve]]
+                    title$="[[accessi.Name]]">
+                  </teamatical-ui-image>
+                  <div class="size" hidden$="[[!accessi.IsContinous]]">
+                    <div><span>
+                      [[accessi.Size]]
+                    </span>
+                    [[accessi.Units]]</div>
+                  </div>
+                  <div class="color-container">
+                    <div class="color" style$="[[_convertBkgColor(accessi.Color.h)]]">
+                      [[accessi.Color.n]]
+                    </div>
+                  </div>
+                  <div class="qty">
+                    [[accessi.Quantity]]
+                  </div>
+                  <div class="label">
+                    [[accessi.Name]]
+                  </div>
+                </div>
+              </template>
+            </dom-repeat>
+          </div>
+
+      </template>
+    </dom-if>
+
+
+
+    <!-- <dom-if if="[[entry.Accessories]]">
+      <template>
+        <div class="accessories">
+          <dom-if if="[[entry.Accessories.length]]">
+            <template>
+              <h4>
+                [[localize('admin-ws-sewing-info-accessories')]]
+              </h4>
+            </template>
+          </dom-if>
+
+          <div class="table width100">
+            <dom-repeat items="[[entry.Accessories]]" as="accessi">
+              <template>
+                <div class="row vcenter">
+
+                  <dom-if if="[[accessi.ImageUrl]]">
+                    <template>
+                      <div class="centered">
+                            <teamatical-ui-image 
+                              src="[[accessi.ImageUrl]]" 
+                              alt="[[accessi.Name]]" 
+                              class="clickable"
+                              on-tap="onAccessoryImageTap"
+                              lazy-load
+                              lazy-observe=[[lazyObserve]] 
+                              title$="[[accessi.Name]]">
+                            </teamatical-ui-image>
+                      </div>
+                    </template>
+                  </dom-if>
+
+                  <div>
+                    <div class="label">[[accessi.Name]]</div>
+                  </div>
+                  <div>
+                    <div class="qty">[[accessi.Quantity]]</div>
+                  </div>
+                  <div>
+                    <span hidden$="[[!accessi.IsContinous]]">
+                      [[accessi.Size]]
+                    </span>
+                    [[accessi.Units]]
+                  </div>
+                  <div>
+                    <dom-if if="[[accessi.Color]]">
+                      <template>
+                          <div class="color" style$="[[_convertBkgColor(accessi.Color.h)]]">
+                            [[accessi.Color.n]]
+                          </div>
+                      </template>
+                    </dom-if>
+                  </div>
+                </div>
+              </template>
+            </dom-repeat>
+          </div>
+        </div>
+      </template>
+    </dom-if>
+    -->
+
+  </div>
+
+</div>
+
+
+
+
+<!-- <tmladmin-ui-dialog id="dialogzoom" disabled$="[[dialogzoom.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button 
+			class="close-dialog-small-btn" 
+			icon="admin-icons:close"
+			dialog-dismiss>
+		</paper-icon-button>
+
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogzoom.loading]]" hidden$="[[!dialogzoom.loading]]"></paper-progress>
+		</div>
+
+		<h2>
+			[[dialogzoom.title]]
+		</h2>
+	</div>
+
+	<div slot="body">
+    <teamatical-ui-image-multiview-3d 
+      style="width: 100%; height: 100%;"
+      views="{{dialogzoom.zoompconfi.ProductViews}}"
+      pv="{{dialogzoom.zoompconfi.ProductPointOfView}}" 
+      pvs="[[dialogzoom.zoompconfi.ProductPointOfViewCount]]" 
+      visible="[[zoompconfiVisible]]"
+      lazy-load 
+      lazy-observe=[[lazyObserve]] 
+      allow-zoom 
+      alt="">
+    </teamatical-ui-image-multiview-3d>
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			[[localize('admin-dlg-close')]]
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog> -->
+
+
+<tmladmin-ui-dialog id="dialogcamera" disabled$="[[dialogcamera.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button 
+			class="close-dialog-small-btn" 
+			icon="admin-icons:close"
+			dialog-dismiss>
+		</paper-icon-button>
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogcamera.loading]]"
+				hidden$="[[!dialogcamera.loading]]">
+			</paper-progress>
+		</div>
+	</div>
+	<div slot="body">
+    <img src="[[dialogcamera.zoomimgi.ImageUrl]]" />
+	</div>
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			[[localize('admin-dlg-close')]]
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>
+
+
+<paper-dialog id="dialogzoomimg" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<paper-dialog-scrollable>
+		<dom-if if="[[zoomimgi.ImageUrl]]">
+			<template>
+				<teamatical-ui-image 
+					style="width: 576px; height: 768px;" 
+					src="[[zoomimgi.ImageUrl]]"
+					alt="[[zoomimgi.Name]]" 
+					lazy-load 
+					lazy-observe=[[lazyObserve]]>
+				</teamatical-ui-image>
+			</template>
+		</dom-if>
+</paper-dialog>
+
+
+<paper-dialog id="dialogzoom" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center" on-iron-overlay-closed="onCloseZoomDialog" on-iron-overlay-opened="onOpenZoomDialog">
+  <paper-dialog-scrollable>
+    <div style="width: 554px; height: 774px;">
+      <teamatical-ui-image-multiview-3d 
+        style="width: 576px; height: 768px; margin: 0 auto;" 
+        views="{{zoompconfi.ProductViews}}"
+        pv="{{zoompconfi.ProductPointOfView}}" 
+        pvs="[[zoompconfi.ProductPointOfViewCount]]" 
+        visible="[[zoompconfiVisible]]"
+        lazy-load 
+        lazy-observe=[[lazyObserve]] 
+        allow-zoom 
+        alt="">
+      </teamatical-ui-image-multiview-3d>
+    </div>
+  </paper-dialog-scrollable>
+  <!-- <div class="buttons">
+					<paper-button dialog-confirm>OK</paper-button>
+				</div> -->
+</paper-dialog>
+
+

@@ -1,0 +1,197 @@
+:host {
+  @apply --layout-inline;
+  @apply --layout-center-center;
+  position: relative;
+  box-sizing: border-box;
+  min-width: 5.14em;
+  /* background: transparent; */
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-tap-highlight-color: transparent;
+  font: inherit;
+  text-transform: uppercase;
+  outline-width: 0;
+  /* border-radius: 3px; */
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  z-index: 0;
+
+  margin: 0 0.29em;
+  padding: 0.7em 0.57em;
+
+  @apply --paper-font-common-base;
+  @apply --paper-button;
+
+
+  margin: 0;
+  padding: 8px 44px;
+
+  border: 2px solid #000;
+  border-radius: 0;
+  background-color: #FFF;
+  color: var(--app-primary-color);
+
+  outline: none;
+  -webkit-appearance: none;
+  font-size: 1.15em;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+a {
+  outline: none;
+}
+
+:host([elevation="1"]) {
+  @apply --paper-material-elevation-1;
+}
+
+:host([elevation="2"]) {
+  @apply --paper-material-elevation-2;
+}
+
+:host([elevation="3"]) {
+  @apply --paper-material-elevation-3;
+}
+
+:host([elevation="4"]) {
+  @apply --paper-material-elevation-4;
+}
+
+:host([elevation="5"]) {
+  @apply --paper-material-elevation-5;
+}
+
+:host([hidden]) {
+  display: none !important;
+}
+
+a:hover,
+a:visited,
+a {
+  /* border: 1px solid blue; */
+	padding: 8px 44px;
+	margin: -8px -44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: inherit; /* blue colors for links too */
+  text-decoration: inherit; /* no underline */
+}
+
+:host([raised]:not([disabled]).keyboard-focus) {
+  box-shadow: 0px 5px 7px 1px rgba(0,0,0,0.29);
+  -webkit-box-shadow: 0px 5px 7px 1px rgba(0,0,0,0.29);
+  -moz-box-shadow: 0px 5px 7px 1px rgba(0,0,0,0.29);
+  @apply --paper-button-raised-keyboard-focus;
+}
+
+:host(:not([raised]):not([disabled]).keyboard-focus) {
+  box-shadow: 0px 5px 7px 1px rgba(0,0,0,0.29);
+  -webkit-box-shadow: 0px 5px 7px 1px rgba(0,0,0,0.29);
+  -moz-box-shadow: 0px 5px 7px 1px rgba(0,0,0,0.29);
+  @apply --paper-button-flat-keyboard-focus;
+}
+
+:host([disabled]) {
+  background: var(--paper-input-container-disabled);
+  color: var(--disabled-text-color);
+  cursor: auto;
+
+  @apply --paper-button-disabled;
+}
+
+:host([animated]) {
+  @apply --shadow-transition;
+}
+
+paper-ripple {
+  color: var(--paper-button-ink-color);
+}
+
+/******************************************************************************/
+
+
+/* :host(:active) {
+  background-color: #000;
+  color: #FFF;
+} */
+
+/* :host(:focus) {
+  background-color: #c5cad3;
+} */
+
+
+/* :host([disabled]) {
+  opacity:0.45;
+} */
+
+/* :host([raised].keyboard-focus) {
+  font-weight: 500;
+} */
+
+/* :host(:not([raised]).keyboard-focus) {
+  font-weight: 500;
+} */
+
+
+:host([responsive-hide]),
+:host([responsive-hide=""]) {
+  display: none;
+}
+
+
+@media (max-width: 767px) {
+
+  :host {
+    padding: 8px 48px;
+  }
+  
+  :host([responsive]) {
+    /* @apply --layout-fixed-bottom; */
+    @apply --layout-inline;
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    z-index: 2;
+    
+    height: 64px;
+
+    font-size: 1.15em;
+    background-color: var(--app-accent-button-color);
+    color: white;
+    border: none;
+
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+    margin-bottom: 0px !important;
+    /* padding-top: 10px;
+    padding-bottom: 10px; */
+    /* padding: 20px; */
+    /* width: 100%; */
+    /* height: 100%; */
+    overflow: hidden;
+  }
+
+  :host([responsive]) paper-ripple {
+    color: #417BD8;
+  }
+  :host([responsive][disabled]) {
+    background-color: var(--app-disabled-color-bkg);
+    color: var(--app-disabled-color);
+  }
+
+  /* :host([disabled]) {
+    background-color: #a8a8a8;
+  } */
+
+  /* :host([responsive]:focus) {
+    background-color: var(--app-accent-color);
+  } */
+}

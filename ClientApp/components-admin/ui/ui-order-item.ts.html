@@ -1,0 +1,407 @@
+
+<iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
+
+<!-- title$="[[entry.item.Product.Title]]" -->
+<div id="image-product-grid" class="image-product-grid">
+  <div class="index">
+    <span>[[_formatIndex(index)]]</span>
+
+    <paper-button class="order-qaimages-btn hidden"
+        showen$="[[entry.IsQaPictureAvailable]]"
+        disabled$="[[dis_show_qaimages(actionDisabled, entry.IsQaPictureAvailable)]]"
+        raised
+        on-tap="showQAImagesTap">
+      QA Images
+    </paper-button>
+    <!-- <paper-spinner-lite class="thick"></paper-spinner-lite> -->
+  </div>
+
+  <dom-repeat items="[[productImages]]" as="imgi">
+    <template>
+      <a class="link-over-object" href="[[_buildProductUrl(entry)]]" target="[[_buildProductUrlTarget(entry)]]">
+        <teamatical-ui-image 
+          src="[[imgi.imgUrl]]" 
+          alt="[[imgi.title]]" 
+          lazy-load 
+          lazy-observe=[[lazyObserve]]>
+        </teamatical-ui-image>
+      </a>
+    </template>
+  </dom-repeat>
+</div>
+
+<div class="detail-container">
+  <div class="name">
+    <!-- <a href$="[[_buildProductUrl(entry)]]">[[entry.item.Product.Title]]</a> -->
+    [[entry.item.Product.Title]]
+
+    <span class="status-bar">
+      <tmladmin-ui-progress-icon type="printing" status="[[entry.PrintStatus]]"></tmladmin-ui-progress-icon>
+      <tmladmin-ui-progress-icon type="transferring" status="[[entry.TransferringStatus]]"></tmladmin-ui-progress-icon>
+      <tmladmin-ui-progress-icon type="cutting" status="[[entry.CuttingStatus]]"></tmladmin-ui-progress-icon>
+      <tmladmin-ui-progress-icon type="sewing" status="[[entry.SewingStatus]]"></tmladmin-ui-progress-icon>
+      <tmladmin-ui-progress-icon type="qa" status="[[entry.QAStatus]]"></tmladmin-ui-progress-icon>
+      <tmladmin-ui-progress-icon type="aggregation" status="[[entry.AggregationStatus]]"></tmladmin-ui-progress-icon>
+      <tmladmin-ui-progress-icon type="shipping-labels" status="[[entry.ShippingLabelsStatus]]"></tmladmin-ui-progress-icon>
+      <tmladmin-ui-progress-icon type="shipping-rfid" status="[[entry.ShippingRFIDStatus]]"></tmladmin-ui-progress-icon>
+      <tmladmin-ui-progress-icon type="shipping" status="[[entry.ShippingStatus]]"></tmladmin-ui-progress-icon>
+  </span>
+
+
+    <dom-if if="[[isProductAdminLink]]">
+      <template strip-whitespace>
+        <a href="/admin/product?productid=[[entry.item.Product.ProductID]]">
+          <iron-icon icon="open-in-new" class="open-in-here"></iron-icon>
+        </a>
+      </template>
+    </dom-if>
+
+  </div>
+
+
+  <div class="detail">
+
+    <div class="table">
+      <div class="row">
+        <div>
+          Product Configuration ID:
+        </div>
+        <div>
+          <span class="copy-tap" on-tap="_copyTap">[[entry.item.ProductConfigurationID]]</span>
+          <a href="[[_buildProductUrl(entry)]]" target="_blank">
+            <iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon>
+          </a>
+        </div>
+      </div>
+    </div>    
+
+    <dom-if if="[[isAddtocart]]">
+      <template>
+        <paper-button class="order-addtocart-btn"
+            disabled$="[[actionDisabled]]"
+            raised
+            on-tap="addToCartTap">
+          Item Add to Cart
+        </paper-button>
+      </template>
+    </dom-if>
+
+    <dom-if if="[[priceDiscounts.length]]">
+      <template>
+        <div class="discount">
+          <div>
+            <dom-repeat items="[[priceDiscounts]]" as="disi">
+              <template>
+                <p>[[disi]]</p>
+              </template>
+            </dom-repeat>
+          </div>
+        </div>
+      </template>
+    </dom-if>
+    
+    <dom-if if="[[priceRegularShow]]">
+      <template>
+        <div class="price">[[priceRegular]]</div>
+      </template>
+    </dom-if>
+    
+    <dom-if if="[[!priceRegularShow]]">
+      <template>
+        <div class="price">
+          <span class="price_new">[[priceSale]]</span>
+          <span class="price_old">[[priceList]]</span>
+        </div>
+      </template>
+    </dom-if>
+
+    <!-- <dom-if if="[[entry.price.PriceForOrganization]]">
+      <template>
+        <div class="price" title="Price For Organization Tier">
+          Org-[[localizep('admin-tiers-', entry.price.OrganizationTier)]]: [[_formatPrice(entry.price.PriceForOrganization, entry.price.Currency)]]
+        </div>
+      </template>
+    </dom-if> -->
+
+    <dom-if if="[[entry.IsAllowDesignUpdate]]">
+      <template>
+        <p class="note-alt">
+          Product Configuration Replacement goes with whole order on 'Save Details' action.
+        </p>
+        <paper-checkbox 
+            is-danger
+						checked="{{entry.IsDesignUpdate}}"
+						name="IsDesignUpdate"
+            disabled$="[[actionDisabled]]"
+						on-value-changed="onInputChanged"
+						error-message="[[entry.notvalid.IsDesignUpdate]]" 
+						invalid="[[_asBool(entry.notvalid.IsDesignUpdate)]]">
+						Design Update
+        </paper-checkbox>
+  
+      </template>
+    </dom-if>
+    
+
+    <div hidden$="[[!isProductConfigurationReplace]]">
+      <p class="note-alt">
+        Product Configuration Replacement goes with whole order on 'Save Details' action.
+      </p>
+      <paper-input 
+        label="Replace Product Configuration ID" 
+        type="string" 
+        disabled$="[[actionDisabled]]"
+        style="display: inline-block; width: 309px"
+        value="{{entry.replacepcid::input}}"
+        is-danger
+        on-value-changed="onInputChanged" 
+        error-message="[[entry.notvalid.replacepcid]]"
+        invalid="[[_asBool(entry.notvalid.replacepcid)]]">
+        <paper-icon-button 
+          slot="suffix" 
+          class="input-own-pcid-btn" 
+          icon="admin-icons:assignment-return" 
+          on-tap="_useOwnPCIDTap" 
+          title="Put Recent Product Configuration"
+        ></paper-icon-button>
+      </paper-input>
+    </div>
+
+    <dom-if if="[[entry.item.Player]]">
+      <template>
+        <div class="player" hidden$="[[isPlayerInfoEdit]]">
+          [[localize('orders-player')]]
+          [[_formatPlayer(entry.item.Player)]]
+        </div>
+
+        <paper-input 
+          label="Player Name" 
+          type="string" 
+          disabled$="[[actionDisabled]]"
+          class="player-input"
+          value="{{entry.item.Player.PlayerName::input}}"
+          is-danger
+          hidden$="[[!isPlayerInfoEdit]]"
+          on-value-changed="onInputChanged" 
+          error-message="[[entry.item.Player.notvalid.PlayerName]]"
+          invalid="[[_asBool(entry.item.Player.notvalid.PlayerName)]]">
+        </paper-input>
+        
+
+        <paper-input 
+          label="Player Number" 
+          type="string" 
+          disabled$="[[actionDisabled]]"
+          class="player-input"
+          value="{{entry.item.Player.PlayerNumber::input}}"
+          is-danger
+          hidden$="[[!isPlayerInfoEdit]]"
+          on-value-changed="onInputChanged" 
+          error-message="[[entry.item.Player.notvalid.PlayerNumber]]"
+          invalid="[[_asBool(entry.item.Player.notvalid.PlayerNumber)]]">
+        </paper-input>
+
+        <paper-input 
+          label="Player Year" 
+          type="string" 
+          disabled$="[[actionDisabled]]"
+          class="player-input"
+          value="{{entry.item.Player.PlayerYear::input}}"
+          is-danger
+          hidden$="[[!isPlayerInfoEdit]]"
+          on-value-changed="onInputChanged" 
+          error-message="[[entry.item.Player.notvalid.PlayerYear]]"
+          invalid="[[_asBool(entry.item.Player.notvalid.PlayerYear)]]">
+        </paper-input>
+      </template>
+    </dom-if>
+
+    <dom-if if="[[entry.item.SizesSelected]]">
+      <template>
+        <div class="size" hidden$="[[isSizeSelector]]">[[localize('orders-size')]]
+          <span>[[_formatSize(entry.item.SizesSelected)]]</span>
+        </div>
+
+        <teamatical-ui-select 
+          is-danger
+          class="size-selector" 
+          hidden$="[[!LenMore(entry.item.SizesSelected, 0)]]"
+          hidden2$="[[!isSizeSelector]]"
+          caption-text="[[_formatSizeTitle(entry.item.Product.ProductManufacturers.0, entry.item.Product.ProductManufacturers)]]" 
+          options="[[entry.item.Product.ProductManufacturers.0.Sizes]]" 
+          text-property="Name"
+          value-property="Code" 
+          value="{{entry.item.SizesSelected.0.Size}}">
+        </teamatical-ui-select> 
+        
+        <teamatical-ui-select 
+          is-danger
+          class="size-selector" 
+          hidden$="[[!LenMore(entry.item.SizesSelected, 1)]]"
+          hidden2$="[[!isSizeSelector]]"
+          caption-text="[[_formatSizeTitle(entry.item.Product.ProductManufacturers.1, entry.item.Product.ProductManufacturers)]]" 
+          options="[[entry.item.Product.ProductManufacturers.1.Sizes]]" 
+          text-property="Name"
+          value-property="Code" 
+          value="{{entry.item.SizesSelected.1.Size}}">
+        </teamatical-ui-select>
+      </template>
+    </dom-if>
+
+    <dom-if if="[[entry.item.Roster]]">
+      <template>
+        <div class="roster">[[localize('orders-roster')]]
+          <paper-icon-button 
+            class="edit-icon"
+            disabled
+            cake="1w2" 
+            slot="prefix" 
+            aria-label="roster"
+            icon="icons:view-list">
+            <!-- title$="[[localize('orders-roster-edit-btn')]]"
+            on-tap="_rosterEdit" -->
+          </paper-icon-button>
+          
+          <span>[[entry.item.Roster.title]]</span>
+          <a href="[[_buildProductUrl(entry)]]">
+            <iron-icon icon="open-in-new" class="open-in-here"></iron-icon>
+          </a>
+        </div>
+      </template>
+    </dom-if>
+
+    <dom-if if="[[entry.item.Roster]]">
+      <template>
+        <div class="quantity roster">
+          [[localize('orders-roster-qty')]]
+          [[entry.quantity]]
+        </div>
+      </template>
+    </dom-if>
+
+    <dom-if if="[[!entry.item.Roster]]">
+      <template>
+        <div class="quantity">
+          [[localize('orders-qty')]]
+          [[entry.quantity]]
+        </div>
+      </template>
+    </dom-if>
+
+
+    <div class="store" hidden$="[[!entry.item.Store]]">
+      <a href="[[_hrefStore(entry.item.BaseUrl, entry.item.Store)]]" target="_blank">[[entry.item.Store.title]]</a>
+    </div>
+
+    
+    <dom-if if="[[!isOrganization]]">
+      <template>
+        <dom-if if="[[entry.item.Store.organization]]">
+          <template>
+            <a href="[[_hrefOrganization(entry.item.Store.organization)]]">[[entry.item.Store.organization.OrganizationName]]</a>
+          </template>
+        </dom-if>
+      </template>
+    </dom-if>
+
+    <dom-if if="[[isOrganization]]">
+      <template>
+        <dom-if if="[[entry.item.Store.organization]]">
+          <template>
+            [[entry.item.Store.organization.OrganizationName]]
+          </template>
+        </dom-if>
+      </template>
+    </dom-if>
+
+    <div class="accessory-variant" hidden$="[[!entry.item.Product.AccessoryVariants]]">
+      [[entry.item.Product.AccessoryVariantsName]]:
+      <span>
+        [[entry.item.Product.AccessoryVariants.0.Name]]
+      </span>
+    </div>
+
+    <div class="customoptions" hidden$="[[!entry.item.CustomOption]]">
+      [[entry.item.CustomOptionsTitle]]:
+      <span>
+        [[entry.item.CustomOption.title]]
+      </span>
+    </div>
+
+
+    <h5 hidden$="[[!LenMore(entry.pitems)]]">
+      Production Order Items
+    </h5>
+
+    <dom-repeat items="[[entry.pitems]]" as="pitemi">
+      <template>
+        <div class="porder-item">
+          <div class="table">
+
+            <div class="row">
+              <div>
+                Type
+              </div>
+              <div>
+                [[pitemi.Type]]
+              </div>
+            </div>
+            
+            <div class="row">
+              <div>
+                SKU
+              </div>
+              <div>
+                <span class="copy-tap" on-tap="_copyTap">[[pitemi.SKU]]</span>
+              </div>
+            </div>
+
+            <dom-if if="[[!isOrganization]]">
+              <template>
+
+                <div class="row">
+                  <div>
+                    Manufacture Product Internal ID
+                  </div>
+                  <div>
+                    <span class="copy-tap" on-tap="_copyTap">[[pitemi.ManufactureProductInternalID]]</span>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div>
+                    Product ID
+                  </div>
+                  <div>
+                    <span class="copy-tap" on-tap="_copyTap">[[pitemi.ProductID]]</span>
+                    <a href="[[_urlViewProduct(pitemi.ProductID)]]">
+                      <iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+                    </a>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div>
+                    Product Manufacturer ID
+                  </div>
+                  <div>
+                    <span class="copy-tap" on-tap="_copyTap">[[pitemi.ProductManufacturerID]]</span>
+                    <a href="[[_urlViewProductManufacturer(pitemi.ProductManufacturerID)]]">
+                      <iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+                    </a>
+                  </div>
+                </div>
+
+              </template>
+            </dom-if>
+
+            
+          </div>
+
+        </div>
+      </template>
+    </dom-repeat>
+
+
+  </div>
+</div>

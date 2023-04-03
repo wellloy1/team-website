@@ -1,0 +1,35 @@
+STATIC
+/admin/build/*								- (Cache 1m)
+	/admin/build/1.0.0/components/*			- immutable url (Cache 1Y)
+	/admin/build/1.0.0/precache-manifest.*	- immutable url (Cache 1Y)
+	/admin/build/1.0.0/teamatical-admin.*	- immutable url (Cache 1Y)
+	
+/build/*									- (Cache 1m)
+	/build/1.0.0/components/*				- immutable url (Cache 1Y)
+	/build/1.0.0/babel-polyfills.*			- immutable url (Cache 1Y)
+	/build/1.0.0/precache-manifest.*		- immutable url (Cache 1Y)
+	/build/1.0.0/teamatical-app.*			- immutable url (Cache 1Y)
+	
+/data/*										- static (Cache 1m)
+	/IllustratorApp/teamatical-artmanager.*	- immutable url
+	/IllustratorApp/index.html				- static NO CACHE
+/.well-known/*								- static (Cache 1m)
+/images/*									- static (Cache 1m)
+
+/manifest.json								- static (Cache 1m)
+/robots.txt									- static (Cache 1m)
+/favicon.ico								- static (Cache 30d)
+/service-worker-admin.js					- static NO CACHE
+/service-worker.js							- static NO CACHE
+
+
+
+APIs
+/api/v1.0/image/get*						- immutable url  (Cache 33d, if exception than 0d)
+/api/*										- dynamic API (NO CACHE)
+/admin/api/*								- dynamic API (NO CACHE)
+
+
+PAGES
+/admin/*       								- all pages pathes (routes, Cache: 61s)
+/*											- all pages pathes (routes, Cache: 61s) 

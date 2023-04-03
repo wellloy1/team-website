@@ -1,0 +1,339 @@
+<app-localstorage-document key="admin-custom-stores-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+			
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					disabled$="[[loading]]" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+			</div>
+		</div>
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+		
+		<vaadin-grid
+			id="grid"
+			aria-label="CustomStores" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.StoreID]]</span>
+					<a href="[[_urlViewStore(item.StoreID)]]" class="iron-icon">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+					<a href="[[_urlConsumerViewStore(item.StoreID, item.BaseUrl)]]" target="_blank">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="160px" resizable="true" id="StoreID">
+				<template class="header">
+						Store
+					<vaadin-grid-filter aria-label="ID" path="StoreID" value="[[_filterStoreID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.StoreID]]</span>
+					<a href="[[_urlViewStore(item.StoreID)]]" class="iron-icon">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+					<a href="[[_urlConsumerViewStore(item.StoreID, item.BaseUrl)]]" target="_blank">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">
+					Store
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="160px" resizable="true" id="IndexPublicCatalog">
+				<template class="header">
+					<vaadin-grid-sorter path="IndexPublicCatalog">
+					Sorting Index
+					</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="IndexPublicCatalog" path="IndexPublicCatalog" value="[[_filterIndexPublicCatalog]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span>[[item.IndexPublicCatalog]]</span> 
+				</template>
+				<template class="footer-off">
+					Sorting Index
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" resizable="true" id="Created">
+				<template class="header">
+					<vaadin-grid-sorter path="Created" direction$="{{_sortCreated}}">
+						Created
+					</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Created" aria-placeholder="Created" path="Created" value="[[_filterCreated]]"></vaadin-grid-filter>
+				</template>
+				<template>[[_formatDate(item.Created)]]</template>
+				<template class="footer-off">
+					Created
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" resizable="true" id="Updated">
+				<template class="header">
+					<vaadin-grid-sorter path="Updated">
+						Updated
+					</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Updated" aria-placeholder="Updated" path="Updated" value="[[_filterUpdated]]"></vaadin-grid-filter>
+				</template>
+				<template>[[_formatDate(item.Updated)]]</template>
+				<template class="footer-off">
+					Updated
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="100px" resizable="true" id="InPublicCatalog">
+				<template class="header">
+					In Public Catalog
+					<vaadin-grid-filter class="hidden" aria-label="InPublicCatalog" aria-placeholder="InPublicCatalog" path="InPublicCatalog"
+						value="[[_filterInPublicCatalog]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="InPublicCatalogCombo" value="{{_filterInPublicCatalog}}" style="width:80px;"></vaadin-combo-box>
+				</template>
+				<template>
+					[[item.InPublicCatalog]]
+				</template>
+				<template class="footer-off">
+					In Public Catalog
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="100px" resizable="true" id="NoQuantityLimits">
+				<template class="header">
+					No Quantity Limits
+					<vaadin-grid-filter class="hidden" aria-label="NoQuantityLimits" aria-placeholder="NoQuantityLimits" path="NoQuantityLimits"
+						value="[[_filterNoQuantityLimits]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="NoQuantityLimitsCombo" value="{{_filterNoQuantityLimits}}" style="width:80px;"></vaadin-combo-box>
+				</template>
+				<template>
+					[[item.NoQuantityLimits]]
+				</template>
+				<template class="footer-off">
+					No Quantity Limits
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="100px" resizable="true" id="DisableTierPriceModel">
+				<template class="header">
+					Disable Tier Price Model
+					<vaadin-grid-filter class="hidden" aria-label="DisableTierPriceModel" aria-placeholder="DisableTierPriceModel" path="DisableTierPriceModel"
+						value="[[_filterDisableTierPriceModel]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="DisableTierPriceModelCombo" value="{{_filterDisableTierPriceModel}}" style="width:80px;"></vaadin-combo-box>
+				</template>
+				<template>
+					[[item.DisableTierPriceModel]]
+				</template>
+				<template class="footer-off">
+					Disable Tier Price Model
+				</template>
+			</vaadin-grid-column>
+			
+
+			<vaadin-grid-column width="100px" resizable="true" id="LockCustomize">
+				<template class="header">
+					Lock Customize
+					<vaadin-grid-filter class="hidden" aria-label="LockCustomize" aria-placeholder="LockCustomize"
+						path="LockCustomize" value="[[_filterLockCustomize]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="LockCustomizeCombo" value="{{_filterLockCustomize}}" style="width:80px;"></vaadin-combo-box>
+				</template>
+				<template>
+					[[item.LockCustomize]]
+				</template>
+				<template class="footer-off">
+					Lock Customize
+				</template>
+			</vaadin-grid-column>
+			
+			<vaadin-grid-column width="100px" resizable="true" id="HidePrices">
+				<template class="header">
+					Hide Prices
+					<vaadin-grid-filter class="hidden" aria-label="HidePrices" aria-placeholder="HidePrices"
+						path="HidePrices" value="[[_filterHidePrices]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="HidePricesCombo" value="{{_filterHidePrices}}" style="width:80px;"></vaadin-combo-box>
+				</template>
+				<template>
+					[[item.HidePrices]]
+				</template>
+				<template class="footer-off">
+					Hide Prices
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="100px" resizable="true" id="BindToOrganization">
+				<template class="header">
+					Is Organization
+					<vaadin-grid-filter class="hidden" aria-label="BindToOrganization" aria-placeholder="BindToOrganization"
+						path="BindToOrganization" value="[[_filterBindToOrganization]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="BindToOrganizationCombo" value="{{_filterBindToOrganization}}" style="width:80px;"></vaadin-combo-box>
+				</template>
+				<template>
+					[[item.BindToOrganization]]
+				</template>
+				<template class="footer-off">
+					Is Organization
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="OrganizationID">
+				<template class="header">
+					Organization
+					<vaadin-grid-filter aria-label="OrganizationID" path="OrganizationID" value="[[_filterOrganizationID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.Organization.Name]]<br /> 
+					<span class="copy-tap" on-tap="_copyTap">[[item.Organization.OrganizationID]]</span>
+				</template>
+				<template class="footer-off">
+					Organization
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="CurrencyRegion">
+				<template class="header">
+					Currency Region
+					<vaadin-grid-filter class="hidden" aria-label="CurrencyRegion" aria-placeholder="CurrencyRegion"
+					 path="CurrencyRegion" value="[[_filterCurrencyRegion]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="CurrencyRegionCombo" value="{{_filterCurrencyRegion}}"></vaadin-combo-box>
+					<!-- <vaadin-grid-filter aria-label="CurrencyRegion" path="CurrencyRegion" value="[[_filterCurrencyRegion]]"></vaadin-grid-filter> -->
+				</template>
+				<template>
+					[[item.CurrencyRegion]]
+				</template>
+				<template class="footer-off">
+					Currency Region
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="350px" resizable="true" id="UserID">
+				<template class="header">
+					User ID
+					<vaadin-grid-filter aria-label="UserID" path="UserID" value="[[_filterUserID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<teamatical-ui-user-inline user="[[item.User]]">
+					</teamatical-ui-user-inline>
+				</template>
+				<template class="footer-off">
+					User ID
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="340px" resizable="true" id="Title">
+				<template class="header">
+					Title
+					<vaadin-grid-filter aria-label="Title" path="Title" value="[[_filterTitle]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span>[[item.Title]]</span>
+				</template>
+				<template class="footer-off">
+					Title
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="220px" resizable="true" id="ItemsCount">
+				<template class="header">
+					Items
+					<vaadin-grid-filter aria-label="ItemsCount" aria-placeholder="ItemsCount" path="ItemsCount"
+					 value="[[_filterItemsCount]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.ItemsCount]]</template>
+				<template class="footer-off">
+					Items
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="220px" resizable="true" id="GroupShippingIDCurrent">
+				<template class="header">
+					Recent Group Shipping
+					<vaadin-grid-filter aria-label="GroupShippingIDCurrent" aria-placeholder="GroupShippingIDCurrent" path="GroupShippingIDCurrent" value="[[_filterGroupShippingIDCurrent]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.GroupShippingIDCurrent]]</template>
+				<template class="footer-off">
+					Recent Group Shipping
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="220px" resizable="true" id="GroupShippingIDArchivedLast">
+				<template class="header">
+					Last Group Shipping
+					<vaadin-grid-filter aria-label="GroupShippingIDArchivedLast" aria-placeholder="GroupShippingIDArchivedLast" path="GroupShippingIDArchivedLast" value="[[_filterGroupShippingIDArchivedLast]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.GroupShippingIDArchivedLast]]</template>
+				<template class="footer-off">
+					Last Group Shipping
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="140px" resizable="true" id="IsArchive">
+				<template class="header">
+					Archived
+					<vaadin-grid-filter class="hidden" aria-label="IsArchive" aria-placeholder="IsArchive"
+					 path="IsArchive" value="[[_filterIsArchive]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="IsArchiveCombo" value="{{_filterIsArchive}}"></vaadin-combo-box>
+				</template>
+				<template>
+					[[item.IsArchive]]
+				</template>
+				<template class="footer-off">
+					Archived
+				</template>
+			</vaadin-grid-column>
+
+		</vaadin-grid>
+
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				fixed
+				localstorage-key="admin-custom-stores-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

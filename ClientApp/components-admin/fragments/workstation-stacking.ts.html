@@ -1,0 +1,170 @@
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="stacking"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+
+<div class="maindiv horiz">
+	<div class="order-container sticky">
+		<div class="order">
+			<!-- stacking -->
+			<div class="order-stacking" hidden$="[[!order]]">
+				<div class="sticky-container">
+					<h2>
+						<paper-icon-button 
+							class="refresh-btn" 
+							icon="admin-icons:refresh"
+							title="[[localize('admin-ws-refresh')]]" 
+							disabled="[[loadingAny]]"
+							on-tap="_reloadTap">
+						</paper-icon-button>
+
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+						
+						[[localize('admin-ws-stacking-title')]]
+					</h2>
+
+					<paper-progress 
+						id="progress" 
+						indeterminate 
+						class="" 
+						disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+				
+				<div class="main">
+					<paper-input id="newbarcode" label="[[localize('admin-ws-stacking-barcode-label')]]" name="barcode" class="barcode-input" type="string" disabled="[[loadingAny]]" on-value-changed="onInputChanged"
+						on-keydown="_barcodeEnter">
+						<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+						<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:arrow-downward" on-tap="_barcodeTap">
+						</paper-icon-button>
+					</paper-input>
+
+
+					<dom-if if="[[order.BatchID]]">
+						<template>
+								<h1>
+									#[[order.BatchID]] - [[localize('admin-ws-stacking-item-fabric')]] [[order.FabricName]] - [[order.ManufactureOrderID]]
+									<span class="hidden" showen$="[[order.Sandbox]]">
+										<iron-icon icon="admin-icons:warning" class="warning" title="[[localize('admin-ws-test-item')]]"></iron-icon> [[localize('admin-ws-test-item')]]
+									</span>
+								</h1>
+
+
+
+								<div class="table stripe">
+									<div class="header">
+										<div class="w25" style="min-width: 190px;">
+											[[localize('admin-ws-stacking-item-title')]]
+										</div>
+										<!-- <div>
+											[[localize('admin-ws-stacking-item-filename')]] 
+										</div>
+										<div>
+											[[localize('admin-ws-stacking-item-cutlength')]]
+										</div> -->
+									</div>
+								
+									<div class="row total">
+										<div class="pdf-title">
+											[[order.PDFFileTitle]]
+										</div>
+										<!-- <div class="pdf-filename">
+											[[order.PDFFileName]]
+										</div>
+										<div class="pdf-meters">
+											[[_formatMeters(order.CutsLengthMeters, 'yd')]]
+										</div> -->
+									</div>
+								</div>
+
+						</template>
+					</dom-if>
+
+					<dom-if if="[[order.Invalid]]">
+						<template>
+							<h3 class="invalid">
+								[[localize('admin-ws-stacking-item-invalid')]]
+							</h3>
+						</template>
+					</dom-if>
+
+				</div>
+
+			</div>
+
+
+			<div class="order-buttons">
+				<div class="spinner">
+					<paper-button 
+						class="order-print-stickers-btn" 
+						raised 
+						disabled="[[disabledPrintStickers]]"
+						on-tap="_onStickerPrintTap">
+						[[localize('admin-ws-stacking-stickers-btn')]] 
+						<span hidden$="[[!_asBool(order.Stickers)]]">&nbsp;([[order.Stickers.length]])</span>
+						
+					</paper-button>
+					<!-- <paper-spinner-lite id="download-progress" class="thick"></paper-spinner-lite> -->
+				</div>
+			</div>
+
+
+
+			<div id="preview-pages" class="preview-pages">
+				<dom-repeat items="[[order.Pages]]" as="pagei">
+					<template>
+						<dom-repeat items="[[pagei.Images]]" as="imagei" index-as="imageindex">
+							<template>
+								<img src="[[imagei]]" style$="[[_pageStyle(imagei)]]" />
+							</template>
+						</dom-repeat>
+					</template>
+				</dom-repeat>
+
+				<dom-if if="[[!_asBool(order.Pages.0.Images)]]">
+					<template>
+						<div class="nopreviews">
+							[[localize('admin-ws-printing-dlg-no-previews')]]
+						</div>
+					</template>
+				</dom-if>
+			</div>
+			
+				
+
+		</div>
+	</div>
+</div>
+
+
+
+<div class="fbuttons-container">
+	<paper-fab 
+		class="button bundling"
+		label="B"
+		disabled$="[[loadingAny]]"
+		title$="[[localize('admin-ws-stacking-bundling-btn-tooltip')]]"
+		mini
+		on-tap="openBundlingTap">
+	</paper-fab>
+</div>
+
+
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="stacking"
+	website-url="[[websiteUrl]]"
+	sticker-printer
+	barcode-scanner
+	loading="{{loadingWS}}"
+	visible="[[visible]]">
+</teamatical-ui-scanner-printer-settings>
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>

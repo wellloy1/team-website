@@ -1,0 +1,278 @@
+:host {
+	width: 40px;
+	height: 40px;
+}
+:host > a > paper-icon-button {
+	position: absolute;
+    transform: translateZ(0);
+    top: 0px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+.signin-btn {
+    width: 40px;
+    position: relative;
+}
+
+.profile-avatar {
+    position: relative;
+    border-radius: 20px;
+    
+    width: 40px;
+    height: 40px;
+    margin: 0px;
+    /* width: 32px;
+    height: 32px;
+    margin: 4px; */
+}
+
+.popup-container {
+    position: relative;
+
+    --teamatical-tooltip-color: #333;
+    --teamatical-tooltip-text-color: #fff;
+    --teamatical-tooltip-boxshadow-color: rgba(0, 0, 0, 0.35);
+    --teamatical-tooltip-base: 6px;
+    --teamatical-tooltip-shift: 5px;
+  
+    z-index: 0;
+}
+
+.popup-container .avatar-caption {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    margin-right: 56px;
+    text-align: left;
+}
+
+.popup-container .help-menu {
+	opacity: 0;
+	transform: scaleY(0);
+	transform-origin: top;
+    /* transform: scaleX(0);
+    transform-origin: right; */
+
+    transition: all .2s ease-in-out;
+
+    display: block;
+    z-index: 1;
+    
+    right: -0.5em;
+    top: -1.5em;
+
+    text-transform: none; /* opinion 2 */
+    font-size: var(--app-font-size); /* opinion 3 */
+    font-weight: normal;
+    font-variant: initial;
+    line-height: 1;
+    user-select: none;
+    position: absolute;
+    
+
+    font-size: var(--app-font-size);
+    font-weight: normal;
+    text-align: center;
+
+    min-width: 18em;
+    max-width: 21em;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: .3ch;
+    box-shadow: 0 1em 2em -.5em var(--teamatical-tooltip-boxshadow-color);
+    background: #fff;
+    /* var(--teamatical-tooltip-color); */
+    /* color: var(--teamatical-tooltip-text-color); */
+
+    padding: 1ch 1.5ch;
+    padding-top: 72px;
+}
+/* .popup-container .help-menu::before {
+    content: '';
+    border: var(--teamatical-tooltip-base) solid transparent; 
+    z-index: 1; 
+
+
+    text-transform: none;
+    font-size: var(--app-font-size);
+    font-weight: normal;
+    font-variant: initial;
+    line-height: 1;
+    user-select: none;
+    position: absolute;
+    pointer-events: none;
+
+    content: '';
+    border: var(--teamatical-tooltip-base) solid transparent;
+    z-index: 1;
+
+    top: 100%;
+    border-top-width: 0;
+    border-bottom-color: var(--teamatical-tooltip-color);
+
+    left: 50%;
+    transform: translate(-50%, 0.5em);
+} */
+/* [show-popup-menu] */
+
+:host(:hover) .popup-container .help-menu {
+    opacity: 1;
+	transform: none;
+}
+:host(:hover) a paper-icon-button {
+    --iron-icon-fill-color: var(--app-primary-color);
+}
+
+.popup-container .help-menu teamatical-ui-button {
+    display: block;
+}
+
+
+
+
+
+
+/*Strip the ul of padding and list styling*/
+.help-menu ul {
+	list-style-type:none;
+	margin:0;
+	padding:0;
+	position: absolute;
+	z-index: 1;
+	
+	background-color: var(--color-fill-frame-blur,hsla(0,0%,100%,0.9));
+    -webkit-backdrop-filter: blur(16px);
+    -moz-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+}
+ul.help-menu {
+	position: relative;
+	/* text-align: left; */
+	/* display: flex; */
+	transition: all .2s ease-in-out;
+}
+ul.help-menu::-webkit-scrollbar {
+	width: 2px;
+	height: 2px;
+}
+
+ul.help-menu::-webkit-scrollbar-track {
+	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+}
+
+ul.help-menu::-webkit-scrollbar-thumb {
+	background-color: darkgrey;
+}
+
+.help-menu li .open-in-here {
+	vertical-align: 4%;
+	--iron-icon-height: 12px;
+    --iron-icon-width: 12px;
+}
+
+/*Create a horizontal list with spacing*/
+.help-menu li {
+	/* flex: 0 0 250px;
+    width: 250px;
+	display: flex; */
+	/* display: inline-block; */
+    display: block;
+	margin-right: 1px;
+	margin-bottom: 1px;
+
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-drag: none; 
+	-webkit-user-drag: none;
+
+}
+
+/*Style for menu links*/
+.help-menu li a {
+	display:block;
+	min-width: 144px;
+	min-height: 35px;
+	/* height: 35px; */
+	text-align: center;
+	line-height: 35px;
+	text-decoration: none;
+	padding: 0px 10px;
+	transition: all .2s ease-in-out;
+
+	color: #fff;
+	fill: #fff;
+	background: #2f3036;
+
+	/* white-space: nowrap; */
+}
+
+
+/*Hover state for top level links*/
+.help-menu li:hover a {
+	background: #19c589;
+}
+
+/*Style for dropdown links*/
+.help-menu li:hover ul a {
+	background: #f3f3f3;
+	color: #2f3036;
+	fill: #2f3036;
+}
+
+/*Hover state for dropdown links*/
+.help-menu li:hover ul a:hover {
+	background: #19c589;
+	fill: #fff;
+	color: #fff;
+}
+
+/*Hide dropdown links until they are needed*/
+.help-menu li ul {
+	/* display: none; */
+	display: block;
+}
+
+/*Make dropdown links vertical*/
+.help-menu li ul li {
+	display: block;
+	float: none;
+}
+
+/*Prevent text wrapping*/
+.help-menu li ul li a {
+	width: auto;
+	min-width: 160px;
+	padding: 0 20px;
+
+	/* line-height: 22px;
+	-webkit-line-clamp: 2;
+  	-webkit-box-orient: vertical;  
+  	overflow: hidden; */
+}
+
+
+
+/*Display the dropdown on hover*/
+.help-menu ul.submenu {
+	transition: all .2s ease-in-out;
+	opacity: 0;
+	transform: scaleY(0);
+	transform-origin: top;
+}
+ul.help-menu li a:hover + .submenu, 
+.help-menu .submenu:hover {
+	opacity: 1;
+	transform: none;
+}
+.help-menu .submenu.right {
+    margin-top: -35px;
+	margin-left: 200px;
+}
+.help-menu .submenu.left {
+    margin-top: -35px;
+	margin-left: -200px;
+}
+

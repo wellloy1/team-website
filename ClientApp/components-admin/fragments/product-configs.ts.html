@@ -1,0 +1,197 @@
+<app-localstorage-document key="admin-product-configurations-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress id="progress" indeterminate class="" disabled$="[[!loadingAny]]">
+			</paper-progress>
+	
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+			</div>
+		</div>
+		
+
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid 
+			id="grid" 
+			aria-label="ProductConfigurations" 
+			theme="no-border column-borders wrap-cell-content no-row-stripes compact"
+			data-provider="[[dataProvider]]" 
+			loading="{{loading}}" 
+			page-size="[[pageSize]]" 
+			column-reordering-allowed
+			height-by-rows 
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ProductConfigurationID]]</span>
+					<a href="[[_urlViewPConfiguration(item.ProductConfigurationID)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+					<a href="[[_urlConsumerViewPConfiguration(item.ProductConfigurationID, item.PcBaseUrl)]]" target="_blank"><iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon></a>
+				</div>
+			</template>
+			
+
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="150px" resizable="true" id="ProductConfigurationID">
+				<template class="header">
+					ID
+					<vaadin-grid-filter aria-label="ProductConfigurationID" path="ProductConfigurationID" value="[[_filterProductConfigurationID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ProductConfigurationID]]</span>
+					<a href="[[_urlViewPConfiguration(item.ProductConfigurationID)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+					<a href="[[_urlConsumerViewPConfiguration(item.ProductConfigurationID, item.PcBaseUrl)]]" target="_blank"><iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon></a>
+				</template>
+				<template class="footer-off">
+					ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="150px" resizable="true" id="ProductConfigurationRedirectID">
+				<template class="header">
+					Redirect ID
+					<vaadin-grid-filter aria-label="ProductConfigurationRedirectID" path="ProductConfigurationRedirectID" value="[[_filterProductConfigurationRedirectID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<dom-if if="[[_asBool(item.ProductConfigurationRedirectID)]]">
+						<template>
+							<span class="order-id copy-tap" on-tap="_copyTap">[[item.ProductConfigurationRedirectID]]</span>
+							<a href="[[_urlViewPConfiguration(item.ProductConfigurationRedirectID)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+							<a href="[[_urlConsumerViewPConfiguration(item.ProductConfigurationRedirectID, item.RedirectPcBaseUrl)]]" target="_blank"><iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon></a>
+						</template>
+					</dom-if>
+				</template>
+				<template class="footer-off">
+					Redirect ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="440px" flex-grow="0" resizable="true" id="Preview">
+				<template class="header">Preview</template>
+				<template>
+					<div class="prod-imgs-cont">
+						<dom-repeat items="[[item.ProductConfiguration.Product.ImageUrls]]" as="imgi">
+							<template>
+								<teamatical-ui-image
+									src="[[imgi]]"
+									alt="[[item.ProductConfiguration.Product.Title]]" lazy-load lazy-observe=[[lazyObserve]]>
+								</teamatical-ui-image>
+							</template>
+						</dom-repeat>
+					</div>
+				</template>
+				<template class="footer-off">Preview</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="220px" flex-grow="0" resizable="true" id="Created">
+				<template class="header">
+					<vaadin-grid-sorter path="Created">Created</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Created" aria-placeholder="Created" path="Created" value="[[_filterCreated]]"></vaadin-grid-filter>
+				</template>
+				<template>[[_formatDate(item.Created)]]</template>
+				<template class="footer-off">Created</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="150px" resizable="true" id="ProductConfigurationParentID">
+				<template class="header">
+					Parent ID
+					<vaadin-grid-filter aria-label="ProductConfigurationParentID" aria-placeholder="ProductConfigurationParentID" path="ProductConfigurationParentID" value="[[_filterProductConfigurationParentID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ProductConfigurationParentID]]</span>
+					<a href="[[_urlViewPConfiguration(item.ProductConfigurationParentID)]]" hidden$="[[!item.ProductConfigurationParentID]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+					<a href="[[_urlConsumerViewPConfiguration(item.ProductConfigurationParentID, item.ParentPcBaseUrl)]]" hidden$="[[!item.ProductConfigurationParentID]]" target="_blank"><iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon></a>
+				</template>
+				<template class="footer-off">
+					Parent ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column  width="320px" resizable="true" id="ProductID">
+				<template class="header">
+					Product ID
+					<vaadin-grid-filter aria-label="ProductID" aria-placeholder="ProductID" path="ProductID" value="[[_filterProductID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ProductID]]</span>
+					<a href="[[_urlViewProduct(item.ProductID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">
+					Product ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column  width="150px" resizable="true" id="AssignedStoreID">
+				<template class="header">
+					Assigned Store ID
+					<vaadin-grid-filter aria-label="AssignedStoreID" aria-placeholder="AssignedStoreID" path="AssignedStoreID" value="[[_filterAssignedStoreID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.AssignedStoreID]]</span>
+					<a href="[[_urlViewStore(item.AssignedStoreID)]]" class="iron-icon" hidden$="[[!item.AssignedStoreID]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+					<a href="[[_urlConsumerViewStore(item.AssignedStoreID, item.BaseUrl)]]" target="_blank" hidden$="[[!item.AssignedStoreID]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">
+					Assigned Store ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" flex-grow="0" resizable="true" id="UserID">
+				<template class="header">
+					User ID
+					<vaadin-grid-filter aria-label="UserID" aria-placeholder="UserID" path="UserID" value="[[_filterUserID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<teamatical-ui-user-inline user="[[item.User]]">
+					</teamatical-ui-user-inline>
+				</template>
+				<template class="footer-off">
+					User ID
+				</template>
+			</vaadin-grid-column>
+
+		</vaadin-grid>
+
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				fixed
+				localstorage-key="admin-product-configurations-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

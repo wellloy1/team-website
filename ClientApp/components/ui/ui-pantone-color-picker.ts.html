@@ -1,0 +1,42 @@
+<app-localstorage-document key="ui-pantone-color-picker" data="{{localStorage}}"></app-localstorage-document>
+
+<div id="container" 
+        class="container"
+        draggable="false"
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+
+    <teamatical-ui-loader hidden$="[[_isNotConn(colorsPalette, opened)]]"></teamatical-ui-loader>
+    
+    <iron-icon id="checkmark" class="checkmark" icon="icons:check-circle" draggable="false" hidden="true"></iron-icon>
+    <iron-icon id="checkmark_search" class="checkmark_search" icon="icons:search" draggable="false" hidden="true"></iron-icon>
+
+    <canvas 
+        id="canvas1" 
+        width="400" height="400" 
+        draggable="false" 
+        on-tap="_canvasTap">
+    </canvas>
+
+    <div id="header" class="header" draggable="false">
+        <paper-input 
+            id="search" 
+            disabled$="[[!_isNotConn(colorsPalette, opened)]]"
+            label="[[localize('pantone-color-quicksearch')]]" 
+            value="{{_quickSearch}}"
+            on-tap="quickSearchTap"
+            draggable="false">
+        </paper-input>
+
+        <teamatical-ui-color-picker
+            id="recentColorPicker"
+            class="recent-colors-list"
+            rectangle
+            tabindex="-1"
+            color-icon="image:style"
+            on-ui-color-picker-selected="onRecentSelectedColor"
+            colors-palette="{{recentColors}}"
+            selected-color="{{selectedColor}}">
+        </teamatical-ui-color-picker>
+    </div>
+</div>

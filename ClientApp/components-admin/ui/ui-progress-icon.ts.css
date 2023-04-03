@@ -1,0 +1,20 @@
+:host {
+    position: relative;
+}
+
+.background {
+    --iron-icon-fill-color: #ccc;
+    
+    /* -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+    opacity: 0.5; */
+}
+
+.foreground {
+    --iron-icon-fill-color: #ccc;
+    
+    position: absolute;
+    top: 0px;
+    overflow: hidden;
+    /* height: 20%; progress */
+}

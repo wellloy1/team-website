@@ -1,0 +1,144 @@
+<teamatical-stores-data 
+  id="stores-data" 
+  is-public-catalog
+  stores="{{stores}}" 
+  num-items="{{numItems}}"
+  query-params="{{queryParams}}"
+  searching-progress="{{searchingProgress}}"
+  user-info="{{userInfo}}" 
+  website-url="[[websiteUrl]]"
+  loading="{{loading}}" 
+  failure="{{failure}}"
+  visible="[[visible]]" 
+  saving="{{saving}}">
+</teamatical-stores-data>
+
+<teamatical-ui-loader hidden$="[[_isNotConn]]"></teamatical-ui-loader>
+
+<div hidden$="[[_isNoStores]]">
+  <div class="subsection" visible>
+    <header>
+      <h1>[[localize('store-list-title')]]</h1>
+      <!-- <span>
+        (
+        <span>[[_numItems]][[_numItemsApproximately]]</span>
+        <span hidden="[[!_single]]">[[localize('stores-qty-item')]]</span>
+        <span hidden="[[!_many]]">[[localize('stores-qty-items')]]</span>
+        )
+      </span> -->
+      
+      <ul class="letters">
+        <dom-repeat items="[[stores.letters]]" as="leti">
+          <template>
+            <li selected$="[[leti.selected]]">
+              <button on-tap="letterTap">[[leti.title]]</button>
+            </li>
+          </template>
+        </dom-repeat>
+      </ul>
+
+    </header>
+
+    <paper-input 
+      id="search"
+      name="search"
+      type="text"
+      label="[[localize('stores-search-input')]]" 
+      aria-label$="[[localize('stores-search-input')]]"
+      placeholder="[[localize('stores-search-placeholder')]]"
+      value="{{stores.search::input}}"
+      required
+      autocomplete="search"
+      error-message="[[localize('stores-search-invalid')]]">
+    </paper-input>
+
+    <p class="empty-list" hidden$="[[_hasSearchedItems]]">
+      [[localize('stores-search-empty')]]
+    </p>
+    
+    <div
+      id="list" 
+      class="store-list" 
+      hidden$="[[!_hasSearchedItems]]"
+      draggable="false">
+
+      <iron-list 
+        id="gridList"
+        items="{{stores.items}}" 
+        as="storei"
+        scroll-target="document"
+        default-physical-count="40">
+          <template>
+            <div 
+              class="store drag-item" 
+              archive$="[[_bool(storei.isarchive)]]">
+
+              <div class="store-header">
+                <div class="line-horizonal">
+
+                  <dom-if if="[[_asBool(storei.storelogo.imgUrl)]]">
+                    <template>
+                      <a href$="[[_hrefStore(storei.sid)]]">
+                        <teamatical-ui-image
+                          class="hero-image"
+                          alt="[[storei.storelogo.name]]" 
+                          src="[[storei.storelogo.imgUrl]]" 
+                          not-use-webp 
+                          lazy-load
+                          placeholder-img="[[storei.storelogo.placeholder]]">
+                        </teamatical-ui-image>
+                      </a>
+                    </template>
+                  </dom-if>
+                  
+                  <h3>
+                      [[storei.title]]
+                      <!-- <dom-if if="[[storei.description]]">
+                        <template>
+                          <p class="store-desc">[[storei.description]]</p>
+                        </template>
+                      </dom-if> -->
+                  </h3>
+                  <teamatical-ui-button 
+                    class="configure-btn" 
+                    href="[[_hrefStore(storei.sid)]]"
+                    on-tap="eventNull">
+                    [[localize('stores-btn-edit')]]
+                  </teamatical-ui-button>
+                </div>
+              </div>
+            </div>
+          </template>
+      </iron-list>
+
+    </div>
+
+    <footer class="progress-container">
+      <paper-spinner-lite 
+        id="loadMoreProgress"
+        class="progress-centered"
+        active="[[_loadMoreProgress(loading, loadingMore)]]">
+      </paper-spinner-lite>
+      
+      <teamatical-ui-button 
+        id="loadMoreBtn"
+        hidden$="[[stores.plast]]"
+        class="hidden-animated slow"
+        hidden-animated$="[[_loadMoreProgress(loading, loadingMore)]]"
+        disabled$="[[loading]]"
+        on-tap="_loadMore">
+        [[localize('stores-load-more-btn')]]
+      </teamatical-ui-button>
+
+      <div class="end-list" hidden$="[[!_hasNoMoreItems]]">[[localize('stores-list-end')]]</div>
+    </footer>
+
+  </div>
+</div>
+
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

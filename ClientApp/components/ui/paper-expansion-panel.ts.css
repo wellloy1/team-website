@@ -1,0 +1,108 @@
+:host {
+	display: block;
+}
+:host([no-header]) .header {
+	display: none;
+}
+:host([disabled]) .header {
+	overflow: hidden;
+	color: var(--disabled-text-color);
+}
+
+
+.header {
+	min-height: 48px;
+	background-color: var(--primary-background-color);
+	color: var(--primary-text-color);
+	/* border-radius: 8px; */
+	border-top: 1px solid var(--primary-background-color);
+	border-bottom: 1px solid var(--primary-background-color);
+
+	--paper-item-focused : {
+		background-color: var(--primary-background-color);
+		border-top: 1px solid var(--divider-color) !important;
+		border-bottom: 1px solid var(--primary-background-color);
+	};
+	--paper-item-focused-before: {
+		background-color: var(--primary-background-color);
+		border-top: 1px dashed var(--divider-color) !important;
+		border-bottom: 1px solid var(--primary-background-color);
+	};
+
+	@apply --layout-center;
+	@apply --layout-justified;
+	@apply --paper-font-subhead;
+	@apply --paper-expansion-panel-header;
+}
+:host([no-toggle-header][no-toggle-btn]:not([no-toggle-header-focusable])) .header {
+	--paper-item-focused : {
+		background-color: var(--primary-background-color);
+		border-top: 1px solid var(--primary-background-color) !important;
+		border-bottom: 1px solid var(--primary-background-color);
+	};
+	--paper-item-focused-before: {
+		background-color: var(--primary-background-color);
+		border-top: 1px solid var(--primary-background-color) !important;
+		border-bottom: 1px solid var(--primary-background-color);
+	};
+}
+:host([opened=false]) .header,
+:host(:not([opened])) .header {
+	border-top: 1px dashed var(--divider-color);
+	border-bottom: 1px dashed var(--divider-color);
+	/* border-radius: 8px; */
+	overflow: hidden;
+	
+	--paper-item-focused: {
+		background-color: var(--primary-background-color);
+		border-top: 1px solid var(--divider-color) !important;
+		border-bottom: 1px solid var(--divider-color) !important;
+	};
+	--paper-item-focused-before: {
+		background-color: var(--primary-background-color);
+		border-top: 1px dashed var(--divider-color) !important;
+		border-bottom: 1px solid var(--divider-color) !important;
+	};
+
+	@apply --paper-expansion-panel-header-collapsed;
+}
+:host([opened=true]) .header {
+	@apply --paper-expansion-panel-header-expanded;
+}
+:host(:not([no-toggle-header])) .header {
+	cursor: pointer;
+}
+
+.toggle {
+	color: var(--disabled-text-color);
+	transition: transform 0.4s ease-in-out;
+}
+.toggle[collapsed] {
+	transform: rotateZ(180deg);
+}
+.content {
+	@apply --paper-font-body1;
+	@apply --paper-expansion-panel-content;
+}
+
+.summary {
+	color: var(--secondary-text-color);
+	@apply --paper-expansion-panel-summary;
+}
+
+.flex {
+	@apply --layout-flex;
+	@apply --paper-expansion-panel-header-text;
+}
+
+
+@media print {
+	paper-icon-button {
+		display: none;
+	}
+	.header {
+		background-color: var(--primary-background-color);
+		border-top: 1px solid var(--divider-color) !important;
+	}
+}
+  

@@ -1,0 +1,92 @@
+<!-- <input class="focus-trap-input" value="focus trap" tabindex="0" /> -->
+<div class="qrcode-continer">
+  <div class="qrcode-message">
+    <div class="message-layout">
+      <teamatical-ui-description 
+        class="label"
+        html="[[messageHtml]]">
+      </teamatical-ui-description>
+    </div>
+    
+    
+    <div class="inputs-layout">
+      <dom-repeat items="[[inputs]]" as="inputi">
+        <template>
+          <div>
+            <paper-input 
+              type$="[[inputi.type]]"
+              name$="[[inputi.name]]" 
+              label$="[[inputi.label]]" 
+              aria-label$="[[inputi.label]]"
+              value$="{{inputi.value}}" 
+              autofocus$="[[inputi.autofocus]]"
+              autocomplete$="[[inputi.autocomplete]]"
+              required$="[[inputi.required]]"
+              maxlength$="[[inputi.maxlength]]">
+            </paper-input>
+          </div>
+        </template>
+      </dom-repeat>
+    </div>
+    
+    
+    <dom-if if="[[_asBool(errorid)]]">
+      <template>
+        <div class="error-section">
+          <p class="error-id">
+            error-id: <span>[[errorid]]</span>
+            <!-- [<span class="copy-tap" on-tap="_copyTap" copy-content$="[[errorid]]" copy-message$="[[localize('app-dialog-errorid-toast')]]">[[localize('app-dialog-copyit-btn')]]</span>] -->
+            
+            <dom-if if="[[_asBool(devErrorDetails)]]">
+              <template>
+                <div class="error-stack">
+                  <span>[[_devdetails(devErrorDetails)]]</span>
+                </div>
+              </template>
+            </dom-if>
+          </p>
+        </div>
+      </template>
+    </dom-if>
+  </div>
+
+  <dom-if if="[[_asBool(qrcode)]]">
+    <template>
+      <div class="qrcode-view">
+          <div class="qrcode"><canvas id="qrcanvas"></canvas></div>
+        </div>
+    </template>
+  </dom-if>
+</div>
+
+
+
+
+<div class="buttons-layout">
+  <dom-repeat items="[[buttons]]" as="btni">
+    <template>
+      <teamatical-ui-button 
+        class$="[[_classBtn('modal-button', btni.class)]]" 
+        href="[[btni.href]]" 
+        on-tap="onTapButton">
+        <span>
+          <dom-if if="[[_asBool(btni.icon)]]">
+            <template>
+              <iron-icon icon$="[[btni.icon]]"></iron-icon>
+            </template>
+          </dom-if>
+          [[btni.title]]
+        </span>
+      </teamatical-ui-button>
+    </template>
+  </dom-repeat>
+</div>
+
+<paper-icon-button 
+  id="closeBtn"
+  class="close-btn"
+  icon="close"
+  aria-label="close"
+  disabled="[[required]]"
+  on-tap="close">
+</paper-icon-button>

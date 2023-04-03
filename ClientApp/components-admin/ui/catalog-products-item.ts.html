@@ -1,0 +1,140 @@
+<div class="frame">
+
+  <div class="close-container">
+    <paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline" on-tap="newProductTap">
+    </paper-icon-button>
+
+    <paper-icon-button 
+      hidden="[[_hideEditDelayed]]" 
+      hidden-animated$="[[_hideEdit]]" 
+      class="close-icon hidden-animated"
+      aria-label="close-icon"
+      cake="1w2" 
+      icon="admin-icons:close" 
+      on-tap="_deleteTap">
+    </paper-icon-button>
+
+    <!-- <iron-icon
+      hidden="[[_hideEditDelayed]]" 
+      hidden-animated$="[[_hideEdit]]" 
+      style="color:#3B5998" 
+      class="grab-icon hidden-animated"
+      cake="1w2" 
+      icon="admin-icons:open-with">
+    </iron-icon> -->
+  </div>
+  
+  <dom-if if="[[!editing]]">
+    <template>
+      <a href="[[_urlItem(item, editing)]]">
+        <teamatical-ui-image 
+          id="img"
+          src="[[item.ImageUrl]]" 
+          alt="[[item.ID]]"
+          drag-handler
+          lazy-load
+          hover-effect>
+        </teamatical-ui-image>
+      </a>
+    </template>
+  </dom-if>
+    
+  <dom-if if="[[editing]]">
+    <template>
+      <teamatical-ui-image 
+        id="img"
+        src="[[item.ImageUrl]]" 
+        alt="[[item.ID]]"
+        drag-handler
+        lazy-load
+        hover-effect>
+      </teamatical-ui-image>
+    </template>
+  </dom-if>
+
+  <dom-if if="[[priceDiscounts.length]]">
+    <template>
+      <div class="discount" hidden$="[[editing]]">
+        <div>
+          <dom-repeat items="[[priceDiscounts]]" as="disi">
+            <template>
+              <p>[[disi]]</p>
+            </template>
+          </dom-repeat>
+        </div>
+      </div>
+    </template>
+  </dom-if>
+  
+  
+  <div class="title">
+    <span hidden$="[[editing_]]">
+      <div>[[item.Name]]</div>
+      <div class="product-disabled" hidden$="[[!item.ProductDisabled]]">
+        <div>
+          <p>[[_stringOrLocalize(item.ProductDisabledReason, 'detail-disabled-mark')]]</p>
+        </div>
+      </div>
+      <div>ID: 
+        <span class="copy-tap" on-tap="_copyTap">[[item.ID]]</span>
+        <a href="[[_urlViewProductConfiguration(item.BaseUrl, item.ID)]]" target="_blank">
+          <iron-icon icon="admin-icons:open-in-new" class="open-in-new" on-tap="gotoProductConfTap"></iron-icon>
+        </a>
+      </div>
+      <div>
+        SKU: 
+        <span class="copy-tap" on-tap="_copyTap">[[item.SKU]]</span>
+        <a href="[[_urlViewProduct(item.ProductID)]]" target="_blank" on-tap="gotoProductConfAdminTap">
+          <iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon>
+        </a>
+      </div>
+    </span>
+
+    <!-- <paper-input 
+        id="profit"
+        name="profit"
+        hidden$="[[hideProfit]]"
+        type="text"
+        placeholder="[[localize('store-item-profit-placeholder')]]"
+        value="{{item.profit}}" 
+        autocomplete="profit"
+        error-message="[[localize('store-item-profit-error')]]">
+
+        <div slot="suffix">%</div>
+
+    </paper-input>
+
+    <paper-input 
+        id="title"
+        name="title"
+        class="title-edit"
+        hidden$="[[!editing]]"
+        type="text"
+        placeholder="[[localize('store-title-placeholder')]]"
+        value="{{item.title}}" 
+        required
+        autocomplete="title"
+        error-message="[[localize('store-title-invalid')]]">
+    </paper-input> -->
+
+  </div>
+
+  
+  <!-- <div class="price_line">
+    <dom-if if="[[priceRegularShow]]">
+      <template>
+        <span class="price">[[priceRegular]]</span>
+      </template>
+    </dom-if>
+    
+    <dom-if if="[[!priceRegularShow]]">
+      <template>
+        <div>
+          <span class="price_new">[[priceSale]]</span>
+          <span class="price_old">[[priceList]]</span>
+        </div>
+      </template>
+    </dom-if>
+  </div> -->
+
+</div>

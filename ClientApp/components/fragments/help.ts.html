@@ -1,0 +1,41 @@
+<iron-media-query query="max-width:390px" query-matches="{{mobileScreen}}"></iron-media-query>
+<app-route route="[[route]]" pattern="/:article" data="{{routeData}}"></app-route>
+
+
+<teamatical-ui-loader hidden$="[[!isConnecting]]"></teamatical-ui-loader>
+
+<div class="main-frame wide">
+  <header>
+    <paper-expansion-panel 
+        id="menuExpansion"
+        class="menu-expansion"
+        header="[[localize('help-menu-title')]]"
+        opened="[[!mobileScreen]]"
+        no-header$="[[!mobileScreen]]"
+        no-header-toggle
+        no-toggle-btn$="[[!mobileScreen]]">
+        <div id="menuContainer" class="menu-container"></div>
+    </paper-expansion-panel>
+  </header>
+
+  <div id="notfound" hidden$="[[!isNotFound]]">
+    <div>
+      <iron-icon icon="icons:find-in-page"></iron-icon>
+      <h1>[[localize('help-article-notfound-title')]]</h1>
+      <p>[[localize('help-article-notfound-msg')]]</p>
+    </div>
+    <a href="/help/home">
+      <teamatical-ui-button>[[localize('help-article-notfound-btn')]]</teamatical-ui-button>
+    </a>
+  </div>
+
+  <teamatical-ui-network-warning 
+    hidden$="[[!isNetworkFailure]]"
+    offline="[[offline]]" 
+    on-try-reconnect="_tryReconnect">
+  </teamatical-ui-network-warning>
+
+
+
+  <div id="articleContainer" class="documentation"></div>
+</div>

@@ -1,0 +1,229 @@
+<app-localstorage-document key="admin-history-viewer-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+			</div>
+		</div>
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="HistoryViewer" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<!-- <template class="row-details">
+				<div class="details-cell white">
+					<h3>Details of [[item.id]]</h3>
+					<paper-toggle-button checked="{{viewasjson}}">JSON Viewer</paper-toggle-button>
+					<pre hidden$="[[viewasjson]]">[[item.Details]]</pre>
+					<json-viewer hidden$="[[!viewasjson]]" json="[[item.Details]]"></json-viewer>
+				</div>
+			</template> -->
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>
+					<span>[[_formatPageN(index, item)]]</span>
+				</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<!-- <vaadin-grid-column width="300px" flex-grow="0" resizable="true" id="ItemType">
+				<template class="header">
+					ItemType
+					<vaadin-grid-filter class="hidden" aria-label="ItemType" path="ItemType" value="[[_filterItemType]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="ItemTypeCombo" style="width: 280px;" value="{{_filterItemType}}"></vaadin-combo-box>
+				</template>
+				<template>[[item.ItemType]]</template>
+				<template class="footer-off">ItemType</template>
+			</vaadin-grid-column> -->
+
+			<vaadin-grid-column width="210px" resizable="true" id="ID">
+				<template class="header">
+					ID
+					<vaadin-grid-filter aria-label="ID" path="ID" value="[[_filterID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<paper-icon-button slot="suffix" class="copy-json-btn"
+						aria-label="show-json-btn"
+						icon="admin-icons:json-doc"
+						on-tap="showDetailsTap">
+					</paper-icon-button>
+					<paper-icon-button slot="suffix" class="copy-json-btn"
+						aria-label="copy-json-btn"
+						icon="icons:content-copy"
+						on-tap="copyJsonDetailsTap">
+					</paper-icon-button>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.id]]</span>
+				</template>
+				<template class="footer-off">ID</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="210px" resizable="true" id="UserID">
+				<template class="header">
+					User ID
+					<vaadin-grid-filter aria-label="UserID" path="UserID" value="[[_filterUserID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<teamatical-ui-user-inline user="[[item.User]]">
+					</teamatical-ui-user-inline>
+				</template>
+				<template class="footer-off">
+					User ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="210px" flex-grow="0" resizable="true" id="Timestamp">
+				<template class="header">
+					<vaadin-grid-sorter path="Timestamp">Timestamp</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Timestamp" aria-placeholder="Timestamp" path="Timestamp" value="[[_filterTimestamp]]"></vaadin-grid-filter>
+				</template>
+				<template>[[_formatDate(item.Timestamp)]]</template>
+				<template class="footer-off">Timestamp</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="210px" resizable="true" id="Author">
+				<template class="header">
+					Author
+					<vaadin-grid-filter aria-label="Author" aria-placeholder="Author" path="Author" value="[[_filterAuthor]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.Author]]</template>
+				<template class="footer-off">Author</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="210px" resizable="true" id="RelatedObjectType">
+				<template class="header">
+					RelatedObjectType
+					<vaadin-grid-filter aria-label="RelatedObjectType" aria-placeholder="RelatedObjectType" path="RelatedObjectType" value="[[_filterRelatedObjectType]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.RelatedObjectType]]</template>
+				<template class="footer-off">RelatedObjectType</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="210px" resizable="true" id="RelatedObjectID">
+				<template class="header">
+					RelatedObjectID
+					<vaadin-grid-filter aria-label="RelatedObjectID" aria-placeholder="RelatedObjectID" path="RelatedObjectID" value="[[_filterRelatedObjectID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="copy-tap" on-tap="_copyTap">[[item.RelatedObjectID]]</span>
+				</template>
+				<template class="footer-off">RelatedObjectID</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="210px" resizable="true" id="Reason">
+				<template class="header">
+					Reason
+				</template>
+				<template>[[item.Reason]]</template>
+				<template class="footer-off">Reason</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="210px" resizable="true" id="Description">
+				<template class="header">
+					Description
+				</template>
+				<template>[[item.Description]]</template>
+				<template class="footer-off">Description</template>
+			</vaadin-grid-column>
+
+			<!-- <vaadin-grid-column width="380px" resizable="true" id="Details">
+				<template class="header">
+					Details
+				</template>
+				<template>[[item.Details]]</template>
+				<template class="footer-off">Details</template>
+			</vaadin-grid-column> -->
+
+			<vaadin-grid-column width="210px" resizable="true" id="Tags">
+				<template class="header">
+					Tags
+					<vaadin-grid-filter aria-label="Tags" aria-placeholder="Tags" path="Tags" value="[[_filterTags]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.Tags]]</template>
+				<template class="footer-off">Tags</template>
+			</vaadin-grid-column>
+		</vaadin-grid>
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				fixed
+				localstorage-key="admin-history-viewer-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+	</div>
+</div>
+
+
+<tmladmin-ui-dialog id="dialogdetails" disabled$="[[dialogdetails.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button 
+			class="close-dialog-small-btn" 
+			icon="admin-icons:close"
+			dialog-dismiss>
+		</paper-icon-button>		
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogdetails.loading]]"
+				hidden$="[[!dialogdetails.loading]]">
+			</paper-progress>
+		</div>
+		<div class="dialog-title">
+			<h3 style="margin-right: auto;">Details of [[dialogdetails.id]]</h3>
+
+			<paper-icon-button slot="suffix" class="copy-json-btn" style="margin: -7px 12px;"
+				aria-label="copy-json-btn"
+				icon="icons:content-copy"
+				on-tap="copyJsonDetailsTap">
+			</paper-icon-button>
+			<paper-toggle-button checked="{{viewasjson}}">JSON Viewer</paper-toggle-button>
+		</div>
+	</div>
+
+	<div slot="body">
+		<div class="details-cell white">
+			<pre hidden$="[[viewasjson]]">[[dialogdetails.Details]]</pre>
+			<json-viewer hidden$="[[!viewasjson]]" json="[[dialogdetails.Details]]"></json-viewer>
+		</div>
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			Close
+		</paper-button>
+	</div>
+	
+</tmladmin-ui-dialog>

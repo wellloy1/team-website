@@ -1,0 +1,130 @@
+<app-localstorage-document key="admin-currency-regions-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+
+				<paper-button class="new-currency-region-btn indigo" raised on-tap="newCurrencyRegionTap">
+					New Currency Region
+				</paper-button>
+			</div>
+		</div>
+
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="currency-regions" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ID]]</span>
+					
+					<a href="[[_urlViewCurrencyRegion(item.ID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" flex-grow="0" resizable="true" id="ID">
+				<template class="header">
+					Currency Region ID
+					<vaadin-grid-filter aria-label="ID" path="ID" value="[[_filterID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ID]]</span>
+					<a href="[[_urlViewCurrencyRegion(item.ID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="140px" flex-grow="0" resizable="true" id="Disabled">
+				<template class="header">
+					Disabled
+					<vaadin-grid-filter class="hidden" aria-label="Disabled" aria-placeholder="Disabled" path="Disabled" value="[[_filterDisabled]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="DisabledCombo" value="{{_filterDisabled}}" style="width:80px;"></vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted$="[[item.Disabled]]">
+						[[item.Disabled]]
+					</span>
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="140px" flex-grow="0" resizable="true" id="Currency">
+				<template class="header">
+					Currency
+					<vaadin-grid-filter class="hidden" aria-label="Currency" aria-placeholder="Currency" path="Currency" value="[[_filterCurrency]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="CurrencyCombo" value="{{_filterCurrency}}" style="width:80px;"></vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted$="[[_equal(item.Currency.id, 'USD')]]">
+						[[_formatCurrency(item.Currency)]]
+					</span>
+				</template>
+				<template class="footer-off">Currency</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column resizable="true" id="Name">
+				<template class="header">
+					Currency Region Name
+					<vaadin-grid-filter aria-label="Name" aria-placeholder="Name" path="Name" value="[[_filterName]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="copy-tap" on-tap="_copyTap">[[item.Name]]</span>
+				</template>
+			</vaadin-grid-column>
+
+		</vaadin-grid>
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-currency-regions-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

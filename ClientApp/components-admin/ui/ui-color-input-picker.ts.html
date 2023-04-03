@@ -1,0 +1,103 @@
+<paper-input 
+  id="inputEl"
+  label="[[label]]" 
+  type="string" 
+  readonly$="[[isManufacturer]]"
+  value="{{search::input}}" 
+  disabled$="[[disabledInput]]">
+  <!-- readonly="true"  -->
+
+  <paper-spinner-lite 
+    slot="suffix" 
+    active="[[searchProgress]]"
+    class="search-progress">
+  </paper-spinner-lite>
+
+  <paper-icon-button
+    id="newColorBtn"
+    slot="prefix"
+    class="color-picker-button" 
+    style$="[[_convertSwColor(selectedColor.h)]]"
+    icon="admin-image:color-lens"
+    disabled="[[disabled]]"
+    on-tap="onNewColorTap">
+  </paper-icon-button>
+
+  <iron-icon
+    slot="prefix"
+    class="color-swatch" 
+    style$="[[_convertSwColor(selectedColor.h)]]"
+    icon="admin-image:color-lens"
+    title="Spot Color">
+  </iron-icon>
+
+  <paper-icon-button 
+    slot="suffix" 
+    class="add-btn" 
+    disabled="[[disabledAddColor]]"
+    icon="admin-icons:add-circle-outline"
+    on-tap="_addColorTap">
+  </paper-icon-button>
+
+</paper-input>
+
+
+<div class="color-selection">
+    <paper-listbox 
+      hidden$="[[LenLess(colors)]]"
+      slot="dropdown-content" 
+      class="dropdown-content" 
+      attr-for-selected="value"
+      selected="{{colorSelected.i}}">
+      <dom-repeat items="[[colors]]" as="colori">
+        <template>
+
+          <paper-icon-item value$="[[colori.i]]" on-tap="_onColorItemTap">
+            <iron-icon
+              slot="item-icon"
+              style$="[[_convertSwColor(colori.h)]]"
+              icon="admin-image:color-lens"
+              title="Spot Color">
+            </iron-icon>
+            [[_compute_selectedColorText(colori.n, colori.h)]]
+          </paper-icon-item>
+
+        </template>
+      </dom-repeat>
+    </paper-listbox>
+</div>
+
+
+
+
+<tmladmin-ui-dialog id="dialognew" disabled$="[[dialognew.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button class="close-dialog-small-btn" icon="admin-icons:close" dialog-dismiss></paper-icon-button>
+    <dom-if if="[[!isManufacturer]]">
+      <template>
+        Edit as Non-Spot Color
+      </template>
+    </dom-if>
+    <dom-if if="[[isManufacturer]]">
+      <template>
+        Edit Color
+      </template>
+    </dom-if>
+	</div>
+
+	<div slot="body">
+    <tmladmin-ui-color-form-picker 
+      color-type-selector$="[[isManufacturer]]"
+      selected-color="{{dialognew.color}}">
+    </tmladmin-ui-color-form-picker>
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			[[localize('admin-dialog-close')]]
+		</paper-button>
+		<paper-button class="order-edit-btn" on-tap="onApplyColorTap">
+			[[localize('admin-dialog-apply')]]
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>

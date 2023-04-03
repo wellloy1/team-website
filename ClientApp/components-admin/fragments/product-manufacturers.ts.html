@@ -1,0 +1,192 @@
+<app-localstorage-document key="admin-product-manufacturers-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+				<paper-button class="create-new-product-btn indigo" raised on-tap="createNewProductTap">
+					Create New Manufacturer Product
+				</paper-button>
+			</div>
+		</div>
+
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="Manufacturers Products" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ProductManufacturerID]]</span>
+					<a href="[[_urlViewProductManufacturer(item.ProductManufacturerID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="340px" resizable="true" id="ProductManufacturerID">
+				<template class="header">
+					Product Manufacturer ID
+					<vaadin-grid-filter aria-label="ProductManufacturerID" path="ProductManufacturerID" value="[[_filterProductManufacturerID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.ProductManufacturerID]]</span>
+					<a href="[[_urlViewProductManufacturer(item.ProductManufacturerID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">
+					Product Manufacturer ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="ManufacturerID">
+				<template class="header">
+					Manufacturer IDs
+					<vaadin-grid-filter class="hidden" aria-label="ManufacturerID" aria-placeholder="ManufacturerID" path="ManufacturerID" value="[[_filterManufacturerID]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="ManufacturerIDCombo" class="wide-combo-box" value="{{_filterManufacturerID}}"></vaadin-combo-box>
+				</template>
+				<template>
+					<span hidden$="[[!item.ManufacturerID]]">
+						<b>[[item.ManufacturerName]]</b><br /> 
+						#: <span class="copy-tap" on-tap="_copyTap">[[item.ManufacturerID]]</span>
+						<a href="[[_urlViewManufacturer(item.ManufacturerID)]]">
+							<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+						</a>
+					</span>
+				</template>
+				<template class="footer-off">
+					Manufacturer IDs
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="180px" resizable="true" id="SKU">
+				<template class="header">
+					SKU
+					<vaadin-grid-filter aria-label="SKU" path="SKU" value="[[_filterSKU]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="copy-tap" on-tap="_copyTap">[[item.SKU]]</span>
+				</template>
+				<template class="footer-off">SKU</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="180px" resizable="true" id="BrandID">
+				<template class="header">
+					BrandID
+					<vaadin-grid-filter aria-label="BrandID" path="BrandID" value="[[_filterBrandID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<!-- <span class="copy-tap" on-tap="_copyTap">[[item.BrandID]]</span> -->
+					<span hidden$="[[!item.BrandID]]">
+						<b>[[item.BrandName]]</b><br /> 
+						#: <span class="copy-tap" on-tap="_copyTap">[[item.BrandID]]</span>
+						<a href="[[_urlViewBrand(item.BrandID)]]">
+							<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+						</a>
+					</span>
+				</template>
+				<template class="footer-off">
+					BrandID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="180px" resizable="true" id="ProductInternalID">
+				<template class="header">
+					Product Internal ID
+					<vaadin-grid-filter aria-label="ProductInternalID" path="ProductInternalID" value="[[_filterProductInternalID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="copy-tap" on-tap="_copyTap">[[item.ProductInternalID]]</span>
+				</template>
+				<template class="footer-off">
+					Product Internal ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="180px" resizable="true" id="Type">
+				<template class="header">
+					Type
+					<vaadin-grid-filter aria-label="Type" path="Type" value="[[_filterType]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.Type]]</template>
+				<template class="footer-off">Type</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="180px" resizable="true" id="Fabric">
+				<template class="header">
+					Fabric
+					<vaadin-grid-filter aria-label="Fabric" path="Fabric" value="[[_filterFabric]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.Fabric]]
+				</template>
+				<template class="footer-off">
+					Fabric
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="180px" resizable="true" id="Variants">
+				<template class="header">
+					Variants
+					<vaadin-grid-filter aria-label="Variants" path="Variants" value="[[_filterVariants]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[_variants(item.Variants)]]
+				</template>
+				<template class="footer-off">
+					Variants
+				</template>
+			</vaadin-grid-column>
+
+		</vaadin-grid>
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-product-manufacturers-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

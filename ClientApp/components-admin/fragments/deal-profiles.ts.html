@@ -1,0 +1,146 @@
+<app-localstorage-document key="admin-deal-profiles-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+
+				<paper-button class="new-deal-profile-btn indigo" raised on-tap="newDealProfileTap">
+					New Deal
+				</paper-button>
+
+				<div class="order-dangersection-btn">
+				</div>
+			</div>
+		</div>
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="DealProfiles" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.DealProfileID]]</span>
+					<a href="[[_urlViewDealProfile(item.DealProfileID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			
+			<vaadin-grid-column width="340px" resizable="true" id="DealProfileID">
+				<template class="header">
+					Deal Profile ID
+					<vaadin-grid-filter aria-label="DealProfileID" path="DealProfileID" value="[[_filterDealProfileID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.DealProfileID]]</span>
+					<a href="[[_urlViewDealProfile(item.DealProfileID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">DealProfileID</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="380px" resizable="true" id="Name">
+				<template class="header">
+					Name
+					<vaadin-grid-filter aria-label="Name" path="Name" value="[[_filterName]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					[[item.Name]]
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="110px" resizable="true" id="IsDisabled">
+				<template class="header">
+					Is Disabled
+					<vaadin-grid-filter class="hidden" aria-label="IsDisabled"
+						aria-placeholder="IsDisabled" path="IsDisabled"
+						value="[[_filterIsDisabled]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="IsDisabledCombo" style="width:80px;" value="{{_filterIsDisabled}}">
+					</vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted$="[[item.IsDisabled]]">
+						[[item.IsDisabled]]
+					</span>
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="380px" resizable="true" id="Type">
+				<template class="header">
+					Type
+					<vaadin-grid-filter aria-label="Type" path="Type" value="[[_filterType]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="copy-tap" on-tap="_copyTap">[[item.Type.title]]</span>
+				</template>
+				<template class="footer-off">Type</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="210px" resizable="true" id="PointOfPurchase">
+				<template class="header">
+					Point Of Purchase
+					<vaadin-grid-filter aria-label="PointOfPurchase" path="PointOfPurchase" value="[[_filterPointOfPurchase]]"></vaadin-grid-filter>
+					<!-- <vaadin-grid-filter class="hidden" aria-label="PointOfPurchase" aria-placeholder="PointOfPurchase" path="PointOfPurchase"
+						value="[[_filterPointOfPurchase]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="PointOfPurchaseCombo" value="{{_filterPointOfPurchase}}" style="width:110px;"></vaadin-combo-box> -->
+				</template>
+				<template>
+					[[item.PointOfPurchase.title]]
+				</template>
+				<template class="footer-off">PointOfPurchase</template>
+			</vaadin-grid-column>
+
+		</vaadin-grid>
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-deal-profiles-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

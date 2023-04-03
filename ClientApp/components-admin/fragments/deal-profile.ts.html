@@ -1,0 +1,465 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Deal Profile #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.DealProfileID]]</span>
+				</h3>
+
+				<div class="buttons">
+					<paper-button 
+						class="order-save-view-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveDealProfileTap">
+						Save Deal
+					</paper-button>
+				
+					<div class="order-dangersection-btn">
+						<paper-button 
+							class="order-discard-btn" 
+							disabled$="[[_dis_discard(loadingAny, order.IsDraft, hasUnsavedChanges)]]" 
+							raised
+							on-tap="discardDraftTap">
+							Discard Draft
+						</paper-button>
+					</div>
+				</div>
+				
+				<div class="order-inputs details-section">
+					<h4>
+						Details:
+					</h4>
+
+					<paper-checkbox 
+						disabled$="[[loadingAny]]" 
+						checked="{{order.IsDisabled}}">
+						Is Disabled
+					</paper-checkbox>
+					
+					<paper-checkbox 
+						disabled$="[[loadingAny]]" 
+						checked="{{order.IsDraft}}">
+						Is Draft
+					</paper-checkbox>
+					
+					<paper-input 
+						label="Name" 
+						type="string" 
+						name="Name"
+						disabled$="[[loadingAny]]" 
+						value="{{order.Name}}"
+						on-value-changed="onInputChanged" 
+						error-message="[[order.notvalid.Name]]"
+						invalid="[[_asBool(order.notvalid.Name)]]">
+					</paper-input>
+
+					
+					<div class="small-inputs">
+						<div class="selection">
+							<tmladmin-ui-dropdown-menu 
+								vertical-align="top" 
+								horizontal-align="left"
+								id-property="id"
+								title-property="title"
+								label="Type"
+								disabled$="[[loadingAny]]" 
+								value="{{order.Type}}"
+								value-list="[[order.Types]]"
+								error-message="[[order.notvalid.Type]]"
+								invalid="[[_asBool(order.notvalid.Type)]]">
+							</tmladmin-ui-dropdown-menu>
+						</div>
+
+						<div class="selection">
+							<tmladmin-ui-dropdown-menu 
+								vertical-align="top" 
+								horizontal-align="left"
+								id-property="id"
+								title-property="title"
+								label="Point Of Purchase"
+								disabled$="[[loadingAny]]" 
+								value="{{order.PointOfPurchase}}"
+								value-list="[[order.PointsOfPurchase]]"
+								error-message="[[order.notvalid.PointOfPurchase]]"
+								invalid="[[_asBool(order.notvalid.PointOfPurchase)]]">
+							</tmladmin-ui-dropdown-menu>
+						</div>
+					
+
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+				</div>
+			</div>
+
+
+			<div class="order-body">
+				<div class="order-inputs graph-section">
+					<h4>
+						<span>Relations:</span>
+
+						<paper-icon-button 
+							slot="suffix" 
+							class="add-btn" 
+							disabled="[[loadingAny]]"
+							icon="admin-icons:add-circle-outline"
+							on-tap="addRelationTap">
+						</paper-icon-button>
+						<!-- <span>
+							<paper-icon-button class="help-btn hide-on-print" 
+								icon="admin-icons:help-outline"
+								disabled="[[loadingAny]]"
+								on-tap="showHelpTap">
+							</paper-icon-button>
+						</span>-->
+					</h4>
+
+					<!-- <div>
+						<paper-toggle-button 
+							checked="{{isDiagram}}">
+							Diagram
+						</paper-toggle-button>
+					</div> -->
+					
+
+					
+					<div id="table">
+						<div class="order-inputs relations-section">
+							<!-- <h4>
+								Add Relation
+							</h4> -->
+
+							<dom-if if="[[order.notvalid.Relations]]"><template>
+								<div class="notvalid alert">
+									<pre>
+										[[order.notvalid.Relations]]
+									</pre>
+								</div>
+							</template></dom-if>
+
+							<div scrollable-x>
+								<div class="table">
+									<div class="header">
+										<div class="w10">
+											&nbsp;
+										</div>
+										<!-- <div class="w5">
+											&nbsp;
+										</div> -->
+										<div>
+											Source
+										</div>
+										<div>
+											Destination
+										</div>
+										<div>
+											Distance
+										</div>
+										<div class="w35">
+											Parts
+										</div>
+										<div class="w5">
+											&nbsp;
+										</div>
+									</div>
+			
+									<dom-repeat items="[[order.Relations]]" as="reli" index-as="relinx">
+										<template>
+											<div class="row vcenter">
+												<div>
+													<paper-icon-button class="upward-btn" icon="admin-icons:arrow-upward" on-tap="upwardRelationTap"></paper-icon-button>
+													<paper-icon-button class="downward-btn" icon="admin-icons:arrow-downward" on-tap="downwardRelationTap"></paper-icon-button>
+												</div>
+												<!-- <div class="centered">
+													<paper-icon-button 
+														class="edit-btn" 
+														icon="admin-editor:mode-edit" 
+														on-tap="editRelationTap">
+													</paper-icon-button>
+												</div> -->
+												<div>
+													<teamatical-ui-select 
+														label="Source"
+														no-caption
+														name="Source"
+														options="[[membersList]]" 
+														text-property="title"
+														value-property="id"
+														value="{{reli.Source}}"
+														on-change="onInputChanged"
+														error-message="[[reli.notvalid.Source]]" 
+														invalid="[[_asBool(reli.notvalid.Source)]]">
+													</teamatical-ui-select>
+													<!-- [[_title(reli.Source)]]
+													<dom-if if="[[reli.notvalid.Source]]"><template>
+														<div class="alert invalid-line">
+															[[reli.notvalid.Source]]
+														</div>
+													</template></dom-if> -->
+												</div>
+												<div>
+													<teamatical-ui-select 
+														label="Destination"
+														no-caption
+														name="Destination"
+														options="[[membersList]]" 
+														text-property="title"
+														value-property="id" 
+														value="{{reli.Destination}}"
+														on-change="onInputChanged"
+														error-message="[[reli.notvalid.Destination]]" 
+														invalid="[[_asBool(reli.notvalid.Destination)]]">
+													</teamatical-ui-select>
+													<!-- [[_title(reli.Destination)]]
+													<dom-if if="[[reli.notvalid.Destination]]"><template>
+														<div class="alert invalid-line">
+															[[reli.notvalid.Destination]]
+														</div>
+													</template></dom-if> -->
+												</div>
+												<div>
+													<paper-input 
+														name="Distance"
+														type="number" 
+														value="{{reli.Distance}}"
+														on-value-changed="onInputChanged"
+														error-message="[[reli.notvalid.Distance]]" 
+														invalid="[[_asBool(reli.notvalid.Distance)]]">
+													</paper-input>
+													<!-- [[reli.Distance]]
+													<dom-if if="[[reli.notvalid.Distance]]"><template>
+															<div class="alert invalid-line">
+																[[reli.notvalid.Distance]]
+															</div>
+													</template></dom-if> -->
+												</div>
+												<div>
+													<dom-if if="[[reli.notvalid.TransactionLimit]]">
+														<template>
+															<div class="alert invalid-line">
+																[[reli.notvalid.TransactionLimit]]
+															</div>
+														</template>
+													</dom-if>
+													<div class="rel-variables">
+														<dom-repeat items="[[reli.TransactionLimit]]" as="parti" index-as="partinx">
+															<template>
+																<div class="horiz-container">
+																	<paper-input 
+																		type="text"
+																		class="var-input"
+																		value="{{parti.Coefficient::input}}"
+																		name="Variable"
+																		on-value-changed="onInputChanged"
+																		maxlength="12"
+																		error-message="[[parti.notvalid.Coefficient]]" 
+																		invalid="[[_asBool(parti.notvalid.Coefficient)]]">
+																	</paper-input>
+																	<span>
+																		&nbsp;×&nbsp;
+																		[[parti.Variable.title]]
+																	</span>
+																	<paper-icon-button 
+																		slot="suffix" 
+																		class="remove-var-btn" 
+																		icon="admin-icons:remove" 
+																		on-tap="removeVariableTap">
+																	</paper-icon-button>
+																</div>
+															</template>
+														</dom-repeat>
+														<div class="add-row">
+															<teamatical-ui-select 
+																no-caption
+																options="[[order.Variables]]" 
+																text-property="title"
+																value-property="id"
+																value="{{variableToAdd}}"
+																on-change="onInputChanged">
+															</teamatical-ui-select>
+															<paper-icon-button 
+																slot="suffix" 
+																class="add-btn" 
+																disabled="[[loadingAny]]"
+																icon="admin-icons:add-circle-outline"
+																on-tap="addVariableTap">
+															</paper-icon-button>
+														</div>
+													</div>
+												</div>
+												<div class="centered">
+													<paper-icon-button class="remove-btn" icon="admin-icons:close" 
+														bcid$="[[bcolorcati.ID]]"
+														cid$="[[coli.i]]"
+														on-tap="removeRelationTap">
+													</paper-icon-button>
+												</div>
+
+												
+											</div>
+										</template>
+									</dom-repeat>
+
+									<dom-if if="[[!LenMore(order.Relations)]]">
+										<template>
+											<div class="noitems">
+												[[localize('admin-list-noitems')]]
+											</div>
+										</template>
+									</dom-if>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+					<div hidden$="[[!isDiagram]]">
+						<teamatical-ui-select 
+							hidden$="[[!membersListNew.length]]"
+							options="[[membersListNew]]" 
+							text-property="title"
+							value-property="id" 
+							value="{{membersListNewSelected}}">
+						</teamatical-ui-select>
+					</div>
+
+					<div id="diagram-container" 
+						hidden$="[[!isDiagram]]"
+						allow-add-tasks$="[[allowAddTasks]]">
+					</div>
+				</div>
+			</div>
+
+
+			<!-- History -->
+			<tmladmin-ui-changes-history 
+				class="order-history"
+				title="Deal Profile History"
+				items="[[order.History]]">
+			</tmladmin-ui-changes-history>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+<!-- dialogs -->
+<tmladmin-ui-dialog id="dialogrelation" disabled$="[[dialogrelation.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button class="close-dialog-small-btn" icon="admin-icons:close" dialog-dismiss></paper-icon-button>
+		<!-- <div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogrelation.loading]]" hidden$="[[!dialogrelation.loading]]"></paper-progress>
+		</div> -->
+		<h2>
+			Edit Relation
+		</h2>
+	</div>
+
+	<div slot="body">
+		
+		<teamatical-ui-select 
+			label="Source"
+			name="Source"
+			options="[[membersList]]" 
+			text-property="title"
+			value-property="id"
+			value="{{dialogrelation.reli.Source}}"
+			on-change="onInputChanged"
+			error-message="[[dialogrelation.reli.notvalid.Source]]" 
+			invalid="[[_asBool(dialogrelation.reli.notvalid.Source)]]">
+		</teamatical-ui-select>
+
+		<teamatical-ui-select 
+			label="Destination"
+			name="Destination"
+			options="[[membersList]]" 
+			text-property="title"
+			value-property="id" 
+			value="{{dialogrelation.reli.Destination}}"
+			on-change="onInputChanged"
+			error-message="[[dialogrelation.reli.notvalid.Destination]]" 
+			invalid="[[_asBool(dialogrelation.reli.notvalid.Destination)]]">
+		</teamatical-ui-select>
+
+		<paper-input 
+			label="Distance" 
+			name="Distance"
+			type="number" 
+			value="{{dialogrelation.reli.Distance}}"
+			on-value-changed="onInputChanged"
+			error-message="[[dialogrelation.reli.notvalid.Distance]]" 
+			invalid="[[_asBool(dialogrelation.reli.notvalid.Distance)]]">
+		</paper-input>
+		
+
+		<multiselect-combo-box 
+			items="[[order.Variables]]"
+			item-id-path="id" 
+			item-value-path="id" 
+			item-label-path="title"
+			selected-items="{{dialogrelation.reli.Parts}}"
+			disabled$="[[loadingAny]]"
+			label="Parts" 
+			placeholder="Add" 
+			error-message="[[dialogrelation.reli.notvalid.Parts]]" 
+			invalid="[[_asBool(dialogrelation.reli.notvalid.Parts)]]"
+			clear-button-visible
+			allow-custom-values-off>
+			<template>
+				[[item.title]]
+			</template>
+		</multiselect-combo-box>
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			[[localize('admin-dialog-close')]]
+		</paper-button>
+		<paper-button dialog-confirm class="order-edit-btn" on-tap="editRelationApplyTap">
+			[[localize('admin-dialog-apply')]]
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>
+
+
+<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Confirm Deal Profile to Save</h2>
+	<paper-dialog-scrollable>
+		Deal Profile #: [[order.DealProfileID]] is going to be saved...are you sure?
+		<!-- <paper-textarea label="Refund reason" value="{{dialogcancel_reason}}"></paper-textarea> -->
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="saveDealProfileConfirmTap">Save Deal Profile</paper-button>
+	</div>
+</paper-dialog>

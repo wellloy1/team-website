@@ -1,0 +1,282 @@
+<app-route route="[[route]]" pattern="/:gid" data="{{routeData}}"></app-route>
+
+<teamatical-purchase-invoice-data 
+  id="purchase-invoice-data" 
+  gid="[[routeData.gid]]"
+  participants="{{participants}}" 
+  num-items="{{numItems}}"
+  query-params="{{queryParams}}"
+  searching-progress="{{searchingProgress}}"
+  user-info="{{userInfo}}" 
+  website-url="[[websiteUrl]]"
+  loading="{{loading}}" 
+  failure="{{failure}}"
+  visible="[[visible]]" 
+  saving="{{saving}}">
+</teamatical-purchase-invoice-data>
+
+
+<teamatical-ui-loader hidden$="[[_isNotConn]]"></teamatical-ui-loader>
+
+<div hidden$="[[_isNoParticipants]]">
+  <div class="subsection" visible>
+    <header>
+      <h1 hidden$="[[orderView]]">
+        <span>[[localize('purchase-invoice-title')]]</span>
+
+        <paper-icon-button 
+          class="purchase-invoice-print" 
+          aria-label$="[[localize('purchase-invoice-print-aria-label')]]" 
+          disabled$="[[disablePrintInvoice]]"
+          icon="print" 
+          on-tap="printInvoice">
+        </paper-icon-button>
+      </h1>
+
+      <div class="parts">
+        <div class="part-left">
+          <div class="part-content">
+            <p>
+              Teamatical Inc
+            </p>
+            
+            <h3>Bill To</h3>
+            <p>
+              [[participants.Organization]]
+            </p>
+          </div>
+        </div>
+        
+        <div class="part-right">
+          <div class="part-content">
+            <p>
+              #: [[participants.InvoiceID]]
+              <span class="hidden" showen$="[[participants.Sandbox]]">
+                <iron-icon icon="warning" class="warning"></iron-icon>
+                [[localize('order-testmark')]]
+              </span>
+            </p>
+            <p>
+              Date: [[_formatDate(participants.Created)]]
+            </p>
+            <p>
+              Payment Terms: [[participants.PaymentTerms]]
+            </p>
+            <p>
+              Due Date: [[_formatDate(participants.Due)]]
+            </p>
+            <p>
+              Balance Due: [[_computeBalanceDue(participants.totals, participants.Currency)]]
+            </p>
+          </div>
+        </div>
+      </div>
+      
+    </header>
+
+    <div id="search-progress-container">
+      <paper-spinner-lite 
+        id="search-progress"
+        active="[[searchingProgress]]">
+      </paper-spinner-lite>
+    </div>
+
+    <!-- <paper-input 
+      id="search"
+      name="search"
+      hidden$="[[_hideSearchInput]]"
+      type="text"
+      label="[[localize('purchase-invoice-search-input')]]" 
+      aria-label$="[[localize('purchase-invoice-search-input')]]"
+      placeholder="[[localize('purchase-invoice-search-placeholder')]]"
+      value="{{participants.search::input}}"
+      required
+      autocomplete="search"
+      error-message="[[localize('purchase-invoice-search-invalid')]]">
+    </paper-input> -->
+
+
+    <p class="empty-list" hidden$="[[_hasItemsNoProgress]]">
+      [[localize('purchase-invoice-underconstruction')]]
+    </p>
+
+    <p class="empty-list" hidden$="[[_hasInitialItems]]">
+      [[localize('purchase-invoice-empty')]]
+    </p>
+
+    <p class="empty-list" hidden$="[[_hasSearchedItems]]">
+      [[localize('purchase-invoice-search-empty')]]
+    </p>
+
+    <div class="participant-list-head">
+      <!-- <paper-checkbox checked="{{participants.checkboxAll}}" on-change="checkboxAllChangeHandler">
+        [[localize('purchase-invoice-checkbox-all')]]
+      </paper-checkbox> -->
+    </div>
+
+    <div id="list" class="participant-list">
+      <dom-repeat 
+        items="[[participants.items]]" 
+        as="participanti">
+        <template>
+
+          <!-- <div class="print-header">
+            <iron-icon icon="teamatical:logo" alt="teamatical:logo"></iron-icon>
+          </div> -->
+          <div class="participant">
+            <div class="participant-header">
+              <h3>
+                <div>
+                  <span>
+                    #[[formatIndex(index)]] :
+                    [[participanti.OrderID]] 
+                    - [[participanti.BillLastName]] [[participanti.BillFirstName]]
+                    - [[participanti.AccountEmail]], [[participanti.AccountPhone]]
+                  </span>
+                  <span>([[localize('purchase-invoice-participant-counts', 'items', participanti.OrderItemCount)]])</span>
+                </div>
+              </h3>
+            </div>
+
+            <div class="participant-items">
+              <!-- <h4>
+                [[localize('purchase-invoice-title-paymenthistory')]]
+                <span class="hidden" showen$="[[orderi.Sandbox]]">
+                  <iron-icon icon="warning" class="warning"></iron-icon> [[localize('purchase-invoice-testmark')]]
+                </span>
+              </h4> -->
+              <div class="table">
+                <div class="header">
+                  <div>
+                    <!-- images -->
+                  </div>
+                  <div>
+                    [[localize('purchase-invoice-participant-details')]]
+                  </div>
+                  <div>
+                    [[localize('purchase-invoice-participant-qty')]]
+                  </div>
+                </div>
+              
+                <dom-repeat items="[[participanti.Items]]" as="itemi">
+                  <template>
+                    <div class="row vcenter participant-item">
+                      <div class="w20">
+                        <div id="image-product-grid" class="image-product-grid">
+                          <!-- tooltip$="[[itemi.ProductTitle]]" -->
+                          <dom-repeat items="[[_computeProductImagesA(itemi.ProductTitle, itemi.ImageUrls)]]" as="imgi">
+                            <template>
+                              <teamatical-ui-image 
+                                src="[[imgi.imgUrl]]" 
+                                alt="[[imgi.title]]" 
+                                lazy-load="[[lazyload]]" 
+                                lazy-observe=[[lazyObserve]]>
+                              </teamatical-ui-image>
+                            </template>
+                          </dom-repeat>
+                        </div>
+                      </div>
+                      <div>
+                        <div>
+                          [[localize('purchase-invoice-participant-producttitle')]]
+                          [[itemi.ProductTitle]]
+                        </div>
+                        <dom-if if="[[_asBool(itemi.Player)]]">
+                          <template>
+                            <div>
+                              [[localize('purchase-invoice-participant-player')]]
+                              [[_formatPlayer(itemi.Player)]]
+                            </div>
+                          </template>
+                        </dom-if>
+                        <div>
+                          [[localize('purchase-invoice-participant-size')]]
+                          [[_formatSize(itemi.Sizes)]]
+                        </div>
+                        <dom-if if="[[_asBool(itemi.SKU)]]">
+                          <template>
+                            <div>
+                              [[localize('purchase-invoice-participant-sku')]]
+                              [[itemi.SKU]]
+                            </div>
+                          </template>
+                        </dom-if>
+                        <dom-if if="[[_asBool(itemi.ManufacturerSKU)]]">
+                          <template>
+                            <div>
+                              [[localize('purchase-invoice-participant-manf_sku')]]
+                              [[itemi.ManufacturerSKU]]
+                            </div>
+                          </template>
+                        </dom-if>
+
+                        <!-- roster? -->
+                        <!-- store? -->
+                        <!-- AccessoryVariant?  -->
+                        <!-- CustomOption?  -->
+                      </div>
+                      <div class="w10">
+                        [[itemi.Quanity]]
+                      </div>
+                    </div>
+
+                  </template>
+                </dom-repeat>
+              </div>
+
+            <!-- <div class="participant-footer">
+            </div> -->
+          </div>
+          
+        </template>
+      </dom-repeat>
+    </div>
+
+    <div class="participant-list-footer">
+      <div class="total-items">
+        <dom-repeat items="[[_computeTotalsVisible(participants.totals)]]" as="totali">
+          <template>
+            <div class$="total-row {{totali.class}}">
+              <div>[[totali.title]]</div>
+              <div>[[_formatTotalsItem(totali.id, totali.amount, participants.Currency)]]</div>
+            </div>
+          </template>
+        </dom-repeat>
+      </div>
+
+      <!-- <div class="notes">
+        <p>Notes: ...</p>
+      </div> -->
+    </div>
+
+    <div class="detail-buttons progress-container">
+      <teamatical-ui-button 
+        class="back-btn" 
+        href="[[_hrefAccountPurchaseOrders()]]">
+        [[localize('purchase-invoice-btn-back')]]
+      </teamatical-ui-button>
+
+      <teamatical-ui-button 
+        class="print-btn" 
+        on-tap="printInvoice" 
+        disabled$="[[disablePrintInvoice]]">
+        [[localize('purchase-invoice-btn-print')]]
+      </teamatical-ui-button>
+      <teamatical-ui-button 
+        responsive 
+        responsive-hide 
+        class="print-btn" 
+        on-tap="printInvoice" 
+        disabled$="[[disablePrintInvoice]]">
+        [[localize('purchase-invoice-btn-print')]]
+      </teamatical-ui-button>
+    </div>
+
+  </div>
+</div>
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

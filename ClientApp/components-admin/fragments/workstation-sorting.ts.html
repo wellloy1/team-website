@@ -1,0 +1,488 @@
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="sorting"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+
+<div class="maindiv horiz">
+	<div class="order-container sticky">
+		<div class="order">
+			<!-- Sorting -->
+			<div class="order-sorting hidden" showen-flex$="[[_asBool(order)]]">
+
+				<div class="sticky-container">
+					<h2>
+						<paper-icon-button 
+							class="refresh-btn" 
+							icon="admin-icons:refresh"
+							title="[[localize('admin-ws-refresh')]]" 
+							disabled="[[loadingAny]]"
+							on-tap="_reloadTap">
+						</paper-icon-button>
+
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+
+						[[localize('admin-ws-sorting-title')]]
+
+						<dom-if if="[[order.BatchID]]">
+							<template>
+								- [[localize('admin-ws-sorting-batch')]] #: [[order.BatchID]]
+								<span class="hidden" showen$="[[order.Sandbox]]">
+									<iron-icon icon="admin-icons:warning" class="warning" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+									[[localize('admin-ws-test-item')]]
+								</span>
+							</template>
+						</dom-if>
+
+					</h2>
+
+					<paper-progress 
+						id="progress" 
+						indeterminate 
+						class="" 
+						disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+
+
+				<div class="main">
+					<tmladmin-ui-barcode-input
+						id="barcodeinput" 
+						label$="[[barcodeLabel]]" 
+						name="barcode" 
+						class="barcode-input" 
+						type="string" 
+						disabled$="[[loadingAny]]" 
+						loading$="[[loadingCmd]]" 
+						sorting-mode
+						on-barcode-changed="onInputChanged"
+						on-barcode-enter="onBarcodeInputEnter">
+					</tmladmin-ui-barcode-input>
+
+					<dom-if if="[[showPartsStats]]">
+						<template>
+							<div class="parts-container push">
+								<div class="table">
+									<div class="header">
+										<div>
+											[[localize('admin-ws-sorting-batch')]]
+										</div>
+										<div>
+											[[localize('admin-ws-sorting-item-total')]]
+										</div>
+										<div>
+											[[localize('admin-ws-sorting-item-parts')]]&nbsp;/&nbsp;[[localize('admin-ws-sorting-item-sortedparts')]]
+										</div>
+									</div>
+									<div class="row">
+										<div>
+											[[order.BatchID]]
+											<span class="hidden" showen$="[[order.Sandbox]]">
+												<iron-icon icon="admin-icons:warning" class="warning" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+											</span>
+										</div>
+										<div>
+											[[order.TotalProducts]]
+										</div>
+										<div>
+											[[order.TotalParts]]&nbsp;/&nbsp;[[order.TotalSortedParts]]
+										</div>
+									</div>
+								</div>
+							</div>
+						</template>
+					</dom-if>
+					
+					<dom-if if="[[order.Invalid]]">
+						<template>
+							<h3 class="invalid">
+								[[localize('admin-ws-sorting-item-invalid')]]
+							</h3>
+						</template>
+					</dom-if>
+
+
+					<dom-if if="[[order.RecentAccessory]]">
+						<template>
+							<div class="order-recent-accessory push">
+								<h3>[[localize('admin-ws-sorting-recent-accessory')]] - [[order.RecentAccessory.Title]]</h3>
+								<p>[[order.RecentAccessory.Properties]]</p>
+								<div class="table">
+									<div class="header">
+										<div>
+											[[localize('admin-ws-sorting-batch')]]
+										</div>
+										<div>
+											[[localize('admin-ws-sorting-accessories-item-qrcode')]]
+										</div>
+										<div>
+											[[localize('admin-ws-sorting-accessories-item-toteqty')]]
+										</div>
+										<div>
+											[[localize('admin-ws-sorting-accessories-item-pertoteqty')]]
+										</div>
+										<div>
+											[[localize('admin-ws-sorting-accessories-item-qtysorted')]]
+										</div>
+										<div>
+										</div>
+									</div>
+									<div class="row">
+										<div>
+											[[order.BatchID]]
+											<span class="hidden" showen$="[[order.Sandbox]]">
+												<iron-icon icon="admin-icons:warning" class="warning" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+											</span>
+										</div>
+										<div>
+											<teamatical-ui-image-svg 
+												class="qr-code" 
+												svg-src="[[order.RecentAccessory.Doses.0.QrCodeSvg]]">
+											</teamatical-ui-image-svg>
+										</div>										
+										<div>
+											[[order.RecentAccessory.Doses.0.Quantity]]
+										</div>
+										<div>
+											[[order.RecentAccessory.Doses.0.PerToteQuantity]]
+										</div>
+										<div>
+											[[order.RecentAccessory.Doses.0.SortedQuantity]]
+										</div>
+									</div>
+								</div>
+							</div>
+						</template>
+					</dom-if>
+					
+				</div>
+				
+			</div>
+
+			<div class="order-buttons hidden" showen-flex$="[[_asBool(order.BatchID)]]">
+				<paper-button class="order-startnew-btn" raised mo-id$="[[order.ManufactureOrderID]]" batch-id$="[[order.BatchID]]"
+					disabled="[[disabledStartNewBatch]]" on-tap="startnewTap">
+					[[localize('admin-ws-sorting-btn-startnewbatch')]]
+				</paper-button>
+
+				<paper-button class="order-sortreset-btn" raised mo-id$="[[order.ManufactureOrderID]]" batch-id$="[[order.BatchID]]"
+					disabled="[[disabledSortResetBatch]]" on-tap="sortResetTap">
+					[[localize('admin-ws-sorting-btn-sortreset')]]
+				</paper-button>
+			</div>
+
+			<div class="order-buttons hidden" showen-flex$="[[_asBool(order.BatchID)]]">
+				<div class="spinner">
+					<paper-button class="order-totelables-btn" raised mo-id$="[[order.ManufactureOrderID]]"
+						batch-id$="[[order.BatchID]]" disabled="[[disabledPrintToteLabels]]" on-tap="printToteLabelsTap">
+						[[localize('admin-ws-sorting-btn-printtotelabels')]] ([[order.ToteLabels.length]])
+					</paper-button>
+					<paper-spinner-lite class="thick"></paper-spinner-lite>
+				</div>
+				
+				<div class="spinner">
+					<paper-button class="order-batchlabel-btn" raised mo-id$="[[order.ManufactureOrderID]]"
+						batch-id$="[[order.BatchID]]" disabled="[[disabledPrintBatchLabel]]" on-tap="printBatchLabelTap">
+						[[localize('admin-ws-sorting-btn-printbatchlabel')]] (1)
+					</paper-button>
+					<paper-spinner-lite class="thick"></paper-spinner-lite>
+				</div>
+				
+				<paper-button class="order-accessories-btn" raised mo-id$="[[order.ManufactureOrderID]]" batch-id$="[[order.BatchID]]"
+					disabled="[[disabledPrintAccessories]]" on-tap="printAccessoriesTap">
+					[[localize('admin-ws-sorting-btn-printaccessories')]] ([[order.Accessories.length]])
+				</paper-button>
+			</div>
+
+			<div class="order-buttons hidden" showen-flex$="[[_asBool(order.BatchID)]]">
+				<!-- <paper-checkbox checked="{{showStateParts}}">
+					[[localize('admin-ws-sorting-showstate-parts')]]
+				</paper-checkbox>
+
+				<paper-checkbox checked="{{showStateAccessories}}">
+					[[localize('admin-ws-sorting-showstate-accessories')]]
+				</paper-checkbox> -->
+				<h3>[[localize('admin-ws-sorting-showleds')]] &nbsp;</h3>
+				<div class="table led-colors">
+					<div class="row vcenter">
+						<div>
+							<div class="showstate parts">
+								[[localize('admin-ws-sorting-showstate-completed')]]
+							</div>
+						</div>
+						<div>
+							<div class="showstate accessories">
+							[[localize('admin-ws-sorting-showstate-partly')]]
+							</div>
+						</div>
+						<div>
+							<div class="showstate empty">
+								[[localize('admin-ws-sorting-showstate-empty')]]
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<paper-button class="order-showstate-btn" raised mo-id$="[[order.ManufactureOrderID]]" batch-id$="[[order.BatchID]]"
+					disabled="[[disabledShowState]]" on-tap="showStateTap">
+					[[localize('admin-ws-sorting-btn-showstate')]]
+				</paper-button>
+			</div>
+
+			<div class="order-buttons hidden" showen-flex$="[[_asBool(order.BatchID)]]">
+				<h3>[[localize('admin-ws-sorting-showleds')]] &nbsp;</h3>
+				<div class="table led-colors">
+					<div class="row vcenter">
+						<div>
+							<div class="showstate parts">
+								[[localize('admin-ws-sorting-showstate-parts')]]
+							</div>
+						</div>
+						<div>
+							<div class="showstate accessories">
+							[[localize('admin-ws-sorting-showstate-accessories')]]
+							</div>
+						</div>
+						<div>
+							<div class="showstate empty">
+								[[localize('admin-ws-sorting-showstate-empty')]]
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<paper-button class="order-showstate-btn" raised mo-id$="[[order.ManufactureOrderID]]" batch-id$="[[order.BatchID]]"
+					disabled="[[disabledShowState]]" on-tap="showStatePartsAccessoriesTap">
+					[[localize('admin-ws-sorting-btn-showpartsaccessories')]]
+				</paper-button>
+			</div>
+
+
+
+
+			<dom-if if="[[LenMore(order.Accessories)]]">
+				<template>
+
+					<div class="order-accessories">
+						<h2>
+							[[localize('admin-ws-sorting-accessories-title')]] - [[localize('admin-ws-sorting-batch')]] 
+							#:[[order.BatchID]]
+							<span class="hidden" showen$="[[order.Sandbox]]">
+								<iron-icon icon="admin-icons:warning" class="warning" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+							</span>
+
+							<teamatical-ui-image-svg 
+								class="qr-code right" 
+								svg-src="[[order.QrCodeSvg]]">
+							</teamatical-ui-image-svg>
+						</h2>
+
+						<dom-repeat items="[[order.Accessories]]" as="accessi">
+							<template>
+								<div class="order-accessories-item unbrakable-on-print">
+									<h3>
+										[[accessi.Title]], SKU: [[accessi.SKU]]
+										<!-- 
+											
+
+										# [[_formatIndex(rpindex)]]
+
+										<span>
+											<paper-icon-button class="barcodes-btn hide-on-print" icon="admin-icons:fingerprint" disabled="[[loadingAny]]"
+												nonvisible$="[[!_asBool(rpi.Barcodes)]]"
+												on-tap="showBarcodesTap">
+											</paper-icon-button>
+										</span>
+		
+										 -->
+
+										 <span style="float: right;">
+											[[accessi.Address]]
+										 </span>
+									</h3>
+									
+									<div class="col-1">
+										<div class="access-image">
+											<dom-if if="[[accessi.ImageUrl]]">
+												<template>
+													<img src="[[accessi.ImageUrl]]" />
+												</template>
+											</dom-if>
+											<div></div>
+										</div>
+									</div>
+									<div class="col-2">
+										<div>
+											<dom-if if="[[accessi.Color]]">
+												<template>
+													<div class="color" style$="[[_convertBkgColor(accessi.Color.h)]]">
+														[[accessi.Color.n]]
+													</div>
+												</template>
+											</dom-if>
+										</div>
+										<div>
+											<span class="qty total">
+												[[accessi.Quantity]]
+												<span hidden$="[[!accessi.IsContinous]]">
+													[[accessi.Units]]
+												</span>												
+											</span>
+											[[accessi.Properties]]
+										</div>
+
+										<div class="table width100">
+											<div class="header">
+												<div>
+													[[localize('admin-ws-sorting-accessories-item-qrcode')]]
+												</div>
+												<div>
+													[[localize('admin-ws-sorting-accessories-item-toteqty')]]
+												</div>
+												<div>
+													[[localize('admin-ws-sorting-accessories-item-pertoteqty')]]
+												</div>
+												<div>
+													[[localize('admin-ws-sorting-accessories-item-qtysorted')]]
+												</div>
+												<div>
+												</div>
+											</div>
+
+											<dom-repeat items="[[accessi.Doses]]" as="dosei">
+												<template>
+													<div class="row vcenter" highlight$="[[_isDose(order.RecentAccessory.Doses.0, dosei)]]">
+														<div>
+															<div>
+																<!-- <span class="pdf-barcode">*[[dosei.Barcode]]*</span><br /> -->
+																[[dosei.Barcode]]
+															</div>
+															<teamatical-ui-image-svg 
+																class="qr-code click" 
+																svg-src="[[dosei.QrCodeSvg]]" 
+																on-tap="doseQrCodeTap">
+															</teamatical-ui-image-svg>
+														</div>
+														<div class="qty">
+															[[dosei.Quantity]]
+														</div>
+														<div class="qty">
+															[[dosei.PerToteQuantity]]
+														</div>
+														<div class="qty">
+															[[dosei.SortedQuantity]]
+														</div>
+														<div class="qty">
+															<span hidden$="[[!accessi.IsContinous]]">
+																[[dosei.Size]] ([[_formatDouble(dosei.SizeProduction,1)]])
+															</span>
+															[[accessi.Units]]
+														</div>
+													</div>
+												</template>
+											</dom-repeat>
+										</div>
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+
+					</div>
+
+				</template>
+			</dom-if>
+		</div>
+	</div>
+</div>
+
+
+
+<div class="fbuttons-container">
+	<paper-fab 
+		class="button"
+		label="R"
+		disabled$="[[loadingAny]]"
+		title$="[[localize('admin-ws-replacements-btn-tooltip')]]"
+		mini
+		on-tap="openReplacementsTap">
+	</paper-fab>
+</div>
+
+
+
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="sorting"
+	website-url="[[websiteUrl]]"
+	sticker-printer
+	barcode-scanner
+	multi-scanners
+	led-controller
+	sorting-delays
+	loading="{{loadingWS}}"
+	visible="[[visible]]">
+</teamatical-ui-scanner-printer-settings>
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>
+
+
+
+
+<app-localstorage-document key="admin-ws-printing-queue" data="{{updateQueue}}"></app-localstorage-document>
+
+
+<paper-dialog id="startnew_dialog" class="dialog-wide" proceed no-overlap dynamic-align
+	vertical-align="middle" horizontal-align="center" on-iron-overlay-closed="onCloseStartNewDialog">
+
+	<h2>[[localize('admin-ws-sorting-dlg-startnewbatch')]]</h2>
+
+	<paper-dialog-scrollable>
+
+		<div>
+			[[localize('admin-ws-sorting-dlg-startnewbatch-msg', 'BatchID', order.BatchID)]]
+			<span class="hidden" showen$="[[order.Sandbox]]">
+				<iron-icon icon="admin-icons:warning" class="warning" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+				[[localize('admin-ws-test-item')]]
+			</span>
+		</div>
+
+	</paper-dialog-scrollable>
+
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>[[localize('admin-ws-sorting-btn-dlg-close')]]</paper-button>
+		<paper-button dialog-confirm on-tap="startnewbatchTap">[[localize('admin-ws-sorting-btn-dlg-startnew')]]</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="sortreset_dialog" class="small-with-icon" proceed no-overlap dynamic-align 
+	vertical-align="middle" horizontal-align="center">
+	<h2>[[localize('admin-ws-sorting-dlg-sortreset')]]</h2>
+	<paper-dialog-scrollable>
+		<iron-icon class="error" icon="admin-icons:highlight-off" showen$=""></iron-icon>
+		<br /><br />
+		<br /><br />
+		[[localize('admin-ws-sorting-dlg-sortreset-msg', 'moid', order.id)]]
+		<paper-textarea 
+			style="margin: 16px;"
+			label="Reset reason" 
+			value="{{sortreset_dialog.Reason}}"
+			on-value-changed="onInputChanged" 
+			name="sortreset_dialog.Reason"
+			error-message="[[sortreset_dialog.notvalid.Reason]]"
+			invalid="[[_asBool(sortreset_dialog.notvalid.Reason)]]"
+		></paper-textarea>
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>[[localize('admin-dialog-close')]]</paper-button>
+		<paper-button dialog-confirm class="order-sortreset-btn" on-tap="sortingStateResetConfirmTap">
+			[[localize('admin-ws-sorting-btn-sortreset')]]
+		</paper-button>
+	</div>
+</paper-dialog>

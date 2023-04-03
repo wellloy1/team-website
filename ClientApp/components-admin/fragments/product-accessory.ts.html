@@ -1,0 +1,301 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Product Accessory #: <span class="copy-tap" on-tap="_copyTap">[[order.ProductAccessoryID]]</span>
+
+					<br/>
+					<span class="barcode-as-text">
+						Barcode: <span class="copy-tap" on-tap="_copyTap">[[order.Barcode]]</span>
+					</span>
+					<span class="barcode">
+						*[[order.Barcode]]*
+					</span>
+
+					<teamatical-ui-image-svg class="qr-code" svg-src="[[order.QrCodeSvg]]"></teamatical-ui-image-svg>
+				</h3>
+
+				<div class="buttons">
+					<paper-button 
+						class="order-resnapshot-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveAccessoryConfirmTap">
+						Save Accessory
+					</paper-button>
+				
+					<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm Accessory to Save</h2>
+						<paper-dialog-scrollable>
+							Product Accessory #: [[order.ProductAccessoryID]] is going to be saved...are you sure?
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss>Close</paper-button>
+							<paper-button dialog-confirm autofocus on-tap="saveAccessoryTap">Save Accessory</paper-button>
+						</div>
+					</paper-dialog>
+
+					<paper-button 
+						class="order-clone-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideCloneBtn(order)]]" 
+						raised
+						on-tap="cloneAccessoryTap">
+						Clone Accessory
+					</paper-button>
+			
+				</div>
+				
+				<div class="order-inputs">
+					<h4>
+						Details:
+					</h4>
+
+					<div class="small-inputs">
+						<paper-input 
+							label="SKU" 
+							type="string" 
+							value="{{order.SKU}}"
+							name="SKU"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.SKU]]" 
+							invalid="[[_asBool(order.notvalid.SKU)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Name" 
+							type="string" 
+							value="{{order.Name}}"
+							name="Name"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.Name]]" 
+							invalid="[[_asBool(order.notvalid.Name)]]">
+						</paper-input>
+						
+						<paper-input 
+							label="Packing Size" 
+							type="number" 
+							value="{{order.PackingSize}}"
+							name="PackingSize"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.PackingSize]]" 
+							invalid="[[_asBool(order.notvalid.PackingSize)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Units" 
+							type="string" 
+							value="{{order.Units}}"
+							name="Units"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.Units]]" 
+							invalid="[[_asBool(order.notvalid.Units)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Production Length (p.u.)" 
+							type="string" 
+							disabled="[[!order.IsContinous]]"
+							value="{{order.ProductionLength::input}}"
+							name="order.ProductionLength" on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.ProductionLength]]"
+							invalid="[[_asBool(order.notvalid.ProductionLength)]]">
+						</paper-input>
+
+						<paper-input 
+							label="[[_formatWeightGramsLabel('Weight (g)', order.WeightGrams)]]"
+							type="string" 
+							value="{{order.WeightGrams}}"
+							name="order.WeightGrams" on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.WeightGrams]]"
+							invalid="[[_asBool(order.notvalid.WeightGrams)]]">
+						</paper-input>
+
+						
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+
+					<paper-checkbox checked="{{order.IsContinous}}">
+						Is Continous
+					</paper-checkbox>
+					
+					<paper-checkbox checked="{{order.HasColor}}">
+						Has Color
+					</paper-checkbox>
+
+					<paper-checkbox checked="{{order.AddOnQA}}">
+						Add On QA
+					</paper-checkbox>
+
+					<paper-checkbox checked="{{order.AddOnHeatTransfer}}">
+						Add On Heat Transfer
+					</paper-checkbox>
+					
+
+					<tmladmin-ui-color-input-picker
+						disabled$="[[!order.HasColor]]"
+						website-url="[[websiteUrl]]"
+						label="Thread Color" 
+						selected-color="{{order.Color}}"
+						colors-swatch-palette="[[order.ColorsPalette]]" 
+						colors-pantone-palette="[[colorsPalette]]"
+						name="Color"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.Color]]" 
+						invalid="[[_asBool(order.notvalid.Color)]]">
+					</tmladmin-ui-color-input-picker>
+
+					<paper-textarea 
+						label="Properties:" 
+						value="{{order.Properties}}"
+						on-value-changed="onInputChanged" 
+						error-message="[[order.notvalid.Properties]]" 
+						invalid="[[_asBool(order.notvalid.Properties)]]">
+					</paper-textarea>
+
+
+					<h5>Accessory Picture</h5>
+					<teamatical-ui-image-uploader 
+						id="image-uploader" 
+						api-path="[[_uploadImagePath(APIPath, 'upload-image')]]"
+						website-url="[[websiteUrl]]"
+						visible="[[visible]]"
+						files="{{order.Images}}">
+					</teamatical-ui-image-uploader>
+
+				</div>
+
+
+				<div class="manufacturers-dialogs">
+					<paper-dialog id="dialog_manufacture" class="dialog-wide" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center"
+					 on-iron-overlay-closed="onCloseEditManufacturerDialog">
+						<h2>[[editManTitle]]</h2>
+						<paper-dialog-scrollable>
+							<h4>#: [[editManItem.ManufacturerID]]</h4>
+							<h3>[[editManItem.ManufacturerName]]</h3>
+				
+							<paper-input label="Tote/Row Addess" type="string" value="{{editManItem.Address::input}}" name="editManItem.Address"
+								on-value-changed="onInputChanged" error-message="[[editManItem.notvalid.Address]]"
+								invalid="[[_asBool(editManItem.notvalid.Address)]]">
+							</paper-input>
+						</paper-dialog-scrollable>
+				
+						<div class="buttons">
+							<paper-button dialog-dismiss autofocus>Close</paper-button>
+							<paper-button dialog-confirm on-tap="saveManufacturerTap">[[editManBtn]]</paper-button>
+						</div>
+					</paper-dialog>
+				</div>
+
+				<div class="manufacturers-list">
+					<h4>
+						Product Manufacturers:
+					</h4>
+				
+					<dom-if if="[[order.notvalid.Manufacturers]]">
+						<template>
+							<div class="notvalid alert">
+								<pre>[[order.notvalid.Manufacturers]]</pre>
+							</div>
+						</template>
+					</dom-if>
+					
+					<div>
+						<paper-input id="newpm" class="newinput small-input" label="Add Manufacturer ID" type="string"
+							name="ManufacturerID" on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.ManufacturerID]]"
+							invalid="[[_asBool(order.notvalid.ManufacturerID)]]">
+							<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+							<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline"
+								oid$="[[order.ManufacturerID]]" on-tap="_addManufacturerTap">
+							</paper-icon-button>
+						</paper-input>
+					</div>
+				
+					<div scrollable-x>
+						<div class="table">
+							<div class="header">
+								<div>
+									ManufacturerID
+								</div>
+								<div>
+									ManufacturerName
+								</div>
+								<div>
+									Address
+								</div>
+								<div>
+								</div>
+							</div>
+					
+							<dom-repeat items="[[order.Manufacturers]]" as="mani">
+								<template>
+									<div class="row">
+										<div>
+											<span has-errors$="[[mani.notvalid.ManufacturerID]]" title$="[[mani.notvalid.ManufacturerID]]">
+												<span class="copy-tap" on-tap="_copyTap">[[mani.ManufacturerID]]</span>
+											</span>
+
+											<a href="[[_urlViewManufacturer(mani.ManufacturerID)]]">
+												<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+											</a>
+										</div>
+										<div>
+											<span has-errors$="[[mani.notvalid.ManufacturerName]]" title$="[[mani.notvalid.ManufacturerName]]">[[mani.ManufacturerName]]</span>
+										</div>
+										<div>
+											<span has-errors$="[[mani.notvalid.Address]]" title$="[[mani.notvalid.Address]]">[[mani.Address]]</span>
+										</div>
+										<div>
+											<paper-spinner-lite class="thick"></paper-spinner-lite>
+											<paper-icon-button class="remove-btn" icon="admin-icons:close" manid$="[[mani.ManufacturerID]]" on-tap="_removeManufacturerTap"></paper-icon-button>
+											<paper-icon-button class="upward-btn" icon="admin-icons:arrow-upward" manid$="[[mani.ManufacturerID]]" on-tap="_upwardManufacturerTap"></paper-icon-button>
+											<paper-icon-button class="downward-btn" icon="admin-icons:arrow-downward" manid$="[[mani.ManufacturerID]]" on-tap="_downwardManufacturerTap"></paper-icon-button>
+											<paper-button raised1 on-tap="_editManufacturerTap" class="edit-btn" disabled$="[[loading]]">Edit</paper-button>
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+					
+							<dom-if if="[[!LenMore(order.Manufacturers)]]">
+								<template>
+									<div>
+										<div class="noitems">
+											no items
+										</div>
+									</div>
+								</template>
+							</dom-if>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

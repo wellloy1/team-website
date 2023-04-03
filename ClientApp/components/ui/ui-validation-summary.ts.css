@@ -1,0 +1,11 @@
+:host {
+    display: none;
+}
+
+:host([invalid]) {
+    display: block;
+}
+
+:host([invalid]) > div {
+  color: var(--paper-input-container-invalid-color, var(--error-color));
+}

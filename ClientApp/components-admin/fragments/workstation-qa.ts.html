@@ -1,0 +1,474 @@
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="qa"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+
+<div class="maindiv horiz">
+	<div class="order-container sticky">
+		<div class="order">
+			
+			<!-- QA -->
+			<div class="order-qa" hidden$="[[!order]]">
+				<div class="sticky-container">
+					<h2>
+						<paper-icon-button 
+							class="refresh-btn" 
+							icon="admin-icons:refresh"
+							title="[[localize('admin-ws-refresh')]]" 
+							disabled="[[loadingAny]]"
+							on-tap="_reloadTap">
+						</paper-icon-button>
+
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+
+						[[localize('admin-ws-qa-title')]]
+					</h2>
+
+					<paper-progress 
+						id="progress" 
+						indeterminate 
+						class="" 
+						disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+				
+				<div class="main">
+					<tmladmin-ui-barcode-input
+						id="barcodeinput" 
+						label$="[[localize('admin-ws-qa-barcode-label')]]" 
+						name="barcode" 
+						class="barcode-input" 
+						type="string" 
+						disabled$="[[loadingAny]]" 
+						loading$="[[loadingCmd]]" 
+						qa-mode
+						related-barcodes="[[order.RelatedBarcodes]]"
+						on-barcode-changed="onInputChanged"
+						on-barcode-enter="onBarcodeInputEnter">
+					</tmladmin-ui-barcode-input>
+
+
+					<dom-if if="[[order.Invalid]]">
+						<template>
+							<h3 class="invalid">
+								[[localize('admin-ws-qa-item-invalid')]]
+							</h3>
+						</template>
+					</dom-if>
+
+					<dom-if if="[[order.Discarded]]">
+						<template>
+							<h3 class="invalid">
+								[[localize('admin-ws-qa-item-discarded')]]
+							</h3>
+						</template>
+					</dom-if>
+
+
+					<dom-if if="[[order]]">
+						<template>
+							<tmladmin-production-sewing-item 
+								class="hidden"
+								responsive-images
+								as-qa
+								showen$="[[_asBool(order.ImageUrls)]]"
+								entry="[[order]]" 
+								is-replaced="[[isReplaced]]"
+								website-url="[[websiteUrl]]" 
+								scroll-target="[[scrollTarget]]"
+								action-disabled="[[loadingAny]]"
+								on-tmladmin-production-sewing-cameraresult-tap="_onTakeAPictureTap">
+								<div slot="slot-first">
+									<!-- <div class="side-container">
+										<div class="side-left"> -->
+											<!-- buttons - bulk -->
+
+											<div>
+												<paper-input label="[[localize('admin-ws-qa-print-count-label')]]" 
+													class="print-count-input" 
+													value="{{printCount}}"
+													type="number" maxlength="6" 
+													disabled="[[disablePrintCountInput]]" 
+													on-value-changed="onInputChanged">
+													<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+												</paper-input>
+											</div>
+											
+
+											<div>
+												<div class="order-buttons">
+
+													<div class="table">
+														<div class="row vcenter">
+															<div class="w20">
+																<div class="spinner">
+																	<paper-button 
+																		class="order-reprintlabeled-btn" 
+																		raised
+																		on-tap="_onReprintLabeledTap"
+																		disabled$=[[disabledReprintLabeled]]>
+																		<iron-icon class="icon-bigger" icon="admin-icons:refresh"></iron-icon>
+																		<iron-icon class="icon-bigger" icon="admin-icons:print"></iron-icon>
+																		[[localize('admin-ws-qa-btn-reprintlabeled')]]
+																	</paper-button>
+																</div>
+															</div>
+															<div class="w20">
+																<div class="spinner">
+																	<paper-button 
+																		class="order-resetlabeled-btn" 
+																		raised
+																		on-tap="_onResetLabeledTap"
+																		disabled$=[[disabledResetLabeled]]>
+																		<iron-icon class="icon-bigger" icon="admin-icons:refresh"></iron-icon>
+																		[[localize('admin-ws-qa-btn-resetlabeled')]]
+																	</paper-button>
+																</div>
+															</div>
+															<div class="w20">
+																<div class="spinner">
+																	<paper-button 
+																		class="order-printlabelsbulk-btn" 
+																		raised
+																		on-tap="_onPrintLabelsBulkTap"
+																		disabled=[[disabledPrintBulk]]>
+																		<iron-icon class="icon-bigger" icon="admin-icons:print"></iron-icon>
+																		[[localize('admin-ws-qa-btn-printlabelbulk')]]
+																		<span hidden$="[[!_morethen(printCount, 0)]]">&nbsp;([[printCount]])</span>
+																	</paper-button>
+																</div>
+															</div>
+															<div class="w20">
+																<div class="spinner">
+																	<paper-button 
+																		class="order-takeapicture-btn" 
+																		raised
+																		on-tap="_onTakeAPictureTap"
+																		disabled=[[disabledTakeAPicture]]>
+																		<iron-icon class="icon-bigger" icon="admin-icons:camera-enhance"></iron-icon>
+																		[[localize('admin-ws-qa-btn-takeapicture')]]
+																	</paper-button>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+
+											<div hidden$="[[!order.LabelItems]]" class="was-printed">
+												<span>
+													[[localize('admin-ws-qa-count-printed-msg', 'LABELSCOUNT', order.LabelItems.length, 'PRINTCOUNT', order.PrintCount)]]
+												</span>
+											</div>
+
+
+											<div class="order-bulk-count count">
+
+												<div class="table width100">
+													<div class="header">
+														<div class="center">
+															[[localize('admin-ws-qa-count-approved-title')]]
+														</div>
+														<div class="center">
+															[[localize('admin-ws-qa-count-labeled-title')]]
+														</div>
+														<div class="center">
+															[[localize('admin-ws-qa-count-packby-title')]]
+														</div>														
+														<div class="center">
+															[[localize('admin-ws-qa-count-products-title')]]
+														</div>
+													</div>
+						
+													<div class="row vcenter">
+														<div class="center">
+															<span>
+																[[order.ApprovedCount]]
+																<iron-icon icon="admin-icons:check" class="approved"></iron-icon>
+															</span>
+														</div>
+														<div class="center">
+															<span>
+																[[order.LabeledCount]]
+															</span>
+														</div>
+														<div class="center">
+															<dom-repeat items="[[order.PackBy]]" as="packi" index-as="packinx">
+																<template>
+																	<span>
+																		[[packi.LabelsCount]] x [[packi.ProductsPerLabel]]
+																	</span>
+																	<dom-if if="[[!indexLen(packinx, order.PackBy.length)]]">
+																		<template>
+																			<span>,</span>
+																		</template>
+																	</dom-if>
+																</template>
+															</dom-repeat>
+															<dom-if if="[[!LenMore(order.PackBy)]]">
+																<template>
+																	<span class="noitems">
+																		[[localize('admin-list-noitems')]]
+																	</span>
+																</template>
+															</dom-if>
+														</div>
+
+														<div class="center">
+															<span>
+																[[order.Count]]
+															</span>
+														</div>
+													</div>
+												</div>
+											</div>											
+										</div>
+		
+										<!-- <div class="side-right">
+										</div>
+									</div> -->
+								</div>
+
+								<!-- <div slot="slot-camera-result">
+
+									<div>
+										<img class="camera-result-image" src="[[cameraResultImage]]" />
+									</div>
+
+								</div> -->
+							</tmladmin-production-sewing-item>
+
+							
+							<dom-if if="[[order.KeyMeasurements]]">
+								<template>
+									<div class="order-keymeasurements-list">
+										<dom-if if="[[order.KeyMeasurements.length]]">
+											<template>
+												<h4>
+													[[localize('admin-ws-qa-keymeasurements-title')]]
+												</h4>
+											</template>
+										</dom-if>
+		
+										<div class="table width100">
+											<div class="header">
+												<div class="center">
+													[[localize('admin-ws-qa-keymeasurements-name')]]
+												</div>
+												<div class="center">
+													[[localize('admin-ws-qa-keymeasurements-nameth')]]
+												</div>
+												<dom-repeat items="[[order.Sizes]]" as="sizei">
+													<template>
+														<div class="center" is-current$="[[_formatSizeIsCurrent(order.KeyMeasurements.0.Values, sizei)]]">
+															[[sizei]]
+														</div>
+													</template>
+												</dom-repeat>
+												<div class="center">
+													[[localize('admin-ws-qa-keymeasurements-tolerance')]]
+												</div>
+												<div class="center">
+													[[localize('admin-ws-qa-keymeasurements-units')]]
+												</div>
+											</div>
+				
+											<dom-repeat items="[[order.KeyMeasurements]]" as="keymeasurei">
+												<template>
+													<div class="row vcenter">
+														<div class="center">
+															<div>[[keymeasurei.Name]]</div>
+														</div>
+														<div class="center">
+															<div>[[keymeasurei.NameTH]]</div>
+														</div>
+		
+														<!-- Sizes -->
+														<dom-repeat items="[[order.Sizes]]" as="sizei">
+															<template>
+																<div class="center" is-current$="[[_formatSizeIsCurrent(keymeasurei.Values, sizei)]]">
+																	[[_formatSizeValue(keymeasurei.Values, sizei)]]
+																</div>
+															</template>
+														</dom-repeat>
+		
+														<div class="center">
+															<div>[[keymeasurei.Tolerance]]</div>
+														</div>
+														<div class="center">
+															<div>[[keymeasurei.Units]]</div>
+														</div>
+													</div>
+												</template>
+											</dom-repeat>
+										</div>
+									</div>
+								</template>
+							</dom-if>
+
+
+							
+							<dom-if if="[[order.Parts.length]]">
+								<template>
+									<div class="order-parts-list">
+										<h4>[[localize('admin-ws-sewing-parts-title')]] ([[order.SewingPartsCount]]) </h4>
+		
+										<dom-repeat items="[[order.Parts]]" as="parti">
+											<template>
+												<div class="order-part-item">
+													<teamatical-ui-image 
+														class="clickable" 
+														on-tap="onProductPartImageTap"
+														src="[[parti.ImageUrl]]" 
+														alt="[[parti.PartName]]" 
+														lazy-load 
+														lazy-observe=[[lazyObserve]]
+														title$="[[parti.PartName]]">
+													</teamatical-ui-image>
+		
+													<dom-if if="[[_asBool(parti.ImageUrlBack)]]">
+														<template>
+															<teamatical-ui-image 
+																class="clickable back"
+																on-tap="onProductPartImageBackTap"
+																src="[[parti.ImageUrlBack]]" 
+																alt="[[parti.PartName]] Sendwich Back" 
+																lazy-load 
+																lazy-observe=[[lazyObserve]] 
+																title$="[[parti.PartName]] Sendwich Back">
+															</teamatical-ui-image>
+														</template>
+													</dom-if>
+
+													<div>
+														[[parti.PartName]]
+													</div>
+													<div>
+														[[parti.Fabric]]
+													</div>
+													<!-- <div class="vertical-barcode">
+														<span class="pdf-barcode">*[[parti.Barcode]]*</span><br />
+														[[parti.Barcode]]
+													</div> -->
+												</div>
+											</template>
+		
+										</dom-repeat>
+									</div>
+								</template>
+							</dom-if>
+
+							
+						</template>
+					</dom-if>
+					
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+<div class="fbuttons-container">
+	<div class="button batch-name" hidden$="[[!_asBool(order.BatchID)]]">
+		<span>[[order.BatchID]]</span>
+	</div>
+	<paper-fab 
+		class="button rfid-flag" 
+		hidden$="[[!printRfid]]"
+		label="RFID"
+		icon="admin-icons:rfid" 
+		title$="[[localize('admin-ws-qa-rfid-tooltip')]]" 
+		mini 
+		on-tap="rfidTap">
+	</paper-fab>
+	<tmladmin-ui-product-search
+		class="button" 
+		hidden$="[[!userInfo.isAdmin]]"
+		id="product-search"
+		user-info="[[userInfo]]"
+		website-url="[[websiteUrl]]"
+		scroll-target="[[scrollTarget]]"
+		visible="[[visible]]"
+		on-tmladmin-production-sewing-item-tap="onItemTap">
+	</tmladmin-ui-product-search>
+</div>
+
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="qa"
+	website-url="[[websiteUrl]]"
+	video-camera
+	sticker-printer
+	sticker-printer-rfid
+	barcode-scanner
+	user-info="[[userInfo]]"
+	print-rfid="{{printRfid}}"
+	loading="{{loadingWS}}"
+	connected="{{connectedWS}}"
+	active="{{activeWS}}"
+	visible="[[visible]]">
+</teamatical-ui-scanner-printer-settings>
+
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>
+
+
+
+
+
+
+
+
+<paper-dialog id="dialogzoom" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<paper-dialog-scrollable>
+		<teamatical-ui-image style="width: 576px; height: 768px;" src="[[zoomimgi.ImageUrl]]"
+			alt="[[zoomimgi.PartName]]" lazy-load lazy-observe=[[lazyObserve]]>
+		</teamatical-ui-image>
+	</paper-dialog-scrollable>
+</paper-dialog>
+<paper-dialog id="dialogzoomback" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<paper-dialog-scrollable>
+		<teamatical-ui-image style="width: 576px; height: 768px;" src="[[zoomimgi.ImageUrlBack]]"
+			alt="[[zoomimgi.PartName]]" lazy-load lazy-observe=[[lazyObserve]]>
+		</teamatical-ui-image>
+	</paper-dialog-scrollable>
+</paper-dialog>
+
+<paper-dialog id="dialogresetlabeled" class="small-with-icon" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>[[localize('admin-ws-qa-dialogresetlabeled-dlg-title')]]</h2>
+	<paper-dialog-scrollable>
+		<iron-icon class="error" icon="admin-icons:refresh" showen$=""></iron-icon>
+		<!-- <paper-checkbox 
+			class="hide-on-print"
+			checked="{{doUncheckGrabForProduction}}">
+			[[localize('admin-morder-uncheck-GrabForProduction')]]
+		</paper-checkbox>
+		<br /><br /> -->
+		[[localize('admin-ws-qa-dialogresetlabeled-dlg-msg', 'moid', order.id)]]
+		<paper-textarea 
+			style="margin: 16px;"
+			label="[[localize('admin-ws-qa-dialogresetlabeled-dlg-input')]]" 
+			value="{{dialogresetlabeled.ResetReason}}"
+			on-value-changed="onInputChanged" 
+			name="dialogresetlabeled.ResetReason"
+			error-message="[[dialogresetlabeled.notvalid.ResetReason]]"
+			invalid="[[_asBool(dialogresetlabeled.notvalid.ResetReason)]]"
+		></paper-textarea>
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>[[localize('admin-dialog-close')]]</paper-button>
+		<paper-button dialog-confirm class="order-resetlabeled-btn" on-tap="resetLabeledConfirmTap">
+			[[localize('admin-ws-qa-btn-resetlabeled')]]
+		</paper-button>
+	</div>
+</paper-dialog>
+

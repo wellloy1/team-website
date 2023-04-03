@@ -1,0 +1,1497 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\.well-known\\apple-app-site-association",
+      "PackagePath": "staticwebassets\\.well-known"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\.well-known\\apple-developer-merchantid-domain-association",
+      "PackagePath": "staticwebassets\\.well-known"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\.well-known\\auth0\\icon-square150x150.png",
+      "PackagePath": "staticwebassets\\.well-known\\auth0\\icon-square150x150.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\embedded-test\\dev-index.html",
+      "PackagePath": "staticwebassets\\data\\embedded-test\\dev-index.html"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\embedded-test\\index.html",
+      "PackagePath": "staticwebassets\\data\\embedded-test\\index.html"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\3OF9NEW.eot",
+      "PackagePath": "staticwebassets\\data\\fonts\\3OF9NEW.eot"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\3OF9NEW.otf",
+      "PackagePath": "staticwebassets\\data\\fonts\\3OF9NEW.otf"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\3OF9NEW.svg",
+      "PackagePath": "staticwebassets\\data\\fonts\\3OF9NEW.svg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\3OF9NEW.ttf",
+      "PackagePath": "staticwebassets\\data\\fonts\\3OF9NEW.ttf"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\3OF9NEW.woff",
+      "PackagePath": "staticwebassets\\data\\fonts\\3OF9NEW.woff"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\3OF9NEW.woff2",
+      "PackagePath": "staticwebassets\\data\\fonts\\3OF9NEW.woff2"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\Fabrica.eot",
+      "PackagePath": "staticwebassets\\data\\fonts\\Fabrica.eot"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\Fabrica.svg",
+      "PackagePath": "staticwebassets\\data\\fonts\\Fabrica.svg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\Fabrica.ttf",
+      "PackagePath": "staticwebassets\\data\\fonts\\Fabrica.ttf"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\Fabrica.woff",
+      "PackagePath": "staticwebassets\\data\\fonts\\Fabrica.woff"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\Fabrica.woff2",
+      "PackagePath": "staticwebassets\\data\\fonts\\Fabrica.woff2"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\citydbol-webfont.eot",
+      "PackagePath": "staticwebassets\\data\\fonts\\citydbol-webfont.eot"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\citydbol-webfont.svg",
+      "PackagePath": "staticwebassets\\data\\fonts\\citydbol-webfont.svg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\citydbol-webfont.ttf",
+      "PackagePath": "staticwebassets\\data\\fonts\\citydbol-webfont.ttf"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\citydbol-webfont.woff",
+      "PackagePath": "staticwebassets\\data\\fonts\\citydbol-webfont.woff"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\fonts\\citydbol-webfont.woff2",
+      "PackagePath": "staticwebassets\\data\\fonts\\citydbol-webfont.woff2"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\3rd-tab\\images\\Image_0.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\3rd-tab\\images\\Image_0.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\3rd-tab\\images\\Image_1.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\3rd-tab\\images\\Image_1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\3rd-tab\\images\\Image_2.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\3rd-tab\\images\\Image_2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\3rd-tab\\images\\Image_3.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\3rd-tab\\images\\Image_3.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\3rd-tab\\images\\Image_4.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\3rd-tab\\images\\Image_4.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\3rd-tab\\images\\Image_5.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\3rd-tab\\images\\Image_5.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\3rd-tab\\index-en-US.html",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\3rd-tab\\index-en-US.html"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\4th-tab\\images\\Image_0.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\4th-tab\\images\\Image_0.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\4th-tab\\images\\Image_1.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\4th-tab\\images\\Image_1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\4th-tab\\images\\Image_10.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\4th-tab\\images\\Image_10.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\4th-tab\\images\\Image_11.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\4th-tab\\images\\Image_11.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\4th-tab\\images\\Image_2.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\4th-tab\\images\\Image_2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\4th-tab\\images\\Image_3.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\4th-tab\\images\\Image_3.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\4th-tab\\images\\Image_4.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\4th-tab\\images\\Image_4.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\4th-tab\\images\\Image_5.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\4th-tab\\images\\Image_5.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\4th-tab\\images\\Image_6.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\4th-tab\\images\\Image_6.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\4th-tab\\images\\Image_7.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\4th-tab\\images\\Image_7.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\4th-tab\\images\\Image_8.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\4th-tab\\images\\Image_8.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\4th-tab\\images\\Image_9.png",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\4th-tab\\images\\Image_9.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\4th-tab\\index-en-US.html",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\4th-tab\\index-en-US.html"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\artmanager\\video-lessons\\index-en-US.html",
+      "PackagePath": "staticwebassets\\data\\help\\artmanager\\video-lessons\\index-en-US.html"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\brand-module\\images\\bm_01.png",
+      "PackagePath": "staticwebassets\\data\\help\\brand-module\\images\\bm_01.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\brand-module\\images\\bm_05.png",
+      "PackagePath": "staticwebassets\\data\\help\\brand-module\\images\\bm_05.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\brand-module\\images\\bm_06.png",
+      "PackagePath": "staticwebassets\\data\\help\\brand-module\\images\\bm_06.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\brand-module\\index-en-US.html",
+      "PackagePath": "staticwebassets\\data\\help\\brand-module\\index-en-US.html"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\design-module\\images\\dm01.png",
+      "PackagePath": "staticwebassets\\data\\help\\design-module\\images\\dm01.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\design-module\\images\\dm02.png",
+      "PackagePath": "staticwebassets\\data\\help\\design-module\\images\\dm02.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\design-module\\images\\dm03.png",
+      "PackagePath": "staticwebassets\\data\\help\\design-module\\images\\dm03.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\design-module\\images\\dm04.png",
+      "PackagePath": "staticwebassets\\data\\help\\design-module\\images\\dm04.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\design-module\\images\\dm05.png",
+      "PackagePath": "staticwebassets\\data\\help\\design-module\\images\\dm05.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\design-module\\images\\dm06.png",
+      "PackagePath": "staticwebassets\\data\\help\\design-module\\images\\dm06.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\design-module\\images\\dm07.png",
+      "PackagePath": "staticwebassets\\data\\help\\design-module\\images\\dm07.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\design-module\\images\\dm08.png",
+      "PackagePath": "staticwebassets\\data\\help\\design-module\\images\\dm08.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\design-module\\images\\dm09.png",
+      "PackagePath": "staticwebassets\\data\\help\\design-module\\images\\dm09.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\design-module\\index-en-US.html",
+      "PackagePath": "staticwebassets\\data\\help\\design-module\\index-en-US.html"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\home-en-US.html",
+      "PackagePath": "staticwebassets\\data\\help\\home-en-US.html"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\manufacturing-module\\images\\mm_01.png",
+      "PackagePath": "staticwebassets\\data\\help\\manufacturing-module\\images\\mm_01.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\manufacturing-module\\images\\mm_04.png",
+      "PackagePath": "staticwebassets\\data\\help\\manufacturing-module\\images\\mm_04.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\manufacturing-module\\images\\mm_05.png",
+      "PackagePath": "staticwebassets\\data\\help\\manufacturing-module\\images\\mm_05.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\manufacturing-module\\index-en-US.html",
+      "PackagePath": "staticwebassets\\data\\help\\manufacturing-module\\index-en-US.html"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\menu-en-Au.html",
+      "PackagePath": "staticwebassets\\data\\help\\menu-en-Au.html"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\menu-en-US.html",
+      "PackagePath": "staticwebassets\\data\\help\\menu-en-US.html"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\sales-module\\images\\sm_01.png",
+      "PackagePath": "staticwebassets\\data\\help\\sales-module\\images\\sm_01.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\sales-module\\images\\sm_02.png",
+      "PackagePath": "staticwebassets\\data\\help\\sales-module\\images\\sm_02.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\sales-module\\images\\sm_03.png",
+      "PackagePath": "staticwebassets\\data\\help\\sales-module\\images\\sm_03.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\sales-module\\images\\sm_04.png",
+      "PackagePath": "staticwebassets\\data\\help\\sales-module\\images\\sm_04.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\sales-module\\images\\sm_05.png",
+      "PackagePath": "staticwebassets\\data\\help\\sales-module\\images\\sm_05.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\help\\sales-module\\index-en-US.html",
+      "PackagePath": "staticwebassets\\data\\help\\sales-module\\index-en-US.html"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\images\\ladies_outerwear.jpg",
+      "PackagePath": "staticwebassets\\data\\images\\ladies_outerwear.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\images\\ladies_tshirts.jpg",
+      "PackagePath": "staticwebassets\\data\\images\\ladies_tshirts.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\images\\mens_outerwear.jpg",
+      "PackagePath": "staticwebassets\\data\\images\\mens_outerwear.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\data\\images\\mens_tshirts.jpg",
+      "PackagePath": "staticwebassets\\data\\images\\mens_tshirts.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\favicon.ico",
+      "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\favicon.svg",
+      "PackagePath": "staticwebassets\\favicon.svg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\designplugin-mac.jpg",
+      "PackagePath": "staticwebassets\\images\\designplugin-mac.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\designplugin-mac.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\designplugin-mac.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\designplugin-teamatical.jpg",
+      "PackagePath": "staticwebassets\\images\\designplugin-teamatical.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\designplugin-teamatical.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\designplugin-teamatical.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\designplugin-win.jpg",
+      "PackagePath": "staticwebassets\\images\\designplugin-win.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\designplugin-win.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\designplugin-win.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-bda\\BDa_pic.png",
+      "PackagePath": "staticwebassets\\images\\home-bda\\BDa_pic.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-bda\\Bda_back.jpg",
+      "PackagePath": "staticwebassets\\images\\home-bda\\Bda_back.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-candgsalesinc\\CandG.png",
+      "PackagePath": "staticwebassets\\images\\home-candgsalesinc\\CandG.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-candgsalesinc\\CandGbgnd.png",
+      "PackagePath": "staticwebassets\\images\\home-candgsalesinc\\CandGbgnd.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-candgsalesinc\\Kappa.png",
+      "PackagePath": "staticwebassets\\images\\home-candgsalesinc\\Kappa.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-candgsalesinc\\Maskjacket.png",
+      "PackagePath": "staticwebassets\\images\\home-candgsalesinc\\Maskjacket.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-candgsalesinc\\Maskjacket_ph.png",
+      "PackagePath": "staticwebassets\\images\\home-candgsalesinc\\Maskjacket_ph.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-candgsalesinc\\Poloquarter.png",
+      "PackagePath": "staticwebassets\\images\\home-candgsalesinc\\Poloquarter.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-candgsalesinc\\Poloquarter_ph.png",
+      "PackagePath": "staticwebassets\\images\\home-candgsalesinc\\Poloquarter_ph.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-customization.jpg",
+      "PackagePath": "staticwebassets\\images\\home-customization.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-customization.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\home-customization.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-customstore-text-icon.jpg",
+      "PackagePath": "staticwebassets\\images\\home-customstore-text-icon.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-customstore-text-icon.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\home-customstore-text-icon.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-customstore.jpg",
+      "PackagePath": "staticwebassets\\images\\home-customstore.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-customstore.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\home-customstore.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\app-opengraph-imageurl.png",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\app-opengraph-imageurl.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\favicon.ico",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\favicon.ico"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\favicon.svg",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\favicon.svg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\icon-144x144.png",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\icon-144x144.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\icon-16x16.png",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\icon-16x16.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\icon-192x192.png",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\icon-192x192.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\icon-32x32.png",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\icon-32x32.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\icon-48x48.png",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\icon-48x48.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\icon-512x512.png",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\icon-512x512.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\icon-72x72.png",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\icon-72x72.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\icon-96x96.png",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\icon-96x96.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\icon-square150x150.png",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\icon-square150x150.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\icon-square310x310.png",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\icon-square310x310.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\icon-square70x70.png",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\icon-square70x70.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\manifest.json",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\manifest.json"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-decathlon-fr\\manifest-2\\opensearch.xml",
+      "PackagePath": "staticwebassets\\images\\home-decathlon-fr\\manifest-2\\opensearch.xml"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\Deploy_TeamwearPlaceHolder.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\Deploy_TeamwearPlaceHolder.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\Deploy_Teamwear_Banner_01.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\Deploy_Teamwear_Banner_01.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\Deploy_Teamwear_Banner_02.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\Deploy_Teamwear_Banner_02.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\Deploy_Teamwear_Banner_03.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\Deploy_Teamwear_Banner_03.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\Deploy_Teamwear_Banner_04.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\Deploy_Teamwear_Banner_04.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\Shop-Baseball.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\Shop-Baseball.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\Shop-Basketball.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\Shop-Basketball.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\Shop-Football.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\Shop-Football.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\app-opengraph-imageurl.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\app-opengraph-imageurl.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\favicon.ico",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\favicon.ico"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\favicon.svg",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\favicon.svg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\icon-144x144.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\icon-144x144.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\icon-150x150.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\icon-150x150.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\icon-16x16.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\icon-16x16.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\icon-192x192.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\icon-192x192.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\icon-31x310png.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\icon-31x310png.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\icon-32x32.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\icon-32x32.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\icon-48x48-B.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\icon-48x48-B.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\icon-48x48.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\icon-48x48.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\icon-512x512.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\icon-512x512.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\icon-70x70.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\icon-70x70.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\icon-72x72.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\icon-72x72.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\icon-96x96.png",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\icon-96x96.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\manifest.json",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\manifest.json"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-deploy\\manifest-2\\opensearch.xml",
+      "PackagePath": "staticwebassets\\images\\home-deploy\\manifest-2\\opensearch.xml"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-designplugin-placeholder.jpg",
+      "PackagePath": "staticwebassets\\images\\home-designplugin-placeholder.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-designplugin-placeholder.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\home-designplugin-placeholder.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-designplugin-text-icon.jpg",
+      "PackagePath": "staticwebassets\\images\\home-designplugin-text-icon.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-designplugin-text-icon.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\home-designplugin-text-icon.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-designplugin.jpg",
+      "PackagePath": "staticwebassets\\images\\home-designplugin.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-designplugin.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\home-designplugin.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-designvariations-icon.jpg",
+      "PackagePath": "staticwebassets\\images\\home-designvariations-icon.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-designvariations-icon.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\home-designvariations-icon.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-designvariations-placeholder.jpg",
+      "PackagePath": "staticwebassets\\images\\home-designvariations-placeholder.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-designvariations-placeholder.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\home-designvariations-placeholder.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-designvariations.jpg",
+      "PackagePath": "staticwebassets\\images\\home-designvariations.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-designvariations.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\home-designvariations.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\Douglas_Image_1,2.jpg",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\Douglas_Image_1,2.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\Douglas_Image_3,4.jpg",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\Douglas_Image_3,4.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\app-opengraph-imageurl.png",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\app-opengraph-imageurl.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\favicon.ico",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\favicon.ico"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\favicon.svg",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\favicon.svg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\icon-144x144.png",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\icon-144x144.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\icon-16x16.png",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\icon-16x16.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\icon-192x192.png",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\icon-192x192.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\icon-32x32.png",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\icon-32x32.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\icon-48x48.png",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\icon-48x48.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\icon-512x512.png",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\icon-512x512.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\icon-72x72.png",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\icon-72x72.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\icon-96x96.png",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\icon-96x96.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\icon-square150x150.png",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\icon-square150x150.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\icon-square310x310.png",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\icon-square310x310.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\icon-square70x70.png",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\icon-square70x70.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\manifest.json",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\manifest.json"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\manifest-4\\opensearch.xml",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\manifest-4\\opensearch.xml"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-douglassportswear\\top_1000x1000-01.png",
+      "PackagePath": "staticwebassets\\images\\home-douglassportswear\\top_1000x1000-01.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fanatics\\home.jpg",
+      "PackagePath": "staticwebassets\\images\\home-fanatics\\home.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\JCVD\\1000jcvd_prod1.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\JCVD\\1000jcvd_prod1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\JCVD\\1000jcvd_prod2.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\JCVD\\1000jcvd_prod2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\JCVD\\1000jcvd_prod3.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\JCVD\\1000jcvd_prod3.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\Pandito\\1000pandito_prod01.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\Pandito\\1000pandito_prod01.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\Pandito\\1000pandito_prod02.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\Pandito\\1000pandito_prod02.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\Pandito\\1000pandito_prod03.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\Pandito\\1000pandito_prod03.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\font\\FuturaPT-BoldObl.eot",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\font\\FuturaPT-BoldObl.eot"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\font\\FuturaPT-BoldObl.ttf",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\font\\FuturaPT-BoldObl.ttf"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\font\\FuturaPT-BoldObl.woff",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\font\\FuturaPT-BoldObl.woff"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\font\\FuturaPT-BoldObl.woff2",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\font\\FuturaPT-BoldObl.woff2"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\font\\FuturaPT-Demi.eot",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\font\\FuturaPT-Demi.eot"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\font\\FuturaPT-Demi.ttf",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\font\\FuturaPT-Demi.ttf"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\font\\FuturaPT-Demi.woff",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\font\\FuturaPT-Demi.woff"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\font\\FuturaPT-Demi.woff2",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\font\\FuturaPT-Demi.woff2"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\font\\FuturaPT-Medium.eot",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\font\\FuturaPT-Medium.eot"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\font\\FuturaPT-Medium.ttf",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\font\\FuturaPT-Medium.ttf"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\font\\FuturaPT-Medium.woff",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\font\\FuturaPT-Medium.woff"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\font\\FuturaPT-Medium.woff2",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\font\\FuturaPT-Medium.woff2"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\font\\stylesheet.css",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\font\\stylesheet.css"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\app-opengraph-imageurl.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\app-opengraph-imageurl.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\favicon.ico",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\favicon.ico"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\favicon.svg",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\favicon.svg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\icon-144x144.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\icon-144x144.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\icon-16x16.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\icon-16x16.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\icon-192x192.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\icon-192x192.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\icon-32x32.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\icon-32x32.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\icon-48x48.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\icon-48x48.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\icon-512x512.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\icon-512x512.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\icon-72x72.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\icon-72x72.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\icon-96x96.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\icon-96x96.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\icon-square150x150.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\icon-square150x150.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\icon-square310x310.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\icon-square310x310.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\icon-square70x70.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\icon-square70x70.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\manifest.json",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\manifest.json"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\manifest-2\\opensearch.xml",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\manifest-2\\opensearch.xml"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\white diamond\\1000wd_prod1.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\white diamond\\1000wd_prod1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\white diamond\\1000wd_prod2.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\white diamond\\1000wd_prod2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-fashiontv\\white diamond\\1000wd_prod3.png",
+      "PackagePath": "staticwebassets\\images\\home-fashiontv\\white diamond\\1000wd_prod3.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-lcahl\\Asset 1_NEW.jpg",
+      "PackagePath": "staticwebassets\\images\\home-lcahl\\Asset 1_NEW.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-lcahl\\Asset 5.png",
+      "PackagePath": "staticwebassets\\images\\home-lcahl\\Asset 5.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-lcahl\\Asset 6.png",
+      "PackagePath": "staticwebassets\\images\\home-lcahl\\Asset 6.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-lcahl\\Asset 7.tif.png",
+      "PackagePath": "staticwebassets\\images\\home-lcahl\\Asset 7.tif.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-lcahl\\Asset 8.tif.png",
+      "PackagePath": "staticwebassets\\images\\home-lcahl\\Asset 8.tif.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-lcahl\\Asset 9.tif.png",
+      "PackagePath": "staticwebassets\\images\\home-lcahl\\Asset 9.tif.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-lcahl\\icon 1_100px_NEW.png",
+      "PackagePath": "staticwebassets\\images\\home-lcahl\\icon 1_100px_NEW.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-lcahl\\icon 2_100px_NEW.png",
+      "PackagePath": "staticwebassets\\images\\home-lcahl\\icon 2_100px_NEW.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-lcahl\\icon 3_100px_NEW.png",
+      "PackagePath": "staticwebassets\\images\\home-lcahl\\icon 3_100px_NEW.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-masks.jpg",
+      "PackagePath": "staticwebassets\\images\\home-masks.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-masks.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\home-masks.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\Asset 1.svg",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\Asset 1.svg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\Asset 4.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\Asset 4.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\Asset 5.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\Asset 5.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\Asset 6.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\Asset 6.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\Asset 7.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\Asset 7.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\Asset 9.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\Asset 9.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\Asset 9.svg",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\Asset 9.svg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\Main.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\Main.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\Sponsor2.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\Sponsor2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\app-opengraph-imageurl.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\app-opengraph-imageurl.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\favicon.ico",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\favicon.ico"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\favicon.svg",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\favicon.svg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\icon-144x144.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\icon-144x144.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\icon-16x16.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\icon-16x16.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\icon-192x192.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\icon-192x192.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\icon-32x32.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\icon-32x32.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\icon-48x48.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\icon-48x48.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\icon-512x512.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\icon-512x512.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\icon-72x72.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\icon-72x72.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\icon-96x96.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\icon-96x96.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\icon-square150x150.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\icon-square150x150.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\icon-square310x310.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\icon-square310x310.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\icon-square70x70.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\icon-square70x70.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\manifest.json",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\manifest.json"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\manifest-2\\opensearch.xml",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\manifest-2\\opensearch.xml"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\pic1.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\pic1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\pic2.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\pic2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\pic3.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\pic3.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\pic4.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\pic4.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-purewear\\pic5.png",
+      "PackagePath": "staticwebassets\\images\\home-purewear\\pic5.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-snapraise\\b1.png",
+      "PackagePath": "staticwebassets\\images\\home-snapraise\\b1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-snapraise\\b2.png",
+      "PackagePath": "staticwebassets\\images\\home-snapraise\\b2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-snapraise\\b3.png",
+      "PackagePath": "staticwebassets\\images\\home-snapraise\\b3.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-snapraise\\i21.png",
+      "PackagePath": "staticwebassets\\images\\home-snapraise\\i21.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-snapraise\\i21_placeholder.png",
+      "PackagePath": "staticwebassets\\images\\home-snapraise\\i21_placeholder.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-snapraise\\i22.png",
+      "PackagePath": "staticwebassets\\images\\home-snapraise\\i22.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-snapraise\\i22_placeholder.png",
+      "PackagePath": "staticwebassets\\images\\home-snapraise\\i22_placeholder.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-snapraise\\i23.png",
+      "PackagePath": "staticwebassets\\images\\home-snapraise\\i23.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-snapraise\\i23_placeholder.png",
+      "PackagePath": "staticwebassets\\images\\home-snapraise\\i23_placeholder.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-snapraise\\main.png",
+      "PackagePath": "staticwebassets\\images\\home-snapraise\\main.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-snapraise\\main_placeholder.png",
+      "PackagePath": "staticwebassets\\images\\home-snapraise\\main_placeholder.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-sportsium\\bg-footer.jpg",
+      "PackagePath": "staticwebassets\\images\\home-sportsium\\bg-footer.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-sportsium\\bg1.jpg",
+      "PackagePath": "staticwebassets\\images\\home-sportsium\\bg1.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-sportsium\\img1.jpg",
+      "PackagePath": "staticwebassets\\images\\home-sportsium\\img1.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-sportsium\\img2.jpg",
+      "PackagePath": "staticwebassets\\images\\home-sportsium\\img2.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-sportsium\\shirt12.jpg",
+      "PackagePath": "staticwebassets\\images\\home-sportsium\\shirt12.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-sportsium\\shirt22.jpg",
+      "PackagePath": "staticwebassets\\images\\home-sportsium\\shirt22.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-sportsium\\shirt32.jpg",
+      "PackagePath": "staticwebassets\\images\\home-sportsium\\shirt32.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-sportsium\\shirt42.jpg",
+      "PackagePath": "staticwebassets\\images\\home-sportsium\\shirt42.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-sportsium\\shirt52.jpg",
+      "PackagePath": "staticwebassets\\images\\home-sportsium\\shirt52.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-sublimation-colors-icon.jpg",
+      "PackagePath": "staticwebassets\\images\\home-sublimation-colors-icon.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-sublimation-colors-icon.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\home-sublimation-colors-icon.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-sublimation-placeholder.jpg",
+      "PackagePath": "staticwebassets\\images\\home-sublimation-placeholder.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-sublimation-placeholder.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\home-sublimation-placeholder.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-sublimation.jpg",
+      "PackagePath": "staticwebassets\\images\\home-sublimation.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-sublimation.jpg.webp",
+      "PackagePath": "staticwebassets\\images\\home-sublimation.jpg.webp"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-tailgreeter\\bgnd.png",
+      "PackagePath": "staticwebassets\\images\\home-tailgreeter\\bgnd.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-tailgreeter\\i1.png",
+      "PackagePath": "staticwebassets\\images\\home-tailgreeter\\i1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-tailgreeter\\i2.png",
+      "PackagePath": "staticwebassets\\images\\home-tailgreeter\\i2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-tailgreeter\\p1-Bolt Pride.png",
+      "PackagePath": "staticwebassets\\images\\home-tailgreeter\\p1-Bolt Pride.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-tailgreeter\\p2-SOMH.png",
+      "PackagePath": "staticwebassets\\images\\home-tailgreeter\\p2-SOMH.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-tailgreeter\\p3-daBUS.png",
+      "PackagePath": "staticwebassets\\images\\home-tailgreeter\\p3-daBUS.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home-tailgreeter\\p4-TAILGREETER LINE.png",
+      "PackagePath": "staticwebassets\\images\\home-tailgreeter\\p4-TAILGREETER LINE.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\1.png",
+      "PackagePath": "staticwebassets\\images\\home\\1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\2.png",
+      "PackagePath": "staticwebassets\\images\\home\\2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\3.png",
+      "PackagePath": "staticwebassets\\images\\home\\3.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\4.png",
+      "PackagePath": "staticwebassets\\images\\home\\4.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\5.png",
+      "PackagePath": "staticwebassets\\images\\home\\5.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\BASKETBALL_1000_1000.png",
+      "PackagePath": "staticwebassets\\images\\home\\BASKETBALL_1000_1000.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\HOCKEY_1000_1000.png",
+      "PackagePath": "staticwebassets\\images\\home\\HOCKEY_1000_1000.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\POLO_1000_1000.png",
+      "PackagePath": "staticwebassets\\images\\home\\POLO_1000_1000.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\SCHOOL_1000_1000.png",
+      "PackagePath": "staticwebassets\\images\\home\\SCHOOL_1000_1000.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\Soccer_1000_1000.png",
+      "PackagePath": "staticwebassets\\images\\home\\Soccer_1000_1000.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\baseball_1000_1000.png",
+      "PackagePath": "staticwebassets\\images\\home\\baseball_1000_1000.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\home_pic_1X1.png",
+      "PackagePath": "staticwebassets\\images\\home\\home_pic_1X1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\home_pic_1X1_AF.png",
+      "PackagePath": "staticwebassets\\images\\home\\home_pic_1X1_AF.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\home_pic_1X1_B1.png",
+      "PackagePath": "staticwebassets\\images\\home\\home_pic_1X1_B1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\i1.jpg",
+      "PackagePath": "staticwebassets\\images\\home\\i1.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\i1b.jpg",
+      "PackagePath": "staticwebassets\\images\\home\\i1b.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\i2.jpg",
+      "PackagePath": "staticwebassets\\images\\home\\i2.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\i2b.jpg",
+      "PackagePath": "staticwebassets\\images\\home\\i2b.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\i3.jpg",
+      "PackagePath": "staticwebassets\\images\\home\\i3.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\i4-t.png",
+      "PackagePath": "staticwebassets\\images\\home\\i4-t.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\o1.png",
+      "PackagePath": "staticwebassets\\images\\home\\o1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\o2.png",
+      "PackagePath": "staticwebassets\\images\\home\\o2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\o3.png",
+      "PackagePath": "staticwebassets\\images\\home\\o3.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\o4.png",
+      "PackagePath": "staticwebassets\\images\\home\\o4.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\o5.png",
+      "PackagePath": "staticwebassets\\images\\home\\o5.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\home\\o6.png",
+      "PackagePath": "staticwebassets\\images\\home\\o6.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\Goalie1.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\Goalie1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\Goalie2.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\Goalie2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\Hockey-hero.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\Hockey-hero.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\Jacket.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\Jacket.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\Jersey 1.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\Jersey 1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\Jersey 2.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\Jersey 2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\Jersey 3.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\Jersey 3.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\Polo.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\Polo.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\Socks 1.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\Socks 1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\Socks 2.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\Socks 2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\Socks 3.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\Socks 3.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\Sweatshirt.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\Sweatshirt.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\ben1.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\ben1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\ben2.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\ben2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\ben3.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\ben3.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\ben4.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\ben4.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\ben5.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\ben5.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\hockey\\bgnd2.png",
+      "PackagePath": "staticwebassets\\images\\kits\\hockey\\bgnd2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\soccer\\Jersey1.png",
+      "PackagePath": "staticwebassets\\images\\kits\\soccer\\Jersey1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\soccer\\Jersey2.png",
+      "PackagePath": "staticwebassets\\images\\kits\\soccer\\Jersey2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\soccer\\Jersey3.png",
+      "PackagePath": "staticwebassets\\images\\kits\\soccer\\Jersey3.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\soccer\\Shorts1.png",
+      "PackagePath": "staticwebassets\\images\\kits\\soccer\\Shorts1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\soccer\\Shorts2.png",
+      "PackagePath": "staticwebassets\\images\\kits\\soccer\\Shorts2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\soccer\\Shorts3.png",
+      "PackagePath": "staticwebassets\\images\\kits\\soccer\\Shorts3.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\soccer\\Socks1.png",
+      "PackagePath": "staticwebassets\\images\\kits\\soccer\\Socks1.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\soccer\\Socks2.png",
+      "PackagePath": "staticwebassets\\images\\kits\\soccer\\Socks2.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\soccer\\Socks3.png",
+      "PackagePath": "staticwebassets\\images\\kits\\soccer\\Socks3.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\kits\\soccer\\soccer-hero.png",
+      "PackagePath": "staticwebassets\\images\\kits\\soccer\\soccer-hero.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\icon-144x144.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\icon-144x144.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\icon-16x16.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\icon-16x16.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\icon-192x192.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\icon-192x192.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\icon-32x32.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\icon-32x32.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\icon-48x48.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\icon-48x48.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\icon-512x512.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\icon-512x512.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\icon-72x72.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\icon-72x72.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\icon-96x96.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\icon-96x96.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\icon-square150x150.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\icon-square150x150.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\icon-square310x310.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\icon-square310x310.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\icon-square70x70.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\icon-square70x70.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\shortcut-192x192-artmanager.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\shortcut-192x192-artmanager.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\shortcut-192x192-create-store.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\shortcut-192x192-create-store.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\shortcut-192x192-create-team.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\shortcut-192x192-create-team.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\shortcut-192x192-help.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\shortcut-192x192-help.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\shortcut-192x192-help.png.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\shortcut-192x192-help.png.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\manifest\\shortcut-192x192-myaccount.png",
+      "PackagePath": "staticwebassets\\images\\manifest\\shortcut-192x192-myaccount.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\sewing-instructions\\stitch-iso--.jpg",
+      "PackagePath": "staticwebassets\\images\\sewing-instructions\\stitch-iso--.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\sewing-instructions\\stitch-iso-301.jpg",
+      "PackagePath": "staticwebassets\\images\\sewing-instructions\\stitch-iso-301.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\sewing-instructions\\stitch-iso-401-2.jpg",
+      "PackagePath": "staticwebassets\\images\\sewing-instructions\\stitch-iso-401-2.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\sewing-instructions\\stitch-iso-401.jpg",
+      "PackagePath": "staticwebassets\\images\\sewing-instructions\\stitch-iso-401.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\sewing-instructions\\stitch-iso-405.jpg",
+      "PackagePath": "staticwebassets\\images\\sewing-instructions\\stitch-iso-405.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\sewing-instructions\\stitch-iso-406.jpg",
+      "PackagePath": "staticwebassets\\images\\sewing-instructions\\stitch-iso-406.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\sewing-instructions\\stitch-iso-407.jpg",
+      "PackagePath": "staticwebassets\\images\\sewing-instructions\\stitch-iso-407.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\sewing-instructions\\stitch-iso-514.jpg",
+      "PackagePath": "staticwebassets\\images\\sewing-instructions\\stitch-iso-514.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\sewing-instructions\\stitch-iso-607.jpg",
+      "PackagePath": "staticwebassets\\images\\sewing-instructions\\stitch-iso-607.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\sewing-instructions\\stitch-iso-undefined.jpg",
+      "PackagePath": "staticwebassets\\images\\sewing-instructions\\stitch-iso-undefined.jpg"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\store\\store-banner-sample.png",
+      "PackagePath": "staticwebassets\\images\\store\\store-banner-sample.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\images\\workstations\\shipping-label-failed.png",
+      "PackagePath": "staticwebassets\\images\\workstations\\shipping-label-failed.png"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\manifest.json",
+      "PackagePath": "staticwebassets\\manifest.json"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\opensearch.xml",
+      "PackagePath": "staticwebassets\\opensearch.xml"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\robots.txt",
+      "PackagePath": "staticwebassets\\robots.txt"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\service-worker-admin.js",
+      "PackagePath": "staticwebassets\\service-worker-admin.js"
+    },
+    {
+      "Id": "D:\\Coding\\Teamatical\\code-reduced\\Website\\src\\Teamatical.Website\\wwwroot\\service-worker.js",
+      "PackagePath": "staticwebassets\\service-worker.js"
+    },
+    {
+      "Id": "obj\\x64\\Debug\\net7.0\\win7-x64\\staticwebassets\\msbuild.Teamatical.Website.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\x64\\Debug\\net7.0\\win7-x64\\staticwebassets\\msbuild.build.Teamatical.Website.props",
+      "PackagePath": "build\\Teamatical.Website.props"
+    },
+    {
+      "Id": "obj\\x64\\Debug\\net7.0\\win7-x64\\staticwebassets\\msbuild.buildMultiTargeting.Teamatical.Website.props",
+      "PackagePath": "buildMultiTargeting\\Teamatical.Website.props"
+    },
+    {
+      "Id": "obj\\x64\\Debug\\net7.0\\win7-x64\\staticwebassets\\msbuild.buildTransitive.Teamatical.Website.props",
+      "PackagePath": "buildTransitive\\Teamatical.Website.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

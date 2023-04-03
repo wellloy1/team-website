@@ -1,0 +1,225 @@
+:host {
+  display: block;
+
+  margin: 0 auto;
+  max-width: var(--app-page-width);
+}
+:host([should-show-tabs]) header {
+  display: none;
+}
+
+
+.size-selector-container {
+  display: flex;
+  gap: 4px;
+}
+
+.size-selector-container.sizes-10,
+.size-selector-container.sizes-9,
+.size-selector-container.sizes-8,
+.size-selector-container.sizes-7,
+.size-selector-container.sizes-6,
+.size-selector-container.sizes-5,
+.size-selector-container.sizes-4,
+.size-selector-container.sizes-3 {
+  display: unset;
+}
+
+
+
+.detail-input {
+  margin: 0 10px;
+}
+
+#search-progress {
+  margin: 22px;
+  float: right;
+}
+
+.size-select {
+  display: block;
+  min-width: 160px;
+  --teamatical-ui-select-native: {
+    padding: 16px 24px 12px 79px;
+  };
+}
+
+.size-select[recent] {
+  border-radius: 0px;
+  box-shadow: 0 0 1px 1px rgb(0 0 0 / 30%);
+}
+
+.export-button,
+.clean-button {
+  font-size: 0.6em;
+}
+.warning {
+  fill: var(--paper-orange-700);
+}
+
+teamatical-ui-button#loadMoreBtn {
+  border-radius: 0px;
+  animation: borderin .2s ease-in-out alternate;
+}
+teamatical-ui-button#loadMoreBtn[hidden-animated] {
+  animation: borderout .2s ease-in-out alternate;
+  border-radius: 20px;
+}
+
+.progress-container {
+  position: relative;
+}
+
+.progress-centered {
+  position: absolute;
+  top: 20%;
+  left: 48.5%;
+}
+
+
+.roster-list {
+  margin: 10px;
+}
+
+.roster-import {
+  margin: 10px;
+}
+
+.roster-list .product-item {
+  margin-bottom: 15px;
+}
+
+.roster-list .product-item:last-of-type {
+  border-bottom: 1px solid var(--divider-color);
+  margin-bottom: 45px;
+}
+
+.roster-footer {
+  text-align: center;
+  margin: 16px;
+}
+.roster-footer teamatical-ui-button:not(:last-of-type) {
+  margin-right: 8px;
+  margin-bottom: 4px;
+}
+
+.product-header h3 {
+  padding-left: 15px;
+  border-bottom: 1px solid var(--light-theme-divider-color);
+}
+
+.roster-add-line {
+  margin-top: 16px;
+  border-radius: 5px;
+  border: 1px solid var(--divider-color);
+  padding: 8px;
+
+  background-color: var(--google-grey-100);
+}
+.roster-add-line > .table .row > * {
+    border-bottom: 0px;
+     /* dashed var(--divider-color); */
+}
+.roster-add-line > .table > .row {
+  height: 62px;
+}
+
+.roster-list .table {
+  /* margin: 16px; */
+  width: 100%;
+  /* max-width:500px; */
+}
+
+@media (max-width: 420px) {
+  .roster-list .table .row.roster-focus > div > paper-input,
+  .roster-list .table .row.roster-focus > div > *,
+  .roster-list .table .row div,
+  .roster-list .table .row > div {
+    transition: all .2s ease-in-out;
+  }
+  .roster-list .table .row paper-input {
+    min-width: 24px;
+  }
+  .roster-list .table .row.roster-focus > div {
+    width: 0px !important;
+    transform: skewX(0);
+  }
+  .roster-list .table .row.roster-focus .roster-container-focused {
+    width: 100% !important;
+    max-width: unset;
+  }
+  /* .roster-list .table .row.roster-focus > div > *[focused] {
+    display: block;
+  } */
+  .roster-list .table .row.roster-focus > div > paper-input:not([focused]) {
+    width: 24px;
+    min-width: unset;
+  }
+  .roster-list .table .row.roster-focus > div > teamatical-ui-select:not([focused]) {
+    width: 36px;
+    min-width: unset;
+  }
+
+  
+}
+
+.empty-list {
+  text-align: center;
+  white-space: nowrap;
+  color: var(--app-secondary-color);
+}
+
+.detail-buttons {
+  margin: 16px;
+  text-align: center;
+}
+
+ui-loader {
+  padding-top: 0px;
+  display: block;
+  margin-top: 40px;
+}
+
+.main-frame {
+  padding: 0 8px 48px 8px;
+}
+
+.captain-select {
+  display: block;
+  min-width: 126px;
+}
+
+@media (max-width: 767px) {
+
+  .roster-list {
+    margin: 0px;
+    margin-top: 15px;
+  }
+  .roster-import {
+    margin: 5px;
+    margin-top: 15px;
+  }
+
+  .buttons-container {
+    margin-right: 10px;
+  }
+
+  .captain-select {
+    min-width: 64px;
+  }
+  .size-select {
+    min-width: 64px;
+    /* min-width: 120px; */
+    /* --teamatical-ui-select-native: {
+      padding: 16px 24px 8px 116px;
+    }; */
+  }
+
+  .main-frame {
+    padding: 0 1px 6px 1px;
+  }
+
+  .size-selector-container {
+    display: unset;
+  }
+}

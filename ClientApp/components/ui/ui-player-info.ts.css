@@ -1,0 +1,74 @@
+/* :host {
+    --paper-input-container-invalid-color: var(--google-yellow-300);
+} */
+
+/* :host(:not([player-name-switcher])) .uppercase-icon { 
+  display: none !important;
+} */
+:host([player-name-uppercase]) #name { 
+  --paper-input-container-shared-input-style-over: {
+    text-transform: uppercase;
+  };
+  --paper-input-container-shared-label: {
+    text-transform: uppercase;
+  };
+}
+/* 
+:host([player-name-animation]) #name { 
+  --paper-input-container-shared-input-style-over: {
+    --blur-value: 6px;
+    -webkit-filter: blur(var(--blur-value));
+    -moz-filter: blur(var(--blur-value));
+    -o-filter: blur(var(--blur-value));
+    -ms-filter: blur(var(--blur-value));
+    filter: blur(var(--blur-value));
+  
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  
+    pointer-events: none;
+  };
+} */
+
+
+
+h2 {
+    margin: 16px 0;
+    font-size: 1.1em;
+}
+
+.input-row {
+  @apply --layout-vertical;
+}
+
+.case-btns {
+  position: relative;
+}
+.uppercase-icon {
+  position: absolute;
+  bottom: -16px;
+  right: 0px;
+
+  --iron-icon: {
+    color: var(--paper-input-container-label) !important;
+  };
+}
+
+#name[focused] .uppercase-icon { 
+  --iron-icon: {
+    color: var(--paper-input-container-label-focus) !important;
+  };
+}
+
+/* .uppercase-icon {
+  --iron-icon: {
+    fill: var(--paper-orange-700);
+    color: var(--paper-orange-700);
+  };
+}
+.uppercase-icon[tooltip] {
+  --teamatical-tooltip-color: var(--paper-orange-700);
+  --teamatical-tooltip-text-color: #fff;
+  --teamatical-tooltip-boxshadow-color: rgba(0, 0, 0, 0.35);
+} */

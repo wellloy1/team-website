@@ -1,0 +1,1108 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Manufacturer #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.ManufacturerID]]</span>
+					([[_formatDate(order.Created)]])
+					- [[order.Name]]
+				</h3>
+				
+				
+				<!-- <ul>
+					<li><b>Created:</b> [[_formatDate(order.Created)]]</li>
+					<li><b>UserCount:</b> [[order.UserCount]]</li>
+				</ul> -->
+
+
+				<div class="buttons">
+					<paper-button 
+						class="order-resnapshot-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveManufacturerTap">
+						Save Manufacturer
+					</paper-button>
+				</div>
+				
+				<div class="order-inputs">
+					<h4>
+						Details:
+					</h4>
+
+					<div>
+						<paper-checkbox checked="{{order.NestingRuller}}">
+							Nesting Ruller
+						</paper-checkbox>
+					</div>
+
+					<!--div>
+						<label id="labelFabricName">Nesting Ruller:</label>
+						<paper-radio-group 
+							aria-labelledby="labelFabricName" 
+							selected="{{order.NestingRuller}}" 
+							name="NestingRuller"
+							on-value-changed="onInputChanged" 
+							error-message="[[order.notvalid.NestingRuller]]" 
+							aria-readonly="true"
+							invalid="[[_asBool(order.notvalid.NestingRuller)]]">
+							<dom-repeat items="[[order.NestingRullerValues]]" as="nritemi">
+								<template>
+									<paper-radio-button name="[[nritemi]]" label="[[nritemi]]">[[nritemi]]</paper-radio-button>
+								</template>
+							</dom-repeat>
+						</paper-radio-group>
+					</div-->
+
+					<div class="small-inputs">
+						<paper-input 
+							label="Priority" 
+							type="string" 
+							value="{{order.Priority}}"
+							name="Priority"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.Priority]]" 
+							invalid="[[_asBool(order.notvalid.Priority)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Name" 
+							type="string" 
+							value="{{order.Name}}"
+							name="Name"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.Name]]" 
+							invalid="[[_asBool(order.notvalid.Name)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Vinyl Roll Width (in)" 
+							type="string" 
+							value="{{order.VinylRollWidthInches}}"
+							name="VinylRollWidthInches"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.VinylRollWidthInches]]" 
+							invalid="[[_asBool(order.notvalid.VinylRollWidthInches)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Vinyl Parts Gap (mm)" 
+							type="string" 
+							value="{{order.VinylPartsGapMillimeters}}"
+							name="VinylPartsGapMillimeters"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.VinylPartsGapMillimeters]]" 
+							invalid="[[_asBool(order.notvalid.VinylPartsGapMillimeters)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Ftp Server" 
+							type="string" 
+							value="{{order.FtpConnectionServer}}"
+							name="FtpConnectionServer"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.FtpConnectionServer]]" 
+							invalid="[[_asBool(order.notvalid.FtpConnectionServer)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Ftp Username" 
+							type="string" 
+							value="{{order.FtpConnectionUsername}}"
+							name="FtpConnectionUsername"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.FtpConnectionUsername]]" 
+							invalid="[[_asBool(order.notvalid.FtpConnectionUsername)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Ftp Password" 
+							type="password" 
+							value="{{order.FtpConnectionPassword}}"
+							name="FtpConnectionPassword"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.FtpConnectionPassword]]" 
+							invalid="[[_asBool(order.notvalid.FtpConnectionPassword)]]">
+						</paper-input>							
+
+						
+						
+						<paper-input 
+							label="Sorting Shelves Per Cage (#)" 
+							type="string" 
+							value="{{order.ShelfsPerCage}}"
+							name="ShelfsPerCage"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.ShelfsPerCage]]" 
+							invalid="[[_asBool(order.notvalid.ShelfsPerCage)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Sorting Shelf Dimension Height (#)" 
+							type="string" 
+							value="{{order.ShelfDimensionHeight}}"
+							name="ShelfDimensionHeight"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.ShelfDimensionHeight]]" 
+							invalid="[[_asBool(order.notvalid.ShelfDimensionHeight)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Sorting Shelf Dimension Width (#)" 
+							type="string" 
+							value="{{order.ShelfDimensionWidth}}"
+							name="ShelfDimensionWidth"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.ShelfDimensionWidth]]" 
+							invalid="[[_asBool(order.notvalid.ShelfDimensionWidth)]]">
+						</paper-input>
+
+
+						<paper-input 
+							label="Sublimation Parts Gap (mm)" 
+							type="string" 
+							value="{{order.SublimationPartsGapMillimeters}}"
+							name="SublimationPartsGapMillimeters"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.SublimationPartsGapMillimeters]]" 
+							invalid="[[_asBool(order.notvalid.SublimationPartsGapMillimeters)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Sublimation SANDWICH Parts Gap (mm)" 
+							type="string" 
+							value="{{order.SublimationPartsSandwichGapMilimeters}}"
+							name="SublimationPartsSandwichGapMilimeters"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.SublimationPartsSandwichGapMilimeters]]" 
+							invalid="[[_asBool(order.notvalid.SublimationPartsSandwichGapMilimeters)]]">
+						</paper-input>
+					
+
+						<paper-input 
+							label="Sublimation BULK Parts Gap (mm)" 
+							type="string" 
+							value="{{order.SublimationBulkPartsGapMillimeters}}"
+							name="SublimationBulkPartsGapMillimeters"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.SublimationBulkPartsGapMillimeters]]" 
+							invalid="[[_asBool(order.notvalid.SublimationBulkPartsGapMillimeters)]]">
+						</paper-input>
+
+
+						<paper-input 
+							label="Laser Offset (mm)" 
+							type="string" 
+							value="{{order.LaserOffsetMilimeters}}"
+							name="LaserOffsetMilimeters"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.LaserOffsetMilimeters]]" 
+							invalid="[[_asBool(order.notvalid.LaserOffsetMilimeters)]]">
+						</paper-input>
+						
+
+						<paper-input 
+							label="Bulk Cut Offset (mm)" 
+							type="string" 
+							value="{{order.BulkCutOffsetMillimeters::input}}"
+							name="order.BulkCutOffsetMillimeters"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.BulkCutOffsetMillimeters]]" 
+							invalid="[[_asBool(order.notvalid.BulkCutOffsetMillimeters)]]">
+						</paper-input>
+
+
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+
+					</div>
+
+					
+					<div class="horiz">
+						<div class="selection">
+							<paper-dropdown-menu-light vertical-align="top" horizontal-align="left" label="Sublimation Orientation"
+								disabled$="[[disableSelection(loading)]]" value="{{order.SublimationOrientation.title}}" no-label-float1
+								no-animations>
+								<paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="value"
+									selected="{{order.SublimationOrientation.id}}">
+									<dom-repeat items="[[order.Orientations]]" as="orienti">
+										<template>
+											<paper-item value$="[[orienti.id]]">
+												<div class="matrix-sample" style$="[[_transforMatrix(orienti.matrix)]]">
+													AZ
+												</div>
+												[[orienti.title]]
+											</paper-item>
+										</template>
+									</dom-repeat>
+								</paper-listbox>
+							</paper-dropdown-menu-light>
+						</div>
+
+
+						<div class="selection">
+							<paper-dropdown-menu-light vertical-align="top" horizontal-align="left" label="Cut Orientation"
+								disabled$="[[disableSelection(loading)]]" value="{{order.CutOrientation.title}}" no-label-float1
+								no-animations>
+								<paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="value"
+									selected="{{order.CutOrientation.id}}">
+									<dom-repeat items="[[order.Orientations]]" as="orienti">
+										<template>
+											<paper-item value$="[[orienti.id]]">
+												<div class="matrix-sample" style$="[[_transforMatrix(orienti.matrix)]]">
+													AZ
+												</div>
+												[[orienti.title]]
+											</paper-item>
+										</template>
+									</dom-repeat>
+								</paper-listbox>
+							</paper-dropdown-menu-light>
+						</div>
+						
+					</div>
+
+					<!-- <paper-textarea 
+						label="PaymentTerms" 
+						value="{{order.PaymentTerms}}"
+						name="PaymentTerms"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.PaymentTerms]]" 
+						invalid="[[_asBool(order.notvalid.PaymentTerms)]]">
+					</paper-textarea> -->
+				</div>
+
+
+
+				<div class="order-inputs">
+					<h4>
+						Factory Address (for Customs):
+					</h4>
+
+					<div class="small-inputs">
+						<paper-input label="[[localize('order-title-email')]]" type="string" value="{{order.AccountEmail}}"
+									 name="AccountEmail" on-value-changed="onInputChanged" error-message="[[order.notvalid.AccountEmail]]"
+									 invalid="[[_asBool(order.notvalid.AccountEmail)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-phone')]]" type="string" value="{{order.AccountPhone}}"
+									 name="AccountPhone" on-value-changed="onInputChanged" error-message="[[order.notvalid.AccountPhone]]"
+									 invalid="[[_asBool(order.notvalid.AccountPhone)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-firstname')]]" type="string" value="{{order.ShipFirstName}}"
+									 name="ShipFirstName" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipFirstName]]"
+									 invalid="[[_asBool(order.notvalid.ShipFirstName)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-lastname')]]" type="string" value="{{order.ShipLastName}}"
+									 name="ShipLastName" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipLastName]]"
+									 invalid="[[_asBool(order.notvalid.ShipLastName)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-address')]]" type="string" value="{{order.ShipAddress}}"
+									 name="ShipAddress" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipAddress]]"
+									 invalid="[[_asBool(order.notvalid.ShipAddress)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-address2')]]" type="string" value="{{order.ShipAddress2}}"
+									 name="ShipAddress2" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipAddress2]]"
+									 invalid="[[_asBool(order.notvalid.ShipAddress2)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-address3')]]" type="string" value="{{order.ShipAddress3}}"
+									 name="ShipAddress3" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipAddress3]]"
+									 invalid="[[_asBool(order.notvalid.ShipAddress3)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-city')]]" type="string" value="{{order.ShipCity}}" name="ShipCity"
+									 on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipCity]]"
+									 invalid="[[_asBool(order.notvalid.ShipCity)]]">
+						</paper-input>
+
+						<paper-input label="[[localizeByCountry('order-title-state', order.ShipCountryCode)]]" type="string" value="{{order.ShipState}}"
+									 name="ShipState" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipState]]"
+									 invalid="[[_asBool(order.notvalid.ShipState)]]">
+						</paper-input>
+
+						<paper-input label="[[localizeByCountry('order-title-zip', order.ShipCountryCode)]]"
+									 type="string" value="{{order.ShipZip}}" name="ShipZip"
+									 on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipZip]]"
+									 invalid="[[_asBool(order.notvalid.ShipZip)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-country')]]" type="string" value="{{order.ShipCountry}}"
+									 name="ShipCountry" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipCountry]]"
+									 invalid="[[_asBool(order.notvalid.ShipCountry)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-company')]]" type="string" value="{{order.ShipCompany}}"
+									 name="ShipCompany" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipCompany]]"
+									 invalid="[[_asBool(order.notvalid.ShipCompany)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-tax')]]" type="string" value="{{order.ShipTaxID}}" name="ShipTaxID"
+									 on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipTaxID]]"
+									 invalid="[[_asBool(order.notvalid.ShipTaxID)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-eori')]]" type="string" value="{{order.ShipEORI}}" name="ShipEORI"
+									 on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipEORI]]"
+									 invalid="[[_asBool(order.notvalid.ShipEORI)]]">
+						</paper-input>
+
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+				</div>
+
+
+
+
+				<!-- Print Paper -->
+				<div class="print-paper-list">
+					<h4>Printing Papers:</h4>
+					
+					<div class="buttons">
+						<paper-button class="add-new-paper-btn" disabled$="[[loading]]"
+							hidden$="[[hideAddPaperBtn(order)]]" raised on-tap="addNewPaperTap">
+							New Paper
+						</paper-button>
+					</div>
+					
+					<dom-if if="[[order.notvalid.Papers]]">
+						<template>
+							<div class="notvalid alert">
+								<pre>
+									[[order.notvalid.Papers]]
+								</pre>
+							</div>
+						</template>
+					</dom-if>
+
+					
+					
+					<vaadin-grid 
+						id="grid_Papers" 
+						aria-label="Papers"
+						theme="no-border column-borders wrap-cell-content row-stripes compact" 
+						items="[[order.Papers]]"
+						cell-class-name-generator="[[gridCellClassNameGeneratorFabricShrink]]" 
+						column-reordering-allowed 
+						height-by-rows>
+					
+						<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+							<template class="header">#</template>
+							<template>[[_formatN(index, item)]]</template>
+						</vaadin-grid-column>
+					
+						<vaadin-grid-column width="120px" resizable="true" id="id">
+							<template class="header">
+								PaperID
+							</template>
+							<template>
+								<span has-errors$="[[item.notvalid.id]]">[[item.id]]</span>
+							</template>
+						</vaadin-grid-column>
+
+						<vaadin-grid-column width="120px" resizable="true" id="Name">
+							<template class="header">
+								Name
+							</template>
+							<template>
+								<span has-errors$="[[item.notvalid.Name]]">[[item.Name]]</span>
+							</template>
+						</vaadin-grid-column>
+
+
+						<vaadin-grid-column width="200px" resizable="true" id="PaperRollWidthInches">
+							<template class="header">
+								Paper Roll Width (in)
+							</template>
+							<template>
+								<span has-errors$="[[item.notvalid.PaperRollWidthInches]]">[[item.PaperRollWidthInches]]</span>
+							</template>
+						</vaadin-grid-column>
+
+						
+					
+						<vaadin-grid-column width="200px" flex-grow="0" resizable="true" id="_buttons2">
+							<template class="header"></template>
+							<template>
+								<div class="buttons unset">
+									<paper-button raised on-tap="editPaperTap" class="edit-btn" disabled$="[[loading]]">
+										Edit
+									</paper-button>
+									<paper-button raised on-tap="deletePaperTap" class="delete-btn"
+										disabled$="[[loading]]">Delete
+									</paper-button>
+								</div>
+							</template>
+						</vaadin-grid-column>
+					</vaadin-grid>
+
+					<dom-if if="[[!LenMore(order.Papers)]]">
+						<template>
+							<div class="noitems">
+								no items
+							</div>
+						</template>
+					</dom-if>
+				</div>
+
+
+
+
+
+				<!-- Fabric Shrink Compensation -->
+				<div class="fabric-shrink-compensation-list">
+					<h4>Fabric Shrink Compensation:</h4>
+					
+					<div class="buttons">
+						<paper-button class="add-new-discount-btn" disabled$="[[loading]]"
+							hidden$="[[hideAddFabricShrinkCompensationBtn(order)]]" raised on-tap="addNewFabricShrinkCompensationItemTap">
+							New Fabric Shrink Compensation
+						</paper-button>
+					</div>
+					
+					<dom-if if="[[order.notvalid.FabricShrinkCompensation]]">
+						<template>
+							<div class="notvalid alert">
+								<pre>
+									[[order.notvalid.FabricShrinkCompensation]]
+								</pre>
+							</div>
+						</template>
+					</dom-if>
+					
+					<vaadin-grid 
+						id="grid_FabricShrinkCompensation" 
+						aria-label="FabricShrinkCompensation"
+						theme="no-border column-borders wrap-cell-content row-stripes compact" 
+						items="[[order.FabricShrinkCompensation]]"
+						cell-class-name-generator="[[gridCellClassNameGeneratorFabricShrink]]" 
+						column-reordering-allowed 
+						height-by-rows>
+					
+						<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+							<template class="header">#</template>
+							<template>[[_formatN(index, item)]]</template>
+						</vaadin-grid-column>
+					
+						<vaadin-grid-column width="120px" resizable="true" id="Name">
+							<template class="header">
+								Name
+							</template>
+							<template>
+								<span has-errors$="[[item.notvalid.Name]]">[[item.Name]]</span>
+							</template>
+						</vaadin-grid-column>
+
+						<vaadin-grid-column width="80px" resizable="true" id="Disabled">
+							<template class="header">
+								Disabled (Out of Stock)
+							</template>
+							<template>
+								<span 
+									has-errors$="[[item.notvalid.Disabled]]" 
+									title$="[[item.notvalid.Disabled]]"
+									highlighted$="[[item.Disabled]]">[[item.Disabled]]</span>
+							</template>
+						</vaadin-grid-column>
+
+						<vaadin-grid-column width="80px" resizable="true" id="StockFabric">
+							<template class="header">
+								Non-Printable Fabric (Bulk)
+							</template>
+							<template>
+								<span 
+									has-errors$="[[item.notvalid.StockFabric]]" 
+									title$="[[item.notvalid.StockFabric]]"
+									highlighted$="[[item.StockFabric]]">[[item.StockFabric]]</span>
+							</template>
+						</vaadin-grid-column>
+
+						<vaadin-grid-column width="80px" resizable="true" id="StockFabric">
+							<template class="header">
+								Can't Read Barcodes
+							</template>
+							<template>
+								<span 
+									has-errors$="[[item.notvalid.CantReadBarcodes]]" 
+									title$="[[item.notvalid.CantReadBarcodes]]"
+									highlighted$="[[item.CantReadBarcodes]]">[[item.CantReadBarcodes]]</span>
+							</template>
+						</vaadin-grid-column>
+					
+						<vaadin-grid-column width="120px" resizable="true" id="RollProductionWidth">
+							<template class="header">
+								Roll Production Width (p.u.)
+							</template>
+							<template>
+								<span has-errors$="[[item.notvalid.RollProductionWidth]]">[[item.RollProductionWidth]]</span>
+							</template>
+						</vaadin-grid-column>
+					
+						<vaadin-grid-column width="120px" resizable="true" id="RollProductionHeight">
+							<template class="header">
+								Roll Production Height (p.u.)
+							</template>
+							<template>
+								<span has-errors$="[[item.notvalid.RollProductionHeight]]">[[item.RollProductionHeight]]</span>
+							</template>
+						</vaadin-grid-column>
+
+						<vaadin-grid-column width="120px" resizable="true" id="ExpectedRollLength">
+							<template class="header">
+								Expected Roll Length (m)
+							</template>
+							<template>
+								<span has-errors$="[[item.notvalid.ExpectedRollLength]]">[[item.ExpectedRollLength]]</span>
+							</template>
+						</vaadin-grid-column>
+
+						<vaadin-grid-column width="120px" resizable="true" id="SublimationRollWidthInches">
+							<template class="header">
+								Sublimation Roll Width (in)
+							</template>
+							<template>
+								<span has-errors$="[[item.notvalid.SublimationRollWidthInches]]">[[item.SublimationRollWidthInches]]</span>
+							</template>
+						</vaadin-grid-column>
+						
+						<vaadin-grid-column width="120px" resizable="true" id="SublimationMaximumPartWidthInches">
+							<template class="header">
+								Sublimation Part Width Max (in)
+							</template>
+							<template>
+								<span has-errors$="[[item.notvalid.SublimationMaximumPartWidthInches]]">[[item.SublimationMaximumPartWidthInches]]</span>
+							</template>
+						</vaadin-grid-column>
+
+						<vaadin-grid-column width="120px" resizable="true" id="BulkStackHeight">
+							<template class="header">
+								Bulk Stack Height (#)
+							</template>
+							<template>
+								<span has-errors$="[[item.notvalid.BulkStackHeight]]">[[item.BulkStackHeight]]</span>
+							</template>
+						</vaadin-grid-column>
+
+						<vaadin-grid-column width="120px" resizable="true" id="DamagedCenterCms">
+							<template class="header">
+								Damaged Center (cm)
+							</template>
+							<template>
+								<span has-errors$="[[item.notvalid.DamagedCenterCms]]">[[item.DamagedCenterCms]]</span>
+							</template>
+						</vaadin-grid-column>
+						
+						<vaadin-grid-column width="120px" resizable="true" id="WeightGramsPerMeter2">
+							<template class="header">
+								Density (g/m²)
+							</template>
+							<template>
+								<span has-errors$="[[item.notvalid.WeightGramsPerMeter2]]">[[item.WeightGramsPerMeter2]]</span>
+							</template>
+						</vaadin-grid-column>
+
+						<vaadin-grid-column width="80px" resizable="true" id="FabricComposition">
+							<template class="header">
+								Fabric Composition
+							</template>
+							<template>
+								<span 
+									has-errors$="[[item.notvalid.FabricComposition]]" 
+									title$="[[item.notvalid.FabricComposition]]">[[item.FabricComposition]]</span>
+							</template>
+						</vaadin-grid-column>
+						
+					
+						<vaadin-grid-column width="200px" flex-grow="0" resizable="true" id="_buttons2">
+							<template class="header"></template>
+							<template>
+								<div class="buttons unset">
+									<paper-button raised on-tap="editFabricShrinkCompensationTap" class="edit-btn" disabled$="[[loading]]">
+										Edit
+									</paper-button>
+									<paper-button raised on-tap="deleteFabricShrinkCompensationTap" class="delete-btn" disabled$="[[loading]]">
+										Delete
+									</paper-button>
+								</div>
+							</template>
+						</vaadin-grid-column>
+					</vaadin-grid>
+
+					<dom-if if="[[!LenMore(order.FabricShrinkCompensation)]]">
+						<template>
+							<div class="noitems">
+								no items
+							</div>
+						</template>
+					</dom-if>
+				</div>
+
+
+
+				<!-- Aggregation -->
+				<div class="aggregation-cells-list" id="aggregation-list">
+					<h4>Aggregation Shelves:</h4>
+				
+					<div class="buttons">
+						<paper-button class="add-new-discount-btn" disabled$="[[loading]]"
+							hidden$="[[hideAddAggregationCellsBtn(order)]]" raised
+							on-tap="addNewAggregationCellsItemTap">
+							New Aggregation Cell
+						</paper-button>
+					</div>
+				
+					<dom-if if="[[order.notvalid.AggregationShelves]]">
+						<template>
+							<div class="notvalid alert">
+								<pre>
+									[[order.notvalid.AggregationShelves]]
+								</pre>
+							</div>
+						</template>
+					</dom-if>
+
+					<dom-repeat items="[[order.AggregationShelves]]" as="shelvei">
+						<template>
+							<div class="aggregation-shelfs" >
+								<div class="remove-shelve-btn-container">
+									<paper-icon-button class="remove-shelve-btn" icon="admin-icons:close" uid$="[[useri.UserID]]"
+										on-tap="_removeShelveTap">
+									</paper-icon-button>
+								</div>
+
+								<paper-input 
+									class="small-input"
+									label="Shelf Index (readonly)" 
+									type="string" 
+									value="{{shelvei.ShelfIndex}}"
+									name="Shelf Index"
+									readonly="true"
+									on-value-changed="onInputChanged"
+									error-message="[[shelvei.notvalid.ShelfIndex]]" 
+									invalid="[[_asBool(shelvei.notvalid.ShelfIndex)]]">
+								</paper-input>
+
+
+								
+								<vaadin-grid aria-label="AggregationCells"
+									theme="no-border column-borders wrap-cell-content row-stripes compact" items="[[shelvei.RowGroups]]"
+									cell-class-name-generator="[[gridCellClassNameGeneratorAggregationCells]]" column-reordering-allowed height-by-rows>
+								
+									<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+										<template class="header">#</template>
+										<template>[[_formatN(index, item)]]</template>
+									</vaadin-grid-column>
+								
+									<vaadin-grid-column width="120px" resizable="true" id="GroupIndex">
+										<template class="header">
+											Group Index
+										</template>
+										<template>
+											<span has-errors$="[[item.notvalid.GroupIndex]]">[[item.GroupIndex]]</span>
+										</template>
+									</vaadin-grid-column>
+
+									<vaadin-grid-column width="120px" resizable="true" id="Width">
+										<template class="header">
+											Width
+										</template>
+										<template>
+											<span has-errors$="[[item.notvalid.Width]]">[[item.Width]]</span>
+										</template>
+									</vaadin-grid-column>
+
+									<vaadin-grid-column width="120px" resizable="true" id="Height">
+										<template class="header">
+											Height
+										</template>
+										<template>
+											<span has-errors$="[[item.notvalid.Height]]">[[item.Height]]</span>
+										</template>
+									</vaadin-grid-column>
+									
+									<vaadin-grid-column width="120px" resizable="true" id="Size">
+										<template class="header">
+											Size
+										</template>
+										<template>
+											<span has-errors$="[[item.notvalid.Size]]">[[item.Size]]</span>
+										</template>
+									</vaadin-grid-column>
+								
+									<vaadin-grid-column width="250px" flex-grow="0" resizable="true" id="_buttons2">
+										<template class="header"></template>
+										<template>
+											<div class="buttons unset">
+												<paper-button raised on-tap="editAggregationCellsTap" class="edit-btn" disabled$="[[loading]]">
+													Edit
+												</paper-button>
+												<paper-button raised on-tap="deleteAggregationCellsTap" class="delete-btn" disabled$="[[loading]]">
+													Delete
+												</paper-button>
+											</div>
+										</template>
+									</vaadin-grid-column>
+								</vaadin-grid>
+								
+								<dom-if if="[[!LenMore(shelvei.RowGroups)]]">
+									<template>
+										<div class="noitems">
+											no items
+										</div>
+									</template>
+								</dom-if>
+
+							</div>
+						</template>
+					</dom-repeat>
+				
+					<dom-if if="[[!LenMore(order.AggregationShelves)]]">
+						<template>
+							<div class="noitems">
+								no items
+							</div>
+						</template>
+					</dom-if>
+
+				</div>
+
+
+
+
+				<!-- Users -->
+				<div class="users-list">
+					<h4>
+						Users (qty: [[order.UserCount]])
+					</h4>
+
+					<div>
+						<tmladmin-ui-search-input 
+							id="newuser"
+							search-type="user"
+							label="New User ID"
+							visible="[[visible]]"
+							website-url="[[websiteUrl]]">
+						</tmladmin-ui-search-input>
+					</div>
+
+					<dom-if if="[[order.notvalid.Users]]">
+						<template>
+							<div class="notvalid alert">
+								<pre>
+									[[order.notvalid.Users]]
+								</pre>
+							</div>
+						</template>
+					</dom-if>
+				
+					<div scrollable-x>
+						<div class="table">
+							<div class="header">
+								<div>
+									UserID
+								</div>
+								<div>
+									User
+								</div>
+								<div>
+								</div>
+							</div>
+					
+							<dom-repeat items="[[order.Users]]" as="useri">
+								<template>
+									<div class="row vcenter">
+										<div>
+											<span class="copy-tap" on-tap="_copyTap">[[useri.UserID]]</span>
+											<span has-errors$="[[useri.notvalid.UserID]]">[[useri.notvalid.UserID]]</span>
+										</div>
+										<div>
+											<teamatical-ui-user-inline user="[[useri]]">
+											</teamatical-ui-user-inline>
+										</div>
+										<div>
+											<paper-spinner-lite class="thick"></paper-spinner-lite>
+											<paper-icon-button class="remove-btn" icon="admin-icons:close" uid$="[[useri.UserID]]"
+												on-tap="_removeUserTap"></paper-icon-button>
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+					
+							<dom-if if="[[!LenMore(order.Users)]]">
+								<template>
+									<div class="noitems">
+										no items
+									</div>
+								</template>
+							</dom-if>
+						</div>
+					</div>
+				
+				</div>
+			</div>
+
+			
+			<div class="order-items" id="order-items">
+			</div>
+		
+
+			<div class="order-footer">
+				<!-- History -->
+				<tmladmin-ui-changes-history 
+					class="order-history"
+					title="Settings History"
+					items="[[order.History]]">
+				</tmladmin-ui-changes-history>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Confirm Manufacturer to Save</h2>
+	<paper-dialog-scrollable>
+		Manufacturer #: [[order.ManufacturerID]] is going to be saved...are you sure?
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="saveManufacturerConfirm">Save Manufacturer</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialog_paper" class="dialog_paper" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center" on-iron-overlay-closed="onCloseEditPaperDialog">
+	<h2>[[editTitle]]</h2>
+	<paper-dialog-scrollable>
+
+		<paper-input label="ID" type="string" value="[[edititem.id]]" disabled hidden$="[[!_asBool(edititem.id)]]">
+		</paper-input>
+
+		<paper-input label="Name" type="string" value="{{edititem.Name::input}}"
+			name="edititem.Name" on-value-changed="onInputChanged"
+			error-message="[[edititem.notvalid.Name]]"
+			invalid="[[_asBool(edititem.notvalid.Name)]]">
+		</paper-input>
+
+		<paper-input 
+			label="Paper Roll Width (in)" 
+			type="string" 
+			value="{{edititem.PaperRollWidthInches::input}}"
+			name="edititem.PaperRollWidthInches"
+			on-value-changed="onInputChanged"
+			error-message="[[edititem.notvalid.PaperRollWidthInches]]" 
+			invalid="[[_asBool(edititem.notvalid.PaperRollWidthInches)]]">
+		</paper-input>
+
+	</paper-dialog-scrollable>
+
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>Close</paper-button>
+		<paper-button dialog-confirm on-tap="savePaperTap">[[editBtn]]</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialog_compensation" class="dialog_compensation" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center" on-iron-overlay-closed="onCloseEditСompensationDialog">
+	<h2>[[editTitle]]</h2>
+	<paper-dialog-scrollable>
+		<!-- <label id="label1">Type:</label>
+		<paper-radio-group aria-labelledby="label1" selected="{{edititem.Type}}" name="edititem.Type"
+			on-value-changed="onInputChanged" error-message="[[edititem.notvalid.Type]]"
+			invalid="[[_asBool(edititem.notvalid.Type)]]">
+			<paper-radio-button name="QuantityDiscount" label="QuantityDiscount">QuantityDiscount</paper-radio-button>
+			<paper-radio-button name="GroupShippingDiscount" label="GroupShippingDiscount">GroupShippingDiscount</paper-radio-button>
+		</paper-radio-group> -->
+
+		<!-- <paper-input label="MinCount" type="string" value="{{edititem.MinCount::input}}"
+			hidden$="[[hideMinCount(edititem.Type)]]" name="edititem.MinCount" on-value-changed="onInputChanged"
+			error-message="[[edititem.notvalid.MinCount]]" invalid="[[_asBool(edititem.notvalid.MinCount)]]">
+		</paper-input> -->
+
+		<paper-input label="Name" type="string" value="{{edititem.Name::input}}"
+			name="edititem.Name" on-value-changed="onInputChanged"
+			error-message="[[edititem.notvalid.Name]]"
+			invalid="[[_asBool(edititem.notvalid.Name)]]">
+		</paper-input>
+
+		<paper-checkbox checked="{{edititem.Disabled}}" title="Out of stock">
+			Disabled
+		</paper-checkbox>
+
+		<paper-checkbox checked="{{edititem.StockFabric}}" title="Is Non-Printable Fabric (for Bulk Process)">
+			Is Non-Printable Fabric (Bulk)
+		</paper-checkbox>
+
+		<paper-checkbox checked="{{edititem.CantReadBarcodes}}" title="Can't Read Barcodes">
+			Can't Read Barcodes
+		</paper-checkbox>
+		
+		<paper-input label="Roll Production Width (p.u.)" type="string" value="{{edititem.RollProductionWidth::input}}"
+			name="edititem.RollProductionWidth" on-value-changed="onInputChanged"
+			error-message="[[edititem.notvalid.RollProductionWidth]]"
+			invalid="[[_asBool(edititem.notvalid.RollProductionWidth)]]">
+		</paper-input>
+
+		<paper-input label="Roll Production Height (p.u.)" type="string" value="{{edititem.RollProductionHeight::input}}"
+			name="edititem.RollProductionHeight" on-value-changed="onInputChanged"
+			error-message="[[edititem.notvalid.RollProductionHeight]]"
+			invalid="[[_asBool(edititem.notvalid.RollProductionHeight)]]">
+		</paper-input>
+
+		<paper-input label="Expected Roll Length (m)" type="string" value="{{edititem.ExpectedRollLength::input}}"
+			name="edititem.ExpectedRollLength" on-value-changed="onInputChanged"
+			error-message="[[edititem.notvalid.ExpectedRollLength]]"
+			invalid="[[_asBool(edititem.notvalid.ExpectedRollLength)]]">
+		</paper-input>
+
+		<paper-input 
+			label="Sublimation Roll Width (in)" 
+			type="string" 
+			value="{{edititem.SublimationRollWidthInches::input}}"
+			name="edititem.SublimationRollWidthInches"
+			on-value-changed="onInputChanged"
+			error-message="[[edititem.notvalid.SublimationRollWidthInches]]" 
+			invalid="[[_asBool(edititem.notvalid.SublimationRollWidthInches)]]">
+		</paper-input>
+
+		<paper-input 
+			label="Bulk Stack Height (#) - [[[editBulkStackHeightSuggestion]]]" 
+			type="string" 
+			value="{{edititem.BulkStackHeight::input}}"
+			name="edititem.BulkStackHeight"
+			on-value-changed="onInputChanged"
+			error-message="[[edititem.notvalid.BulkStackHeight]]" 
+			invalid="[[_asBool(edititem.notvalid.BulkStackHeight)]]">
+		</paper-input>
+
+		<paper-input 
+			label="Damaged Center (cm)" 
+			type="string" 
+			value="{{edititem.DamagedCenterCms::input}}"
+			name="edititem.DamagedCenterCms"
+			on-value-changed="onInputChanged"
+			error-message="[[edititem.notvalid.DamagedCenterCms]]" 
+			invalid="[[_asBool(edititem.notvalid.DamagedCenterCms)]]">
+		</paper-input>
+
+		<paper-input 
+			label="Density (g/m²)" 
+			type="string" 
+			value="{{edititem.WeightGramsPerMeter2::input}}"
+			name="edititem.WeightGramsPerMeter2"
+			on-value-changed="onInputChanged"
+			error-message="[[edititem.notvalid.WeightGramsPerMeter2]]" 
+			invalid="[[_asBool(edititem.notvalid.WeightGramsPerMeter2)]]">
+		</paper-input>
+
+		<paper-input 
+			label="Fabric Composition" 
+			type="string" 
+			value="{{edititem.FabricComposition::input}}"
+			name="edititem.FabricComposition"
+			on-value-changed="onInputChanged"
+			error-message="[[edititem.notvalid.FabricComposition]]" 
+			invalid="[[_asBool(edititem.notvalid.FabricComposition)]]">
+		</paper-input>
+
+	</paper-dialog-scrollable>
+
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>Close</paper-button>
+		<paper-button dialog-confirm on-tap="saveFabricShrinkCompensationTap">[[editBtn]]</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialog_agcell" class="dialog_agcell" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center" on-iron-overlay-closed="onCloseEditAgCellDialog">
+	<h2>[[editTitle]]</h2>
+	<paper-dialog-scrollable>
+		<paper-input label="Shelf Index" type="string" value="{{edititem.ShelfIndex::input}}" name="edititem.ShelfIndex"
+			on-value-changed="onInputChanged" error-message="[[edititem.notvalid.ShelfIndex]]"
+			invalid="[[_asBool(edititem.notvalid.ShelfIndex)]]"
+			hidden$="[[hideShelfIndex(editTitle)]]">
+		</paper-input>
+		<!-- <div class="selection">
+			disabled1$="[[disableManSelection(loading, order.CanBeSaved, pmani.Manufacturer.IsPending)]]"
+			<tmladmin-ui-dropdown-menu 
+				vertical-align="top" horizontal-align="left" label="Shelf"
+				value="{{pmani.Manufacturer.ManufacturerName}}" no-label-float1 no-animations>
+				<paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="value"
+					selected="{{pmani.Manufacturer.ManufacturerID}}">
+					<dom-repeat items="[[pmani.Manufacturers]]" as="mani">
+						<template>
+							<paper-item value$="[[mani.ManufacturerID]]">
+								[[mani.ManufacturerName]] - (#: [[mani.ManufacturerID]])
+							</paper-item>
+						</template>
+					</dom-repeat>
+				</paper-listbox>
+			</tmladmin-ui-dropdown-menu>
+		
+			<span hidden$="[[!pmani.Manufacturer.IsPending]]">[SAVING PENDING]</span>
+		</div> -->
+		<paper-input label="Group Index" type="string" value="{{edititem.GroupIndex::input}}" name="edititem.GroupIndex"
+			on-value-changed="onInputChanged" error-message="[[edititem.notvalid.GroupIndex]]"
+			invalid="[[_asBool(edititem.notvalid.GroupIndex)]]">
+		</paper-input>
+		<paper-input label="Width" type="string" value="{{edititem.Width::input}}" name="edititem.Width"
+			on-value-changed="onInputChanged" error-message="[[edititem.notvalid.Width]]"
+			invalid="[[_asBool(edititem.notvalid.Width)]]">
+		</paper-input>
+		<paper-input label="Height" type="string" value="{{edititem.Height::input}}" name="edititem.Height"
+			on-value-changed="onInputChanged" error-message="[[edititem.notvalid.Height]]"
+			invalid="[[_asBool(edititem.notvalid.Height)]]">
+		</paper-input>
+		<paper-input label="Size" type="string" value="{{edititem.Size::input}}" name="edititem.Size"
+			on-value-changed="onInputChanged" error-message="[[edititem.notvalid.Size]]"
+			invalid="[[_asBool(edititem.notvalid.Size)]]">
+		</paper-input>
+	</paper-dialog-scrollable>
+
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>Close</paper-button>
+		<paper-button dialog-confirm on-tap="saveAggregationCellsTap">[[editBtn]]</paper-button>
+	</div>
+</paper-dialog>

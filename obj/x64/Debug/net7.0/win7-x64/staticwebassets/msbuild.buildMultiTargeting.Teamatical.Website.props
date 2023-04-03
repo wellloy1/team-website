@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Teamatical.Website.props" />
+</Project>

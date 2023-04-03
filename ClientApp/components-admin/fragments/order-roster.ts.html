@@ -1,0 +1,91 @@
+<div class="maindiv">
+
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+		
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh" 
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Roster #: 
+						<span>[[order.Roster.id]]</span> - 
+						<span>[[order.Roster.title]]</span>
+						<!-- - Roster Line Items: <span class="count">[[order.items.length]]</span> -->
+						- Order #: <span>[[order.orderid]]</span>
+						<a hidden$="[[!_asBool(order.orderid)]]" href="[[_urlViewOrder(order.orderid)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+
+					<span class="hidden" showen$="[[order.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> TEST
+					</span>
+				</h3>
+
+
+				
+
+				<div class="buttons">
+					<dom-if if="[[!isOrganization]]">
+						<template>
+							<paper-button class="order-save-details-btn" disabled$="[[loading]]" hidden$="[[hideSaveBtn(order)]]" raised
+										on-tap="saveDetailTap">
+								Save Details
+							</paper-button>
+						</template>
+					</dom-if>
+
+
+					<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm to Save</h2>
+						<paper-dialog-scrollable>
+							Roster #: [[order.id]] details is going to be saved...are you sure?
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss>Close</paper-button>
+							<paper-button dialog-confirm autofocus on-tap="saveDetailConfirmTap">Save Details</paper-button>
+						</div>
+					</paper-dialog>
+
+				</div>
+			</div>
+		
+			<div class="order-items" id="order-items">
+				<iron-list id="gridList" items="{{order.items}}" as="itemi"  scroll-target="[[scrollTarget]]" default-physical-count="40">
+					<template>
+						<tmladmin-ui-order-item 
+							entry="[[itemi]]" 
+							index="[[index]]"
+							action-disabled="[[loading]]" 
+							user-info="[[userInfo]]"
+							is-admin-console
+							is-organization="[[isOrganization]]">
+						</tmladmin-ui-order-item>
+					</template>
+				</iron-list>
+			</div>
+		
+		
+			<div class="order-footer">
+				<teamatical-ui-button 
+					id="loadMoreBtn"
+					hidden$="[[order.plast]]"
+					class="hidden-animated slow"
+					hidden-animated$="[[_loadMoreProgress(loading, loadingMore)]]"
+					disabled$="[[loading]]"
+					on-tap="_loadMore">
+					Load More
+				</teamatical-ui-button>
+			</div>
+		</div>
+	</div>
+</div>

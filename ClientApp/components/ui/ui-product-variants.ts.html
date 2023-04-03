@@ -1,0 +1,26 @@
+<div class="inputs">
+    <h2>[[variantTitle]]</h2>
+
+    <div class="optionlist">
+        <ul tabindex="0">
+            <dom-repeat items="[[options]]" as="optioni">
+                <template>
+                    <li selected$="[[_sel(optioni, selectedOption)]]">
+                        <button
+                            tabindex$="[[_tabindex(focused)]]"
+                            on-tap="onOptionSelectTap"
+                            on-keydown="onOptionSelectKeydown">
+                            [[_optionName(optioni.Name, optioni.Surcharge, optioni.Currency)]]
+                        </button>
+                    </li>
+                </template>
+            </dom-repeat>
+            <!-- <iron-icon
+                icon="[[colorIcon]]" 
+                slot="suffix"
+                style$="[[_convertSwColor(optioni.ColorHex)]]"
+                >
+            </iron-icon> -->
+        </ul>
+    </div>
+</div>

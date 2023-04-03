@@ -1,0 +1,3540 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+		
+
+		<paper-dialog id="dialogdump" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+			<h2>[[localize('admin-dialog-viewdetails')]]</h2>
+			<paper-dialog-scrollable>
+				<pre>
+				</pre>
+			</paper-dialog-scrollable>
+			<div class="buttons">
+				<paper-button dialog-confirm>[[localize('admin-dialog-ok')]]</paper-button>
+			</div>
+		</paper-dialog>
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<span highlighted hidden$="[[hidden_tasksFlag(order.Tasks)]]">
+						[[localize('admin-tasks')]]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn hide-on-print" 
+						icon="admin-icons:refresh"
+						title="[[localize('admin-refresh')]]" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+					
+					[[localize('admin-morder-order-title')]]
+					<span class="copy-tap" on-tap="_copyTap">[[order.ManufactureOrderID]]</span>
+					([[_formatDate(order.Created)]])
+
+					<dom-if if="[[order.ManufactureItemSetID]]">
+						<template>
+							- [[localize('admin-morder-batch-title')]]
+							<span class="copy-tap" on-tap="_copyTap" copy-content$="[[order.ManufacturerID]]">[[order.ManufactureItemSetID]]</span>
+						</template>
+					</dom-if>
+					&nbsp;
+
+					<dom-repeat items="[[order.ManufactureOrderItemSets]]" as="seti">
+						<template>
+							<span class="hide-on-print">| <a href="[[_urlViewManOrderItemSet(order.ManufactureOrderID, seti)]]" 
+								on-tap="onOrderTabSelected">&nbsp;[[seti]]&nbsp;</a>
+							</span>
+						</template>
+					</dom-repeat>
+					
+					|
+					<span class="nowrap">
+						<!-- <paper-menu-button no-animations class="processtype-selection" disabled$="[[dis_reprocess_all(loadingAny, order.PrintingTuning.*)]]" hidden$="[[!order]]">
+							<div slot="dropdown-trigger">
+								<paper-button>
+									<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(order.ProcessTypeSelected.id, 'Bulk')]]"></iron-icon>
+									<iron-icon icon="admin-image:filter" class="stacking hidden" showen-icon$="[[_equal(order.ProcessTypeSelected.id, 'Stacking')]]"></iron-icon>
+									<span>[[localizep('admin-morder-processtype-', order.ProcessTypeSelected.id)]]</span>
+								</paper-button>
+							</div>
+						
+							<paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="value"
+								selected="{{order.ProcessTypeSelected.id}}" no-animations>
+								<dom-repeat items="[[order.ProcessTypeList]]" as="processtypei">
+									<template>
+										<paper-item value$="[[processtypei.id]]">
+											<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(processtypei.id, 'Bulk')]]"></iron-icon>
+											<iron-icon icon="admin-image:filter" class="stacking hidden" showen-icon$="[[_equal(processtypei.id, 'Stacking')]]"></iron-icon>
+											[[localizep('admin-morder-processtype-', processtypei.id)]]
+										</paper-item>
+									</template>
+								</dom-repeat>
+							</paper-listbox>
+						</paper-menu-button> -->
+						<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(order.ProcessTypeSelected.id, 'Bulk')]]"></iron-icon> 
+						<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(order.ProcessTypeSelected.id, 'Bulk2')]]"></iron-icon> 
+						<iron-icon icon="admin-image:filter" class="stacking hidden" showen-icon$="[[_equal(order.ProcessTypeSelected.id, 'Stacking')]]"></iron-icon>
+						[[localizep('admin-morder-processtype-', order.ProcessTypeSelected.id)]]
+					</span>
+
+					<span class="hidden nowrap" showen$="[[order.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('admin-flag-test')]]
+					</span>
+					
+					<span class="hidden nowrap" showen$="[[!order.Sandbox]]">
+						<iron-icon icon="admin-icons:verified-user" class="production"></iron-icon> [[localize('admin-flag-production')]]
+					</span>
+
+
+					<span class="status-bar">
+						<tmladmin-ui-progress-icon type="freeze" status="[[order.FreezeStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="pushed to ftp" status="[[order.PushStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="rasterize" status="[[order.RasterizeStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="printing" status="[[order.PrintStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="transferring" status="[[order.TransferringStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="cutting" status="[[order.CuttingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="sorting" status="[[order.SortingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="bundling" status="[[order.BundlingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="sewing" status="[[order.SewingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="qa" status="[[order.QAStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="aggregation" status="[[order.AggregationStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-labels" status="[[order.ShippingLabelsStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-rfid" status="[[order.ShippingRFIDStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping" status="[[order.ShippingStatus]]"></tmladmin-ui-progress-icon>
+					</span>
+
+					<!-- <dom-if if="[[_showTargetShipDateInfuture(order.TargetShipDate.ms, order.Status.id)]]">
+						<template>
+							<teamatical-ui-date-time 
+								show-count-down
+								count-down-template="D~ h~ m~"
+								hidden$="[[!_isTargetShipDateInfuture(order.TargetShipDate.ms)]]"
+								visible="[[visible]]"
+								hour="numeric" minute="numeric" second="numeric"
+								datetime-obj="[[order.TargetShipDate]]">
+							</teamatical-ui-date-time>
+
+							<teamatical-ui-date-time 
+								visible="[[visible]]"
+								date-is-gone$="[[!_isTargetShipDateInfuture(order.TargetShipDate.ms)]]"
+								hour="numeric" minute="numeric" second="numeric"
+								datetime-obj="[[order.TargetShipDate]]">
+							</teamatical-ui-date-time>
+						</template>
+					</dom-if> -->
+
+					<span class="hide-on-print" hidden$="[[!userInfo.isAdmin]]">
+						|&nbsp;
+						[[localize('admin-manufacturer-title')]]
+						<span class="copy-tap" on-tap="_copyTap" copy-content$="[[order.ManufacturerID]]">[[order.ManufacturerName]]</span>
+						<a href="[[_urlViewManufacturer(order.ManufacturerID)]]">
+							<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+					</span>
+
+				</h3>
+
+				<!-- <div class="quick-anchors hide-on-print">
+					<div class="order-printing" hidden$="[[!order.PrintingTuning]]">
+						<h2  on-tap="gotoAnchor" anchor="#printing">
+							#[[localize('admin-morder-printing-title')]]
+						</h2>
+					</div>
+				
+					<div class="order-reprocess" hidden$="[[!LenMore(order.ManufactureOrderItemSetItems)]]">
+						<h2  on-tap="gotoAnchor" anchor="#reprocess-single">
+							#[[localize('admin-morder-items-title')]]
+						</h2>
+					</div>
+				
+					<div class="order-reprocess" hidden$="[[!LenMore(order.BulkProduction)]]">
+						<h2 on-tap="gotoAnchor" anchor="#reprocess-bulk">
+							#[[localize('admin-morder-bulkitems-title')]]
+						</h2>
+					</div>
+				
+					<div class="order-shipping" hidden$="[[!order.Shipping]]">
+						<h2 on-tap="gotoAnchor" anchor="#shipping">
+							#[[localize('admin-morder-shipping-title')]]
+						</h2>
+					</div>
+				
+					<div class="order-history hide-on-print" hidden$="[[!userInfo.isAdmin]]">
+						<h2 on-tap="gotoAnchor" anchor="#history">
+							#[[localize('admin-morder-history-title')]]
+						</h2>
+					</div>
+				
+					<div class="order-tasks hide-on-print">
+						<h2 on-tap="gotoAnchor" anchor="#tasks">
+							#[[localize('admin-morder-tasks-title')]]
+						</h2>
+					</div>
+				</div> -->
+
+				<!-- Tabs -->
+				<dom-if if="[[_morethen(orderTabs.length, 1)]]">
+					<template>
+						<paper-tabs class="order-tabs hide-on-print" selected="{{orderTabIndex}}" scrollable noink1 autoselect autoselect-delay="0"
+							on-iron-select="onOrderTabSelected">
+							<dom-repeat items="[[orderTabs]]" as="tabi">
+								<template>
+									<paper-tab class$="[[tabi.Class]]">
+										<iron-icon icon="[[tabi.Icon]]"></iron-icon>
+										&nbsp;
+										[[tabi.Title]]
+									</paper-tab>
+								</template>
+							</dom-repeat>
+						</paper-tabs>
+					</template>
+				</dom-if>
+
+				
+
+				<!-- Buttons -->
+				<div class="buttons hide-on-print" style="display: none;" showen-flex$="[[isTabActive(orderTabs, orderTabIndex, 'Summary')]]">
+					<paper-dropdown-menu
+						vertical-align="top" 
+						horizontal-align="left" 
+						label="[[localize('admin-morder-orderstatus-title')]]" 
+						disabled$="[[disableStatusSelection(loadingAny)]]"
+						value="{{order.Status.title}}"
+						no-label-float1
+						no-animations>
+						<paper-listbox 
+							slot="dropdown-content" 
+							class="dropdown-content" 
+							attr-for-selected="value"
+							selected="{{order.Status.id}}">
+							<dom-repeat items="[[order.StatusList]]" as="statusi">
+								<template>
+									<paper-item value$="[[statusi.id]]">
+										<iron-icon icon="admin-icons:verified-user" class="production hidden" showen-icon$="[[_equal(statusi.id, 'ready for manufacture')]]"></iron-icon> 
+										<iron-icon icon="admin-icons:pan-tool" class="production-hold hidden" showen-icon$="[[_equal(statusi.id, 'production hold')]]"></iron-icon>
+										&nbsp;
+										[[localizeStatus(statusi.id)]]
+									</paper-item>
+								</template>
+							</dom-repeat>
+						</paper-listbox>
+					</paper-dropdown-menu>
+
+					<paper-spinner-lite class="thick"></paper-spinner-lite>
+					
+					<paper-button
+						class="order-updatestatus-btn hide-on-print" 
+						disabled$="[[loadingAny]]" 
+						raised 
+						on-tap="updateOrderStatusTap">
+						[[localize('admin-morder-updatestatus-btn')]]
+					</paper-button>
+
+					<vaadin-date-time-picker 
+						label="Target Ship Date" 
+						value="{{targetShipDate}}" 
+						step="1800"
+						disabled$="[[loadingAny]]"
+						time-placeholder="hh:mm">
+						<!-- <span slot="helper">Target Ship Date</span> -->
+					</vaadin-date-time-picker>
+
+					<paper-button class="order-save-details-btn" disabled$="[[loadingAny]]" hidden$="[[hideSaveBtn(order)]]" raised
+						on-tap="saveDetailTap">
+						[[localize('admin-morder-save-btn')]]
+					</paper-button>
+
+					<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>[[localize('admin-morder-save-dlg-title')]]</h2>
+						<paper-dialog-scrollable>
+							[[localize('admin-morder-save-dlg-msg', 'moid', order.id)]]
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss>[[localize('admin-morder-save-dlg-close')]]</paper-button>
+							<paper-button dialog-confirm autofocus on-tap="saveDetailConfirmTap">[[localize('admin-morder-save-btn')]]
+							</paper-button>
+						</div>
+					</paper-dialog>
+
+
+					<paper-button class="order-reprocess-btn" raised 
+						disabled$="[[dis_reprocess_all(loadingAny, order.PrintingTuning.*)]]"
+						hidden$="[[hideReprocess(order)]]" 
+						on-tap="reprocessOrderTap">
+						[[localize('admin-morder-reprocessall-btn')]]
+					</paper-button>
+
+					<!-- disabled$="[[dis_reprocess(loading, printingi.IsPDFsFrozen)]]" -->
+					<div class="order-dangersection-btn">
+						<paper-button class="order-fixassignment-btn" disabled$="[[dis_fixassignment(loadingAny, order.PrintingTuning.*)]]"
+							hidden$="[[hideFixassignment(order)]]" raised on-tap="fixassignmentOrderTap">
+							[[localize('admin-morder-fixassignment-btn')]]
+						</paper-button>
+						<paper-button class="order-dispose-btn" disabled$="[[dis_dispose(loadingAny, order.PrintingTuning.*)]]"
+							hidden$="[[hideDispose(order)]]" raised on-tap="disposeOrderTap">
+							[[localize('admin-morder-dispose-btn')]]
+						</paper-button>
+					</div>
+
+
+
+					<paper-dialog id="dialogreprocess" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>[[localize('admin-morder-reprocess-dlg-title')]]</h2>
+						<paper-dialog-scrollable>
+							<div class="checkbox-container">
+								<paper-checkbox class="hide-on-print" checked="{{order_SpotColors}}" disabled$="[[loadingAny]]">
+									Spot Colors
+								</paper-checkbox>
+							</div>
+
+							<div>
+								[[localize('admin-morder-processtype-title')]]
+								<paper-menu-button no-animations class="processtype-selection"
+									disabled$="[[dis_reprocess_all(loadingAny, order.PrintingTuning.*)]]" hidden$="[[!order]]">
+									<div slot="dropdown-trigger">
+										<paper-button raised>
+											<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(order_ProcessTypeSelected.id, 'Bulk')]]"></iron-icon>
+											<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(order_ProcessTypeSelected.id, 'Bulk2')]]"></iron-icon>
+											<iron-icon icon="admin-image:filter" class="stacking hidden" showen-icon$="[[_equal(order_ProcessTypeSelected.id, 'Stacking')]]"></iron-icon>
+											<span>[[localizep('admin-morder-processtype-', order_ProcessTypeSelected.id)]]</span>
+										</paper-button>
+									</div>
+								
+									<paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="value"
+										selected="{{order_ProcessTypeSelected.id}}" no-animations>
+										<dom-repeat items="[[order.ProcessTypeList]]" as="processtypei">
+											<template>
+												<paper-item value$="[[processtypei.id]]">
+													<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(processtypei.id, 'Bulk')]]"></iron-icon>
+													<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(processtypei.id, 'Bulk2')]]"></iron-icon>
+													<iron-icon icon="admin-image:filter" class="stacking hidden" showen-icon$="[[_equal(processtypei.id, 'Stacking')]]"></iron-icon>
+													[[localizep('admin-morder-processtype-', processtypei.id)]]
+												</paper-item>
+											</template>
+										</dom-repeat>
+									</paper-listbox>
+								</paper-menu-button>
+							</div>
+
+							<p>
+								[[localize('admin-morder-reprocess-dlg-msg', 'moid', order.id)]]
+							</p>
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss autofocus>[[localize('admin-dialog-close')]]</paper-button>
+							<paper-button dialog-confirm class="order-reprocess-btn" on-tap="reprocessOrderConfirmTap">[[localize('admin-morder-reprocess-btn')]]
+							</paper-button>
+						</div>
+					</paper-dialog>
+
+
+					<paper-dialog id="dialogdispose" class="small-with-icon" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>[[localize('admin-morder-dispose-dlg-title')]]</h2>
+						<paper-dialog-scrollable>
+							<iron-icon class="error" icon="admin-icons:delete-forever" showen$=""></iron-icon>
+							<paper-checkbox 
+								class="hide-on-print"
+								checked="{{doUncheckGrabForProduction}}">
+								[[localize('admin-morder-uncheck-GrabForProduction')]]
+							</paper-checkbox>
+							<br /><br />
+							[[localize('admin-morder-dispose-dlg-msg', 'moid', order.id)]]
+							<paper-textarea 
+								style="margin: 16px;"
+								label="Dispose reason" 
+								value="{{dialogdispose.reason}}"
+								on-value-changed="onInputChanged" 
+								name="dialogdispose.DisposeReason"
+								error-message="[[dialogdispose.notvalid.DisposeReason]]"
+								invalid="[[_asBool(dialogdispose.notvalid.DisposeReason)]]"
+							></paper-textarea>
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss autofocus>[[localize('admin-dialog-close')]]</paper-button>
+							<paper-button dialog-confirm class="order-dispose-btn" on-tap="disposeOrderConfirmTap">
+								[[localize('admin-morder-dispose-btn')]]
+							</paper-button>
+						</div>
+					</paper-dialog>
+
+				</div>
+
+
+				<div class="order-details hidden" showen$="[[isTabActive(orderTabs, orderTabIndex, 'Summary')]]">
+
+					<!-- <div class="hide-on-print">
+						<paper-checkbox checked="{{order.UseAggregation}}">
+							[[localize('admin-morder-aggregation-use-checkbox')]]
+						</paper-checkbox>
+					</div> -->
+
+					<teamatical-ui-description 
+						class="order-notes hidden"
+						show-on-print-block$="[[_asBool(order.Notes)]]"
+						html="[[order.Notes]]">
+					</teamatical-ui-description>
+
+					<tmladmin-ui-richtext-editor
+						class="hide-on-print"
+						label="Notes" 
+						is-auto-html
+						value="{{order.Notes}}"
+						name="Notes"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.Notes]]" 
+						invalid="[[_asBool(order.notvalid.Notes)]]">
+					</tmladmin-ui-richtext-editor>
+
+
+					<!-- Batch Summary -->
+					<div scrollable-x>
+					<h4 hidden$="[[!_asBool(order.ManufactureItemSetID)]]">[[localize('admin-morder-batchsummary-title')]]</h4>
+					<div class="table" hidden$="[[!_asBool(order.ManufactureItemSetID)]]">
+						<div class="header">
+							<div class="w5">
+								[[localize('admin-morder-set-fabrics-title')]]
+							</div>
+							<div class="w5">
+								[[localize('admin-morder-set-TotalFabricsLengthMeters-title')]]
+							</div>
+							<div class="w5">
+								[[localize('admin-morder-set-TotalFabricsLengthWithoutReplacementsMeters-title')]]
+							</div>							
+							<div class="w5">
+								[[localize('admin-morder-set-TotalFabricsReplacementsOverhead-title')]]
+							</div>							
+							
+							<div class="w5">
+								[[localize('admin-morder-set-products-title')]]
+							</div>
+							<div class="w5">
+								[[localize('admin-morder-set-products-qa-title')]]
+							</div>
+							<div class="w5">
+								[[localize('admin-morder-set-shipments-title')]]
+							</div>
+							<div class="w5">
+								# Hub Shipments
+							</div>
+							<div class="w5">
+								[[localize('admin-morder-set-stylescount-title')]]
+							</div>
+							<div  class="w10">
+								[[localize('admin-morder-set-styles-title')]]
+							</div>
+							<div  class="w15">
+								[[localize('admin-morder-set-senttoprint-title')]]
+							</div>
+							<div class="w15 centered">
+								[[localize('admin-morder-set-senttoprint-count-title')]]
+							</div>
+							<div class="w10">
+								[[localize('admin-morder-set-rasterized-title')]]
+							</div>
+							<div class="w10">
+								[[localize('admin-morder-set-printed-title')]]
+							</div>
+						</div>
+
+						<div class="row">
+							<div>
+								[[order.TotalFabricsCount]]
+							</div>
+							<div>
+								[[_formatMeters(order.TotalFabricsLengthMeters, 'yd')]]
+							</div>
+							<div>
+								[[_formatMeters(order.TotalFabricsLengthWithoutReplacementsMeters, 'yd')]]
+							</div>
+							<div>
+								[[_formatDoubleAsPercent(order.TotalFabricsReplacementsOverhead, 1)]]
+							</div>
+							<div>
+								[[order.TotalProductsCount]]
+							</div>
+							<div>
+								[[order.TotalProductsCountQa]]
+							</div>
+							<div>
+								[[order.TotalShipmentsCount]]
+							</div>
+							<div>
+								[[order.ShippingAggregated.length]]
+							</div>
+							<div>
+								[[order.TotalProductSKUsCount]]
+							</div>
+							<div>
+								[[_formatArray(order.ProductSKUs)]]
+							</div>
+							<div>
+								[[order.TotalPdfFiles]]
+							</div>
+							<div class="centered">
+								[[order.PushedToFtpCount]]
+							</div>
+							<div>
+								[[order.RasterizedCount]] 
+								/ 
+								<dom-if if="[[_morethen(order.RasterizedErrorCount, 0)]]">
+									<template>
+										<iron-icon class="error" icon="admin-icons:error" showen$=""></iron-icon>
+									</template>
+								</dom-if>
+								[[order.RasterizedErrorCount]]
+							</div>
+							<div>
+								[[order.PrintedCount]]
+								/ 
+								<dom-if if="[[_morethen(order.PrintedErrorCount, 0)]]">
+									<template>
+										<iron-icon class="error" icon="admin-icons:error" showen$=""></iron-icon>
+									</template>
+								</dom-if>
+								[[order.PrintedErrorCount]]
+							</div>
+						</div>
+					</div>
+					</div>
+
+					<!-- Batch Process Summary -->
+					<div scrollable-x>
+						<h4 hidden$="[[!_asBool(order.StandardAllocatedMinutes)]]">Standard Allocated Minutes (SAM)</h4>
+						<div class="table" hidden$="[[!_asBool(order.StandardAllocatedMinutes)]]">
+							<div class="header">
+								<div>
+									Process Name
+								</div>
+								<div>
+									SAM (minutes)
+								</div>
+							</div>
+	
+							<dom-repeat items="[[order.StandardAllocatedMinutes]]" as="sami">
+								<template>
+									<div class="row">
+										<div>
+											[[sami.ID]]
+										</div>
+										<div>
+											[[sami.minutes]]
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+						</div>
+					</div>
+					<div class="chart-countainer" hidden$="[[!_asBool(order.StandardAllocatedMinutes)]]">
+						<canvas id="batchSAMChart"></canvas>
+					</div>
+					
+
+					<!-- Products Summary -->
+					<div scrollable-x>
+					<h4 hidden$="[[!_asBool(order.ManufactureItemSetID)]]">
+						[[localize('admin-morder-productsummary-title')]]
+						| #: [[order.ManufactureItemSetID.length]]
+					</h4>
+					<div class="table stripe" hidden$="[[!_asBool(order.ManufactureItemSetID)]]">
+						<div class="header">
+							<div class="w10">
+								[[localize('admin-morder-minternalid-title')]]
+								<!-- [[localize('admin-morder-productsummary-product-internalsku-title')]] -->
+							</div>
+							<div class="w10">
+								[[localize('admin-morder-style-title')]]
+							</div>
+							<dom-repeat items="[[productsSummaryHeader]]" as="sizei">
+								<template>
+									<div class="w5">
+										[[sizei]]
+									</div>
+								</template>
+							</dom-repeat>
+							<div class="w5">
+								[[localize('admin-morder-count-title')]]
+							</div>
+						</div>
+					
+						<dom-repeat items="[[productsSummary]]" as="productsumi">
+							<template>
+								<div class="row">
+									<div>
+										[[productsumi.ManufactureProductInternalID]]
+									</div>
+									<div>
+										[[productsumi.SKU]]
+									</div>
+									<dom-repeat items="[[productsumi.Sizes]]" as="sizecounti">
+										<template>
+											<div class="w5">
+												[[sizecounti]]
+											</div>
+										</template>
+									</dom-repeat>
+									<div>
+										[[productsumi.TotalCount]]
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+						<dom-if if="[[!LenMore(productsSummary)]]">
+							<template>
+								<div class="noitems">
+									[[localize('admin-list-noitems')]]
+								</div>
+							</template>
+						</dom-if>
+					</div>
+					</div>
+
+					<!-- Design Summary -->
+					<div scrollable-x>
+						<h4 hidden$="[[!_asBool(designSummary)]]">
+							[[localize('admin-morder-designsummary-title')]]
+							| #: [[designSummary.length]]
+						</h4>
+						<div class="design-summary" hidden$="[[!_asBool(designSummary)]]">
+							<dom-repeat items="[[designSummary]]" as="designi">
+								<template>
+									<div class="design-summary-item">
+										<div>
+											<span># [[_formatIndex(index)]]:</span> 
+											<iron-icon on-tap="onDesignSummaryItemTap" icon="admin-icons:open-in-new" class="open-in-here clickable"></iron-icon>
+										</div>
+										<div class="count">
+											[[designi.Size]]
+											[[designi.Count]]
+											([[designi.ManufactureProductInternalID]])
+										</div>
+										<div>
+											<span class="status-bar">
+												<tmladmin-ui-progress-icon type="printing" status="[[designi.PrintStatus]]"></tmladmin-ui-progress-icon>
+												<tmladmin-ui-progress-icon type="transferring" status="[[designi.TransferringStatus]]"></tmladmin-ui-progress-icon>
+												<tmladmin-ui-progress-icon type="cutting" status="[[designi.CuttingStatus]]"></tmladmin-ui-progress-icon>
+												<tmladmin-ui-progress-icon type="sewing" status="[[designi.SewingStatus]]"></tmladmin-ui-progress-icon>
+												<tmladmin-ui-progress-icon type="qa" status="[[designi.QAStatus]]"></tmladmin-ui-progress-icon>
+												<tmladmin-ui-progress-icon type="aggregation" status="[[designi.AggregationStatus]]"></tmladmin-ui-progress-icon>
+												<tmladmin-ui-progress-icon type="shipping-labels" status="[[designi.ShippingLabelsStatus]]"></tmladmin-ui-progress-icon>
+												<tmladmin-ui-progress-icon type="shipping-rfid" status="[[designi.ShippingRFIDStatus]]"></tmladmin-ui-progress-icon>
+												<tmladmin-ui-progress-icon type="shipping" status="[[designi.ShippingStatus]]"></tmladmin-ui-progress-icon>
+											</span>
+										</div>
+										<div>
+											<teamatical-ui-image src="[[designi.ImageUrls.0]]" alt="[[index]]" 
+												lazy-load lazy-observe=[[lazyObserve]]>
+											</teamatical-ui-image>
+										</div>
+										<paper-input 
+											label="[[localize('admin-morder-jobid-title')]]" 
+											type="string" 
+											value="{{designi.JobID}}">
+										</paper-input>
+									</div>
+								</template>
+							</dom-repeat>
+							
+						</div>
+					</div>
+
+					<!-- Fabrics Summary -->
+					<div scrollable-x>
+					<h4 hidden$="[[!_asBool(order.ManufactureItemSetID)]]">
+						[[localize('admin-morder-fabricsummary-title')]]
+						| #: [[order.FabricSummaryList.length]]
+					</h4>
+					<div class="table stripe" hidden$="[[!_asBool(order.ManufactureItemSetID)]]">
+						<div class="header">
+							<div class="w10">
+								[[localize('admin-morder-fabicname-title')]]
+							</div>
+							<div class="w5">
+								[[localize('admin-morder-width-title')]]
+							</div>
+							<div class="w5">
+								[[localize('admin-morder-length-title')]]
+							</div>
+							<div class="w5">
+								[[localize('admin-morder-LengthWithoutReplacementsMeters-title')]]
+							</div>
+							<div class="w5">
+								[[localize('admin-morder-LengthReplacementsOverhead-title')]]
+							</div>
+							<div class="w5">
+								[[localize('admin-morder-printarea-title')]]
+							</div>
+							<div class="w5">
+								[[localize('admin-morder-FinalYieldPercentage-title')]]
+							</div>
+							<!-- <div class="w5">
+								[[localize('admin-morder-rolls-title')]]
+							</div>
+							<div class="w5">
+								[[localize('admin-morder-rolllength-title')]]
+							</div> -->
+						</div>
+					
+						<dom-repeat items="[[order.FabricSummaryList]]" as="fabrici">
+							<template>
+								<div class="row">
+									<div>
+										[[fabrici.FabricName]]
+									</div>
+									<div class="pdf-meters">
+										[[_formatMeters(fabrici.WidthMeters, 'in')]]
+									</div>
+									<div class="pdf-meters">
+										[[_formatMeters(fabrici.LengthMeters, 'yd')]]
+									</div>
+									<div>
+										[[_formatMeters(fabrici.LengthWithoutReplacementsMeters, 'yd')]]
+									</div>
+									<div>
+										[[_formatDoubleAsPercent(fabrici.LengthReplacementsOverhead, 1)]]
+									</div>
+									<div class="pdf-meters">
+										[[_formatMeters(fabrici.PrintedAreaSquareMeters, 'yd^2')]]
+									</div>
+									<div>
+										[[_formatDouble(fabrici.FinalYieldPercentage, 1)]]
+									</div>
+									<!-- <div>
+										[[_formatDouble(fabrici.Rolls, 1)]]
+									</div>
+									<div>
+										[[_formatMeters(fabrici.RollLengthMeters, 'yd')]]
+									</div> -->
+								</div>
+							</template>
+						</dom-repeat>
+						<dom-if if="[[!LenMore(order.FabricSummaryList)]]">
+							<template>
+								<div class="noitems">
+									[[localize('admin-list-noitems')]]
+								</div>
+							</template>
+						</dom-if>
+					</div>
+					</div>
+				</div>
+				
+			</div>
+
+
+
+			<!-- Printing Tunings -->
+			<div class="order-printing hidden" showen$="[[isTabActive(orderTabs, orderTabIndex, 'PrintingTuning', order.PrintingTuning)]]">
+				<h2>
+					<a id="printing"></a>
+					[[localize('admin-morder-printing-title')]]
+			
+					<span class="hidden nowrap" showen$="[[order.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('admin-flag-test')]]
+					</span>
+				</h2>
+			
+				<iron-list items="[[order.PrintingTuning]]" as="printingi" index-as="printingindex" scroll-target="[[scrollTarget]]" default-physical-count="40" suppress-focus>
+					<template>
+						<div class="order-printing-item" is-locked$="[[!printingi.IsPDFsFrozen]]">
+							<h3>
+								[[localize('admin-morder-printingjob-title')]] 
+								# [[_formatIndex(printingindex)]]
+
+								<span class="replacement-title hidden" showen$="[[show_replacement(printingi.ReplacementIteration)]]">
+									R-[[printingi.ReplacementIteration]]
+								</span>
+
+							</h3>
+							<div class="col-1">
+								<div class="table">
+									<div class="header"></div>
+		
+									<div class="row">
+										<div>
+											[[localize('admin-morder-genat-title')]]
+										</div>
+										<div>
+											[[_formatDate(printingi.OutputResultTimeStamp)]]
+										</div>
+									</div>
+									<div class="row">
+										<div>
+											[[localize('admin-morder-files-title')]]
+										</div>
+										<div class="pdf-filename">
+											[[printingi.OutputResultSource]]
+										</div>
+									</div>
+
+									<div class="row">
+										<div>
+											[[localize('admin-morder-isprocessing-title')]]
+										</div>
+										<div>
+											<span highlighted$="[[printingi.IsProcessing]]">
+												[[localizep('admin-', printingi.IsProcessing)]]
+											</span>
+										</div>
+									</div>
+
+									<div class="row">
+										<div>
+											[[localize('admin-morder-usecolornames-title')]]
+										</div>
+										<div>
+											<span>
+												<dom-if if="[[printingi.UseColorNames]]">
+													<template>
+														<iron-icon icon="admin-icons:status-spotcolors" class="spotcolors" title$="[[localize('admin-printstatus-spotcolors')]]"></iron-icon>
+													</template>
+												</dom-if>
+												<dom-if if="[[!printingi.UseColorNames]]">
+													<template>
+														[[localizep('admin-', printingi.UseColorNames)]]
+													</template>
+												</dom-if>
+											</span>
+										</div>
+									</div>
+
+									<div class="row">
+										<div>
+											[[localize('admin-morder-ExpandComponentsPatterns-title')]]
+										</div>
+										<div>
+											<span highlighted$="[[printingi.ExpandComponentsPatterns]]">
+												<dom-if if="[[printingi.ExpandComponentsPatterns]]">
+													<template>
+														[[localizep('admin-', printingi.ExpandComponentsPatterns)]]
+													</template>
+												</dom-if>
+											</span>
+										</div>
+									</div>
+									
+		
+									<div class="row">
+										<div>
+											[[localize('admin-morder-submittedprinting-title')]]
+										</div>
+										<div>
+											<!-- [[localizep('admin-', printingi.IsPDFsFrozen)]]
+											<iron-icon class="production hidden" showen-icon$="[[printingi.IsPDFsFrozen]]" icon="admin-icons:check-circle"></iron-icon> -->
+											<span class="status-bar">
+												<tmladmin-ui-progress-icon type="freeze" status="[[printingi.FreezeStatus]]"></tmladmin-ui-progress-icon>
+												<tmladmin-ui-progress-icon type="pushed to ftp" status="[[printingi.PushStatus]]"></tmladmin-ui-progress-icon>
+												<tmladmin-ui-progress-icon type="rasterize" status="[[printingi.RasterizeStatus]]"></tmladmin-ui-progress-icon>
+												<tmladmin-ui-progress-icon type="printing" status="[[printingi.PrintStatus]]"></tmladmin-ui-progress-icon>
+												<tmladmin-ui-progress-icon type="transferring" status="[[printingi.TransferringStatus]]"></tmladmin-ui-progress-icon>
+												<tmladmin-ui-progress-icon type="cutting" status="[[printingi.CuttingStatus]]"></tmladmin-ui-progress-icon>
+											</span>
+										</div>
+									</div>
+									<!-- <div class="row">
+										<div>
+											[[localize('admin-morder-iterations-title')]]
+										</div>
+										<div>
+											[[printingi.ReplacementIteration]]
+										</div>
+									</div> -->
+									<div class="row">
+										<div>
+											[[localize('admin-morder-totalpdffiles-title')]]
+										</div>
+										<div>
+											[[printingi.TotalPdfFiles]]
+										</div>
+									</div>
+									<!-- <div class="row">
+										<div>
+											[[localize('admin-morder-totalrolls-title')]]
+										</div>
+										<div>
+											[[printingi.TotalSpecifiedRolls]]
+										</div>
+									</div> -->
+									<div class="row">
+										<div>
+											[[localize('admin-morder-usedfabrics-title')]]
+										</div>
+										<div>
+											[[printingi.TotalUsedFabrics]]
+										</div>
+									</div>
+								</div>
+							</div>
+		
+							<div class="col-2">
+								<div class="horizontal">
+									<div class="spinner">
+										<paper-button class="order-items-reprocess-btn hide-on-print" raised
+											data-id$="[[printingi.ManufacturePrintingTuningID]]"
+											disabled$="[[dis_reprocess(loadingAny, printingi.IsProcessing, printingi.IsOnHold, printingi.IsPDFsFrozen, printingi.ReprocessProperties)]]" on-tap="_onReprocess">
+											[[localize('admin-morder-reprocess-btn')]]
+										</paper-button>
+										<paper-spinner-lite class="thick"></paper-spinner-lite>
+									</div>
+									<div class="spinner">
+										<paper-button class="order-items-reprocess-review-btn hide-on-print" raised
+											data-id$="[[printingi.ManufacturePrintingTuningID]]"
+											disabled$="[[dis_reprocess(loadingAny, printingi.IsProcessing, printingi.IsOnHold, printingi.IsPDFsFrozen, printingi.ReprocessProperties)]]" on-tap="_onReprocessPreview">
+											[[localize('admin-morder-reprocess-preveiw-btn')]]
+										</paper-button>
+										<paper-spinner-lite class="thick"></paper-spinner-lite>
+									</div>
+								</div>
+								<div class="spinner">
+									<paper-button class="order-download-btn hide-on-print" raised
+										data-id$="[[printingi.ManufacturePrintingTuningID]]" 
+										disabled$="[[dis_download(loadingAny, printingi.IsProcessing, printingi.IsOnHold, printingi.IsPDFsFrozen, printingi.OutputResultSource)]]"
+										on-tap="_onDownload">
+										[[localize('admin-morder-download-btn')]]
+									</paper-button>
+									<paper-spinner-lite id="downloadProgress" class="thick"></paper-spinner-lite>
+								</div>
+								
+
+								<div class="horizontal">
+								<div class="spinner" hidden$="[[hid_freeze(loadingAny, printingi.IsProcessing, printingi.IsOnHold, printingi.IsPDFsFrozen)]]">
+									<paper-button class="order-items-freeze-btn hide-on-print" raised
+										data-id$="[[printingi.ManufacturePrintingTuningID]]"
+										disabled$="[[dis_freeze(loadingAny, printingi.IsProcessing, printingi.IsOnHold, printingi.IsPDFsFrozen)]]" 
+										on-tap="ptFreezeTap">
+										[[localize('admin-morder-freeze-btn')]]
+									</paper-button>
+									<paper-spinner-lite class="thick"></paper-spinner-lite>
+								</div>
+								<div class="spinner" hidden$="[[hid_unfreeze(loadingAny, printingi.IsProcessing, printingi.IsOnHold, printingi.IsPDFsFrozen)]]">
+									<paper-button class="order-items-unfreeze-btn hide-on-print" raised
+										data-id$="[[printingi.ManufacturePrintingTuningID]]" 
+										disabled$="[[dis_unfreeze(loadingAny, printingi.IsProcessing, printingi.IsOnHold, printingi.IsPDFsFrozen)]]"
+										on-tap="ptUnfreezeTap">
+										[[localize('admin-morder-unfreeze-btn')]]
+									</paper-button>
+									<paper-spinner-lite class="thick"></paper-spinner-lite>
+								</div>
+								</div>
+								
+								<div class="horizontal">
+									<div class="spinner" hidden$="[[hid_hold(loadingAny, printingi.IsProcessing, printingi.IsOnHold, printingi.IsPDFsFrozen)]]">
+										<paper-button class="order-items-hold-btn hide-on-print" raised
+											data-id$="[[printingi.ManufacturePrintingTuningID]]"
+											disabled$="[[dis_hold(loadingAny, printingi.IsProcessing, printingi.IsOnHold, printingi.IsPDFsFrozen)]]" 
+											on-tap="ptHoldTap">
+											[[localize('admin-morder-hold-btn')]]
+										</paper-button>
+										<paper-spinner-lite class="thick"></paper-spinner-lite>
+									</div>
+									<div class="spinner" hidden$="[[hid_unhold(loadingAny, printingi.IsProcessing, printingi.IsOnHold, printingi.IsPDFsFrozen)]]">
+										<paper-button class="order-items-unhold-btn hide-on-print" raised
+											data-id$="[[printingi.ManufacturePrintingTuningID]]" 
+											disabled$="[[dis_unhold(loadingAny, printingi.IsProcessing, printingi.IsOnHold, printingi.IsPDFsFrozen)]]"
+											on-tap="ptUnHoldTap">
+											[[localize('admin-morder-unhold-btn')]]
+										</paper-button>
+										<paper-spinner-lite class="thick"></paper-spinner-lite>
+									</div>
+								</div>
+
+								
+								<div class="spinner" hidden$="[[!show_replacement(printingi.ReplacementIteration)]]">
+									<paper-button class="order-replace_reason-btn hide-on-print" raised
+										data-id$="[[printingi.ManufacturePrintingTuningID]]" 
+										disabled$="[[dis_download(loadingAny, printingi.IsProcessing, printingi.IsOnHold, printingi.IsPDFsFrozen, printingi.OutputResultSource)]]"
+										on-tap="_onReasonTap">
+										[[localize('admin-morder-replace_reason-btn')]]
+									</paper-button>
+									<paper-spinner-lite id="reasonProgress" class="thick"></paper-spinner-lite>
+								</div>
+							</div>
+
+							<div class="col-3">
+								<!-- PushList -->
+								<div scrollable-x>
+									<div class="table spacer stripe ">
+										<div class="header">
+											<div>
+												[[localize('admin-ws-printing-printlocation')]]
+											</div>
+											<div>
+												[[localize('admin-morder-destination-title')]]
+											</div>
+											<div>
+												[[localize('admin-morder-name-title')]]
+											</div>
+											<div>
+												[[localize('admin-ws-printing-pushlist-user')]]
+											</div>
+											<div>
+												[[localize('admin-morder-time-title')]]
+											</div>
+											<div class="centered">
+												[[localize('admin-morder-success-title')]]
+											</div>
+										</div>
+			
+										<dom-repeat items="[[printingi.PushList]]" as="pushi">
+											<template>
+												<div class="row vcenter">
+													<div>
+														[[pushi.PrintLocation]]
+													</div>
+													<div>
+														[[pushi.Destination]]
+													</div>
+													<div>
+														[[pushi.Name]]
+													</div>
+													<div>
+														<teamatical-ui-user-inline user="[[pushi.User]]">
+														</teamatical-ui-user-inline>
+													</div>
+													<div>
+														[[_formatDate(pushi.Timestamp)]]
+													</div>
+													<div>
+														<span highlighted$="[[pushi.Success]]">[[localizep('admin-', pushi.Success)]]</span>
+													</div>
+												</div>
+											</template>
+										</dom-repeat>
+
+										<dom-if if="[[!LenMore(printingi.PushList)]]">
+											<template>
+												<div class="noitems">
+													[[localize('admin-list-noitems')]]
+												</div>
+											</template>
+										</dom-if>
+									</div>
+								</div>
+		
+								<!-- PDFFiles -->
+								<div scrollable-x>
+									<div class="table spacer stripe_ width100">
+										<div class="header">
+											<div>
+												[[localize('admin-morder-pdfname-title')]]
+											</div>
+											<div style="max-width: 40px;">
+												<!--  -->
+											</div>
+											<div style="max-width: 40px;" hidden$="[[!_asBool(pdfi.Content)]]">
+												<!--  -->
+											</div>
+											<div>
+												[[localize('admin-morder-pdffile-title')]]
+											</div>
+											<div>
+												[[localize('admin-morder-fabicname-title')]]
+											</div>
+											<div>
+												[[localize('admin-morder-papername-title')]]
+											</div>
+											<div>
+												[[localize('admin-morder-bulkstacksize-title')]]
+											</div>
+											<div>
+												[[localize('admin-morder-width-title')]]
+											</div>
+											<div>
+												[[localize('admin-morder-length-meters-title')]]
+											</div>
+											<div>
+												[[localize('admin-morder-length-title')]]
+											</div>
+											<div>
+												[[localize('admin-morder-printarea-title')]]
+											</div>
+											<div>
+												[[localize('admin-morder-finalyield-title')]]
+											</div>
+											<div>
+												[[localize('admin-morder-printstatus-title')]]
+											</div>
+											<!-- <div>
+												[[localize('admin-morder-printprogress-title')]]
+											</div>
+											<div>
+												[[localize('admin-morder-printcompleted-title')]]
+											</div> -->
+										</div>
+			
+										<dom-repeat items="[[printingi.PDFFiles]]" as="pdfi">
+											<template>
+												<div class="row">
+													<div class="pdf-title">
+														[[pdfi.PDFTitle]]
+													</div>
+													<div>
+														<paper-icon-button 
+															class="preview-btn hide-on-print" 
+															icon="admin-icons:find-in-page" 
+															disabled="[[_isPdfPreviewBtn(loadingAny, pdfi.Pages.0)]]" 
+															on-tap="showPreviewTap">
+														</paper-icon-button>
+													</div>
+													<div hidden$="[[!_asBool(pdfi.Content)]]">
+														<paper-icon-button class="barcodes-btn hide-on-print" icon="admin-icons:fingerprint" disabled="[[loadingAny]]" on-tap="showBarcodesTap">
+														</paper-icon-button>
+													</div>
+													<div class="pdf-filename">
+														[[pdfi.PDFFileName]]
+													</div>
+													<div>
+														[[pdfi.FabricName]]
+													</div>
+													<div>
+														[[pdfi.PaperName]]
+													</div>
+													<div class="centered">
+														[[pdfi.BulkStackSize]]
+													</div>
+													<div class="pdf-meters">
+														[[_formatMeters(pdfi.WidthMeters, 'in')]]
+													</div>
+													<div class="pdf-meters">
+														[[_formatMeters(pdfi.LengthMeters, 'm')]]
+													</div>
+													<div class="pdf-meters">
+														[[_formatMeters(pdfi.LengthMeters, 'yd')]]
+													</div>
+													<div class="pdf-meters">
+														[[_formatMeters(pdfi.PrintedAreaSquareMeters, 'yd^2')]]
+													</div>
+													<div>
+														[[_formatDouble(pdfi.FinalYieldPercentage, 1)]]
+													</div>
+													<div>
+														<span class="status-bar">
+															<tmladmin-ui-progress-icon type="freeze" status="[[pdfi.FreezeStatus]]"></tmladmin-ui-progress-icon>
+															<tmladmin-ui-progress-icon type="pushed to ftp" status="[[pdfi.PushStatus]]"></tmladmin-ui-progress-icon>
+															<tmladmin-ui-progress-icon type="rasterize" status="[[pdfi.RasterizeStatus]]"></tmladmin-ui-progress-icon>
+															<tmladmin-ui-progress-icon type="printing" status="[[pdfi.PrintStatus]]"></tmladmin-ui-progress-icon>
+															<tmladmin-ui-progress-icon type="transferring" status="[[pdfi.TransferringStatus]]"></tmladmin-ui-progress-icon>
+															<tmladmin-ui-progress-icon type="cutting" status="[[pdfi.CuttingStatus]]"></tmladmin-ui-progress-icon>
+														</span>
+													</div>
+													<!-- <div>
+														<span hidden$="[[!_asBool(pdfi.PrintCompletedPercentage)]]">
+															[[_formatDouble(pdfi.PrintCompletedPercentage, 1)]] %
+														</span>
+													</div>
+													<div class="pdf-meters">
+														<span hidden$="[[!_asBool(pdfi.PrintCompletedLengthMeters)]]">
+															[[_formatMeters(pdfi.PrintCompletedLengthMeters, 'yd')]]
+														</span>
+													</div> -->
+												</div>
+
+												<dom-if if="[[pdfi.SandwichBack]]">
+													<template>
+														<div class="row sandwich-back">
+															<div class="pdf-title">
+																↳ <span>Sandwich Back:</span><br />
+																[[pdfi.SandwichBack.PDFTitle]]
+															</div>
+															<div>
+																<paper-icon-button 
+																	class="preview-btn hide-on-print" 
+																	icon="admin-icons:find-in-page" 
+																	disabled="[[_isPdfPreviewBtn(loadingAny, pdfi.SandwichBack.Pages.0)]]" 
+																	on-tap="showBackPreviewTap">
+																</paper-icon-button>
+															</div>
+															<div>
+															</div>
+															<div class="pdf-filename">
+																[[pdfi.SandwichBack.PDFFileName]]
+															</div>
+															<div>
+																[[pdfi.SandwichBack.FabricName]]
+															</div>
+															<div>
+																[[pdfi.SandwichBack.PaperName]]
+															</div>
+															<div class="centered">
+															</div>
+															<div class="pdf-meters">
+															</div>
+															<div class="pdf-meters">
+															</div>
+															<div class="pdf-meters">
+															</div>
+															<div class="pdf-meters">
+															</div>
+															<div>
+															</div>
+															<div>
+																<span class="status-bar">
+																	<tmladmin-ui-progress-icon type="freeze" status="[[pdfi.SandwichBack.FreezeStatus]]"></tmladmin-ui-progress-icon>
+																	<tmladmin-ui-progress-icon type="pushed to ftp" status="[[pdfi.SandwichBack.PushStatus]]"></tmladmin-ui-progress-icon>
+																	<tmladmin-ui-progress-icon type="rasterize" status="[[pdfi.SandwichBack.RasterizeStatus]]"></tmladmin-ui-progress-icon>
+																	<tmladmin-ui-progress-icon type="printing" status="[[pdfi.SandwichBack.PrintStatus]]"></tmladmin-ui-progress-icon>
+																	<tmladmin-ui-progress-icon type="transferring" status="[[pdfi.SandwichBack.TransferringStatus]]"></tmladmin-ui-progress-icon>
+																	<tmladmin-ui-progress-icon type="cutting" status="[[pdfi.SandwichBack.CuttingStatus]]"></tmladmin-ui-progress-icon>
+																</span>
+															</div>
+															<!-- <div>
+																<span hidden$="[[!_asBool(pdfi.SandwichBack.PrintCompletedPercentage)]]">
+																	[[_formatDouble(pdfi.SandwichBack.PrintCompletedPercentage, 1)]] %
+																</span>
+															</div>
+															<div class="pdf-meters">
+																<span hidden$="[[!_asBool(pdfi.SandwichBack.PrintCompletedLengthMeters)]]">
+																	[[_formatMeters(pdfi.SandwichBack.PrintCompletedLengthMeters, 'yd')]]
+																</span>
+															</div> -->
+														</div>
+													</template>
+												</dom-if>
+											</template>
+										</dom-repeat>
+
+										<dom-if if="[[!LenMore(printingi.PDFFiles)]]">
+											<template>
+												<div class="noitems">
+													[[localize('admin-list-noitems')]]
+												</div>
+											</template>
+										</dom-if>
+									</div>
+								</div>
+		
+							</div>
+							
+						</div>
+					</template>
+				</iron-list>
+			</div>
+
+
+			<!-- Items as Bulk Processing -->
+			<div class="order-reprocess hidden" showen$="[[isTabActive(orderTabs, orderTabIndex, 'BulkProduction', order.BulkProduction)]]">
+				<h2>
+					<a id="reprocess-bulk"></a>
+					[[localize('admin-morder-items-title')]]
+					<span class="hidden nowrap" showen$="[[order.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('admin-flag-test')]]
+					</span>
+				</h2>
+
+		
+				<iron-list id="orderBulkProductionList" items="[[order.BulkProduction]]" as="rpi" index-as="rpindex" scroll-target="[[scrollTarget]]" default-physical-count="40" suppress-focus>
+					<template>
+						<div class="order-reprocess-item unbrakable-on-print">
+							<h3>
+								[[localize('admin-morder-item-title')]] 
+								# [[_formatIndex(rpindex)]]
+								<span>
+									<paper-icon-button class="barcodes-btn hide-on-print" icon="admin-icons:fingerprint" disabled="[[loadingAny]]"
+										nonvisible$="[[!_asBool(rpi.Barcodes)]]"
+										on-tap="showBarcodesTap">
+									</paper-icon-button>
+								</span>
+								<span>
+									<paper-icon-button class="barcodes-btn hide-on-print" icon="admin-icons:status-qa" disabled="[[loadingAny]]"
+										nonvisible$="[[!_asBool(rpi.BarcodesQa)]]"
+										on-tap="showBarcodesQaTap">
+									</paper-icon-button>
+								</span>
+
+								<span style="float: right;">
+									<paper-icon-button class="productdetails-btn hide-on-print" icon="admin-icons:help-outline" disabled="[[loadingAny]]"
+										on-tap="showProductDetailsTap">
+									</paper-icon-button>
+								</span>
+							</h3>
+							
+							<div class="order-reprocess-item-columns">
+								<div class="col-1">
+									<div class="table">
+										<div class="row">
+											<div>
+												Item Status
+											</div>
+											<div>
+												<span class="status-bar">
+													<tmladmin-ui-progress-icon type="printing" status="[[rpi.PrintStatus]]"></tmladmin-ui-progress-icon>
+													<tmladmin-ui-progress-icon type="transferring" status="[[rpi.TransferringStatus]]"></tmladmin-ui-progress-icon>
+													<tmladmin-ui-progress-icon type="cutting" status="[[rpi.CuttingStatus]]"></tmladmin-ui-progress-icon>
+													<tmladmin-ui-progress-icon type="sewing" status="[[rpi.SewingStatus]]"></tmladmin-ui-progress-icon>
+													<tmladmin-ui-progress-icon type="qa" status="[[rpi.QAStatus]]"></tmladmin-ui-progress-icon>
+													<tmladmin-ui-progress-icon type="aggregation" status="[[rpi.AggregationStatus]]"></tmladmin-ui-progress-icon>
+													<tmladmin-ui-progress-icon type="shipping-labels" status="[[rpi.ShippingLabelsStatus]]"></tmladmin-ui-progress-icon>
+													<tmladmin-ui-progress-icon type="shipping-rfid" status="[[rpi.ShippingRFIDStatus]]"></tmladmin-ui-progress-icon>
+													<tmladmin-ui-progress-icon type="shipping" status="[[rpi.ShippingStatus]]"></tmladmin-ui-progress-icon>
+												</span>
+											</div>
+										</div>
+										<div class="row">
+											<div>
+												[[localize('admin-morder-count-title')]]
+											</div>
+											<div class="count-field">
+												[[rpi.Count]]
+												<dom-if if="[[_asBool(rpi.EqualityClassSvg)]]">
+													<template>
+														<teamatical-ui-image-svg 
+															class="equality-class-svg"
+															svg-src="[[rpi.EqualityClassSvg]]">
+														</teamatical-ui-image-svg>
+													</template>
+												</dom-if>
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('admin-morder-qa-approved-title')]]
+											</div>
+											<div class="count-field">
+												[[rpi.QaApprovedCount]] 
+												/ [[rpi.QaLabeledCount]]
+												<iron-icon icon="admin-icons:check" class="approved" hidden$="[[!_equal(rpi.QaApprovedCount, rpi.QaLabeledCount)]]"></iron-icon>
+											</div>
+										</div>
+
+										<!-- <div class="row">
+											<div>
+												[[localize('admin-morder-qa-defect-title')]]
+											</div>
+											<div class="count-field">
+												<iron-icon icon="admin-icons:close" class="discarded"></iron-icon>
+												[[rpi.QaDefectedCount]]
+
+												<span style="float: right;">
+													<paper-icon-button class="productdefect-btn hide-on-print" icon="admin-icons:help-outline" disabled="[[loadingAny]]"
+														on-tap="showDefectDetailsTap">
+													</paper-icon-button>
+												</span>
+											</div>
+										</div> -->
+
+										<!-- <div class="row">
+											<div>
+												[[localize('admin-morder-aggregation-visited-title')]]
+											</div>
+											<div class="count-field">
+												[[rpi.AggregationVisitedCount]] / [[rpi.Count]]
+												<iron-icon icon="admin-icons:check" class="approved" hidden$="[[!_equal(rpi.AggregationVisitedCount, rpi.Count)]]">
+												</iron-icon>
+											</div>
+										</div> -->
+
+										<div class="row" hidden$="[[!_bool(rpi.BundlingComplete)]]">
+											<div>
+												[[localize('admin-morder-bundling-completed-title')]]
+											</div>
+											<div>
+												<iron-icon icon="admin-icons:check" class="approved" hidden$="[[!rpi.BundlingComplete]]"></iron-icon>
+												<iron-icon icon="admin-icons:history" class="progress" hidden$="[[rpi.BundlingComplete]]"></iron-icon>
+											</div>
+										</div>
+
+
+										<dom-if if="[[_asBool(rpi.Stores)]]">
+											<template>
+												<div class="row">
+													<div>
+														[[localize('admin-morder-customstore-title')]]
+													</div>
+													<div>
+														<dom-repeat items="[[rpi.Stores]]" as="storei">
+															<template>
+																<div class="store-container">
+																<div class="store">
+																	<a href="[[_urlViewStore(storei.StoreID)]]">[[storei.Title]]</a>
+																</div>
+																<dom-if if="[[storei.Organization]]">
+																	<template>
+																		<a href="[[_urlViewOrganization(storei.Organization.OrganizationID)]]">[[storei.Organization.OrganizationName]]</a>
+																	</template>
+																</dom-if>
+																</div>
+															</template>
+														</dom-repeat>
+													</div>
+												</div>
+											</template>
+										</dom-if>
+
+										
+										<div class="row" hidden$="[[!_asBool(rpi.OrderProductionIDs)]]">
+											<div>
+												[[localize('admin-morder-orderrelated-title')]]
+											</div>
+											<div>
+												|
+												<dom-repeat items="[[rpi.OrderProductionIDs]]" as="orderprodi">
+													<template>
+														<span>
+															<span class="copy-tap" on-tap="_copyTap">[[orderprodi.ID]]</span>
+															<a href="[[_urlViewOrderProduction(orderprodi.ID)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+														</span>
+														|
+													</template>
+												</dom-repeat>
+											</div>
+										</div>
+										
+										<div class="row" hidden$="[[!_asBool(rpi.ProductID)]]">
+											<div>
+												[[localize('admin-morder-productmarketing-title')]]
+											</div>
+											<div>
+												<span class="copy-tap" on-tap="_copyTap">[[rpi.ProductID]]</span>
+												<a href="[[_urlViewProduct(rpi.ProductID)]]">
+													<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+												</a>
+											</div>
+										</div>
+
+										<div class="row" hidden$="[[!_asBool(rpi.ProductConfiguration.ProductConfigurationID)]]">
+											<div>
+												Product Configuration ID
+											</div>
+											<div>
+												<span class="copy-tap" on-tap="_copyTap">[[rpi.ProductConfiguration.ProductConfigurationID]]</span>
+												<a href="[[_urlViewPConfiguration(rpi.ProductConfiguration.ProductConfigurationID)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+												<!-- <a href="[[_urlConsumerViewPConfiguration(rpi.ProductConfiguration.ProductConfigurationID, item.PcBaseUrl)]]" target="_blank"><iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon></a> -->
+											</div>
+										</div>
+
+										<div class="row" hidden$="[[!_asBool(rpi.ProductManufacturerID)]]">
+											<div>
+												[[localize('admin-morder-productmanufacturer-title')]]
+											</div>
+											<div>
+												<span class="copy-tap" on-tap="_copyTap">[[rpi.ProductManufacturerID]]</span>
+												<a href="[[_urlViewProductManufacturer(rpi.ProductManufacturerID)]]">
+													<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+												</a>
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('admin-morder-minternalid-title')]]
+											</div>
+											<div>
+												[[rpi.ManufactureProductInternalID]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('admin-morder-style-title')]]
+											</div>
+											<div>
+												[[rpi.SKU]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('admin-morder-type-title')]]
+											</div>
+											<div>
+												[[rpi.Type]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('admin-morder-size-title')]]
+											</div>
+											<div>
+												[[rpi.Size]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('admin-morder-threadcolor-title')]]
+											</div>
+											<div class="thread-color">
+												<dom-if if="[[rpi.ThreadColor]]">
+													<template>
+														<div class="color" style$="[[_convertBkgColor(rpi.ThreadColor.h)]]">
+															[[rpi.ThreadColor.n]]
+														</div>
+													</template>
+												</dom-if>
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('admin-morder-threadquality-title')]]
+											</div>
+											<div>
+												[[rpi.ThreadQuality]]
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-2 width100">
+									<div id="image-product-grid" class="image-product-grid left clickable">
+										<dom-repeat items="[[_computeProductImagesZ('', rpi.ImageUrls, rpi.ImageUrlsZoomIn)]]" as="imgi">
+											<template>
+												<teamatical-ui-image src="[[imgi.imgUrl]]" alt="[[imgi.title]]" lazy-load lazy-observe=[[lazyObserve]]
+													on-tap="onProductImageTap">
+												</teamatical-ui-image>
+											</template>
+										</dom-repeat>
+									</div>
+
+									<!-- Accessories -->
+									<!-- <div class="table width100 accessories">
+										<div class="header">
+											<div>
+											</div>
+											<div>
+												[[localize('admin-morder-accessoryid-title')]]
+											</div>
+											<div>
+												[[localize('admin-morder-name-title')]]
+											</div>
+											<div>
+												[[localize('admin-morder-quantity-title')]]
+											</div>
+											<div>
+												[[localize('admin-morder-size-title')]]
+											</div>
+											<div>
+												[[localize('admin-morder-color-title')]]
+											</div>
+										</div>
+									
+										<dom-repeat items="[[rpi.Accessories]]" as="acci">
+											<template>
+												<div class="row">
+													<div>
+														<teamatical-ui-image 
+															src="[[acci.ImageUrl]]" 
+															alt="[[acci.Name]]" 
+															class="clickable"
+															on-tap="onProductAccessoryImageTap"
+															lazy-load lazy-observe=[[lazyObserve]] 
+															title$="[[acci.Name]]">
+														</teamatical-ui-image>
+													</div>
+													<div>
+														[[acci.AccessoryID]]
+													</div>
+													<div>
+														[[acci.Name]]
+													</div>
+													<div>
+														[[acci.Quantity]]
+													</div>
+													<div>
+														<span hidden$="[[!acci.IsContinous]]">
+															[[acci.Size]]
+														</span>
+														[[acci.Units]]
+													</div>
+													<div>
+														<dom-if if="[[acci.Color]]">
+															<template>
+																<div class="color" style$="[[_convertBkgColor(acci.Color.h)]]">
+																	[[acci.Color.n]]
+																</div>
+															</template>
+														</dom-if>
+													</div>
+													
+												</div>
+											</template>
+										</dom-repeat>
+										<dom-if if="[[!LenMore(rpi.Accessories)]]">
+											<template>
+												<div class="noitems">
+													[[localize('admin-list-noitems')]]
+												</div>
+											</template>
+										</dom-if>
+									</div> -->
+									
+
+									<!-- Accessories -->
+									<dom-if if="[[rpi.Accessories.length]]">
+										<template>
+											<div class="accessories">
+												<h4>Accessories ([[rpi.Accessories.length]]) </h4>
+									
+												<dom-repeat items="[[rpi.Accessories]]" as="acci">
+													<template>
+														<div class="accessories-item">
+															<dom-if if="[[_asBool(acci.ImageUrl)]]">
+																<template>
+																	<teamatical-ui-image 
+																		src="[[acci.ImageUrl]]" 
+																		alt="[[acci.Name]]" 
+																		class="clickable"
+																		on-tap="onProductAccessoryImageTap"
+																		lazy-load lazy-observe=[[lazyObserve]] 
+																		title$="[[acci.Name]]">
+																	</teamatical-ui-image>
+																</template>
+															</dom-if>
+															
+															<div>
+																<dom-if if="[[acci.Color]]">
+																	<template>
+																		<div class="color" style$="[[_convertBkgColor(acci.Color.h)]]">
+																			[[acci.Color.n]]
+																		</div>
+																	</template>
+																</dom-if>
+																<dom-if if="[[!acci.Color]]">
+																	<template>
+																		<div class="nocolor">&nbsp;</div>
+																	</template>
+																</dom-if>
+															</div>
+															<div>
+																[[acci.Name]]
+															</div>
+															<div>
+																<!-- [[localize('admin-ws-sewing-part-allocatedcount')]] -->
+																([[acci.Quantity]])
+																<span hidden$="[[!acci.IsContinous]]">
+																	[[acci.Size]]
+																</span>
+																[[acci.Units]]
+															</div>
+														</div>
+													</template>
+												</dom-repeat>
+
+												<dom-if if="[[!LenMore(rpi.Accessories)]]">
+													<template>
+														<div class="noitems">
+															[[localize('admin-list-noitems')]]
+														</div>
+													</template>
+												</dom-if>
+											</div>
+										</template>
+									</dom-if>
+									
+
+
+									<!-- Sewing Parts -->
+									<dom-if if="[[rpi.Parts.length]]">
+										<template>
+											<div class="order-parts-list">
+												<h4>[[localize('admin-ws-sewing-parts-title')]] ([[rpi.Parts.length]]) </h4>
+									
+									
+												<dom-repeat items="[[rpi.Parts]]" as="parti">
+													<template>
+														<div class="order-part-item">
+															<teamatical-ui-image 
+																class="clickable"
+																on-tap="onProductPartImageTap"
+																src="[[parti.ImageUrl]]" 
+																alt="[[parti.PartName]]" 
+																lazy-load lazy-observe=[[lazyObserve]] 
+																title$="[[parti.PartName]]">
+															</teamatical-ui-image>
+
+															<dom-if if="[[_asBool(parti.ImageUrlBack)]]">
+																<template>
+																	<teamatical-ui-image 
+																		class="clickable back"
+																		on-tap="onProductPartImageBackTap"
+																		src="[[parti.ImageUrlBack]]" 
+																		alt="[[parti.PartName]] Sendwich Back" 
+																		lazy-load 
+																		lazy-observe=[[lazyObserve]] 
+																		title$="[[parti.PartName]] Sendwich Back">
+																	</teamatical-ui-image>
+																</template>
+															</dom-if>
+					
+									
+															<div>
+																<!-- [[localize('admin-ws-sewing-part-partname')]]  -->
+																[[parti.PartName]]
+															</div>
+															<div>
+																<!-- [[localize('admin-ws-sewing-part-fabric')]] -->
+																[[parti.Fabric]]
+															</div>
+															<div>
+																[[localize('admin-ws-sewing-part-allocatedcount')]]
+																[[parti.AllocatedCount]]
+															</div>
+															
+															<div>
+																<span title="[[localize('admin-ws-sewing-part-count-tooltip')]]">
+																	([[parti.SortedCount]]/[[rpi.Count]])
+																</span>
+															</div>
+														</div>
+													</template>
+									
+												</dom-repeat>
+
+												<dom-if if="[[!LenMore(rpi.Parts)]]">
+													<template>
+														<div class="noitems">
+															[[localize('admin-list-noitems')]]
+														</div>
+													</template>
+												</dom-if>
+											</div>
+										</template>
+									</dom-if>
+									
+
+									<!-- PDFs -->
+									<div class="table stripe1 width100">
+										<div class="header">
+											<div>
+												[[localize('admin-morder-pdffile-title')]]
+											</div>
+										</div>
+									
+										<dom-repeat items="[[rpi.PDFFiles]]" as="pdfi">
+											<template>
+												<div class="row">
+													<div class="pdf-filename">
+														[[pdfi.PDFFileName]]
+													</div>
+												</div>
+											</template>
+										</dom-repeat>
+										<dom-if if="[[!LenMore(rpi.PDFFiles)]]">
+											<template>
+												<div class="noitems">
+													[[localize('admin-list-noitems')]]
+												</div>
+											</template>
+										</dom-if>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</template>
+				</iron-list>
+			</div>
+
+
+			<!-- Accessories Report -->
+			<div class="order-accessories hidden" 
+				showen$="[[isTabActive(orderTabs, orderTabIndex, 'AccessoryReport', order.AccessoryReport)]]"
+				show-on-print$="[[isTabActive(orderTabs, orderTabIndex, 'AccessoryReport', order.AccessoryReport)]]">
+				<h2>
+					[[localize('admin-ws-sorting-accessories-title')]] 
+					<!-- - [[localize('admin-ws-sorting-batch')]] #:[[order.ManufactureItemSetID]]
+					<span class="hidden" showen$="[[order.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning" title="[[localize('admin-ws-test-item')]]"></iron-icon>[[localize('admin-ws-test-item')]]
+					</span> -->
+
+					<teamatical-ui-image-svg 
+						class="qr-code right" 
+						svg-src="[[order.QrCodeSvg]]">
+					</teamatical-ui-image-svg>
+				</h2>
+
+				<dom-repeat items="[[order.AccessoryReport]]" as="accessi">
+					<template>
+						<div class="order-accessories-item unbrakable-on-print">
+							<h3>
+								[[accessi.Title]], SKU: [[accessi.SKU]]
+								<!-- 
+									
+
+								# [[_formatIndex(rpindex)]]
+
+								<span>
+									<paper-icon-button class="barcodes-btn hide-on-print" icon="admin-icons:fingerprint" disabled="[[loadingAny]]"
+										nonvisible$="[[!_asBool(rpi.Barcodes)]]"
+										on-tap="showBarcodesTap">
+									</paper-icon-button>
+								</span>
+
+								 -->
+
+								 <span style="float: right;">
+									[[accessi.Address]]
+								 </span>
+							</h3>
+							
+							<div class="col-1">
+								<div class="access-image">
+									<dom-if if="[[accessi.ImageUrl]]">
+										<template>
+											<img src="[[accessi.ImageUrl]]" />
+										</template>
+									</dom-if>
+									<div></div>
+								</div>
+							</div>
+							<div class="col-2">
+								<div>
+									<dom-if if="[[accessi.Color]]">
+										<template>
+											<div class="color" style$="[[_convertBkgColor(accessi.Color.h)]]">
+												[[accessi.Color.n]]
+											</div>
+										</template>
+									</dom-if>
+								</div>
+								<div>
+									<span class="qty total">
+										[[accessi.Quantity]]
+										<span hidden$="[[!accessi.IsContinous]]">
+											[[accessi.Units]]
+										</span>												
+									</span>
+									[[accessi.Properties]]
+								</div>
+
+								<div class="table width100">
+									<div class="header">
+										<div>
+											[[localize('admin-ws-sorting-accessories-item-qrcode')]]
+										</div>
+										<div>
+											[[localize('admin-ws-sorting-accessories-item-toteqty')]]
+										</div>
+										<div>
+											[[localize('admin-ws-sorting-accessories-item-pertoteqty')]]
+										</div>
+										<div>
+											[[localize('admin-ws-sorting-accessories-item-qtysorted')]]
+										</div>
+										<div>
+										</div>
+									</div>
+
+									<dom-repeat items="[[accessi.Doses]]" as="dosei">
+										<template>
+											<div class="row vcenter">
+												<div>
+													<div is-heat-transfer$="[[accessi.HeatTransfer]]">
+														<!-- <span class="pdf-barcode">*[[dosei.Barcode]]*</span><br /> -->
+														[[dosei.Barcode]]
+													</div>
+													<teamatical-ui-image-svg 
+														class="qr-code" 
+														is-heat-transfer$="[[accessi.HeatTransfer]]"
+														svg-src="[[dosei.QrCodeSvg]]">
+													</teamatical-ui-image-svg>
+												</div>
+												<div class="qty">
+													[[dosei.Quantity]]
+												</div>
+												<div class="qty">
+													[[dosei.PerToteQuantity]]
+												</div>
+												<div class="qty">
+													[[dosei.SortedQuantity]]
+												</div>
+												<div class="qty">
+													<span hidden$="[[!accessi.IsContinous]]">
+														[[dosei.Size]] ([[_formatDouble(dosei.SizeProduction,1)]])
+													</span>
+													[[accessi.Units]]
+												</div>
+											</div>
+										</template>
+									</dom-repeat>
+								</div>
+							</div>
+						</div>
+					</template>
+				</dom-repeat>
+
+				<dom-if if="[[!LenMore(order.AccessoryReport)]]">
+					<template>
+						<div class="noitems">
+							[[localize('admin-list-noitems')]]
+						</div>
+					</template>
+				</dom-if>
+			</div>
+
+
+			<!-- Stock Report -->
+			<div class="order-stocks hidden" 
+				showen$="[[isTabActive(orderTabs, orderTabIndex, 'StockReport', order.StockReport)]]"
+				show-on-print$="[[isTabActive(orderTabs, orderTabIndex, 'StockReport', order.StockReport)]]">
+				<h2 class="hide-on-print">
+					[[localize('admin-morder-stocks-title')]] 
+					<span class="hidden nowrap" showen$="[[order.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('admin-flag-test')]]
+					</span>
+				</h2>
+				<teamatical-ui-image-svg 
+					class="qr-code right" 
+					svg-src="[[order.QrCodeSvg]]">
+				</teamatical-ui-image-svg>
+
+
+				<div class="list">
+					<dom-repeat items="[[order.StockReport]]" as="stocki" index-as="stockindex">
+						<template>
+							<div class="order-stocks-item unbrakable-on-print">
+								<div class="table width100">
+									<div class="header">
+										<div>
+											[[localize('admin-morder-stockitem-title')]] 
+											# [[_formatIndex(stockindex)]]
+										</div>
+										<div>
+											[[localize('admin-morder-count-title')]]
+										</div>
+										<div>
+											[[localize('admin-morder-minternalid-title')]]
+										</div>
+										<div>
+											[[localize('admin-morder-style-title')]]
+										</div>
+										<div>
+											[[localize('admin-morder-type-title')]]
+										</div>
+										<div>
+											[[localize('admin-morder-size-title')]]
+										</div>
+										<div>
+											[[localize('admin-morder-stockcolor-title')]]
+										</div>
+									</div>
+									
+									<div class="row vcenter">
+										<div>
+											<div id="image-product-grid" class="image-product-grid left clickable">
+												<dom-repeat items="[[_computeProductImagesZ('', stocki.ImageUrls, stocki.ImageUrlsZoomIn)]]" as="imgi">
+													<template>
+														<teamatical-ui-image src="[[imgi.imgUrl]]" alt="[[imgi.title]]" lazy-load lazy-observe=[[lazyObserve]]
+															on-tap="onProductImageTap">
+														</teamatical-ui-image>
+													</template>
+												</dom-repeat>
+											</div>
+										</div>
+										<div class="count-field">
+											[[stocki.Count]]
+										</div>
+										<div>
+											[[stocki.ManufactureProductInternalID]]
+										</div>
+										<div>
+											[[stocki.SKU]]
+										</div>
+										<div>
+											[[stocki.Type]]
+										</div>
+										<div>
+											[[stocki.Size]]
+										</div>
+										<div class="stock-color">
+											[[stocki.StockColor]]
+										</div>
+									</div>
+								</div>
+							</div>
+						</template>
+					</dom-repeat>
+				</div>
+
+				<dom-if if="[[!LenMore(order.StockReport)]]">
+					<template>
+						<div class="noitems">
+							[[localize('admin-list-noitems')]]
+						</div>
+					</template>
+				</dom-if>
+			</div>
+
+
+			<!-- Shipping -->
+			<div class="order-shipping hidden" showen$="[[isTabActive(orderTabs, orderTabIndex, 'Shipping', order.Shipping)]]">
+				<h2>
+					<a id="shipping"></a>
+					[[localize('admin-morder-shipping-title')]]
+					<span class="hidden nowrap" showen$="[[order.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('admin-flag-test')]]
+					</span>
+				</h2>
+
+				<div hidden$="[[!order.UseAggregation]]">
+					<p class="note-alt">[[localize('admin-morder-useaggregation-message')]]</p>
+				</div>
+
+				<iron-list items="[[order.Shipping]]" as="shippingi" scroll-target="[[scrollTarget]]" default-physical-count="40" suppress-focus>
+					<template>
+						<div class="row shipping-item">
+							<div class="w10">
+								<!-- address -->
+								<div class="table">
+									<div class="row">
+										<div>
+											[[localize('admin-morder-firstname-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipFirstName]]
+										</div>
+									</div>
+		
+									<div class="row">
+										<div>
+											[[localize('admin-morder-lastname-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipLastName]]
+										</div>
+									</div>
+		
+									<div class="row" hidden$="[[!shippingi.ShipCompany]]">
+										<div>
+											[[localize('admin-morder-company-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipCompany]]
+										</div>
+									</div>
+		
+									<div class="row" hidden$="[[!shippingi.ShipTaxID]]">
+										<div>
+											[[localize('admin-morder-tax-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipTaxID]]
+										</div>
+									</div>
+		
+									<div class="row" hidden$="[[!shippingi.ShipEORI]]">
+										<div>
+											[[localize('admin-morder-eori-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipEORI]]
+										</div>
+									</div>
+		
+									<div class="row">
+										<div>
+											[[localize('admin-morder-address-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipAddress]]
+										</div>
+									</div>
+		
+									<div class="row" hidden$="[[!shippingi.ShipAddress2]]">
+										<div>
+											[[localize('admin-morder-address2-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipAddress2]]
+										</div>
+									</div>
+		
+									<div class="row" hidden$="[[!shippingi.ShipAddress3]]">
+										<div>
+											[[localize('admin-morder-address3-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipAddress3]]
+										</div>
+									</div>
+		
+		
+									<div class="row">
+										<div>
+											[[localize('admin-morder-city-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipCity]]
+										</div>
+									</div>
+									<div class="row">
+										<div>
+											[[localize('admin-morder-state-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipState]]
+										</div>
+									</div>
+									<div class="row">
+										<div>
+											[[localize('admin-morder-zip-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipZip]]
+										</div>
+									</div>
+									<div class="row">
+										<div>
+											[[localize('admin-morder-country-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipCountry]]
+										</div>
+									</div>
+		
+									<div class="row">
+										<div>
+											[[localize('admin-morder-method-title')]]
+										</div>
+										<div>
+											[[_formatShipment(shippingi.ShipmentMethod)]]
+										</div>
+									</div>
+		
+									<div class="row">
+										<div>
+											[[localize('admin-morder-email-title')]]
+										</div>
+										<div>
+											[[shippingi.Email]]
+										</div>
+									</div>
+									<div class="row">
+										<div>
+											[[localize('admin-morder-phone-title')]]
+										</div>
+										<div>
+											[[shippingi.Phone]]
+										</div>
+									</div>
+		
+									<div class="row">
+										<div>
+											[[localize('admin-morder-totalcount-title')]]
+										</div>
+										<div class="products-total-count">
+											[[shippingi.ProductsTotalCount]]
+										</div>
+									</div>
+								</div>
+							</div>
+		
+							<div>
+								<!-- products -->
+								<dom-repeat items="[[shippingi.ProductsSummary]]" as="producti">
+									<template>
+		
+										<div class="products-summary-border">
+		
+											<div class="table w100 unbrakable-on-print">
+												<div class="header">
+													<div>
+														[[localize('admin-morder-minternalid-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-style-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-type-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-size-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-count-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-shippedcount-sum-title')]]
+													</div>
+												</div>
+												<div class="row">
+													<div>
+														[[producti.ManufactureProductInternalID]]
+													</div>
+													<div>
+														[[producti.SKU]]
+													</div>
+													<div>
+														[[producti.Type]]
+													</div>
+													<div>
+														[[producti.Size]]
+													</div>
+													<div class="count-field">
+														[[producti.Count]]
+													</div>
+													<div class="count-field">
+														[[producti.ShippedCount]]
+													</div>
+												</div>
+											</div>
+		
+											<!-- products trackings  -->
+											<div class="table w100">
+												<div class="header">
+													<div>
+														[[localize('admin-morder-carrier-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-trackid-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-place-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-shippedcount-title')]]
+													</div>
+												</div>
+		
+												<dom-repeat items="[[producti.ProductsTracking]]" as="tracki">
+													<template>
+														<div class="row">
+															<div>
+																[[tracki.Carrier]]
+															</div>
+															<div title="TrackID">
+																[[tracki.TrackingNumber]]
+															</div>
+															<div>
+																[[tracki.Place]]
+															</div>
+															<div class="count-field">
+																[[tracki.ShippedCount]]
+															</div>
+														</div>
+													</template>
+												</dom-repeat>
+											</div>
+											<dom-if if="[[!LenMore(producti.ProductsTracking)]]">
+												<template>
+													<div class="noitems">
+														[[localize('admin-list-noitems')]]
+													</div>
+												</template>
+											</dom-if>
+		
+											<!-- products images -->
+											<div id="image-product-grid" class="image-product-grid clickable unbrakable-on-print">
+												<dom-repeat
+													items="[[_computeProductImagesZ('', producti.ImageUrls, producti.ImageUrlsZoomIn)]]"
+													as="imgi">
+													<template>
+														<teamatical-ui-image class="unbrakable-on-print" src="[[imgi.imgUrl]]"
+															alt="[[imgi.title]]" lazy-load lazy-observe=[[lazyObserve]]
+															on-tap="onProductImageTap">
+														</teamatical-ui-image>
+													</template>
+												</dom-repeat>
+											</div>
+		
+										</div>
+		
+									</template>
+								</dom-repeat>
+							</div>
+						</div>
+					</template>
+				</iron-list>
+			</div>
+
+
+			<!-- Shipping Aggregated -->
+			<div class="order-shipping hidden" showen$="[[isTabActive(orderTabs, orderTabIndex, 'ShippingAggregated', order.ShippingAggregated)]]">
+				<h2>
+					<a id="shipping"></a>
+					[[localize('admin-morder-shipping-title')]]
+					<span class="hidden nowrap" showen$="[[order.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('admin-flag-test')]]
+					</span>
+				</h2>
+
+				<div hidden$="[[!order.UseAggregation]]">
+					<p class="note-alt">[[localize('admin-morder-useaggregation-message')]]</p>
+				</div>
+
+				<iron-list items="[[order.ShippingAggregated]]" as="shippingi" scroll-target="[[scrollTarget]]" default-physical-count="40" suppress-focus>
+					<template>
+						<div class="row">
+							<div class="w10">
+								<div style="text-align: center; width: 100%;">
+									<paper-icon-button class="show-dhl-address-btn"
+										icon="admin-brands:dhl" on-tap="show_DHL_addressTap">
+									</paper-icon-button>
+								</div>
+		
+								<!-- address -->
+								<div class="table">
+									<div class="row">
+										<div>
+											[[localize('admin-morder-shippinghub-title')]]
+										</div>
+										<div>
+											<span class="shipping-hub">[[shippingi.ShippingHub]]</span>
+										</div>
+									</div>
+
+									<div class="row">
+										<div>
+											[[localize('admin-morder-firstname-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipFirstName]]
+										</div>
+									</div>
+		
+									<div class="row">
+										<div>
+											[[localize('admin-morder-lastname-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipLastName]]
+										</div>
+									</div>
+		
+									<div class="row" hidden$="[[!shippingi.ShipCompany]]">
+										<div>
+											[[localize('admin-morder-company-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipCompany]]
+										</div>
+									</div>
+		
+									<div class="row" hidden$="[[!shippingi.ShipTaxID]]">
+										<div>
+											[[localize('admin-morder-tax-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipTaxID]]
+										</div>
+									</div>
+		
+									<div class="row" hidden$="[[!shippingi.ShipEORI]]">
+										<div>
+											[[localize('admin-morder-eori-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipEORI]]
+										</div>
+									</div>
+		
+									<div class="row">
+										<div>
+											[[localize('admin-morder-address-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipAddress]]
+										</div>
+									</div>
+		
+									<div class="row" hidden$="[[!shippingi.ShipAddress2]]">
+										<div>
+											[[localize('admin-morder-address2-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipAddress2]]
+										</div>
+									</div>
+		
+									<div class="row" hidden$="[[!shippingi.ShipAddress3]]">
+										<div>
+											[[localize('admin-morder-address3-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipAddress3]]
+										</div>
+									</div>
+		
+		
+									<div class="row">
+										<div>
+											[[localize('admin-morder-city-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipCity]]
+										</div>
+									</div>
+									<div class="row">
+										<div>
+											[[localize('admin-morder-state-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipState]]
+										</div>
+									</div>
+									<div class="row">
+										<div>
+											[[localize('admin-morder-zip-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipZip]]
+										</div>
+									</div>
+									<div class="row">
+										<div>
+											[[localize('admin-morder-country-title')]]
+										</div>
+										<div>
+											[[shippingi.ShipCountry]]
+										</div>
+									</div>
+		
+									<div class="row">
+										<div>
+											[[localize('admin-morder-email-title')]]
+										</div>
+										<div>
+											[[shippingi.Email]]
+										</div>
+									</div>
+									<div class="row">
+										<div>
+											[[localize('admin-morder-phone-title')]]
+										</div>
+										<div>
+											[[shippingi.Phone]]
+										</div>
+									</div>
+		
+									<div class="row">
+										<div>
+											[[localize('admin-morder-totalcount-title')]]
+										</div>
+										<div class="products-total-count">
+											[[shippingi.ProductsTotalCount]]
+										</div>
+									</div>
+								</div>
+
+							</div>
+		
+							<div>
+								<!-- products -->
+								<dom-repeat items="[[shippingi.ProductsSummary]]" as="producti">
+									<template>
+		
+										<div class="products-summary-border">
+		
+											<div class="table w100 unbrakable-on-print">
+												<div class="header">
+													<div>
+														[[localize('admin-morder-minternalid-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-style-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-type-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-size-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-count-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-shippedcount-sum-title')]]
+													</div>
+												</div>
+												<div class="row">
+													<div>
+														[[producti.ManufactureProductInternalID]]
+													</div>
+													<div>
+														[[producti.SKU]]
+													</div>
+													<div>
+														[[producti.Type]]
+													</div>
+													<div>
+														[[producti.Size]]
+													</div>
+													<div class="count-field">
+														[[producti.Count]]
+													</div>
+													<div class="count-field">
+														[[producti.ShippedCount]]
+													</div>
+												</div>
+											</div>
+		
+											<!-- products trackings  -->
+											<div class="table w100">
+												<div class="header">
+													<div>
+														[[localize('admin-morder-carrier-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-trackid-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-place-title')]]
+													</div>
+													<div>
+														[[localize('admin-morder-shippedcount-title')]]
+													</div>
+												</div>
+		
+												<dom-repeat items="[[producti.ProductsTracking]]" as="tracki">
+													<template>
+														<div class="row">
+															<div>
+																[[tracki.Carrier]]
+															</div>
+															<div title="TrackID">
+																[[tracki.TrackingNumber]]
+															</div>
+															<div>
+																[[tracki.Place]]
+															</div>
+															<div class="count-field">
+																[[tracki.ShippedCount]]
+															</div>
+														</div>
+													</template>
+												</dom-repeat>
+											</div>
+											<dom-if if="[[!LenMore(producti.ProductsTracking)]]">
+												<template>
+													<div class="noitems">
+														[[localize('admin-list-noitems')]]
+													</div>
+												</template>
+											</dom-if>
+		
+	
+											<!-- products images -->
+											<div id="image-product-grid" class="image-product-grid clickable unbrakable-on-print">
+												<dom-repeat
+													items="[[_computeProductImagesZ('', producti.ImageUrls, producti.ImageUrlsZoomIn)]]"
+													as="imgi">
+													<template>
+														<teamatical-ui-image class="unbrakable-on-print" src="[[imgi.imgUrl]]"
+															alt="[[imgi.title]]" lazy-load lazy-observe=[[lazyObserve]]
+															on-tap="onProductImageTap">
+														</teamatical-ui-image>
+													</template>
+												</dom-repeat>
+											</div>
+		
+										</div>
+		
+									</template>
+								</dom-repeat>
+							</div>
+						</div>
+					</template>
+				</iron-list>
+			</div>
+
+
+
+			<!-- Order History -->
+			<div class="order-history hidden hide-on-print" showen$="[[isTabActive(orderTabs, orderTabIndex, 'Summary')]]">
+				<h2>
+					<a id="history"></a>
+					[[localize('admin-morder-history-title')]]
+					<span class="hidden nowrap" showen$="[[order.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('admin-flag-test')]]
+					</span>
+				</h2>
+			
+				<div class="table">
+					<div class="header">
+						<div>
+							[[localize('admin-morder-date-title')]]
+						</div>
+						<div>
+							[[localize('admin-morder-author-title')]]
+						</div>
+						<div>
+							[[localize('admin-morder-reason-title')]]
+						</div>
+						<div>
+							[[localize('admin-morder-details-title')]]
+						</div>
+						<div>
+							[[localize('admin-morder-description-title')]]
+						</div>
+					</div>
+			
+					<dom-repeat items="[[order.History]]" as="histi">
+						<template>
+							<div class="row">
+								<div>
+									[[_formatDate(histi.Timestamp)]]
+								</div>
+								<div>
+									<span hidden$="[[userInfo.isAdmin]]">
+										[[localize('admin-teamatical')]]
+									</span>
+									[[histi.Author]]
+								</div>
+								<div>
+									[[histi.Reason]]
+								</div>
+								<div class="centered">
+									<dom-if if="[[histi.Details]]">
+										<template>
+											<paper-button raised on-tap="showHistDetails" class="hide-on-print">
+												[[localize('admin-dialog-viewdetails')]]
+											</paper-button>
+										</template>
+									</dom-if>
+									<dom-if if="[[!histi.Details]]">
+										<template>
+											[[localize('admin-dialog-ok')]]
+										</template>
+									</dom-if>
+								</div>
+								<div>
+									[[histi.Description]]
+								</div>
+							</div>
+						</template>
+					</dom-repeat>
+				</div>
+			</div>
+
+			<!-- Tasks -->
+			<div class="order-tasks hidden hide-on-print" showen$="[[isTabActive(orderTabs, orderTabIndex, 'Summary|PrintingTuning')]]">
+				<h2>
+					<a id="tasks"></a>
+					[[localize('admin-morder-tasks-title')]]
+					<span class="hidden nowrap" showen$="[[order.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('admin-flag-test')]]
+					</span>
+				</h2>
+			
+				<div class="table nostripe">
+					<div class="header">
+						<div>
+							[[localize('admin-morder-type-title')]]
+						</div>
+						<div>
+							[[localize('admin-morder-created-title')]]
+						</div>
+						<div>
+							[[localize('admin-morder-progress-title')]]
+						</div>
+						<div>
+							[[localize('admin-morder-time-ms-title')]]
+						</div>
+						<div>
+							[[localize('admin-morder-operation-title')]]
+						</div>
+						<div>
+							[[localize('admin-morder-finished-title')]]
+						</div>
+					</div>
+			
+					<dom-repeat items="[[order.Tasks]]" as="taski">
+						<template>
+							<div class="row" is-task-finished$="[[_asBool(taski.FinishedTimestamp)]]">
+								<div>
+									[[taski.Type]]
+								</div>
+								<div>
+									[[_formatDate(taski.CreatedTimestamp)]]
+								</div>
+								<div>
+									<paper-progress class="executing-progress"
+										value="[[_formatProgress(taski.ExecutingOperationProgress)]]"></paper-progress>
+								</div>
+								<div>
+									[[_formatTaskTime(taski.ExecutingTimeMiliseconds)]]
+								</div>
+								<div>
+									[[taski.ExecutingOperation]]
+								</div>
+								<div>
+									<span hidden$="[[!_asBool(taski.FinishedSuccessfully)]]">
+										<iron-icon icon="admin-icons:check" alt="check" class="approved"></iron-icon>
+									</span>
+									[[_formatDate(taski.FinishedTimestamp)]]
+								</div>
+							</div>
+						</template>
+					</dom-repeat>
+
+					<dom-if if="[[!LenMore(order.Tasks)]]">
+						<template>
+							<div class="noitems">
+								[[localize('admin-list-noitems')]]
+							</div>
+						</template>
+					</dom-if>
+				</div>
+			</div>
+
+			<div class="order-footer">
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>
+
+
+
+
+<!-- dialogs -->
+<paper-dialog id="dialogbarcodes" class="dialog-wide-max98" proceed no-overlap dynamic-align vertical-align="middle"
+	horizontal-align="center">
+	<h2>[[previewPrinting.dlgTitle]]</h2>
+	<paper-dialog-scrollable>
+		<dom-if if="[[_asBool(previewPrinting.Barcode0)]]">
+			<template>
+				<h4>
+					<span class="copy-tap" on-tap="_copyTap">[[previewPrinting.Barcode0]]</span>
+				</h4>
+			</template>
+		</dom-if>
+		<dom-if if="[[_asBool(previewPrinting.Barcode1)]]">
+			<template>
+				<h4>
+					<span class="copy-tap" on-tap="_copyTap">[[previewPrinting.Barcode1]]</span>
+				</h4>
+			</template>
+		</dom-if>
+
+		<p>
+			<dom-if if="[[!previewPrinting.Content.length]]">
+				<template>
+					[[localize('admin-array-none')]]
+				</template>
+			</dom-if>
+			<dom-repeat items="[[previewPrinting.Content]]" as="itemi">
+				<template strip-whitespace>
+					<span class="barcode copy-tap" on-tap="_copyTap" approved$="[[itemi.Approved]]">[[itemi.Barcode]]</span>
+					<dom-if if="[[_notLast(previewPrinting.Content, index)]]"><template>, </template></dom-if>
+				</template>
+			</dom-repeat>
+		</p>
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>[[localize('admin-ws-printing-btn-close')]]</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogpreview" class="dialog-hw90" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center"
+	auto-fit-on-attach
+	on-iron-overlay-closed="onClosePreviewDialog"
+	on-iron-overlay-opened="onOpenPreviewDialog">
+	<h2>[[localize('admin-ws-printing-dlg-preview')]]</h2>
+	<paper-dialog-scrollable>
+		<dom-if if="[[_asBool(previewPrinting.Pages.0.Images)]]">
+			<template>
+				<div class="preview-pages">
+					<dom-repeat items="[[previewPrinting.Pages]]" as="pagei">
+						<template>
+							<dom-repeat items="[[pagei.Images]]" as="imagei" index-as="imageindex">
+								<template>
+									<img src="[[imagei]]" style$="[[_pageStyle(imagei)]]" title$="[[_pageTitle(pagei)]]" />
+								</template>
+							</dom-repeat>
+						</template>
+					</dom-repeat>
+				</div>
+			</template>
+		</dom-if>
+		<dom-if if="[[!_asBool(previewPrinting.Pages.0.Images)]]">
+			<template>
+				<div class="nopreviews">
+					[[localize('admin-ws-printing-dlg-no-previews')]]
+				</div>
+			</template>
+		</dom-if>
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>[[localize('admin-ws-printing-btn-close')]]</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogzoom3d" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center"
+	on-iron-overlay-closed="onCloseZoomDialog" on-iron-overlay-opened="onOpenZoomDialog">
+	<paper-dialog-scrollable>
+		<!-- <img src="[[zoomimgi.imgZoomUrl]]" alt="[[zoomimgi.title]]" /> -->
+
+		<!-- <teamatical-ui-image style="width: 576px; height: 768px;" src="[[zoomimgi.imgZoomUrl]]" alt="[[zoomimgi.title]]"
+						lazy-load lazy-observe=[[lazyObserve]]>
+					</teamatical-ui-image> -->
+		<div style="width: 554px; height: 774px;">
+			<teamatical-ui-image-multiview-3d views="{{zoompconfi.ProductViews}}" pv="{{zoompconfi.ProductPointOfView}}"
+				pvs="[[zoompconfi.ProductPointOfViewCount]]" visible="[[visible]]" lazy-load
+				lazy-observe=[[lazyObserve]] allow-zoom alt="">
+			</teamatical-ui-image-multiview-3d>
+		</div>
+	</paper-dialog-scrollable>
+	<!-- <div class="buttons">
+					<paper-button dialog-confirm>OK</paper-button>
+				</div> -->
+</paper-dialog>
+
+<paper-dialog id="dialogzoom" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<paper-dialog-scrollable>
+		<teamatical-ui-image style="width: 576px; height: 768px;" src="[[zoomimgi.ImageUrl]]"
+			alt="[[zoomimgi.PartName]]" lazy-load lazy-observe=[[lazyObserve]]>
+		</teamatical-ui-image>
+	</paper-dialog-scrollable>
+</paper-dialog>
+
+<paper-dialog id="dialogzoomback" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<paper-dialog-scrollable>
+		<teamatical-ui-image style="width: 576px; height: 768px;" src="[[zoomimgi.ImageUrlBack]]"
+			alt="[[zoomimgi.PartName]]" lazy-load lazy-observe=[[lazyObserve]]>
+		</teamatical-ui-image>
+	</paper-dialog-scrollable>
+</paper-dialog>
+
+<paper-dialog id="dialogtrackremove" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>[[localize('admin-dialog-confirmation-title')]]</h2>
+	<paper-dialog-scrollable>
+		[[localize('admin-morder-trackremove-msg')]]
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>[[localize('admin-dialog-close')]]</paper-button>
+		<paper-button dialog-confirm on-tap="_removeTrackConfirmTap">[[localize('admin-dialog-delete')]]</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialog_dhl" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>[[localize('admin-morder-dhl-title')]]</h2>
+
+	<!-- <paper-input label="[[localize('admin-morder-dhl-method-title')]]" readonly="true" type="string" value="[[DHL_address.ShipmentMethod]]"></paper-input> -->
+	<paper-input label="[[localize('admin-morder-dhl-name-title')]]" readonly="true" type="string"
+		value="[[DHL_address.ShipFirstName]] [[DHL_address.ShipLastName]]"></paper-input>
+	<paper-input label="[[localize('admin-morder-dhl-country-title')]]" readonly="true" type="string"
+		value="[[DHL_address.ShipCountry]]"></paper-input>
+	<paper-input label="[[localize('admin-morder-dhl-company-title')]]" readonly="true" type="string"
+		value="[[DHL_address.ShipCompany]]"></paper-input>
+	<paper-input label="[[localize('admin-morder-dhl-address-title')]]" readonly="true" type="string"
+		value="[[DHL_address.ShipAddress]]"></paper-input>
+	<paper-input label="[[localize('admin-morder-dhl-address2-title')]]" readonly="true" type="string"
+		value="[[DHL_address.ShipAddress2]]"></paper-input>
+	<paper-input label="[[localize('admin-morder-dhl-address3-title')]]" readonly="true" type="string"
+		value="[[DHL_address.ShipAddress3]]"></paper-input>
+	<div class="horizontal">
+		<paper-input label="[[localize('admin-morder-dhl-postalcode-title')]]" type="string"
+			value="[[DHL_address.ShipZip]]"></paper-input>
+		<paper-input label="[[localize('admin-morder-dhl-city-title')]]" type="string" value="[[DHL_address.ShipCity]]">
+		</paper-input>
+		<paper-input label="[[localize('admin-morder-dhl-state-title')]]" type="string"
+			value="[[DHL_address.ShipState]]"></paper-input>
+	</div>
+	<div class="horizontal">
+		<paper-input label="[[localize('admin-morder-dhl-phonetype-title')]]" type="string"
+			value="[[DHL_address.PhoneType]]"></paper-input>
+		<paper-input label="[[localize('admin-morder-dhl-phonecode-title')]]" type="string"
+			value="[[DHL_address.PhoneCode]]"></paper-input>
+		<paper-input label="[[localize('admin-morder-dhl-phonenumber-title')]]" type="string"
+			value="[[DHL_address.PhoneNumber]]"></paper-input>
+		<paper-input label="[[localize('admin-morder-dhl-phoneext-title')]]" type="string"
+			value="[[DHL_address.PhoneExt]]"></paper-input>
+	</div>
+	<paper-input label="[[localize('admin-morder-dhl-email-title')]]" type="string" value="[[DHL_address.Email]]">
+	</paper-input>
+	<paper-input label="[[localize('admin-morder-dhl-tax-title')]]" type="string" value="[[DHL_address.ShipTaxID]]">
+	</paper-input>
+	<paper-input label="[[localize('admin-morder-dhl-eori-title')]]" type="string" value="[[DHL_address.ShipEORI]]">
+	</paper-input>
+
+	<div class="buttons">
+		<paper-button dialog-dismiss>[[localize('admin-dialog-cancel')]]</paper-button>
+		<paper-button dialog-confirm on-tap="copy_DHL_addressTap">[[localize('admin-morder-dhl-copy-btn')]]
+		</paper-button>
+		<paper-button dialog-confirm>[[localize('admin-dialog-ok')]]</paper-button>
+	</div>
+</paper-dialog>
+
+
+<tmladmin-ui-dialog id="dialogproductinfo" disabled$="[[dialogproductinfo.loading]]" scroll-target="[[scrollTarget]]" frame-margin="16px auto">
+	<div slot="header">
+		<paper-icon-button 
+			class="close-dialog-small-btn" 
+			icon="admin-icons:close"
+			dialog-dismiss>
+		</paper-icon-button>
+
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogproductinfo.loading]]"
+				hidden$="[[!dialogproductinfo.loading]]">
+			</paper-progress>
+		</div>
+
+		<h2>
+			[[dialogproductinfo.title]]
+			#: [[dialogproductinfo.ManufactureOrderID]] 
+			| [[dialogproductinfo.ManufactureItemSetID]]
+		</h2>
+
+		<!-- ID: "BMBF3JCVNA2RJEFXKK2H3T1GA" -->
+		<div class="table" style="font-size: 1.2em; width: 100%;">
+			<div class="header">
+				<div>
+					[[localize('admin-morder-minternalid-title')]]
+				</div>
+				<div>
+					[[localize('admin-morder-style-title')]]
+				</div>
+				<div>
+					[[localize('admin-morder-type-title')]]
+				</div>
+				<div>
+					[[localize('admin-morder-size-title')]]
+				</div>
+			</div>
+			<div class="row">
+				<div>
+					[[dialogproductinfo.ManufactureProductInternalID]]
+				</div>
+				<div>
+					[[dialogproductinfo.SKU]]
+				</div>
+				<div>
+					[[dialogproductinfo.Type]]
+				</div>
+				<div>
+					[[dialogproductinfo.Size]]
+				</div>
+			</div>
+		</div>
+		<h3></h3>
+	</div>
+
+	<div slot="body">
+
+		<div class="image-product-grid">
+			<dom-repeat items="[[_computeProductImagesZ('', dialogproductinfo.ImageUrls, dialogproductinfo.ImageUrlsZoomIn)]]"
+				as="imgi">
+				<template>
+					<teamatical-ui-image src="[[imgi.imgUrl]]" alt="[[imgi.title]]" lazy-load
+						lazy-observe=[[lazyObserve]] on-tap1="onProductImageTap">
+					</teamatical-ui-image>
+				</template>
+			</dom-repeat>
+		</div>
+
+		<div class="spinner">
+			<paper-button raised 
+				class="product-item-disapprove-btn" 
+				disabled$="[[disabledDisapproveAll(loadingAny, dialogproductinfo.QAApprovedConfirmed, dialogproductinfo.QAApproved)]]"
+				on-tap="productItemDisapproveAllConfirmTap">
+				[[localize('admin-morder-qa-disapproveall-btn')]]
+			</paper-button>
+			<paper-spinner-lite class="thick"></paper-spinner-lite>
+
+			<paper-button raised 
+				class="product-item-disapprove-confirm-btn" 
+				hidden$="[[!dialogproductinfo.QAApprovedConfirmed]]"
+				disabled$="[[loadingAny]]"
+				on-tap="productItemDisapproveTap">
+				[[localize('admin-morder-qa-disapprove-confirm-btn')]]
+			</paper-button>
+			<paper-spinner-lite class="thick"></paper-spinner-lite>
+		</div>
+
+		<div class="table w100">
+			<dom-repeat items="[[dialogproductinfo.Items]]" as="rpi" index-as="rpindex">
+				<template>
+
+					<div class="row vtop" 
+						aggregated$="[[rpi.Aggregated]]"
+						advanced-to-shipping$="[[rpi.AdvancedToShipping]]"
+						tabindex="-1" style="outline: none;">
+						<div>
+							<div class="table width100">
+
+								<dom-if if="[[_asBool(rpi.Quantity)]]">
+									<template>
+										<div class="row">
+											<div>
+												[[localize('admin-morder-dialogproductinfo-Quantity')]]
+											</div>
+											<div>
+												[[rpi.Quantity]]
+											</div>
+										</div>
+									</template>
+								</dom-if>
+
+
+
+								<dom-if if="[[_itemIsDefect(rpi)]]">
+									<template>
+
+										
+		
+										<div class="row">
+											<div>
+												[[localize('admin-morder-dialogproductinfo-DefectedReason')]]
+											</div>
+											<div class="error">
+												[[rpi.DefectedReason]]
+											</div>
+										</div>
+
+										
+
+										<dom-if if="[[_asBool(rpi.KeyMeasurements)]]">
+											<template>
+												<div class="row">
+													<div>
+														[[localize('admin-morder-dialogproductinfo-KeyMeasurements')]]
+													</div>
+													<div>
+														<div class="table width100">
+															<div class="header">
+																<div class="center">
+																	[[localize('admin-ws-qa-keymeasurements-name')]]
+																</div>
+																<div class="center">
+																	[[localize('admin-ws-qa-keymeasurements-nameth')]]
+																</div>
+										
+																<div class="center">
+																	[[localize('admin-ws-qa-keymeasurements-value')]]
+																	[[rpi.KeyMeasurements.0.Values.0.Size]]
+																</div>
+
+																<div class="center error">
+																	[[localize('admin-ws-qa-keymeasurements-actualvalue')]]
+																	[[rpi.KeyMeasurements.0.Values.0.Size]]
+																</div>
+										
+																<div class="center">
+																	[[localize('admin-ws-qa-keymeasurements-tolerance')]]
+																</div>
+																<div class="center">
+																	[[localize('admin-ws-qa-keymeasurements-units')]]
+																</div>
+															</div>
+										
+															<dom-repeat items="[[rpi.KeyMeasurements]]" as="keymeasurei">
+																<template>
+																	<div class="row vcenter">
+																		<div class="center">
+																			<div>[[keymeasurei.Name]]</div>
+																		</div>
+																		<div class="center">
+																			<div>[[keymeasurei.NameTH]]</div>
+																		</div>
+										
+																		<div class="center">
+																			<div>
+																				[[keymeasurei.Values.0.Value]]
+																			</div>
+																		</div>
+																		<div class="center error">
+																			<div>
+																				[[keymeasurei.Values.0.ActualValue]]
+																			</div>
+																		</div>
+
+																		<div class="center">
+																			<div>[[keymeasurei.Tolerance]]</div>
+																		</div>
+																		<div class="center">
+																			<div>[[keymeasurei.Units]]</div>
+																		</div>
+																	</div>
+																</template>
+															</dom-repeat>
+														</div>
+													</div>
+												</div>
+											</template>
+										</dom-if>
+
+									</template>
+								</dom-if>
+
+								<dom-if if="[[!_itemIsDefect(rpi)]]">
+									<template>
+
+										<div class="row">
+											<div>
+												[[localize('admin-morder-dialogproductinfo-barcode')]]
+											</div>
+											<div>
+												[[rpi.Barcode]]
+											</div>
+										</div>
+		
+										<div class="row">
+											<div>
+												[[localize('admin-morder-dialogproductinfo-customerorder')]]
+											</div>
+											<div>
+												[[rpi.OrderID]]
+											</div>
+										</div>
+		
+										<div class="row">
+											<div>
+												[[localize('admin-morder-dialogproductinfo-orderproduction')]]
+											</div>
+											<div>
+												[[rpi.OrderProductionID]]
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												[[localize('admin-morder-dialogproductinfo-orderproductionitem')]]
+											</div>
+											<div>
+												[[rpi.OrderProductionItemID]]
+											</div>
+										</div>
+
+									</template>
+								</dom-if>
+
+								
+
+								<dom-if if="[[_asBool(rpi.Store)]]">
+									<template>
+										<div class="row">
+											<div>
+												[[localize('admin-morder-customstore-title')]]
+											</div>
+											<div>
+												<div class="store-container">
+													<div class="store">
+														<a href="[[_urlViewStore(rpi.Store.StoreID)]]">[[rpi.Store.Title]]</a>
+													</div>
+													<dom-if if="[[rpi.Store.Organization]]">
+														<template>
+															<a href="[[_urlViewOrganization(rpi.Store.Organization.OrganizationID)]]">[[rpi.Store.Organization.OrganizationName]]</a>
+														</template>
+													</dom-if>
+												</div>
+											</div>
+										</div>
+									</template>
+								</dom-if>
+
+
+								<dom-if if="[[rpi.QAApproved]]">
+									<template>
+										<div class="row">
+											<div>
+												<span>[[localize('admin-morder-qa-approved')]]</span>
+											</div>
+											<div>
+												<iron-icon icon="admin-icons:check" alt="check" class="approved"></iron-icon>
+											</div>
+										</div>
+									</template>
+								</dom-if>
+
+								<dom-if if="[[rpi.AggregationVisited]]">
+									<template>
+										<div class="row">
+											<div>
+												<span>[[localize('admin-morder-aggregation-done')]]</span>
+											</div>
+											<div>
+												<iron-icon icon="admin-icons:check" alt="check" class="approved"></iron-icon>
+											</div>
+										</div>
+									</template>
+								</dom-if>
+
+								<dom-if if="[[_asBool(rpi.QALabelPrinted)]]">
+									<template>
+										<div class="row">
+											<div>
+												<span>[[localize('admin-morder-qa-labelsprinted')]]</span>
+											</div>
+											<div>
+												[[rpi.QALabelPrinted]]
+											</div>
+										</div>
+									</template>
+								</dom-if>
+
+							</div>
+						</div>
+
+						<div>
+							<div class="image-product-grid snapshots">
+								<dom-repeat items="[[rpi.CameraPictUrls]]" as="imgi">
+									<template>
+										<teamatical-ui-image src="[[imgi]]" alt="[[imgi]]" lazy-load lazy-observe=[[lazyObserve]]>
+										</teamatical-ui-image>
+									</template>
+								</dom-repeat>
+							</div>
+						</div>
+
+						<div class="center">
+							<div class="spinner">
+								<paper-button raised 
+									class="product-item-disapprove-btn" 
+									disabled$="[[disabledDisapprove(loadingAny, rpi.QAApprovedConfirmed, rpi.QAApproved)]]"
+									on-tap="productItemDisapproveConfirmTap">
+									[[localize('admin-morder-qa-disapprove-btn')]]
+								</paper-button>
+								<paper-spinner-lite class="thick"></paper-spinner-lite>
+							</div>
+							<div class="spinner">
+								<paper-button raised 
+									class="product-item-disapprove-confirm-btn" 
+									hidden$="[[!rpi.QAApprovedConfirmed]]"
+									disabled$="[[loadingAny]]"
+									on-tap="productItemDisapproveTap">
+									[[localize('admin-morder-qa-disapprove-confirm-btn')]]
+								</paper-button>
+								<paper-spinner-lite class="thick"></paper-spinner-lite>
+							</div>
+						</div>
+
+					</div>
+
+				</template>
+			</dom-repeat>
+		</div>
+
+		<!-- <div style="width: 554px; height: 774px;">
+			ProductConfiguration
+			<teamatical-ui-image-multiview-3d views="{{zoompconfi.ProductViews}}" pv="{{zoompconfi.ProductPointOfView}}"
+				pvs="[[zoompconfi.ProductPointOfViewCount]]" visible="[[visible]]" lazy-load lazy-observe=[[lazyObserve]]
+				allow-zoom alt="">
+			</teamatical-ui-image-multiview-3d>
+		</div> -->
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			[[localize('admin-dlg-close')]]
+		</paper-button>
+	</div>
+
+</tmladmin-ui-dialog>
+
+
+<tmladmin-ui-dialog id="dialogreplacementreasons" disabled$="[[dialogreplacementreasons.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button 
+			class="close-dialog-small-btn" 
+			icon="admin-icons:close"
+			dialog-dismiss>
+		</paper-icon-button>
+
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogreplacementreasons.loading]]" hidden$="[[!dialogreplacementreasons.loading]]"></paper-progress>
+		</div>
+
+		<h2>
+			[[dialogreplacementreasons.title]]
+		</h2>
+	</div>
+
+	<div slot="body">
+
+		<h4>
+			[[localize('admin-morder-fabricsummary-title')]]
+			| #: [[dialogreplacementreasons.FabricSummaryList.length]]
+		</h4>
+		<div class="table stripe">
+			<div class="header">
+				<div class="w10">
+					[[localize('admin-morder-fabicname-title')]]
+				</div>
+				<div class="w5">
+					[[localize('admin-morder-width-title')]]
+				</div>
+				<div class="w5">
+					[[localize('admin-morder-length-title')]]
+				</div>
+				<div class="w5">
+					[[localize('admin-morder-LengthWithoutReplacementsMeters-title')]]
+				</div>
+				<div class="w5">
+					[[localize('admin-morder-LengthReplacementsOverhead-title')]]
+				</div>
+				<div class="w5">
+					[[localize('admin-morder-printarea-title')]]
+				</div>
+				<!-- <div class="w5">
+					[[localize('admin-morder-rolls-title')]]
+				</div>
+				<div class="w5">
+					[[localize('admin-morder-rolllength-title')]]
+				</div> -->
+			</div>
+		
+			<dom-repeat items="[[dialogreplacementreasons.FabricSummaryList]]" as="fabrici">
+				<template>
+					<div class="row">
+						<div>
+							[[fabrici.FabricName]]
+						</div>
+						<div class="pdf-meters">
+							[[_formatMeters(fabrici.WidthMeters, 'in')]]
+						</div>
+						<div class="pdf-meters">
+							[[_formatMeters(fabrici.LengthMeters, 'yd')]]
+						</div>
+						<div>
+							[[_formatMeters(fabrici.LengthWithoutReplacementsMeters, 'yd')]]
+						</div>
+						<div>
+							[[_formatDoubleAsPercent(fabrici.LengthReplacementsOverhead, 1)]]
+						</div>
+						<div class="pdf-meters">
+							[[_formatMeters(fabrici.PrintedAreaSquareMeters, 'yd^2')]]
+						</div>
+						<!-- <div>
+							[[_formatDouble(fabrici.Rolls, 1)]]
+						</div>
+						<div>
+							[[_formatMeters(fabrici.RollLengthMeters, 'yd')]]
+						</div> -->
+					</div>
+				</template>
+			</dom-repeat>
+			<dom-if if="[[!LenMore(dialogreplacementreasons.FabricSummaryList)]]">
+				<template>
+					<div class="noitems">
+						[[localize('admin-list-noitems')]]
+					</div>
+				</template>
+			</dom-if>
+		</div>
+
+		<h4>
+			Reasons
+			| #: [[dialogreplacementreasons.ReplacementReasonsSummary.length]]
+		</h4>
+		<div class="table" style="font-size: 1.2em; width: 100%;">
+			<div class="header vcenter hcenter">
+				<div>
+					BatchID
+				</div>
+				<div>
+					PartName
+				</div>
+				<div>
+					Title
+				</div>
+				<div>
+					Image
+				</div>
+				<div>
+					Count
+				</div>
+			</div>
+			<dom-repeat items="[[dialogreplacementreasons.ReplacementReasonsSummary]]" as="reasoni">
+				<template>
+					<div class="row vcenter hcenter">
+						<div>
+							[[reasoni.BatchID]]
+						</div>
+						<div>
+							[[reasoni.PartName]]
+						</div>
+						<div>
+							[[reasoni.Title]]
+						</div>
+						<div>
+							<teamatical-ui-image 
+								class="part"
+								src="[[reasoni.ImageUrl]]" 
+								alt="[[reasoni.PartName]]" 
+								lazy-load 
+								lazy-observe=[[lazyObserve]] 
+								title$="[[reasoni.PartName]]">
+							</teamatical-ui-image>
+							<dom-if if="[[_asBool(reasoni.ImageUrlBack)]]">
+								<template>
+									<teamatical-ui-image 
+										class="part back"
+										src="[[reasoni.ImageUrlBack]]" 
+										alt="[[reasoni.PartName]] Sendwich Back" 
+										lazy-load 
+										lazy-observe=[[lazyObserve]] 
+										title$="[[reasoni.PartName]] Sendwich Back">
+									</teamatical-ui-image>
+								</template>
+							</dom-if>
+						</div>
+						<div class="count">
+							[[reasoni.Count]]
+						</div>
+					</div>
+				</template>
+			</dom-repeat>
+			
+		</div>
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			Close
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>
+
+
+<tmladmin-ui-dialog id="dialogreprocess_pt" disabled$="[[dialogreprocess_pt.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button 
+			class="close-dialog-small-btn" 
+			icon="admin-icons:close"
+			dialog-dismiss>
+		</paper-icon-button>
+
+		<!-- <div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogreprocess_pt.loading]]" hidden$="[[!dialogreprocess_pt.loading]]"></paper-progress>
+		</div> -->
+
+		<h2>
+			[[localize('admin-morder-reprocesspt-dlg-title')]]
+		</h2>
+	</div>
+
+	<div slot="body">
+		<paper-checkbox 
+				class=""
+				checked="{{dialogreprocess_pt.UseColorNames}}">
+				[[localize('admin-morder-UseColorNames-checkbox')]]
+		</paper-checkbox>
+
+		<paper-checkbox 
+				class=""
+				checked="{{dialogreprocess_pt.ReprocessAsReplacement}}">
+				[[localize('admin-morder-ReprocessAsReplacement-checkbox')]]
+		</paper-checkbox>
+
+		<paper-checkbox 
+				class=""
+				checked="{{dialogreprocess_pt.ExpandComponentsPatterns}}">
+				[[localize('admin-morder-ExpandComponentsPatterns-checkbox')]]
+		</paper-checkbox>
+
+		<br /><br />
+		[[localize('admin-morder-reprocesspt-dlg-msg', 'moid', order.id)]]
+		<br />
+
+		<!-- <h4>
+			Product Configuration Overrides
+		</h4> -->
+		<div>
+			<multiselect-combo-box 
+				id="ProductConfigurationOverrides"
+				items="[[dialogreprocess_pt.ProductConfigurationList]]"
+				item-id-path="id" 
+				item-value-path="id" 
+				item-label-path="title"
+				selected-items="{{dialogreprocess_pt.ProductConfigurationOverrides}}"
+				disabled$="[[loadingAny]]"
+				label="Product Configuration Overrides" 
+				placeholder="Add" 
+				on-item-removed="dialogreprocess_pt_onProductConfigurationOverridesRemoved"
+				on-remove-all-items="dialogreprocess_pt_onProductConfigurationOverridesonLocalesRemovedAll"
+				error-message="[[order.notvalid.Locales]]" 
+				invalid="[[_asBool(order.notvalid.Locales)]]"
+				clear-button-visible
+				allow-custom-values-off>
+				<template>
+					[[item.title]]
+				</template>
+			</multiselect-combo-box>
+		</div>
+		
+
+		<h4>
+			Fabrics Overrides
+		</h4>
+		<div class="table" style="font-size: 1.2em; width: 100%;">
+			<div class="header vcenter hcenter">
+				<div>
+ 					Fabric
+				</div>
+				<div>
+					Fabric Override
+				</div>
+				<div>
+					Fabric Width Override (in)
+				</div>
+			</div>
+			<dom-repeat items="[[dialogreprocess_pt.Fabrics]]" as="fabricoverridei">
+				<template>
+					<div class="row vcenter hcenter">
+						<div>
+							[[fabricoverridei.FabricTitle]]
+						</div>
+						<div>
+							<paper-dropdown-menu
+								vertical-align="top" 
+								horizontal-align="left" 
+								label="Fabric Override" 
+								value="{{fabricoverridei.FabricOverride.title}}"
+								no-label-float1
+								no-animations>
+								<paper-listbox 
+									style="max-height: 400px;"
+									slot="dropdown-content" 
+									class="dropdown-content" 
+									attr-for-selected="value"
+									selected="{{fabricoverridei.FabricOverride.id}}">
+									<dom-repeat items="[[dialogreprocess_pt.FabricList]]" as="fabi">
+										<template>
+											<paper-item value$="[[fabi.id]]">
+												<!-- <iron-icon icon="admin-icons:verified-user" class="production hidden" showen-icon$="[[_equal(fabi.id, 'ready for manufacture')]]"></iron-icon> 
+												<iron-icon icon="admin-icons:pan-tool" class="production-hold hidden" showen-icon$="[[_equal(fabi.id, 'production hold')]]"></iron-icon>
+												&nbsp; -->
+												[[fabi.title]]
+											</paper-item>
+										</template>
+									</dom-repeat>
+								</paper-listbox>
+							</paper-dropdown-menu>
+						</div>
+						<div>
+							<!-- [[fabricoverridei.FabricWidthOverrideInches]] -->
+							<paper-input 
+								label="Fabric Width Override (in)" 
+								type="string" 
+								value="{{fabricoverridei.FabricWidthOverrideInches::input}}" 
+								name="fabricoverridei.FabricWidthOverrideInches"
+								on-value-changed="onInputChanged" 
+								error-message="[[fabricoverridei.notvalid.FabricWidthOverrideInches]]"
+								invalid="[[_asBool(fabricoverridei.notvalid.FabricWidthOverrideInches)]]">
+							</paper-input>
+						</div>
+					</div>
+				</template>
+			</dom-repeat>
+		</div>
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			[[localize('admin-dialog-close')]]
+		</paper-button>
+		<paper-button dialog-confirm class="order-items-reprocess-btn" 
+			on-tap="_onReprocessConfirm">
+			[[localize('admin-morder-reprocess-btn')]]
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>

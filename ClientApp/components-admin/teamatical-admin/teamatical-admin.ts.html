@@ -1,0 +1,362 @@
+<iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
+<app-location 
+    route="{{route}}" 
+    query-params="{{queryParams}}"
+    url-space-regex="^[[rootPath]]">
+</app-location>
+
+<app-route 
+    route="{{route}}" 
+    pattern="[[rootPath]]:page" 
+    data="{{routeData}}" 
+    tail="{{subroute}}">
+</app-route>
+
+<teamatical-user-data 
+    id="user-data" 
+    user-info="{{userInfo}}" 
+    selected-page="[[page]]" 
+    page-progress="[[!_hideProgress]]" 
+    website-url="[[websiteUrl]]" 
+    auth0-loaded="[[auth0Loaded]]" 
+    auth-domain="[[authDomain]]"
+    auth-audience="[[authAudience]]"
+    auth-scope="[[authScope]]"
+    env="[[env]]" 
+    offline="[[offline]]">
+</teamatical-user-data>
+
+<teamatical-colors-data id="colors-data" colors-palette="{{colorsPalette}}" user-info="{{userInfo}}"
+    website-url="[[websiteUrl]]"></teamatical-colors-data>
+
+<app-drawer-layout fullbleed narrow="{{narrow}}" no-drawer$="[[noDrawer]]">
+    <!-- Drawer content -->
+    <app-drawer id="drawer" slot="drawer" swipe-open="[[allowDrawerSwipe]]">
+        <app-toolbar>
+            <dom-if if="[[!userInfo.isAlmighty]]">
+                <template>
+                    <span>Menu</span>
+                    <paper-icon-button icon="admin-icons:search" tabindex="-1" on-tap="_searchMenuTap"></paper-icon-button>
+                </template>
+            </dom-if>
+            <dom-if if="[[userInfo.isAlmighty]]">
+                <template>
+                    <div class="usertype-selection">
+                        <tmladmin-ui-dropdown-menu 
+                            id="usertype-selector"
+                            vertical-align="top" 
+                            horizontal-align="left"
+                            id-property="id"
+                            title-property="title"
+                            label="Menu"
+                            disabled$="[[loadingAny]]" 
+                            value="{{userType}}"
+                            value-list="[[userTypeList]]">
+                        </tmladmin-ui-dropdown-menu>
+                        <paper-icon-button icon="admin-icons:search" tabindex="-1" on-tap="_searchMenuTap"></paper-icon-button>
+                    </div>
+                </template>
+            </dom-if>
+            <dom-if if="[[_searchStart]]">
+                <template>
+                    <div class="menu-search-text">
+                        <iron-icon icon="admin-icons:search"></iron-icon>
+                        <span tabindex="-1">[[_searchableStr]]</span>
+                    </div>
+                </template>
+            </dom-if>
+            <span class="version">
+                v[[versionStr]]
+            </span>
+        </app-toolbar>
+        
+        <iron-selector selected="[[pageMenu]]" attr-for-selected="name" class="drawer-list" role="navigation">
+            <dom-repeat items="[[menu]]" as="menui">
+                <template>
+                    <dom-if if="[[!_isaction(menui.name)]]">
+                        <template>
+                            <a name="[[menui.name]]" href="[[menui.href]]" class$="[[menui.css]]" on-tap="_onTabsTap" target$="[[menui.target]]">
+                                [[menui.title]]
+                                <dom-if if="[[_asBoolTargetBlank(menui.target)]]">
+                                    <template>
+                                        <iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon>
+                                    </template>
+                                </dom-if>
+                            </a>
+                        </template>
+                    </dom-if>
+                    <dom-if if="[[_isaction(menui.name)]]">
+                        <template>
+                            <span name="[[menui.name]]" on-tap="_onTabsTap" class$="[[menui.css]]">[[menui.title]]</span>
+                            <!-- <a name="[[menui.name]]" href="[[menui.href]]" class$="[[menui.css]]">[[menui.title]]</a> -->
+                        </template>
+                    </dom-if>
+                </template>
+            </dom-repeat>
+
+            <!-- <teamatical-tab name="[[tabi.id]]">
+                <dom-if if="[[!_isaction(tabi.id)]]">
+                    <template>
+                        <a href="[[tabi.href]]" on-tap="_onTabsTap">[[tabi.title]]</a>
+                    </template>
+                </dom-if>
+                <dom-if if="[[_isaction(tabi.id)]]">
+                    <template>
+                        <span on-tap="_onTabsTap">[[tabi.title]]</span>
+                    </template>
+                </dom-if>
+            </teamatical-tab> -->
+        </iron-selector>
+
+        <dom-if if="[[LenLess(menu)]]">
+            <template>
+                [[localize('admin-list-noitems')]]
+            </template>
+        </dom-if>
+    </app-drawer>
+
+    <!-- Main content -->
+    <app-header-layout id="header-layout" has-scrolling-region no-header$="[[noHeader]]">
+        <app-header id="header" slot="header" reveals effects="waterfall" condenses$="[[!noHeader]]" fixed$="[[noHeader]]" no-header$="[[noHeader]]" disabled$="[[savingProgress]]">
+            <app-toolbar>
+                <paper-icon-button main-title-icon icon="admin-icons:menu" drawer-toggle></paper-icon-button>
+                <div main-title>
+                    <iron-icon class="main-title-logo" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> 
+                    : [[pageTitle]]
+					<span class="hidden" showen-icon$="[[hasUnsavedChanges]]">
+                        &nbsp;&nbsp;&nbsp; <iron-icon icon="admin-icons:warning" class="warning"></iron-icon>
+                        [UNSAVED]
+                    </span>
+                </div>
+            </app-toolbar>
+        </app-header>
+
+        <paper-progress id="pageLoading" indeterminate class="page-loading" disabled$="[[_hideProgress]]" hidden$="[[_hideProgress]]">
+        </paper-progress>
+
+        <div class="print-header">
+            <iron-icon icon="teamatical:logo" alt="teamatical:logo"></iron-icon>
+        </div>
+
+        <teamatical-ui-pages id="pages" role="main" selected="[[page]]" attr-for-selected="name" selected-attribute="visible">
+            <dom-if if="[[_allowPages(userInfo, userType.id, queryParams.client_secret,  'h503', 'h404', 'workstation-h503')]]">
+                <template>
+                    <tmladmin-h503 name="h503" offline="[[offline]]" website-url="[[websiteUrl]]"></tmladmin-h503>
+                    <tmladmin-h404 name="h404" offline="[[offline]]" website-url="[[websiteUrl]]" loading="[[!_hideProgress]]"></tmladmin-h404>
+                    <tmladmin-workstation-h503 name="workstation-h503" offline="[[offline]]" website-url="[[websiteUrl]]"></tmladmin-workstation-h503>
+                </template>
+            </dom-if>
+
+            <dom-if if="[[_allowPages(userInfo, userType.id, queryParams.client_secret,  'order(|s|-roster)', 'product-config(|s)' , 'purchase-order(|s)', 'custom-store(|s)', 'group-shippings', 'custom-design-request(|s)' )]]">
+                <template>
+                    <tmladmin-order name="order" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" scroll-target="[[scrollTarget]]" loading="{{pageUpdating.order}}" saving="{{pageSavings.order}}" has-unsaved-changes="{{pageUnsaved.order}}"></tmladmin-order>
+                    <tmladmin-order-roster name="order-roster" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" scroll-target="[[scrollTarget]]"></tmladmin-order-roster>
+                    <tmladmin-orders name="orders" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-orders>
+
+                    <tmladmin-custom-stores name="custom-stores" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-custom-stores>
+                    <tmladmin-custom-store name="custom-store" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.custom-store}}" page-object-title="{{pageObjectTitle.custom-store}}"></tmladmin-custom-store>
+
+                    <tmladmin-custom-design-requests name="custom-design-requests" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-custom-design-requests>
+                    <tmladmin-custom-design-request name="custom-design-request" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.custom-design-request}}"></tmladmin-custom-design-request>
+
+                    <tmladmin-group-shippings name="group-shippings" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-group-shippings>
+                    <tmladmin-group-shipping name="group-shipping" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.group-shipping}}"></tmladmin-group-shipping>
+
+                    <tmladmin-purchase-orders name="purchase-orders" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-purchase-orders>
+                    <tmladmin-purchase-order name="purchase-order" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.purchase-order}}" page-object-title="{{pageObjectTitle.purchase-order}}"></tmladmin-purchase-order>
+
+                    <tmladmin-product-configs name="product-configs" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-product-configs>
+                    <tmladmin-product-config name="product-config" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.product-config}}" scroll-target="[[scrollTarget]]"></tmladmin-product-config>
+                </template>
+            </dom-if>
+
+            
+            <dom-if if="[[_allowPages(userInfo, userType.id, queryParams.client_secret,  'brand(|s)', 'product(|s)', 'product-view(|s)', 'product-font(|s)', 'product-sizecategor(y|ies)', 'organization(|s)', 'upload-product', 'catalog-(products|plugin-products)', 'shipping-hub(|s)', 'website-locale(|s)', 'currency-region(|s)', 'deal-profile(|s|-simulation)')]]">
+                <template>
+                    <tmladmin-brands name="brands" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-brands>
+                    <tmladmin-brand name="brand" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.brand}}" page-object-title="{{pageObjectTitle.brand}}" scroll-target="[[scrollTarget]]"></tmladmin-brand>
+
+                    <tmladmin-products name="products" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-products>
+                    <tmladmin-product name="product" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" scroll-target="[[scrollTarget]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.product}}"></tmladmin-product>
+
+                    <tmladmin-product-fonts name="product-fonts" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-product-fonts>
+                    <tmladmin-product-font name="product-font" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.product-font}}" scroll-target="[[scrollTarget]]"></tmladmin-product-font>
+
+                    <tmladmin-product-colors name="product-colors" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-product-colors>
+                    <tmladmin-product-color name="product-color" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.product-color}}"></tmladmin-product-color>
+
+                    <tmladmin-product-sizecategories name="product-sizecategories" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-product-sizecategories>
+                    <tmladmin-product-sizecategory name="product-sizecategory" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.product-sizecategory}}" page-object-title="{{pageObjectTitle.product-sizecategory}}"></tmladmin-product-sizecategory>
+
+                    <tmladmin-product-views name="product-views" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-product-views>
+                    <tmladmin-product-view name="product-view" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.product-view}}" scroll-target="[[scrollTarget]]"></tmladmin-product-view>
+
+                    <tmladmin-organizations name="organizations" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-organizations>
+                    <tmladmin-organization name="organization" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.organization}}" page-object-title="{{pageObjectTitle.organization}}"></tmladmin-organization>
+                    
+                    <tmladmin-shipping-hubs name="shipping-hubs" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-shipping-hubs>
+                    <tmladmin-shipping-hub name="shipping-hub" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.shipping-hub}}"></tmladmin-shipping-hub>
+
+                    <tmladmin-upload-product name="upload-product" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-upload-product>
+
+                    <tmladmin-catalog-products name="catalog-products" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.catalog-products}}"></tmladmin-catalog-products>
+
+                    <tmladmin-catalog-plugin-products name="catalog-plugin-products" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.catalog-plugin-products}}"></tmladmin-catalog-plugin-products>
+
+                    <tmladmin-website-locales name="website-locales" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-website-locales>
+                    <tmladmin-website-locale name="website-locale" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.website-locale}}" page-object-title="{{pageObjectTitle.website-locale}}"></tmladmin-website-locale>
+
+                    <tmladmin-currency-regions name="currency-regions" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-currency-regions>
+                    <tmladmin-currency-region name="currency-region" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.currency-region}}" page-object-title="{{pageObjectTitle.currency-region}}"></tmladmin-currency-region>
+
+                    <tmladmin-deal-profiles name="deal-profiles" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-deal-profiles>
+                    <tmladmin-deal-profile name="deal-profile" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" loading="{{pageUpdating.deal-profile}}" saving="{{pageSavings.deal-profile}}" has-unsaved-changes="{{pageUnsaved.deal-profile}}" scroll-target="[[scrollTarget]]"></tmladmin-deal-profile>
+                    <tmladmin-deal-profile-simulation name="deal-profile-simulation" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" loading="{{pageUpdating.deal-profile-simulation}}" saving="{{pageSavings.deal-profile-simulation}}" has-unsaved-changes="{{pageUnsaved.deal-profile-simulation}}" scroll-target="[[scrollTarget]]"></tmladmin-deal-profile-simulation>
+                </template>
+            </dom-if>
+    
+
+            <dom-if if="[[_allowPages(userInfo, userType.id, queryParams.client_secret,  'manufacturer-brand(|s)', 'manufacturer-order(s|-batch)', 'production-order(|s)', 'product-label(|s)', 'product-thread(|s)', 'product-accessor(y|ies)', 'product-manufacturer(|s)', 'shipping-container(|s)', 'shipping-freight(|s)', 'manufacturer(|s)')]]">
+                <template>
+                    <tmladmin-production-orders name="production-orders" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" small-screen="[[smallScreen]]"></tmladmin-production-orders>
+                    <tmladmin-production-order name="production-order" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" scroll-target="[[scrollTarget]]" has-unsaved-changes="{{pageUnsaved.production-order}}"></tmladmin-production-order>
+                    
+                    <tmladmin-shipping-containers name="shipping-containers" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-shipping-containers>
+                    <tmladmin-shipping-container name="shipping-container" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.shipping-container}}"></tmladmin-shipping-container>
+
+                    <tmladmin-shipping-freights name="shipping-freights" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-shipping-freights>
+                    <tmladmin-shipping-freight name="shipping-freight" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.shipping-freight}}"></tmladmin-shipping-freight>
+
+                    <tmladmin-product-labels name="product-labels" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-product-labels>
+                    <tmladmin-product-label name="product-label" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.product-label}}" page-object-title="{{pageObjectTitle.product-label}}" scroll-target="[[scrollTarget]]"></tmladmin-product-label>
+
+                    <tmladmin-product-threads name="product-threads" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-product-threads>
+                    <tmladmin-product-thread name="product-thread" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" colors-palette="{{colorsPalette}}" has-unsaved-changes="{{pageUnsaved.product-thread}}"></tmladmin-product-thread>
+        
+                    <tmladmin-product-accessories name="product-accessories" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-product-accessories>
+                    <tmladmin-product-accessory name="product-accessory" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" colors-palette="{{colorsPalette}}" has-unsaved-changes="{{pageUnsaved.product-accessory}}"></tmladmin-product-accessory>
+
+                    <tmladmin-manufacturer-orders name="manufacturer-orders" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}"></tmladmin-manufacturer-orders>
+                    <tmladmin-manufacturer-order-batch name="manufacturer-order-batch" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]" scroll-target="[[scrollTarget]]" loading="{{pageUpdating.manufacturer-order-batch}}" saving="{{pageSavings.manufacturer-order-batch}}" has-unsaved-changes="{{pageUnsaved.manufacturer-order-batch}}"  page-object-title="{{pageObjectTitle.manufacturer-order-batch}}"></tmladmin-manufacturer-order-batch>
+                    
+                    <tmladmin-product-manufacturers name="product-manufacturers" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-product-manufacturers>
+                    <tmladmin-product-manufacturer name="product-manufacturer" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.product-manufacturer}}" scroll-target="[[scrollTarget]]"></tmladmin-product-manufacturer>
+
+                    <tmladmin-manufacturers name="manufacturers" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-manufacturers>
+                    <tmladmin-manufacturer name="manufacturer" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.manufacturer}}" page-object-title="{{pageObjectTitle.manufacturer}}"></tmladmin-manufacturer>
+
+                    <tmladmin-manufacturer-brands name="manufacturer-brands" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-manufacturer-brands>
+                    <tmladmin-manufacturer-brand name="manufacturer-brand" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.manufacturer-brand}}" page-object-title="{{pageObjectTitle.manufacturer-brand}}" scroll-target="[[scrollTarget]]"></tmladmin-manufacturer-brand>
+                </template>
+            </dom-if>
+
+
+            <dom-if if="[[_allowPages(userInfo, userType.id, queryParams.client_secret,  'organization-order(|s|-roster)', 'organization-custom-store(|s)', 'organization-custom-design-request(|s)')]]">
+                <template>
+                    <tmladmin-organization-orders name="organization-orders" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-organization-orders>
+                    <tmladmin-organization-order name="organization-order" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" scroll-target="[[scrollTarget]]"></tmladmin-organization-order>
+                    <tmladmin-organization-order-roster name="organization-order-roster" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" scroll-target="[[scrollTarget]]"></tmladmin-organization-order-roster>
+
+                    <tmladmin-organization-custom-stores name="organization-custom-stores" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-organization-custom-stores>
+                    <tmladmin-organization-custom-store name="organization-custom-store" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.organization-custom-store}}" page-object-title="{{pageObjectTitle.organization-custom-store}}"></tmladmin-organization-custom-store>
+
+                    <tmladmin-organization-custom-design-requests name="organization-custom-design-requests" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-organization-custom-design-requests>
+                    <tmladmin-organization-custom-design-request name="organization-custom-design-request" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-organization-custom-design-request>
+                </template>
+            </dom-if>
+
+
+            <dom-if if="[[_allowPages(userInfo, userType.id, queryParams.client_secret, 'workstation-(planning|printing|roll-inspection|replacements|stacking|cutting|sorting|bundling|sewing|sizelabel|qa|aggregation|shipping|containerizing|freights|freightforward)')]]">
+                <template>
+                    <tmladmin-workstation-planning name="workstation-planning" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]" scroll-target="[[scrollTarget]]"></tmladmin-workstation-planning>
+                    <tmladmin-workstation-printing name="workstation-printing" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]" scroll-target="[[scrollTarget]]"></tmladmin-workstation-printing>
+                    <tmladmin-workstation-roll-inspection name="workstation-roll-inspection" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]"></tmladmin-workstation-roll-inspection>
+                    <tmladmin-workstation-replacements name="workstation-replacements" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]" scroll-target="[[scrollTarget]]"></tmladmin-workstation-replacements>
+                    <tmladmin-workstation-stacking name="workstation-stacking" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]"></tmladmin-workstation-stacking>
+                    <tmladmin-workstation-cutting name="workstation-cutting" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]"></tmladmin-workstation-cutting>
+                    <tmladmin-workstation-sorting name="workstation-sorting" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]"></tmladmin-workstation-sorting>
+                    <tmladmin-workstation-bundling name="workstation-bundling" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]"></tmladmin-workstation-bundling>
+                    <tmladmin-workstation-sewing name="workstation-sewing" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]"></tmladmin-workstation-sewing>
+                    <tmladmin-workstation-sizelabel name="workstation-sizelabel" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]"></tmladmin-workstation-sizelabel>
+                    <tmladmin-workstation-qa name="workstation-qa" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]" scroll-target="[[scrollTarget]]"></tmladmin-workstation-qa>
+                    <tmladmin-workstation-aggregation name="workstation-aggregation" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]" scroll-target="[[scrollTarget]]"></tmladmin-workstation-aggregation>
+                    <tmladmin-workstation-shipping name="workstation-shipping" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]"></tmladmin-workstation-shipping>
+                    <tmladmin-workstation-containerizing name="workstation-containerizing" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]" scroll-target="[[scrollTarget]]"></tmladmin-workstation-containerizing>
+                    <tmladmin-workstation-freights name="workstation-freights" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]" scroll-target="[[scrollTarget]]"></tmladmin-workstation-freights>
+                    <tmladmin-workstation-freightforward name="workstation-freightforward" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]"></tmladmin-workstation-freightforward>
+                </template>
+            </dom-if>
+
+            <dom-if if="[[_allowPages(userInfo, userType.id, queryParams.client_secret, 'workstation-hub')]]">
+                <template>
+                    <tmladmin-workstation-hub name="workstation-hub" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="{{userInfo}}" small-screen="[[smallScreen]]"></tmladmin-workstation-hub>
+                </template>
+            </dom-if>
+
+
+
+            <dom-if if="[[_allowPages(userInfo, userType.id, queryParams.client_secret,  'dev-info', 'dev-bot-user', 'task-planner', 'entity-viewer', 'history-viewer', 'nesting-request(|s)')]]">
+                <template>
+                    <tmladmin-task-planner name="task-planner" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" small-screen="[[smallScreen]]"></tmladmin-task-planner>
+                    <tmladmin-entity-viewer name="entity-viewer" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-entity-viewer>
+                    <tmladmin-history-viewer name="history-viewer" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-history-viewer>
+                    <tmladmin-dev-info name="dev-info" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" small-screen="[[smallScreen]]"></tmladmin-dev-info>
+                    <tmladmin-dev-bot-user name="dev-bot-user" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" small-screen="[[smallScreen]]"></tmladmin-dev-bot-user>
+                    <tmladmin-nesting-requests name="nesting-requests" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]"></tmladmin-nesting-requests>
+                    <tmladmin-nesting-request name="nesting-request" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" has-unsaved-changes="{{pageUnsaved.nesting-request}}" scroll-target="[[scrollTarget]]"></tmladmin-nesting-request>
+                </template>
+            </dom-if>
+
+            <dom-if if="[[_allowPages(userInfo, userType.id, queryParams.client_secret,  'dev-image-url')]]">
+                <template>
+                    <tmladmin-dev-image-url name="dev-image-url" website-url="[[websiteUrl]]" route="[[subroute]]" query-params="{{queryParams}}" env="[[env]]" user-info="[[userInfo]]" small-screen="[[smallScreen]]"></tmladmin-dev-image-url>
+                </template>
+            </dom-if>
+
+        </teamatical-ui-pages>
+    </app-header-layout>
+
+</app-drawer-layout>
+
+<div class="dev workstation">DEV</div>
+<div class="version workstation">v[[versionStr]]</div>
+
+<teamatical-ui-button-scrollup 
+    id="scrollup"
+    target="[[scrollTarget]]"
+    class="hidden-animated">
+</teamatical-ui-button-scrollup>
+
+<span class="version-update hidden" showen-block$="[[!_equal(versionStr, versionStrNew)]]">
+    <!-- v[[versionStr]] -->
+    <div class="new" on-tap="newVersionTap">
+        REFRESH APP<br />
+        NEW [[versionStrNew]]<br />
+        Auto RELOAD in [[_countdownAppVersionSec]] sec...
+    </div>
+</span>
+
+
+<vaadin-context-menu id="contextMenu">
+    <template>
+        <paper-item on-tap="_resetColumnsSettings">Reset Columns to Defaults</paper-item>
+    </template>
+</vaadin-context-menu>
+
+<dom-if if="[[userInfo.isAdmin]]">
+    <template>
+        <teamatical-ui-automation-scripts 
+            id="automation-scripts"
+            user-info="[[userInfo]]"
+            scroll-target="[[scrollTarget]]"
+            hidden$="[[narrow]]"
+            visible="[[!narrow]]">
+        </teamatical-ui-automation-scripts>
+    </template>
+</dom-if>
+
+
+
+<paper-spinner-lite id="savingprogress"
+                    active="[[savingProgress]]">
+</paper-spinner-lite>

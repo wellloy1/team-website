@@ -1,0 +1,540 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Brand #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.BrandID]]</span>
+				</h3>
+
+				<div class="buttons">
+					<paper-button 
+						class="order-save-brand-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveBrandTap">
+						Save Brand
+					</paper-button>
+				
+					<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm Brand to Save</h2>
+						<paper-dialog-scrollable>
+							Brand #: [[order.BrandID]] is going to be saved...are you sure?
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss>Close</paper-button>
+							<paper-button dialog-confirm autofocus on-tap="saveBrandConfirm">Save Brand</paper-button>
+						</div>
+					</paper-dialog>
+
+					<!-- <paper-button 
+						class="order-clone-btn hidden" 
+						disabled$="[[loading]]" 
+						showen$="[[!hideCloneBtn(order)]]" 
+						raised
+						on-tap="cloneBrandTap">
+						Clone Brand
+					</paper-button> -->
+			
+				</div>
+				
+				<div class="order-inputs">
+					<h4>
+						Details:
+					</h4>
+
+					<div class="flag-checkboxes">
+						<!-- <paper-checkbox 
+							checked="{{order.CalculateCameraDistance}}"
+							title="Auto Calculate Camera Distance">
+							Auto Calculate Camera Distance
+						</paper-checkbox>
+
+						<paper-checkbox 
+							checked="{{order.SkipUvSpaceCheck}}"
+							title="Skip UV-space check, to allow older products...">
+							Skip UV-Space Check
+						</paper-checkbox> -->
+					</div>
+					
+					<div class="small-inputs">
+						<paper-input 
+							label$="[[_classBool(isManufacturer, 'Name (readonly)', 'Name', '')]]" 
+							readonly$="[[isManufacturer]]"
+							type="string" 
+							value="{{order.Name}}"
+							name="Name"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.Name]]" 
+							invalid="[[_asBool(order.notvalid.Name)]]">
+						</paper-input>
+
+						<paper-input 
+							label$="[[_classBool(isManufacturer, 'OrganizationID (readonly)', 'OrganizationID', '')]]" 
+							readonly$="[[isManufacturer]]"
+							type="string" 
+							value="{{order.BrandOrganizationID}}"
+							name="OrganizationID"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.BrandOrganizationID]]" 
+							invalid="[[_asBool(order.notvalid.BrandOrganizationID)]]">
+						</paper-input>
+
+						
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+
+					<dom-if if="[[!isManufacturer]]">
+						<template>
+							<div class="small-inputs">
+								<div class="selection">
+									<tmladmin-ui-dropdown-menu 
+										vertical-align="top" 
+										horizontal-align="left"
+										id-property="DealProfileID"
+										title-property="Name"
+										label="Deal Profile Brand to Consumer (B2C)"
+										disabled$="[[loadingAny]]" 
+										readonly$="[[!userInfo.isAlmighty]]"
+										is-almighty$="[[userInfo.isAlmighty]]"
+										value="{{order.DealProfile}}"
+										value-list="[[order.DealProfiles]]"
+										error-message="[[order.notvalid.DealProfile]]"
+										invalid="[[_asBool(order.notvalid.DealProfile)]]">
+									</tmladmin-ui-dropdown-menu>
+								</div>
+
+								<div class="selection">
+									<tmladmin-ui-dropdown-menu 
+										vertical-align="top" 
+										horizontal-align="left"
+										id-property="DealProfileID"
+										title-property="Name"
+										label="Deal Profile Brand to Seller (B2S)"
+										disabled$="[[loadingAny]]" 
+										readonly$="[[!userInfo.isAlmighty]]"
+										is-almighty$="[[userInfo.isAlmighty]]"
+										value="{{order.DealProfileB2S}}"
+										value-list="[[order.DealProfilesB2S]]"
+										error-message="[[order.notvalid.DealProfile]]"
+										invalid="[[_asBool(order.notvalid.DealProfile)]]">
+									</tmladmin-ui-dropdown-menu>
+								</div>
+								
+								
+								<div class="selection">
+									<tmladmin-ui-dropdown-menu 
+										vertical-align="top" 
+										horizontal-align="left"
+										id-property="DealProfileID"
+										title-property="Name"
+										label="Deal Profile Brand to Brand (B2B)"
+										disabled$="[[loadingAny]]" 
+										readonly$="[[!userInfo.isAlmighty]]"
+										is-almighty$="[[userInfo.isAlmighty]]"
+										value="{{order.DealProfileB2B}}"
+										value-list="[[order.DealProfilesB2B]]"
+										error-message="[[order.notvalid.DealProfileB2B]]"
+										invalid="[[_asBool(order.notvalid.DealProfileB2B)]]">
+									</tmladmin-ui-dropdown-menu>
+								</div>
+
+								<paper-input 
+									class="small-inputs-mock" 
+									label="..." 
+									type="string" 
+									disabled>
+								</paper-input>
+							</div>
+						</template>
+					</dom-if>
+				</div>
+
+				<dom-if if="[[!isManufacturer]]">
+					<template>
+						<div class="order-inputs brand-standardcolors-section">
+							<h4>
+								Standard Colors:
+							</h4>
+		
+							<dom-if if="[[order.notvalid.StandardColors]]">
+								<template>
+									<div class="notvalid alert">
+										<pre>
+											[[order.notvalid.StandardColors]]
+										</pre>
+									</div>
+								</template>
+							</dom-if>
+		
+							<tmladmin-ui-color-input-picker
+								show-add-button
+								website-url="[[websiteUrl]]"
+								visible="[[visible]]"
+								selected-color="{{order.NewStandardColor}}"
+								class="new-color-input"
+								label="Search Spot Color" 
+								name="Color"
+								on-value-changed="onInputChanged"
+								error-message="[[order.notvalid.NewStandardColor]]" 
+								invalid="[[_asBool(order.notvalid.NewStandardColor)]]">
+							</tmladmin-ui-color-input-picker>
+		
+							<div scrollable-x>
+								<div class="table">
+									<div class="header">
+										<div>
+											&nbsp;
+										</div>
+										<div>
+											ID
+										</div>
+										<div>
+											Standard Color Name
+										</div>
+										<div>
+											Name
+										</div>
+										<div class="centered">
+											Is Spot
+										</div>
+										<div class="centered">
+											Hex
+										</div>
+										<div class="centered">
+											Lab
+										</div>
+										<div>
+											&nbsp;
+										</div>
+									</div>
+			
+									<dom-repeat items="[[order.StandardColors]]" as="coli">
+										<template>
+											<div class="row vcenter">
+												<div class="right">
+													<paper-icon-button class="upward-btn" icon="admin-icons:arrow-upward"
+														manid$="[[mani.ManufacturerID]]" on-tap="_upwardStdColorTap"></paper-icon-button>
+													<paper-icon-button class="downward-btn" icon="admin-icons:arrow-downward"
+														manid$="[[mani.ManufacturerID]]" on-tap="_downwardStdColorTap"></paper-icon-button>
+												</div>
+												<div>
+													<span has-errors$="[[coli.notvalid.i]]" class="copy-tap" on-tap="_copyTap">[[coli.i]]</span>
+												</div>
+												<div>
+													<paper-input 
+														label="Standard Color Name" 
+														type="string" 
+														value="{{coli.StandardColorName}}"
+														name="StandardColorName"
+														on-value-changed="onInputChanged"
+														error-message="[[coli.notvalid.StandardColorName]]" 
+														invalid="[[_asBool(coli.notvalid.StandardColorName)]]">
+													</paper-input>
+												</div>
+												<div>
+													<span has-errors$="[[coli.notvalid.n]]">[[coli.n]]</span>
+												</div>
+												<div class="centered">
+													<span has-errors$="[[coli.notvalid.IsSpot]]" highlighted$="[[coli.IsSpot]]">[[coli.IsSpot]]</span>
+												</div>
+												<div>
+													<div class="product-color">
+														<div class="color" style$="[[_convertBkgColor(coli.h)]]">
+															<span has-errors$="[[coli.notvalid.h]]">#[[coli.h]]</span>
+														</div>
+													</div>
+												</div>
+												<div class="centered">
+													<span hidden$="[[!_asBool(coli.L)]]">
+														<span has-errors$="[[coli.notvalid.L]]">[[coli.L]]</span>
+														<span has-errors$="[[coli.notvalid.a]]">[[coli.a]]</span>
+														<span has-errors$="[[coli.notvalid.b]]">[[coli.b]]</span>
+													</span>
+												</div>
+												<div class="right">
+													<paper-icon-button class="remove-btn" icon="admin-icons:close" 
+														cid$="[[coli.i]]"
+														on-tap="_removeStandardColorTap">
+													</paper-icon-button>
+												</div>
+											</div>
+										</template>
+									</dom-repeat>
+								</div>
+							</div>
+							
+							<dom-if if="[[!LenMore(order.StandardColors)]]">
+								<template>
+									<div class="noitems">
+										[[localize('admin-list-noitems')]]
+									</div>
+								</template>
+							</dom-if>
+						</div>
+					</template>
+				</dom-if>
+				
+
+
+
+				<div class="order-inputs brand-colors-section">
+					<h4>
+						Brand Colors:
+					</h4>
+					<div>
+						<paper-input id="newcc" class="small-input" type="string"
+							label="Add Color Category" 
+							name="ColorCategoryID" 
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.ColorCategoryID]]"
+							invalid="[[_asBool(order.notvalid.ColorCategoryID)]]">
+							<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+							<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline"
+								oid$="[[order.ColorCategoryID]]" 
+								on-tap="_addColorCategoryTap">
+							</paper-icon-button>
+						</paper-input>
+
+						<dom-if if="[[!isManufacturer]]">
+							<template>
+								<paper-button class="paste-colormodel-btn" raised
+									disabled$="[[loading]]" 
+									on-tap="pasteBrandColorsTap">
+									Paste Brand Colors
+								</paper-button>
+
+								<paper-button class="copy-colormodel-btn" raised
+									disabled$="[[loading]]"
+									on-tap="copyBrandColorsTap">
+									Copy Brand Colors
+								</paper-button>
+							</template>
+						</dom-if>
+		
+						
+
+					</div>
+
+					<dom-repeat items="[[order.BrandColors]]" as="bcolorcati" index-as="bcolorcatinx">
+						<template>
+							<div class="brand-color-category">
+								<h4>
+									<span hidden$="[[bcolorcati.IsEditTitle]]">
+										[[bcolorcati.Title]]
+									</span>
+									<paper-input 
+										hidden$="[[!bcolorcati.IsEditTitle]]"
+										label="Category" 
+										type="string" 
+										value="{{bcolorcati.Title}}"
+										name="Title"
+										on-value-changed="onInputChanged"
+										error-message="[[bcolorcati.notvalid.Title]]" 
+										invalid="[[_asBool(bcolorcati.notvalid.Title)]]">
+									</paper-input>
+									<paper-icon-button 
+										class="edit-btn" 
+										hidden$="[[bcolorcati.IsEditTitle]]"
+										icon="admin-editor:mode-edit" 
+										title="Edit Category"
+										on-tap="_editCategoryTap">
+									</paper-icon-button>
+									<paper-icon-button 
+										class="edit-btn" 
+										hidden$="[[!bcolorcati.IsEditTitle]]"
+										icon="admin-icons:done" 
+										title="Apply Category"
+										on-tap="_editCategoryDoneTap">
+									</paper-icon-button>
+
+
+									
+									<div class="floatright">
+										<paper-icon-button 
+											class="remove-btn" 
+											icon="admin-icons:close" 
+											bcid$="[[bcolorcati.ID]]"
+											on-tap="_removeColorCategoryTap">
+										</paper-icon-button>
+									</div>
+								</h4>
+
+								<dom-if if="[[bcolorcati.notvalid.Colors]]">
+									<template>
+										<div class="notvalid alert">
+											<pre>
+												[[bcolorcati.notvalid.Colors]]
+											</pre>
+										</div>
+									</template>
+								</dom-if>
+
+								<tmladmin-ui-color-input-picker
+									show-add-button
+									is-manufacturer$="[[isManufacturer]]"
+									website-url="[[websiteUrl]]"
+									visible="[[visible]]"
+									selected-color="{{bcolorcati.NewColor}}"
+									class="new-color-input"
+									label$="[[_classBool(isManufacturer, 'Create Color', 'Search Spot Color', '')]]" 
+									name="Color"
+									on-value-changed="onInputChanged"
+									error-message="[[bcolorcati.notvalid.NewColor]]" 
+									invalid="[[_asBool(bcolorcati.notvalid.NewColor)]]">
+								</tmladmin-ui-color-input-picker>
+
+								<div scrollable-x>
+									<div class="table">
+										<div class="header">
+											<div>
+												ID
+											</div>
+											<div>
+												&nbsp;
+											</div>
+											<div>
+												Name
+											</div>
+											<div class="centered">
+												Is Spot
+											</div>
+											<div class="centered">
+												Hex
+											</div>
+											<div class="centered">
+												Lab
+											</div>
+											<div>
+												&nbsp;
+											</div>
+										</div>
+
+										<dom-repeat items="[[bcolorcati.Colors]]" as="coli" index-as="colinx">
+											<template>
+												<div class="row vcenter">
+													<div>
+														<span has-errors$="[[coli.notvalid.i]]" class="copy-tap" on-tap="_copyTap">[[coli.i]]</span>
+													</div>
+													<div>
+														<paper-icon-button 
+															class="edit-btn" 
+															icon="admin-editor:mode-edit" 
+															title="Edit Color"
+															on-tap="_editColorTap">
+														</paper-icon-button>
+													</div>
+													<div>
+														<span has-errors$="[[coli.notvalid.n]]">[[coli.n]]</span>
+													</div>
+													<div class="centered">
+														<span has-errors$="[[coli.notvalid.IsSpot]]" highlighted$="[[coli.IsSpot]]">[[coli.IsSpot]]</span>
+													</div>
+													<div>
+														<div class="product-color">
+															<div class="color" style$="[[_convertBkgColor(coli.h)]]">
+																<span has-errors$="[[coli.notvalid.h]]">#[[coli.h]]</span>
+															</div>
+														</div>
+													</div>
+													<div class="centered">
+														<span hidden$="[[!_asBool(coli.L)]]">
+															<span has-errors$="[[coli.notvalid.L]]">[[coli.L]]</span>
+															<span has-errors$="[[coli.notvalid.a]]">[[coli.a]]</span>
+															<span has-errors$="[[coli.notvalid.b]]">[[coli.b]]</span>
+														</span>
+													</div>
+													<div class="right">
+														<paper-icon-button class="remove-btn" icon="admin-icons:close" 
+															bcid$="[[bcolorcati.ID]]"
+															cid$="[[coli.i]]"
+															on-tap="_removeColorTap">
+														</paper-icon-button>
+													</div>
+												</div>
+											</template>
+										</dom-repeat>
+									</div>
+								</div>
+								<dom-if if="[[!LenMore(bcolorcati.Colors)]]">
+									<template>
+										<div class="noitems">
+											[[localize('admin-list-noitems')]]
+										</div>
+									</template>
+								</dom-if>
+
+							</div>
+						</template>
+					</dom-repeat>
+					<dom-if if="[[!LenMore(order.BrandColors)]]">
+						<template>
+							<div class="noitems">
+								[[localize('admin-list-noitems')]]
+							</div>
+						</template>
+					</dom-if>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+<!-- dialogs -->
+<tmladmin-ui-dialog id="dialogeditcolor" disabled$="[[dialogeditcolor.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button class="close-dialog-small-btn" icon="admin-icons:close" dialog-dismiss></paper-icon-button>
+
+		<!-- <div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogeditcolor.loading]]" hidden$="[[!dialogeditcolor.loading]]"></paper-progress>
+		</div> -->
+		<h2>
+			Edit Color
+		</h2>
+	</div>
+
+	<div slot="body">
+		<tmladmin-ui-color-form-picker 
+			color-type-selector
+			selected-color="{{dialogeditcolor.color}}">
+		</tmladmin-ui-color-form-picker>
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			[[localize('admin-dialog-close')]]
+		</paper-button>
+		<paper-button dialog-confirm class="order-edit-btn" on-tap="_onEditColorConfirmTap">
+			Apply
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>
+

@@ -1,0 +1,67 @@
+<div class="order-tasks">
+	<h4>
+		Tasks
+	</h4>
+
+	<div scrollable-x>
+		<div class="table stripe">
+			<div class="header">
+				<div>
+					[[localize('admin-morder-type-title')]]
+				</div>
+				<div>
+					[[localize('admin-morder-created-title')]]
+				</div>
+				<div>
+					[[localize('admin-morder-progress-title')]]
+				</div>
+				<div>
+					[[localize('admin-morder-time-ms-title')]]
+				</div>
+				<div>
+					[[localize('admin-morder-operation-title')]]
+				</div>
+				<div>
+					[[localize('admin-morder-finished-title')]]
+				</div>
+			</div>
+
+			<dom-repeat items="[[tasks]]" as="taski">
+				<template>
+					<div class="row" is-task-finished$="[[_asBool(taski.FinishedTimestamp)]]">
+						<div>
+							[[taski.Type]]
+						</div>
+						<div>
+							[[_formatDate(taski.CreatedTimestamp)]]
+						</div>
+						<div>
+							<paper-progress class="executing-progress"
+											value="[[_formatProgress(taski.ExecutingOperationProgress)]]"></paper-progress>
+						</div>
+						<div>
+							[[_formatTaskTime(taski.ExecutingTimeMiliseconds)]]
+						</div>
+						<div>
+							[[taski.ExecutingOperation]]
+						</div>
+						<div>
+							<span hidden$="[[!_asBool(taski.FinishedSuccessfully)]]">
+								<iron-icon icon="admin-icons:check" alt="check" class="approved"></iron-icon>
+							</span>
+							[[_formatDate(taski.FinishedTimestamp)]]
+						</div>
+					</div>
+				</template>
+			</dom-repeat>
+
+			<dom-if if="[[!LenMore(tasks)]]">
+				<template>
+					<div class="noitems">
+						[[localize('admin-list-noitems')]]
+					</div>
+				</template>
+			</dom-if>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,109 @@
+<app-route route="{{route}}" pattern="/:rid" data="{{routeData}}"></app-route>
+
+<teamatical-cart-roster-data 
+  id="cart-roster-data" 
+  rid="[[routeData.rid]]"
+  orders="{{orders}}" 
+  num-items="{{numItems}}"
+  searching-progress="{{searchingProgress}}"
+  query-params="{{queryParams}}"
+  currency="{{currency}}"
+  loading="{{loading}}" 
+  failure="{{failure}}"
+  user-info="{{userInfo}}" 
+  visible="[[visible]]" 
+  website-url="[[websiteUrl]]">
+</teamatical-cart-roster-data>
+
+<teamatical-ui-loader hidden$="[[_isNotConn]]"></teamatical-ui-loader>
+
+<div hidden$="[[_isNoOrders]]">
+  <div class="subsection" visible>
+    <header>
+      <h1>
+        <!-- #: [[orders.oid]] - -->
+        [[localize('cart-roster-title')]] - [[orders.Roster.title]]
+      </h1>
+      <span hidden$="[[hideCountTitle]]">
+        (
+        <span>[[_numItems]][[_numItemsApproximately]]</span>
+        <span hidden="[[!_single]]">[[localize('cart-roster-qty-item')]]</span>
+        <span hidden="[[!_many]]">[[localize('cart-roster-qty-items')]]</span>
+        )
+      </span>
+    </header>
+
+    <div id="search-progress-container">
+      <paper-spinner-lite 
+        id="search-progress"
+        active="[[searchingProgress]]">
+      </paper-spinner-lite>
+    </div>
+
+    <paper-input 
+      id="search"
+      name="search"
+      hidden$="[[_hideSearchInput]]"
+      type="text"
+      label="[[localize('cart-roster-search-input')]]" 
+      aria-label$="[[localize('cart-roster-search-input')]]"
+      placeholder="[[localize('cart-roster-search-placeholder')]]"
+      value="{{orders.search::input}}"
+      required
+      autocomplete="search"
+      error-message="[[localize('cart-roster-search-invalid')]]">
+    </paper-input>
+
+
+    <p class="empty-list" hidden$="[[_hasInitialItems]]">
+      [[localize('cart-roster-empty')]]
+    </p>
+
+    <p class="empty-list" hidden$="[[_hasSearchedItems]]">
+      [[localize('cart-roster-search-empty')]]
+    </p>
+
+    <div id="list" class="order-list">
+      <iron-list 
+        id="gridList"
+        items="[[orders.items]]" 
+        as="itemi"
+        scroll-target="document"
+        default-physical-count="40">
+        <template>
+          <div class="order-items">
+            <teamatical-ui-order-item is-cart entry="[[itemi]]" action-disabled="[[loading]]"></teamatical-ui-order-item>
+          </div>
+        </template>
+      </iron-list>
+    </div>
+
+    <div class="detail-buttons progress-container">
+      <paper-spinner-lite 
+        id="loadMoreProgress"
+        class="progress-centered"
+        active="[[_loadMoreProgress(loading, loadingMore)]]">
+      </paper-spinner-lite>
+
+      <teamatical-ui-button
+        id="loadMoreBtn"
+        aria-label$="[[localize('cart-roster-btn-more-label')]]"
+        disabled$="[[loading]]"
+        hidden$="[[orders.plast]]"
+        class="hidden-animated slow"
+        hidden-animated$="[[_loadMoreProgress(loading, loadingMore)]]"
+        on-tap="moreOrdersTap">
+        [[localize('cart-roster-btn-more')]]
+      </teamatical-ui-button>
+
+      <div class="end-list" hidden$="[[!_hasNoMoreItems]]">[[localize('cart-roster-list-end')]]</div>
+    </div>
+
+  </div>
+</div>
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

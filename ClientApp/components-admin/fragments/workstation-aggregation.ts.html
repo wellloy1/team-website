@@ -1,0 +1,577 @@
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="aggregation"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+
+
+<div class="maindiv horiz">
+	<div class="order-container sticky">
+		<div class="order">
+			<!-- aggregation -->
+			<div class="order-aggregation" hidden$="[[!order]]">
+				<div class="sticky-container">
+					<h2>
+						<paper-icon-button 
+							class="refresh-btn" 
+							icon="admin-icons:refresh"
+							title="[[localize('admin-ws-refresh')]]" 
+							disabled="[[loadingAny]]"
+							on-tap="_reloadTap">
+						</paper-icon-button>
+
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+
+						[[localize('admin-ws-aggregation-title')]]
+					</h2>
+
+					<paper-progress 
+						id="progress" 
+						indeterminate 
+						class="" 
+						disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+				
+				<div class="main">
+					<div class="first-line">
+						<tmladmin-ui-barcode-input
+							id="barcodeinput" 
+							label$="[[localize('admin-ws-aggregation-barcode-label')]]" 
+							name="barcode" 
+							class="barcode-input" 
+							type="string" 
+							disabled$="[[loadingAny]]" 
+							loading$="[[loadingCmd]]" 
+							aggregation-mode
+							on-barcode-changed="onInputChanged"
+							on-barcode-enter="onBarcodeInputEnter">
+						</tmladmin-ui-barcode-input>
+
+						<dom-if if="[[showManufacturers]]">
+							<template>
+								<div class="man-selection" is-admin>
+									<tmladmin-ui-dropdown-menu 
+										vertical-align="top" 
+										horizontal-align="left"
+										id-property="ManufacturerID"
+										title-property="ManufacturerName"
+										label="[[localize('admin-ws-manufacturer')]]"
+										disabled$="[[loadingAny]]" 
+										value="{{order.Manufacturer}}"
+										value-list="[[order.Manufacturers]]"
+										on-value-changed="onInputChanged"
+										error-message="[[order.notvalid.Manufacturer]]"
+										invalid="[[_asBool(order.notvalid.Manufacturer)]]">
+									</tmladmin-ui-dropdown-menu>
+								</div>
+							</template>
+						</dom-if>
+
+
+						<div class="options-container">
+							<paper-checkbox checked="{{allowUnderScroll}}">
+								[[localize('admin-ws-aggregation-autoscroll-checkbox')]]
+							</paper-checkbox>
+						</div>
+						
+					</div>
+
+					<!-- <dom-if if="[[order.Invalid]]">
+						<template>
+							<h3 class="invalid">
+								[[_formatInvalid(order.Invalid, order.InvalidMessage, 'admin-ws-aggregation-item-invalid')]]
+							</h3>
+						</template>
+					</dom-if> -->
+
+					<div class="recent-cell-container-sticky-mock" style$="height:[[recentUnderScrollRectHeight]]px;" hidden$="[[!recentUnderScroll]]"></div>
+					<div class="recent-cell-container-sticky" under-scroll$="[[recentUnderScroll]]">
+						<div id="recent-cell-container" class="recent-cell-container">
+							<dom-repeat items="[[RecentCellAndScanners]]" as="rcelli">
+								<template>
+									<div class="recent-cell" is-recent$="[[rcelli.CellIndex]]" recent-index$="[[index]]">
+										<dom-if if="[[rcelli.CellIndex]]">
+											<template>
+												<div class="recent-cell-icons">
+													<paper-icon-button 
+														disabled$="[[loadingAny]]"
+														class="put-recent-back-btn" 
+														icon="admin-icons:arrow-upward" 
+														title="[[localize('admin-ws-aggregation-recentback-tooltip')]]"
+														on-tap="_putRecentBackToHeapTap">
+													</paper-icon-button>
+
+													<paper-icon-button 
+														is-admin
+														disabled$="[[loadingAny]]"
+														hidden$="[[!userInfo.isAdmin]]"
+														class="put-recent-cell-btn" 
+														icon="admin-icons:arrow-downward" 
+														on-tap="_putRecentToProperCellTap">
+													</paper-icon-button>
+												</div>
+												
+												<h4>
+													<!-- [[localize('admin-ws-aggregation-recentcell')]]  -->
+													[[rcelli.CellIndex]]
+													- [[rcelli.RelatedItemsTotal]]
+												</h4>
+												<!-- <p>[[localize('admin-ws-aggregation-cellitems')]] </p> -->
+											</template>
+										</dom-if>
+									</div>
+								</template>
+							</dom-repeat>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		
+
+
+
+
+			<!-- Shelves -->
+			<h2 class="header-list">[[localize('admin-ws-aggregation-shelves-title')]]</h2>
+			<div class="order-shelves-list">
+				<dom-repeat items="[[order.ShelvesGrouped]]" as="shelfi">
+					<template>
+						<div class="order-shelf" 
+							 data-prefix$="[[shelfi.Prefix]]"
+							 style$="[[styleShelve(shelfi, order.Shelves)]]">
+							
+							<dom-repeat items="[[shelfi.RowGroups]]" as="rowgri">
+								<template>
+									<div 
+										class="order-shelf-rowgroup" 
+										data-prefix$="[[rowgri.Prefix]]" 
+										style$="[[styleShelfRowGroup(rowgri)]]">
+
+										<dom-repeat items="[[rowgri]]" as="rowi">
+											<template>
+												<dom-repeat items="[[rowi.Cells]]" as="celli">
+													<template>
+
+														<div class="order-shelf-cell" 
+															data-index$="[[celli.CellIndex]]"
+															cell-empty$="[[!_asBool(celli.RelatedItemsTotal)]]"
+															cell-single$="[[celli.SignleItem]]" 
+															cell-completed$="[[celli.IsComplete]]"
+															cell-scanner1$="[[_cellScannerState(1, celli, RecentCellAndScanners)]]"
+															cell-scanner2$="[[_cellScannerState(2, celli, RecentCellAndScanners)]]"
+															cell-scanner3$="[[_cellScannerState(3, celli, RecentCellAndScanners)]]"
+															cell-hot$="[[celli.IsHot]]"
+															cell-capacity$="[[_cellCapacity(celli.Capacity, order.Shelves)]]">
+
+															<div class="order-shelf-cell-icons">
+																<paper-icon-button
+																	disabled$="[[loadingAny]]"
+ 																	hidden$="[[!_asBool(celli.RelatedItemsTotal)]]"
+																	class="show-info-btn" 
+																	icon="admin-icons:help-outline" 
+																	on-tap="showCellDetailsTap">
+																</paper-icon-button>
+															</div>
+
+															<div class="order-shelf-cell-title">
+																<div>
+																	[[celli.CellIndex]]
+																</div>
+
+																<div class="orderid">
+																	<dom-if if="[[celli.SignleItem]]">
+																		<template>
+																			<span>
+																				- [[localize('admin-ws-aggregation-singleitem')]]
+																			</span>
+																		</template>
+																	</dom-if>
+																	<dom-if if="[[!celli.SignleItem]]">
+																		<template>
+
+																			<span hidden$="[[!_asBool(celli.RelatedItemsTotal)]]">
+																				<!-- - [[localize('admin-ws-aggregation-multiitems')]] -->
+																				[[celli.OrderID]]
+																			</span>
+																		</template>
+																	</dom-if>
+																</div>
+															</div>
+
+															<div class="order-shelf-cell-body">
+
+																<span hidden$="[[!_asBool(celli.RelatedItemsTotal)]]">
+																	[[celli.ItemsTotal]]
+																	/
+																	[[celli.RelatedItemsTotal]]
+																</span>
+															</div>
+															
+														</div>
+
+													</template>
+												</dom-repeat>
+											</template>
+										</dom-repeat>
+
+									</div>
+								</template>
+							</dom-repeat>
+
+						</div>
+					</template>
+				</dom-repeat>
+			</div>
+
+
+
+			<!-- Partially ProcessedOrders -->
+			<h2 class="header-list">[[localize('admin-ws-aggregation-partiallyprocessedorders-title')]]</h2>
+			<div class="order-processedorders-list">
+				<dom-repeat items="[[order.PariallyProcessedOrders]]" as="orderi">
+					<template>
+
+						<div class="order-processedorders-cell">
+							<div class="order-processedorders-cell-icons">
+								<paper-icon-button
+									disabled$="[[loadingAny]]"
+									hidden$="[[!_asBool(orderi.RelatedItemsTotal)]]"
+									class="show-info-btn" 
+									icon="admin-icons:help-outline" 
+									on-tap="showOrderDetailsTap">
+								</paper-icon-button>
+							</div>
+		
+							<div class="order-processedorders-cell-title">
+								<div>
+									[[orderi.OrderID]]
+								</div>
+							</div>
+		
+							<div class="order-processedorders-cell-body">
+		
+								<span hidden$="[[!_asBool(orderi.RelatedItemsTotal)]]">
+									[[orderi.ItemsTotal]]
+									/
+									[[orderi.RelatedItemsTotal]]
+								</span>
+							</div>
+						</div>
+
+					</template>
+				</dom-repeat>
+			</div>
+
+			<div class="order-buttons">
+				<paper-button 
+					class="order-reset-btn" 
+					raised disabled="[[disabledReset]]" 
+					on-tap="_onResetConfirmTap">
+					[[localize('admin-ws-aggregation-btn-reset')]]
+				</paper-button>
+			</div>
+
+			<!-- <dom-if if="[[userInfo.isAdmin]]">
+				<template> -->
+					<div class="order-buttons">
+						<div class="spinner">
+							<paper-button class="order-printcells-btn" raised disabled="[[disabledPrintCells]]"
+								on-tap="_onPrintCellsConfirmTap">
+								[[localize('admin-ws-aggregation-btn-printcells')]] ([[order.CellsCount]])
+							</paper-button>
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+						</div>
+						
+						<div class="spinner">
+							<paper-button class="order-printcells-btn" raised disabled="[[disabledPrintCells]]"
+								on-tap="_onPrintBackCellsConfirmTap">
+								[[localize('admin-ws-aggregation-btn-printbackcells')]] ([[order.CellsCount]])
+							</paper-button>
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+						</div>
+
+						<div class="spinner">
+							<paper-button class="order-printcmds-btn" raised disabled="[[disabledPrintCells]]"
+								on-tap="_onPrintCmdsConfirmTap">
+								[[localize('admin-ws-aggregation-btn-printcmds')]] ([[order.CellsCount]])
+							</paper-button>
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+						</div>
+					</div>
+
+				<!-- </template>
+			</dom-if> -->
+
+		</div>
+	</div>
+</div>
+
+
+				
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="aggregation"
+	website-url="[[websiteUrl]]"
+	sticker-printer
+	barcode-scanner
+	multi-scanners
+	led-controller
+	aggregation-delays
+	connected="{{ls_connected}}"
+	scanner-list="{{scannerList}}"
+	loading="{{loadingWS}}"
+	visible="[[visible]]">
+</teamatical-ui-scanner-printer-settings>
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>
+
+
+
+<paper-dialog id="dialogprintcells" class="dialog-wide" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>[[dialogprintcells.title]]</h2>
+	<paper-dialog-scrollable>
+		[[dialogprintcells.msg]]
+		<paper-input class="range-cells-input" type="string" disabled$="[[loading]]" 
+			label="Range (ex. A.1.1-A.2.1, B.1.1)" 
+			name="PrintRange"
+			value="{{dialogprintcells.PrintRange}}"
+			on-value-changed="onInputChanged" error-message="[[dialogprintcells.notvalid.PrintRange]]"
+			invalid="[[_asBool(dialogprintcells.notvalid.PrintRange)]]">
+		</paper-input>
+		<paper-checkbox 
+			checked="{{dialogprintcells.SpecialBarcodesOnly}}" 
+			title="[[localize('admin-ws-aggregation-special-barcodes-only')]]">
+			[[localize('admin-ws-aggregation-special-barcodes-only')]]
+		</paper-checkbox>
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>[[localize('admin-ws-aggregation-btn-close')]]</paper-button>
+		<paper-button dialog-confirm class="order-printcells-btn" autofocus on-tap="_onPrintCellsTap">
+			[[localize('admin-ws-aggregation-btn-printcells')]] ([[order.CellsCount]])
+		</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogreset" class="dialog-wide" proceed no-overlap dynamic-align vertical-align="middle"
+	horizontal-align="center">
+	<h2>[[localize('admin-ws-aggregation-dlg-reset')]]</h2>
+	<paper-dialog-scrollable>
+		[[localize('admin-ws-aggregation-dlg-reset-msg')]]
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>[[localize('admin-ws-aggregation-btn-close')]]</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="_onResetTap" class="order-reset-btn">
+			[[localize('admin-ws-aggregation-btn-reset')]]
+		</paper-button>
+	</div>
+</paper-dialog>
+
+
+<tmladmin-ui-dialog id="dialogcellinfo" disabled$="[[dialogcellinfo.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button 
+			class="close-dialog-small-btn" 
+			icon="admin-icons:close"
+			dialog-dismiss>
+		</paper-icon-button>		
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogcellinfo.loading]]"
+				hidden$="[[!dialogcellinfo.loading]]">
+			</paper-progress>
+		</div>
+
+		<dom-if if="[[!_asBool(dialogcellinfo.OrderID)]]">
+			<template>
+				<h2>[[localize('admin-ws-aggregation-cellinfo-title')]] #: [[dialogcellinfo.CellIndex]]</h2>
+			</template>
+		</dom-if>
+		<dom-if if="[[_asBool(dialogcellinfo.OrderID)]]">
+			<template>
+				<h2>[[localize('admin-ws-aggregation-orderinfo-title')]] #: [[dialogcellinfo.OrderID]]</h2>
+			</template>
+		</dom-if>
+
+		<div class="table">
+			<div class="row">
+				<div>
+					[[localize('admin-ws-aggregation-cells-indices')]]
+				</div>
+				<div>
+					[[_formatArray(dialogcellinfo.CellIndices)]]
+				</div>
+			</div>
+			<div class="row">
+				<div>
+					[[localize('admin-ws-aggregation-order-ids')]]
+				</div>
+				<div>
+					[[_formatArray(dialogcellinfo.OrderIDs)]]
+				</div>
+			</div>
+			<div class="row">
+				<div>
+					[[localize('admin-ws-aggregation-group-shipping-id')]]
+				</div>
+				<div>
+					[[dialogcellinfo.GroupShippingID]]
+				</div>
+			</div>
+		</div>
+		<h3></h3>
+	</div>
+
+	<div slot="body">
+		
+		<div class="table w100">
+			<dom-repeat items="[[dialogcellinfo.Items]]" as="rpi" index-as="rpindex">
+				<template>
+
+					<div class="row vtop" aggregated$="[[rpi.Aggregated]]" advanced-to-shipping$="[[rpi.AdvancedToShipping]]">
+						<div>
+							<div class="table">
+								<div class="row">
+									<div>
+										[[localize('admin-ws-aggregation-batch')]]
+									</div>
+									<div>
+										<iron-icon hidden$="[[_asBool(rpi.Batch)]]" icon="admin-icons:query-builder" alt="query-builder"></iron-icon>
+										[[_formatBatch(rpi.Batch)]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize('admin-ws-aggregation-qty')]]
+									</div>
+									<div>
+										[[rpi.Quantity]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize('admin-ws-aggregation-size')]]
+									</div>
+									<div>
+										[[rpi.Size]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize('admin-ws-aggregation-orderid')]]
+									</div>
+									<div>
+										[[rpi.OrderID]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										<span>
+											[[localize('admin-ws-aggregation-order-production')]]
+										</span>
+									</div>
+									<div>
+										[[rpi.OrderProductionID]]
+									</div>
+								</div>
+								<div class="row">
+									<div>
+										<span>
+											[[localize('admin-ws-aggregation-order-production-item')]]
+										</span>
+									</div>
+									<div>
+										[[rpi.OrderProductionItemID]]
+									</div>
+								</div>
+
+								<dom-if if="[[rpi.Aggregated]]">
+									<template>
+										<div class="row">
+											<div class="center">
+												<iron-icon icon="admin-icons:move-to-inbox" alt="move-to-inbox"></iron-icon>
+											</div>
+											<div>
+												<span>
+													[[localize('admin-ws-aggregation-aggregated')]]
+												</span>
+											</div>
+										</div>
+									</template>
+								</dom-if>
+
+								<dom-if if="[[rpi.AdvancedToShipping]]">
+									<template>
+										<div class="row">
+											<div class="center">
+												<iron-icon icon="admin-icons:markunread-mailbox" alt="markunread-mailbox"></iron-icon>
+											</div>
+											<div>
+												<span>
+													[[localize('admin-ws-aggregation-advanced-for-shipping')]]
+												</span>
+											</div>
+										</div>
+									</template>
+								</dom-if>
+								
+								
+							
+							</div>
+						</div>
+
+						<div>
+					
+							<div id="image-product-grid" class="image-product-grid">
+								<dom-repeat items="[[_computeProductImagesZ('', rpi.ImageUrls, rpi.ImageUrlsZoomIn)]]" as="imgi">
+									<template>
+										<teamatical-ui-image src="[[imgi.imgUrl]]" alt="[[imgi.title]]" lazy-load
+											lazy-observe=[[lazyObserve]] on-tap1="onProductImageTap">
+										</teamatical-ui-image>
+									</template>
+								</dom-repeat>
+							</div>
+					
+						</div>
+					</div>
+
+				</template>
+			</dom-repeat>
+		</div>
+
+		<!-- <div style="width: 554px; height: 774px;">
+			<teamatical-ui-image-multiview-3d views="{{zoompconfi.ProductViews}}" pv="{{zoompconfi.ProductPointOfView}}"
+				pvs="[[zoompconfi.ProductPointOfViewCount]]" visible="[[visible]]" lazy-load lazy-observe=[[lazyObserve]]
+				allow-zoom alt="">
+			</teamatical-ui-image-multiview-3d>
+		</div> -->
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-confirm on-tap="_forceCompletionCellTap" hidden$="[[!_asBool(dialogcellinfo.CanForceCompletion)]]">
+			[[localize('admin-ws-aggregation-btn-forcecompletion')]]
+		</paper-button>
+		
+		<paper-button class="danger" dialog-confirm on-tap="_forgetCellTap" hidden$="[[!_asBool(dialogcellinfo.CanForget)]]">
+			[[localize('admin-ws-aggregation-btn-forget')]]
+		</paper-button>
+
+
+		<paper-button dialog-dismiss autofocus>
+			[[localize('admin-ws-aggregation-btn-close')]]
+		</paper-button>
+	</div>
+	
+</tmladmin-ui-dialog>

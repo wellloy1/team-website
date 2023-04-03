@@ -1,0 +1,1546 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+					<span highlighted hidden$="[[hidden_tasksFlag(order.Tasks)]]">
+						[[localize('admin-tasks')]]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Organization #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.OrganizationID]]</span>
+					([[_formatDate(order.Created)]])
+					- [[order.Name]]
+				</h3>
+
+
+				<div class="buttons">
+					<paper-button 
+						class="order-save-btn" raised
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						on-tap="saveOrganizationTap">
+						Save Organization
+					</paper-button>
+				
+					<paper-button class="order-sendgrid-btn" raised
+							disabled$="[[_disabledSendGrid(loading, order.IsReadySendGrid)]]"
+							on-tap="setupSendgridTap">
+						Setup Send Grid
+					</paper-button>
+
+					<paper-button class="order-normalize-stores-domain-btn" raised
+							disabled$="[[loading]]"
+							on-tap="normalizeStoresDomainTap">
+						Normalize Stores Host Domain
+					</paper-button>
+				</div>
+
+				
+				<div class="order-inputs section-details">
+					<h4>
+						Details:
+					</h4>
+
+					<paper-checkbox 
+						checked="{{order.IsSeller}}"
+						name="IsSeller"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.IsSeller]]" 
+						invalid="[[_asBool(order.notvalid.IsSeller)]]">
+						Is Seller
+					</paper-checkbox>
+
+					<paper-checkbox 
+						checked="{{order.IsAllowCreateNewPurchaseOrder}}"
+						name="IsAllowCreateNewPurchaseOrder"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.IsAllowCreateNewPurchaseOrder]]" 
+						invalid="[[_asBool(order.notvalid.IsAllowCreateNewPurchaseOrder)]]">
+						Is Allow Create New Checkout Code
+					</paper-checkbox>
+
+					<!-- <paper-checkbox 
+						checked="{{order.AllowFreeOfCharge}}"
+						name="AllowFreeOfCharge"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.AllowFreeOfCharge]]" 
+						invalid="[[_asBool(order.notvalid.AllowFreeOfCharge)]]">
+						Allow Free Of Charge Payment
+					</paper-checkbox> -->
+
+					<paper-checkbox 
+						checked="{{order.AllowNoBadges}}"
+						name="AllowNoBadges"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.AllowNoBadges]]" 
+						invalid="[[_asBool(order.notvalid.AllowNoBadges)]]">
+						No Badge Option
+					</paper-checkbox>
+					
+
+					<paper-checkbox 
+						checked="{{order.HighResImageAvailible}}"
+						name="HighResImageAvailible"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.HighResImageAvailible]]" 
+						invalid="[[_asBool(order.notvalid.HighResImageAvailible)]]">
+						High Res Images are Allowed
+					</paper-checkbox>
+
+					<paper-checkbox 
+						checked="{{order.BrandingAllowed}}"
+						name="BrandingAllowed"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.BrandingAllowed]]" 
+						invalid="[[_asBool(order.notvalid.BrandingAllowed)]]">
+						Custom Store Branding is Allowed
+					</paper-checkbox>
+
+					<paper-checkbox 
+						checked="{{order.DisableCustomDesignRequests}}"
+						name="DisableCustomDesignRequests"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.DisableCustomDesignRequests]]" 
+						invalid="[[_asBool(order.notvalid.DisableCustomDesignRequests)]]">
+						Disabled Custom Design Requests
+					</paper-checkbox>
+					
+
+					<paper-checkbox 
+						checked="{{order.NoQtyLimitForBindStores}}"
+						name="NoQtyLimitForBindStores"
+						disabled
+						title="Allow Organization Users to buy from Organization Stores with No Qty Limit"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.NoQtyLimitForBindStores]]" 
+						invalid="[[_asBool(order.notvalid.NoQtyLimitForBindStores)]]">
+						No Qty Limit For Bind Stores
+					</paper-checkbox>
+
+					<paper-checkbox 
+						checked="{{order.IsAllowExternalShopping}}"
+						name="IsAllowExternalShopping"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.IsAllowExternalShopping]]" 
+						invalid="[[_asBool(order.notvalid.IsAllowExternalShopping)]]">
+						Is Allow External Shopping
+					</paper-checkbox>
+
+					<paper-checkbox 
+						checked="{{order.IsAllowDesignUpdate}}"
+						name="IsAllowDesignUpdate"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.IsAllowDesignUpdate]]" 
+						invalid="[[_asBool(order.notvalid.IsAllowDesignUpdate)]]">
+						Is Allow Design Update
+					</paper-checkbox>
+
+
+					<!-- <div>
+						<label id="labelTier">Tier:</label>
+						<paper-radio-group 
+							aria-labelledby="labelTier" 
+							selected="{{order.Tier}}"
+							name="Tier"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.Tier]]" 
+							invalid="[[_asBool(order.notvalid.Tier)]]">
+							<dom-repeat items="[[order.Tiers]]" as="tieri">
+								<template>
+									<paper-radio-button name="[[tieri]]" label="[[localizep('admin-tiers-', tieri)]]">
+										<span class="tier-hightlight" tier-type$="[[tieri]]">[[localizep('admin-tiers-', tieri)]]</span>
+									</paper-radio-button>
+								</template>
+							</dom-repeat>
+						</paper-radio-group>
+					</div> -->
+
+					
+
+
+					<div class="small-inputs">
+
+						<dom-if if="[[userInfo.isAlmighty]]">
+							<template>
+								<div class="selection">
+									<tmladmin-ui-dropdown-menu 
+										vertical-align="top" 
+										horizontal-align="left"
+										id-property="DealProfileID"
+										title-property="Name"
+										label="Deal Profile"
+										disabled$="[[loadingAny]]" 
+										readonly$="[[!userInfo.isAlmighty]]"
+										is-almighty$="[[userInfo.isAlmighty]]"
+										value="{{order.DealProfile}}"
+										value-list="[[order.DealProfiles]]"
+										error-message="[[order.notvalid.DealProfile]]"
+										invalid="[[_asBool(order.notvalid.DealProfile)]]">
+									</tmladmin-ui-dropdown-menu>
+								</div>
+
+								<div class="selection">
+									<tmladmin-ui-dropdown-menu 
+										vertical-align="top" 
+										horizontal-align="left"
+										id-property="DealProfileID"
+										title-property="Name"
+										label="Deal Profile B2B"
+										disabled$="[[loadingAny]]" 
+										readonly$="[[!userInfo.isAlmighty]]"
+										is-almighty$="[[userInfo.isAlmighty]]"
+										value="{{order.DealProfileB2B}}"
+										value-list="[[order.DealProfilesB2B]]"
+										error-message="[[order.notvalid.DealProfileB2B]]"
+										invalid="[[_asBool(order.notvalid.DealProfileB2B)]]">
+									</tmladmin-ui-dropdown-menu>
+								</div>
+
+								
+								<div class="selection">
+									<tmladmin-ui-dropdown-menu 
+										style="width:calc(100% - 8px)"
+										vertical-align="top" 
+										horizontal-align="left"
+										id-property="id"
+										title-property="title"
+										label="Fee Distribution Mode"
+										disabled$="[[loadingAny]]" 
+										readonly$="[[!userInfo.isAlmighty]]"
+										is-almighty$="[[userInfo.isAlmighty]]"
+										value="{{order.FeeDistributionMode}}"
+										value-list="[[_formatFeeDistributionModeList(order.FeeDistributionModes)]]"
+										on-value-changed="onInputChanged"
+										error-message="[[order.notvalid.FeeDistributionMode]]"
+										invalid="[[_asBool(order.notvalid.FeeDistributionMode)]]">
+									</tmladmin-ui-dropdown-menu>
+								</div>
+							</template>
+						</dom-if>
+
+						<div class="selection">
+							<tmladmin-ui-dropdown-menu 
+								vertical-align="top" 
+								horizontal-align="left"
+								id-property="id"
+								title-property="title"
+								label="Currency Region"
+								disabled$="[[loadingAny]]" 
+								value="{{order.CurrencyRegion}}"
+								value-list="[[order.CurrencyRegions]]"
+								error-message="[[order.notvalid.CurrencyRegion]]"
+								invalid="[[_asBool(order.notvalid.CurrencyRegion)]]">
+							</tmladmin-ui-dropdown-menu>
+						</div>
+
+					</div>
+
+					<div class="small-inputs">
+						<paper-input 
+							label="Name" 
+							type="string" 
+							value="{{order.Name}}"
+							name="Name"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.Name]]" 
+							invalid="[[_asBool(order.notvalid.Name)]]">
+						</paper-input>
+	
+						
+
+						<paper-input 
+							label="Sale Price Simple Fee (%)" 
+							placeholder$="[[_ph_TeamaticalCombinedFeePercent(order.FeeDistributionMode.id, order.TeamaticalCombinedFeeDefaultPercent)]]"
+							type="string" 
+							disabled$="[[_dis_TeamaticalCombinedFeePercent(order.FeeDistributionMode.id)]]"
+							value="{{order.TeamaticalCombinedFeePercent}}"
+							name="TeamaticalCombinedFeePercent"
+							readonly$="[[!userInfo.isAlmighty]]"
+							is-almighty$="[[userInfo.isAlmighty]]"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.TeamaticalCombinedFeePercent]]" 
+							invalid="[[_asBool(order.notvalid.TeamaticalCombinedFeePercent)]]">
+						</paper-input>
+
+						<dom-if if="[[userInfo.isAlmighty]]">
+							<template>
+								<paper-input 
+									label="Shippo API Token [Final-Mile]" 
+									type="string" 
+									value="{{order.ShippoApiTokenPack}}"
+									name="ShippoApiTokenPack"
+									is-almighty$="[[userInfo.isAlmighty]]"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.ShippoApiTokenPack]]" 
+									invalid="[[_asBool(order.notvalid.ShippoApiTokenPack)]]">
+								</paper-input>
+
+								<paper-input 
+									label="Shippo API Token [Freight]" 
+									type="string" 
+									value="{{order.ShippoApiTokenDeparture}}"
+									name="ShippoApiTokenDeparture"
+									is-almighty$="[[userInfo.isAlmighty]]"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.ShippoApiTokenDeparture]]" 
+									invalid="[[_asBool(order.notvalid.ShippoApiTokenDeparture)]]">
+								</paper-input>
+							</template>
+						</dom-if>
+
+
+						<dom-if if="[[order.HasSubdomain]]">
+							<template>
+								<paper-input
+									label$="[[_concatif('Connected Stripe Account ID', userInfo.isAlmighty, '', ' (readonly)')]]" 
+									type="string" 
+									value="{{order.ConnectedStripeAccountID}}"
+									name="ConnectedStripeAccountID"
+									on-value-changed="onInputChanged"
+									readonly$="[[!userInfo.isAlmighty]]"
+									is-almighty$="[[userInfo.isAlmighty]]"
+									error-message="[[order.notvalid.ConnectedStripeAccountID]]" 
+									invalid="[[_asBool(order.notvalid.ConnectedStripeAccountID)]]">
+								</paper-input>
+
+								<paper-input 
+									label$="[[_concatif('Subdomain', order.HasSubdomain, ' (readonly)')]]" 
+									type="string" 
+									value="{{order.Subdomain}}"
+									name="Subdomain"
+									on-value-changed="onInputChanged"
+									readonly="[[order.HasSubdomain]]"
+									error-message="[[order.notvalid.Subdomain]]" 
+									invalid="[[_asBool(order.notvalid.Subdomain)]]">
+								</paper-input>
+							</template>
+						</dom-if>
+
+						
+						<paper-input 
+							label="Invoice Number Prefix" 
+							type="string" 
+							value="{{order.InvoiceNumberPrefix}}"
+							name="InvoiceNumberPrefix"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.InvoiceNumberPrefix]]" 
+							invalid="[[_asBool(order.notvalid.InvoiceNumberPrefix)]]">
+						</paper-input>
+
+						
+						<!-- <paper-input 
+							label="Catalog Plugin Category" 
+							type="string" 
+							value="{{order.CatalogPluginCategory}}"
+							name="CatalogPluginCategory"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.CatalogPluginCategory]]" 
+							invalid="[[_asBool(order.notvalid.CatalogPluginCategory)]]">
+						</paper-input> -->
+						
+						<paper-input 
+							label="Payment Due Days" 
+							type="number" 
+							value="{{order.PaymentDueDays}}"
+							name="PaymentDueDays"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.PaymentDueDays]]" 
+							invalid="[[_asBool(order.notvalid.PaymentDueDays)]]">
+						</paper-input>
+
+						<!-- <paper-input 
+							label="Store Logo" 
+							type="string" 
+							value="{{order.StoreLogo}}"
+							name="StoreLogo"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.StoreLogo]]" 
+							invalid="[[_asBool(order.notvalid.StoreLogo)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Store Logo Placeholder" 
+							type="string" 
+							value="{{order.StoreLogoPlaceholder}}"
+							name="StoreLogoPlaceholder"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.StoreLogoPlaceholder]]" 
+							invalid="[[_asBool(order.notvalid.StoreLogoPlaceholder)]]">
+						</paper-input> -->
+
+						<paper-input 
+							label="Send Grid API Key" 
+							type="string" 
+							value="{{order.SendGridAPIKey}}"
+							name="SendGridAPIKey"
+							on-value-changed="onInputChanged"
+							disabled$="[[!order.HasSubdomain]]"
+							error-message="[[order.notvalid.SendGridAPIKey]]" 
+							invalid="[[_asBool(order.notvalid.SendGridAPIKey)]]">
+						</paper-input>
+
+						
+
+						<paper-input 
+							label="Email From No Reply (from &lt;email&gt;|reply to &lt;email&gt;)" 
+							type="string" 
+							value="{{order.EmailFromNoReply}}"
+							name="EmailFromNoReply"
+							on-value-changed="onInputChanged"
+							disabled$="[[!order.HasSubdomain]]"
+							error-message="[[order.notvalid.EmailFromNoReply]]" 
+							invalid="[[_asBool(order.notvalid.EmailFromNoReply)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Email From Order Notify (from &lt;email&gt;|reply to &lt;email&gt;)" 
+							type="string" 
+							value="{{order.EmailFromOrderNotify}}"
+							name="EmailFromOrderNotify"
+							on-value-changed="onInputChanged"
+							disabled$="[[!order.HasSubdomain]]"
+							error-message="[[order.notvalid.EmailFromOrderNotify]]" 
+							invalid="[[_asBool(order.notvalid.EmailFromOrderNotify)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Email From Group Shipping Notify (from &lt;email&gt;|reply to &lt;email&gt;)" 
+							type="string" 
+							value="{{order.EmailFromGroupShippingNotify}}"
+							name="EmailFromGroupShippingNotify"
+							on-value-changed="onInputChanged"
+							disabled$="[[!order.HasSubdomain]]"
+							error-message="[[order.notvalid.EmailFromGroupShippingNotify]]" 
+							invalid="[[_asBool(order.notvalid.EmailFromGroupShippingNotify)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Email From Store Administration Notify (from &lt;email&gt;|reply to &lt;email&gt;)" 
+							type="string" 
+							value="{{order.EmailFromStoreAdministrationNotify}}"
+							name="EmailFromStoreAdministrationNotify"
+							on-value-changed="onInputChanged"
+							disabled$="[[!order.HasSubdomain]]"
+							error-message="[[order.notvalid.EmailFromStoreAdministrationNotify]]" 
+							invalid="[[_asBool(order.notvalid.EmailFromStoreAdministrationNotify)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Email To Notify Custom Design Request" 
+							type="string" 
+							value="{{order.EmailToNotifyCustomDesignRequest}}"
+							name="EmailToNotifyCustomDesignRequest"
+							on-value-changed="onInputChanged"
+							disabled$="[[!order.HasSubdomain]]"
+							error-message="[[order.notvalid.EmailToNotifyCustomDesignRequest]]" 
+							invalid="[[_asBool(order.notvalid.EmailToNotifyCustomDesignRequest)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Email To Notify Feedback" 
+							type="string" 
+							value="{{order.EmailToNotifyFeedback}}"
+							name="EmailToNotifyFeedback"
+							on-value-changed="onInputChanged"
+							disabled$="[[!order.HasSubdomain]]"
+							error-message="[[order.notvalid.EmailToNotifyFeedback]]" 
+							invalid="[[_asBool(order.notvalid.EmailToNotifyFeedback)]]">
+						</paper-input>
+
+						
+						<paper-input 
+							label="External Shopping API Public Key (clear to revoke)" 
+							type="string" 
+							value="{{order.ExternalShoppingPublicKey}}"
+							name="ExternalShoppingPublicKey"
+							on-value-changed="onInputChanged"
+							disabled$="[[!order.IsAllowExternalShopping]]"
+							error-message="[[order.notvalid.ExternalShoppingPublicKey]]" 
+							invalid="[[_asBool(order.notvalid.ExternalShoppingPublicKey)]]">
+						</paper-input>
+
+						<paper-input 
+							label="External Shopping API Place Order Key (clear to revoke)" 
+							type="string" 
+							value="{{order.ExternalShoppingApiKey}}"
+							name="ExternalShoppingApiKey"
+							on-value-changed="onInputChanged"
+							disabled$="[[!order.IsAllowExternalShopping]]"
+							error-message="[[order.notvalid.ExternalShoppingApiKey]]" 
+							invalid="[[_asBool(order.notvalid.ExternalShoppingApiKey)]]">
+						</paper-input>
+
+						<paper-input 
+							label="External Shopping TEST API Place Order Key (clear to revoke)" 
+							type="string" 
+							value="{{order.ExternalShoppingApiKeyTest}}"
+							name="ExternalShoppingApiKeyTest"
+							on-value-changed="onInputChanged"
+							disabled$="[[!order.IsAllowExternalShopping]]"
+							error-message="[[order.notvalid.ExternalShoppingApiKeyTest]]" 
+							invalid="[[_asBool(order.notvalid.ExternalShoppingApiKeyTest)]]">
+						</paper-input>
+
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+
+					<paper-textarea 
+						label="Payment Terms" 
+						value="{{order.PaymentTerms}}"
+						name="PaymentTerms"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.PaymentTerms]]" 
+						invalid="[[_asBool(order.notvalid.PaymentTerms)]]">
+					</paper-textarea>
+
+					<multiselect-combo-box 
+						id="CatalogPluginCategoryItems"
+						items="[[order.CatalogPluginCategories]]"
+						selected-items="{{orderCatalogPluginCategorySelectedItems}}"
+						label="Catalog Plugin Category" 
+						placeholder="Add" 
+						on-custom-values-set="catalogPluginCategoryCustomItemAdded"
+						on-change="catalogPluginCategoryCustomItemsChanged"
+						on-item-removed="catalogPluginCategoryCustomItemRemoved"
+						on-remove-all-items="catalogPluginCategoryCustomItemRemovedAll"
+						error-message="[[order.notvalid.CatalogPluginCategory]]" 
+						invalid="[[_asBool(order.notvalid.CatalogPluginCategory)]]"
+						clear-button-visible
+						allow-custom-values-off>
+					</multiselect-combo-box> 
+
+				</div>
+
+
+				<div class="users-list">
+					<h4>
+						Users
+						<dom-if if="[[_yesItems(order.Users, order.Users.*)]]">
+							<template>
+							([[order.Users.length]])
+							</template>
+						</dom-if>
+					</h4>
+				
+					<div>
+						<tmladmin-ui-search-input 
+							id="newuser"
+							search-type="user"
+							label="New User ID"
+							visible="[[visible]]"
+							website-url="[[websiteUrl]]">
+						</tmladmin-ui-search-input>
+					</div>
+
+					<div scrollable-x>
+						<div class="table">
+							<div class="header">
+								<div>
+									UserID
+								</div>
+								<div>
+									User
+								</div>
+								<div>
+								</div>
+							</div>
+					
+							<dom-repeat items="[[order.Users]]" as="useri">
+								<template>
+									<div class="row">
+										<div>
+											<span class="copy-tap" on-tap="_copyTap">[[useri.UserID]]</span>
+										</div>
+										<div>
+											<teamatical-ui-user-inline user="[[useri]]">
+											</teamatical-ui-user-inline>
+										</div>
+										<div>
+											<paper-spinner-lite class="thick"></paper-spinner-lite>
+											<paper-icon-button class="remove-btn" icon="admin-icons:close" uid$="[[useri.UserID]]"
+												on-tap="_removeUserTap"></paper-icon-button>
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+					
+							<dom-if if="[[_noItems(order.Users, order.Users.*)]]">
+								<template>
+									<div>
+										<div class="noitems">
+											no items
+										</div>
+									</div>
+								</template>
+							</dom-if>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="order-inputs section-default-data" hidden$="[[!order.HasSubdomain]]">
+					<h4>
+						Default Data (Player, Team Colors):
+					</h4>
+
+					<paper-checkbox 
+						checked="{{order.IsDefaultPlayer}}"
+						name="IsDefaultPlayer"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.IsDefaultPlayer]]" 
+						invalid="[[_asBool(order.notvalid.IsDefaultPlayer)]]">
+						Is Default Player
+					</paper-checkbox>
+					
+					<paper-checkbox 
+						checked="{{order.IsDefaultTeam}}"
+						name="IsDefaultTeam"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.IsDefaultTeam]]" 
+						invalid="[[_asBool(order.notvalid.IsDefaultTeam)]]">
+						Is Default Team
+					</paper-checkbox>
+					
+					<div class="small-inputs">
+						<paper-input 
+							label="Default Player Name" 
+							type="string" 
+							disabled$="[[_disPlayer(loadingAny, order.IsDefaultPlayer)]]"
+							value="{{order.DefaultPlayerName}}"
+							name="DefaultPlayerName"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.DefaultPlayerName]]" 
+							invalid="[[_asBool(order.notvalid.DefaultPlayerName)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Default Player Number" 
+							type="string" 
+							disabled$="[[_disPlayer(loadingAny, order.IsDefaultPlayer)]]"
+							value="{{order.DefaultPlayerNumber}}"
+							name="DefaultPlayerNumber"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.DefaultPlayerNumber]]" 
+							invalid="[[_asBool(order.notvalid.DefaultPlayerNumber)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Default Player Year" 
+							type="string" 
+							disabled$="[[_disPlayer(loadingAny, order.IsDefaultPlayer)]]"
+							value="{{order.DefaultPlayerYear}}"
+							name="DefaultPlayerYear"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.DefaultPlayerYear]]" 
+							invalid="[[_asBool(order.notvalid.DefaultPlayerYear)]]">
+						</paper-input>
+
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+
+					<div class="small-inputs">
+						<paper-input 
+							label="Default Text-1" 
+							type="string" 
+							disabled$="[[_disTeam(loadingAny, order.IsDefaultTeam)]]"
+							value="{{order.DefaultText1}}"
+							name="DefaultText1"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.DefaultText1]]" 
+							invalid="[[_asBool(order.notvalid.DefaultText1)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Default Text-2" 
+							type="string" 
+							disabled$="[[_disTeam(loadingAny, order.IsDefaultTeam)]]"
+							value="{{order.DefaultText2}}"
+							name="DefaultText3"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.DefaultText2]]" 
+							invalid="[[_asBool(order.notvalid.DefaultText2)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Default Text-3" 
+							type="string" 
+							disabled$="[[_disTeam(loadingAny, order.IsDefaultTeam)]]"
+							value="{{order.DefaultText3}}"
+							name="DefaultText2"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.DefaultText3]]" 
+							invalid="[[_asBool(order.notvalid.DefaultText3)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Default Text-4" 
+							type="string" 
+							disabled$="[[_disTeam(loadingAny, order.IsDefaultTeam)]]"
+							value="{{order.DefaultText4}}"
+							name="DefaultText4"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.DefaultText4]]" 
+							invalid="[[_asBool(order.notvalid.DefaultText4)]]">
+						</paper-input>
+
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+
+					<div class="small-inputs">
+						<tmladmin-ui-color-input-picker
+							spot-color-only
+							spot-limit="6"
+							website-url="[[websiteUrl]]"
+							visible="[[visible]]"
+							disabled$="[[_disTeam(loadingAny, order.IsDefaultTeam)]]"
+							selected-color="{{order.DefaultTeamColor1}}"
+							class="new-color-input"
+							label="Default Team Color #1" 
+							name="DefaultTeamColor1"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.DefaultTeamColor1]]" 
+							invalid="[[_asBool(order.notvalid.DefaultTeamColor1)]]">
+						</tmladmin-ui-color-input-picker>
+
+						<tmladmin-ui-color-input-picker
+							spot-color-only
+							spot-limit="6"
+							website-url="[[websiteUrl]]"
+							visible="[[visible]]"
+							disabled$="[[_disTeam(loadingAny, order.IsDefaultTeam)]]"
+							selected-color="{{order.DefaultTeamColor2}}"
+							class="new-color-input"
+							label="Default Team Color #2" 
+							name="DefaultTeamColor2"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.DefaultTeamColor2]]" 
+							invalid="[[_asBool(order.notvalid.DefaultTeamColor2)]]">
+						</tmladmin-ui-color-input-picker>
+
+						<tmladmin-ui-color-input-picker
+							spot-color-only
+							spot-limit="6"
+							website-url="[[websiteUrl]]"
+							visible="[[visible]]"
+							disabled$="[[_disTeam(loadingAny, order.IsDefaultTeam)]]"
+							selected-color="{{order.DefaultTeamColor3}}"
+							class="new-color-input"
+							label="Default Team Color #3" 
+							name="DefaultTeamColor3"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.DefaultTeamColor3]]" 
+							invalid="[[_asBool(order.notvalid.DefaultTeamColor3)]]">
+						</tmladmin-ui-color-input-picker>
+
+
+						<tmladmin-ui-color-input-picker 
+							class="small-inputs-mock" 
+							disabled>
+						</tmladmin-ui-color-input-picker>
+					</div>
+				</div>
+
+
+				<div class="order-inputs section-address">
+					<h4>
+						Address:
+					</h4>
+
+					<div class="small-inputs">
+						<paper-input label="[[localize('order-title-email')]]" type="string" value="{{order.AccountEmail}}"
+										name="AccountEmail" on-value-changed="onInputChanged" error-message="[[order.notvalid.AccountEmail]]"
+										invalid="[[_asBool(order.notvalid.AccountEmail)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-phone')]]" type="string" value="{{order.AccountPhone}}"
+										name="AccountPhone" on-value-changed="onInputChanged" error-message="[[order.notvalid.AccountPhone]]"
+										invalid="[[_asBool(order.notvalid.AccountPhone)]]">
+						</paper-input>
+						
+						<paper-input label="[[localize('order-title-firstname')]]" type="string" value="{{order.ShipFirstName}}"
+										name="ShipFirstName" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipFirstName]]"
+										invalid="[[_asBool(order.notvalid.ShipFirstName)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-lastname')]]" type="string" value="{{order.ShipLastName}}"
+										name="ShipLastName" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipLastName]]"
+										invalid="[[_asBool(order.notvalid.ShipLastName)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-address')]]" type="string" value="{{order.ShipAddress}}"
+										name="ShipAddress" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipAddress]]"
+										invalid="[[_asBool(order.notvalid.ShipAddress)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-address2')]]" type="string" value="{{order.ShipAddress2}}"
+										name="ShipAddress2" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipAddress2]]"
+										invalid="[[_asBool(order.notvalid.ShipAddress2)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-address3')]]" type="string" value="{{order.ShipAddress3}}"
+										name="ShipAddress3" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipAddress3]]"
+										invalid="[[_asBool(order.notvalid.ShipAddress3)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-city')]]" type="string" value="{{order.ShipCity}}" name="ShipCity"
+										on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipCity]]"
+										invalid="[[_asBool(order.notvalid.ShipCity)]]">
+						</paper-input>
+
+						<paper-input label="[[localizeByCountry('order-title-state', order.ShipCountryCode)]]" type="string" value="{{order.ShipState}}"
+										name="ShipState" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipState]]"
+										invalid="[[_asBool(order.notvalid.ShipState)]]">
+						</paper-input>
+
+						<paper-input label="[[localizeByCountry('order-title-zip', order.ShipCountryCode)]]"
+										type="string" value="{{order.ShipZip}}" name="ShipZip"
+										on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipZip]]"
+										invalid="[[_asBool(order.notvalid.ShipZip)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-country')]]" type="string" value="{{order.ShipCountry}}"
+										name="ShipCountry" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipCountry]]"
+										invalid="[[_asBool(order.notvalid.ShipCountry)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-company')]]" type="string" value="{{order.ShipCompany}}"
+										name="ShipCompany" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipCompany]]"
+										invalid="[[_asBool(order.notvalid.ShipCompany)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-tax')]]" type="string" value="{{order.ShipTaxID}}" name="ShipTaxID"
+										on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipTaxID]]"
+										invalid="[[_asBool(order.notvalid.ShipTaxID)]]">
+						</paper-input>
+
+						<paper-input label="[[localize('order-title-eori')]]" type="string" value="{{order.ShipEORI}}" name="ShipEORI"
+										on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipEORI]]"
+										invalid="[[_asBool(order.notvalid.ShipEORI)]]">
+						</paper-input>
+
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+				</div>
+				
+
+
+				<div class="order-inputs section-state-tax">
+					<h4>
+						Seller State Tax
+						<dom-if if="[[_yesItems(order.TaxStates, order.TaxStates.*)]]">
+							<template>
+							([[order.TaxStates.length]])
+							</template>
+						</dom-if>
+					</h4>
+				
+					<div class="horiz">
+						<vaadin-combo-box 
+							label="USA State" 
+							class="us-state"
+							placeholder="State" 
+							items="[[usaStates]]" 
+							item-value-path="ID" 
+							item-label-path="Name" 
+							value="{{addTaxState.State}}">
+						</vaadin-combo-box>
+						<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline" on-tap="addNewTaxStateTap">
+						</paper-icon-button>
+						<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+					</div>
+				
+					<dom-if if="[[order.notvalid.TaxStates]]">
+						<template>
+							<div class="notvalid alert">
+								<pre>
+									[[order.notvalid.TaxStates]]
+								</pre>
+							</div>
+						</template>
+					</dom-if>
+				
+					<div scrollable-x>
+						<div class="table">
+							<div class="header">
+								<div>
+									State (Shipping Address)
+								</div>
+								<div>
+									State Tax (%)
+								</div>
+								<div>
+									Description
+								</div>
+								<div class="w25_">
+									<!-- buttons -->
+								</div>
+							</div>
+					
+							<dom-repeat items="[[order.TaxStates]]" as="taxstatei">
+								<template>
+									<div class="row">
+										<div>
+											<span has-errors$="[[taxstatei.notvalid.State]]">[[taxstatei.State]]</span>
+										</div>
+										<div>
+											<span has-errors$="[[taxstatei.notvalid.TaxPercent]]">[[taxstatei.TaxPercent]]</span>
+										</div>
+										<div>
+											<span has-errors$="[[taxstatei.notvalid.Description]]">[[taxstatei.Description]]</span>
+										</div>
+										<div>
+											<div class="horiz" style="white-space: nowrap;">
+												<paper-icon-button class="upward-btn" icon="admin-icons:arrow-upward" on-tap="upwardTaxStateTap"></paper-icon-button>
+												<paper-icon-button class="downward-btn" icon="admin-icons:arrow-downward" on-tap="downwardTaxStateTap"></paper-icon-button>
+					
+												<paper-button raised1 on-tap="editTaxStateTap" class="edit-btn" disabled$="[[loadingAny]]">Edit</paper-button>
+												<paper-button raised1 on-tap="deleteTaxStateTap" class="delete-btn" disabled$="[[loadingAny]]">Delete</paper-button>
+											</div>
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+						</div>
+						<dom-if if="[[!LenMore(order.TaxStates)]]">
+							<template>
+								<div class="noitems">
+									no items
+								</div>
+							</template>
+						</dom-if>
+					</div>
+				</div>
+
+
+
+				<div class="order-tax-certificates">
+					<h4>
+						Buyer Tax Certificates
+						<dom-if if="[[_yesItems(order.TaxCertificates, order.TaxCertificates.*)]]">
+							<template>
+							([[order.TaxCertificates.length]])
+							</template>
+						</dom-if>
+					</h4>
+				
+					<div class="horiz">
+						<vaadin-combo-box 
+							label="USA State" 
+							class="us-state"
+							placeholder="State" 
+							items="[[usaStates]]" 
+							item-value-path="ID" 
+							item-label-path="Name" 
+							value="{{addTaxCert.State}}">
+						</vaadin-combo-box>
+						<vaadin-date-picker 
+							label="Expiration Date"
+							disabled$="[[loadingAny]]"
+							value="{{addTaxCert.ExpirationDate}}">
+						</vaadin-date-picker>
+						<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline" on-tap="addNewTaxCertTap">
+						</paper-icon-button>
+						<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+					</div>
+				
+					<dom-if if="[[order.notvalid.TaxCertificates]]">
+						<template>
+							<div class="notvalid alert">
+								<pre>
+									[[order.notvalid.TaxCertificates]]
+								</pre>
+							</div>
+						</template>
+					</dom-if>
+				
+					<div scrollable-x>
+						<div class="table">
+							<div class="header">
+								<!-- <div>
+									Tax Certificate ID
+								</div> -->
+								<div>
+									State (Shipping Address)
+								</div>
+								<div>
+									Expiration Date
+								</div>
+								<div>
+									Description
+								</div>
+								<div class="w25_">
+									<!-- buttons -->
+								</div>
+							</div>
+					
+							<dom-repeat items="[[order.TaxCertificates]]" as="taxcerti">
+								<template>
+									<div class="row">
+										<!-- <div>
+											[[taxcerti.TaxCertificateID]]
+										</div> -->
+										<div>
+											<span has-errors$="[[taxcerti.notvalid.State]]">[[taxcerti.State]]</span>
+										</div>
+										<div>
+											<span has-errors$="[[taxcerti.notvalid.ExpirationDate]]" highlighted$="[[taxcerti.IsExpired]]">[[_formatDateOnlyNoTZ(taxcerti.ExpirationDate)]]</span>
+										</div>
+										<div>
+											<span has-errors$="[[taxcerti.notvalid.Description]]">[[taxcerti.Description]]</span>
+										</div>
+										<div>
+											<div class="horiz" style="white-space: nowrap;">
+												<paper-icon-button class="upward-btn" icon="admin-icons:arrow-upward" on-tap="upwardTaxCertTap"></paper-icon-button>
+												<paper-icon-button class="downward-btn" icon="admin-icons:arrow-downward" on-tap="downwardTaxCertTap"></paper-icon-button>
+					
+												<paper-button raised1 on-tap="editTaxCertTap" class="edit-btn" disabled$="[[loadingAny]]">Edit</paper-button>
+												<paper-button raised1 on-tap="deleteTaxCertTap" class="delete-btn" disabled$="[[loadingAny]]">Delete</paper-button>
+											</div>
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+						</div>
+						<dom-if if="[[!LenMore(order.TaxCertificates)]]">
+							<template>
+								<div class="noitems">
+									no items
+								</div>
+							</template>
+						</dom-if>
+					</div>
+				</div>
+
+				
+
+				<div class="brands-list">
+					<h4>
+						Brands
+						<dom-if if="[[_yesItems(order.Brands, order.Brands.*)]]">
+							<template>
+							([[order.Brands.length]])
+							</template>
+						</dom-if>
+					</h4>
+
+					<div scrollable-x>
+						<div class="table">
+							<div class="header">
+								<div>
+									Brand ID
+								</div>
+								<div>
+									Brand Name
+								</div>
+							</div>
+					
+							<dom-repeat items="[[order.Brands]]" as="brandi">
+								<template>
+									<div class="row">
+										<div>
+											<span has-errors$="[[brandi.notvalid.BrandID]]" title="[[brandi.notvalid.BrandID]]">
+												<span class="copy-tap" on-tap="_copyTap">[[brandi.BrandID]]</span>
+											</span>
+											<a href="[[_urlViewBrand(brandi.BrandID)]]">
+												<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+											</a>
+										</div>
+										<div>
+											[[brandi.Name]]
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+					
+							<dom-if if="[[!LenMore(order.Brands)]]">
+								<template>
+									<div>
+										<div class="noitems">
+											no brands
+										</div>
+									</div>
+								</template>
+							</dom-if>
+						</div>
+					</div>
+				</div>
+
+
+
+				<div class="shippinghubs-list">
+					<h4>
+						Shipping Hubs
+						<dom-if if="[[_yesItems(order.ShippingHubs, order.ShippingHubs.*)]]">
+							<template>
+							([[order.ShippingHubs.length]])
+							</template>
+						</dom-if>
+					</h4>
+
+					<div class="order-inputs">
+						<paper-checkbox 
+							checked="{{order.AllowDirectShipping}}"
+							name="AllowDirectShipping"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.AllowDirectShipping]]" 
+							invalid="[[_asBool(order.notvalid.AllowDirectShipping)]]">
+							Allow Internatinal Shipping  (wo Logistic Hub)
+						</paper-checkbox>						
+					</div>
+				
+					<div>
+						<paper-input 
+							id="newshubid" 
+							class="small-input newinput" 
+							label="New Shipping Hub ID" 
+							type="string" 
+							name="ShippingHubs"
+							on-value-changed="onInputChanged" 
+							error-message="[[order.notvalid.ShippingHubs]]"
+							invalid="[[_asBool(order.notvalid.ShippingHubs)]]">
+							<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline" on-tap="_addShippingHubIDTap">
+							</paper-icon-button>
+						</paper-input>
+					</div>
+
+
+					<div scrollable-x>
+						<div class="table">
+							<div class="header">
+								<div>
+									ID
+								</div>
+								<div>
+									Name
+								</div>
+								<div>
+									Country Code(2)
+								</div>
+								<div>
+									<!-- buttons -->
+								</div>
+							</div>
+					
+							<dom-repeat items="[[order.ShippingHubs]]" as="shippinghubi">
+								<template>
+									<div class="row">
+										<div>
+											<span has-errors$="[[shippinghubi.notvalid.ID]]" title="[[shippinghubi.notvalid.ID]]">
+												
+												<span class="copy-tap" on-tap="_copyTap">[[shippinghubi.ID]]</span>
+
+											</span>
+											<a href="[[_urlViewShippingHub(shippinghubi.ID)]]">
+												<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+											</a>
+										</div>
+										<div>
+											[[shippinghubi.Name]]
+										</div>
+										<div>
+											[[shippinghubi.ShipCountryCode]]
+										</div>
+										<div>
+											<paper-icon-button class="remove-btn" icon="admin-icons:close" on-tap="_removeShippingHubTap"></paper-icon-button>
+											<paper-icon-button class="upward-btn" icon="admin-icons:arrow-upward" on-tap="_upwardShippingHubTap"></paper-icon-button>
+											<paper-icon-button class="downward-btn" icon="admin-icons:arrow-downward" on-tap="_downwardShippingHubTap"></paper-icon-button>
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+					
+							<dom-if if="[[!LenMore(order.ShippingHubs)]]">
+								<template>
+									<div>
+										<div class="noitems">
+											no items
+										</div>
+									</div>
+								</template>
+							</dom-if>
+						</div>
+					</div>
+				
+				</div>
+
+
+				<div class="order-inputs section-free-shipping-thresholds">
+					<h4>
+						Free Shipping Thresholds:
+					</h4>
+
+					<div>
+						<paper-input id="newpm" class="small-input newinput" label="New Threshold Currency" type="string"
+							name="Threshold" on-value-changed="onInputChanged"
+							disabled$="[[loadingAny]]"
+							error-message="[[order.notvalid.Threshold]]"
+							invalid="[[_asBool(order.notvalid.Threshold)]]">
+							<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+							<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline" on-tap="addThresholdTap">
+							</paper-icon-button>
+						</paper-input>
+					</div>
+
+					<dom-if if="[[order.notvalid.FreeShippingThresholds]]">
+						<template>
+							<div class="notvalid alert">
+								<pre>
+									[[order.notvalid.FreeShippingThresholds]]
+								</pre>
+							</div>
+						</template>
+					</dom-if>
+
+					<div scrollable-x>
+						<div class="table">
+							<div class="header">
+								<div class="centered">
+									Currency
+								</div>
+								<div class="centered">
+									Amount (¢)
+								</div>
+								<div>
+									&nbsp;
+								</div>
+							</div>
+						
+							<dom-repeat items="[[order.FreeShippingThresholds]]" as="thresholdi">
+								<template>
+									<div class="row">
+										<div has-errors$="[[thresholdi.notvalid.Currency]]" title="[[_asString(thresholdi.notvalid.Currency)]]" class="centered">
+											[[thresholdi.Currency.title]]
+										</div>
+										<div has-errors$="[[thresholdi.notvalid.Amount]]" title="[[_asString(thresholdi.notvalid.Amount)]]" class="centered">
+											[[thresholdi.Amount]]
+										</div>
+										<div class="w10">
+											<div class="horiz-container">
+												<paper-icon-button class="upward-btn" icon="admin-icons:arrow-upward" on-tap="upwardItemTap"></paper-icon-button>
+												<paper-icon-button class="downward-btn" icon="admin-icons:arrow-downward" on-tap="downwardItemTap"></paper-icon-button>
+	
+												<paper-button raised1 on-tap="editItemTap" class="edit-btn" disabled$="[[loading]]">Edit</paper-button>
+												<paper-button raised1 on-tap="deleteItemTap" class="delete-btn" disabled$="[[loading]]">Delete</paper-button>
+											</div>
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+							<dom-if if="[[!LenMore(order.FreeShippingThresholds)]]">
+								<template>
+									<div class="noitems">
+										[[localize('admin-list-noitems')]]
+									</div>
+								</template>
+							</dom-if>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="custom-logo">
+					<h4>
+						Custom Logo
+					</h4>
+
+					<p class="note-alt margin" hidden$="[[!order.HasSubdomain]]">Custom Logo is modatory for subdomain organizations</p>
+
+					<paper-expansion-panel header="Custom LOGO CSS (id: [[_customlogoCobrand(order.Subdomain)]] | 'custom-logo')" opened="false">
+						<paper-textarea 
+							no-label-float
+							value="{{order.SVGLogoStyle}}"
+							on-value-changed="onInputChanged" 
+							error-message="[[order.notvalid.SVGLogoStyle]]" 
+							invalid="[[_asBool(order.notvalid.SVGLogoStyle)]]">
+						</paper-textarea>
+					</paper-expansion-panel>
+
+
+					<paper-expansion-panel header="Custom LOGO Desktop (id:cobrand)" opened="false">
+						<paper-textarea 
+							no-label-float
+							value="{{order.SVGLogoDesktop}}"
+							on-value-changed="onInputChanged" 
+							error-message="[[order.notvalid.SVGLogoDesktop]]" 
+							invalid="[[_asBool(order.notvalid.SVGLogoDesktop)]]">
+						</paper-textarea>
+					</paper-expansion-panel>
+				
+					<paper-expansion-panel header="Custom LOGO Mobile (id:cobrand-mini)" opened="false">
+						<paper-textarea 
+							no-label-float
+							value="{{order.SVGLogoMobile}}"
+							on-value-changed="onInputChanged" 
+							error-message="[[order.notvalid.SVGLogoMobile]]" 
+							invalid="[[_asBool(order.notvalid.SVGLogoMobile)]]">
+						</paper-textarea>
+					</paper-expansion-panel>
+					
+				</div>
+
+
+				<!-- Tasks -->
+				<div class="order-tasks">
+					<h4>
+						Tasks
+					</h4>
+
+					<div scrollable-x>
+						<div class="table stripe">
+							<div class="header">
+								<div>
+									[[localize('admin-morder-type-title')]]
+								</div>
+								<div>
+									[[localize('admin-morder-created-title')]]
+								</div>
+								<div>
+									[[localize('admin-morder-progress-title')]]
+								</div>
+								<div>
+									[[localize('admin-morder-time-ms-title')]]
+								</div>
+								<div>
+									[[localize('admin-morder-operation-title')]]
+								</div>
+								<div>
+									[[localize('admin-morder-finished-title')]]
+								</div>
+							</div>
+
+							<dom-repeat items="[[order.Tasks]]" as="taski">
+								<template>
+									<div class="row" is-task-finished$="[[_asBool(taski.FinishedTimestamp)]]">
+										<div>
+											[[taski.Type]]
+										</div>
+										<div>
+											[[_formatDate(taski.CreatedTimestamp)]]
+										</div>
+										<div>
+											<paper-progress class="executing-progress"
+															value="[[_formatProgress(taski.ExecutingOperationProgress)]]"></paper-progress>
+										</div>
+										<div>
+											[[_formatTaskTime(taski.ExecutingTimeMiliseconds)]]
+										</div>
+										<div>
+											[[taski.ExecutingOperation]]
+										</div>
+										<div>
+											<span hidden$="[[!_asBool(taski.FinishedSuccessfully)]]">
+												<iron-icon icon="admin-icons:check" alt="check" class="approved"></iron-icon>
+											</span>
+											[[_formatDate(taski.FinishedTimestamp)]]
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+
+							<dom-if if="[[!LenMore(order.Tasks)]]">
+								<template>
+									<div class="noitems">
+										[[localize('admin-list-noitems')]]
+									</div>
+								</template>
+							</dom-if>
+						</div>
+					</div>
+				</div>
+
+								
+				<tmladmin-ui-changes-history
+					class="order-history"
+					title="Organization History"
+					items="[[order.History]]">
+				</tmladmin-ui-changes-history>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+<div class="dialogs">
+	<paper-dialog id="dialog_taxcert" class="dialog-wide" proceed no-overlap dynamic-align vertical-align="middle"
+		horizontal-align="center">
+		<h2>[[editTaxCertTitle]]</h2>
+		<paper-dialog-scrollable>
+			<vaadin-combo-box 
+				label="USA State" 
+				class="us-state"
+				placeholder="State" 
+				items="[[usaStates]]" 
+				item-value-path="ID" 
+				item-label-path="Name" 
+				value="{{editTaxCert.State}}"
+				name="editTaxCert.State"
+				on-value-changed="onInputChanged" 
+				error-message="[[editTaxCert.notvalid.State]]"
+				invalid="[[_asBool(editTaxCert.notvalid.State)]]">
+			</vaadin-combo-box>
+
+			<vaadin-date-picker 
+				label="Expiration Date"
+				disabled$="[[loadingAny]]"
+				on-change="taxcertNewExpirationDateChanged"
+				value="{{editTaxCert.ExpirationDate}}"
+				name="editTaxCert.ExpirationDate"
+				on-value-changed="onInputChanged" 
+				error-message="[[editTaxCert.notvalid.ExpirationDate]]"
+				invalid="[[_asBool(editTaxCert.notvalid.ExpirationDate)]]">
+			</vaadin-date-picker>
+
+			<paper-textarea 
+				label="Description" type="string" 
+				value="{{editTaxCert.Description::input}}" 
+				name="editTaxCert.Description"
+				on-value-changed="onInputChanged" 
+				error-message="[[editTaxCert.notvalid.Description]]"
+				invalid="[[_asBool(editTaxCert.notvalid.Description)]]">
+			</paper-textarea>
+
+		</paper-dialog-scrollable>
+
+		<div class="buttons">
+			<paper-button dialog-dismiss>Close</paper-button>
+			<paper-button dialog-confirm autofocus on-tap="applyTaxCertBtnTap">[[applyTaxCertBtn]]</paper-button>
+		</div>
+	</paper-dialog>
+
+
+	<paper-dialog id="dialog_taxstate" class="dialog-wide" proceed no-overlap dynamic-align vertical-align="middle"
+		horizontal-align="center">
+		<h2>[[dialog_taxstate.title]]</h2>
+		<paper-dialog-scrollable>
+			<vaadin-combo-box 
+				label="USA State" 
+				class="us-state"
+				placeholder="State" 
+				items="[[usaStates]]" 
+				item-value-path="ID" 
+				item-label-path="Name" 
+				value="{{dialog_taxstate.State}}"
+				name="dialog_taxstate.State"
+				on-value-changed="onInputChanged" 
+				error-message="[[dialog_taxstate.notvalid.State]]"
+				invalid="[[_asBool(dialog_taxstate.notvalid.State)]]">
+			</vaadin-combo-box>
+
+			<paper-textarea 
+				label="Tax (%)" type="string" 
+				value="{{dialog_taxstate.TaxPercent::input}}" 
+				name="dialog_taxstate.TaxPercent"
+				on-value-changed="onInputChanged" 
+				error-message="[[dialog_taxstate.notvalid.TaxPercent]]"
+				invalid="[[_asBool(dialog_taxstate.notvalid.TaxPercent)]]">
+			</paper-textarea>
+
+			<paper-textarea 
+				label="Description" type="string" 
+				value="{{dialog_taxstate.Description::input}}" 
+				name="dialog_taxstate.Description"
+				on-value-changed="onInputChanged" 
+				error-message="[[dialog_taxstate.notvalid.Description]]"
+				invalid="[[_asBool(dialog_taxstate.notvalid.Description)]]">
+			</paper-textarea>
+
+		</paper-dialog-scrollable>
+
+		<div class="buttons">
+			<paper-button dialog-dismiss>Close</paper-button>
+			<paper-button dialog-confirm autofocus on-tap="applyTaxStateBtnTap">[[dialog_taxstate.btn_title]]</paper-button>
+		</div>
+	</paper-dialog>
+
+
+	<paper-dialog id="dialog_threshold" class="dialog-wide-none" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+		<h2>[[editTitle]]</h2>
+		<paper-dialog-scrollable>
+
+			<h4>#: [[editItem.ID]]</h4>
+
+			<div class="selection">
+				<tmladmin-ui-dropdown-menu 
+					style="width:calc(100% - 8px)"
+					vertical-align="top" 
+					horizontal-align="left"
+					id-property="id"
+					title-property="title"
+					label="Currency"
+					disabled$="[[loading]]" 
+					value="{{editItem.Currency}}"
+					value-list="[[_notUsedCurrencies(order.Currencies, order.FreeShippingThresholds, order.FreeShippingThresholds.*)]]"
+					on-value-changed="onInputChanged"
+					error-message="[[editItem.notvalid.Currency]]"
+					invalid="[[_asBool(editItem.notvalid.Currency)]]">
+				</tmladmin-ui-dropdown-menu>
+			</div>
+
+			<paper-input label="Amount (¢)" type="string" value="{{editItem.Amount::input}}"
+				name="editItem.Order" on-value-changed="onInputChanged"
+				error-message="[[editItem.notvalid.Amount]]"
+				invalid="[[_asBool(editItem.notvalid.Amount)]]">
+			</paper-input>			
+		</paper-dialog-scrollable>
+
+		<div class="buttons">
+			<paper-button dialog-dismiss autofocus>Close</paper-button>
+			<paper-button dialog-confirm on-tap="saveThresholdTap">[[editBtn]]</paper-button>
+		</div>
+	</paper-dialog>
+
+	<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+		<h2>Confirm Organization to Save</h2>
+		<paper-dialog-scrollable>
+			Organization #: [[order.OrganizationID]] is going to be saved...are you sure?
+		</paper-dialog-scrollable>
+		<div class="buttons">
+			<paper-button dialog-dismiss>Close</paper-button>
+			<paper-button dialog-confirm autofocus on-tap="saveOrganizationConfirm">Save Organization</paper-button>
+		</div>
+	</paper-dialog>	
+</div>
+
+

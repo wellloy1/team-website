@@ -1,0 +1,46 @@
+h2 {
+    margin: 16px 0;
+    font-size: 1.1em;
+}
+
+/* paper-input[readonly='true'] iron-icon.color-picker-button  {
+    cursor: default;
+} */
+.color-picker-button {
+    cursor: pointer;
+
+    --iron-icon-height: 30px;
+    --iron-icon-width: 30px;
+    --iron-icon: {
+        -webkit-filter: drop-shadow( -2px -2px 2px #c0c0c0 ); 
+                filter: drop-shadow( -2px -2px 2px #c0c0c0 );
+    }
+
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+    -webkit-backface-visibility:hidden;
+}
+
+
+
+.select-row {
+    @apply --layout-vertical;
+    margin: 8px 0;
+}
+/* .row {
+    @apply --layout-horizontal;
+    @apply --layout-end;
+}
+.row > .flex,
+.input-row > * {
+    @apply --layout-flex;
+}
+.input-row > *:not(:first-child) {
+    margin-left: 8px;
+} */
+
+label { 
+    color: var(--paper-input-container-color); 
+}

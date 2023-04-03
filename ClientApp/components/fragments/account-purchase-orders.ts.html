@@ -1,0 +1,364 @@
+<teamatical-purchase-orders-data 
+  id="purchase-orders-data" 
+  orders="{{orders}}" 
+  searching-progress="{{searchingProgress}}"
+  num-items="{{numItems}}"
+  query-params="{{queryParams}}"
+  saving="{{saving}}"
+  loading="{{loading}}"
+  failure="{{failure}}"
+  user-info="{{userInfo}}" 
+  visible="[[visible]]" 
+  website-url="[[websiteUrl]]">
+</teamatical-purchase-orders-data>
+
+<teamatical-ui-loader hidden$="[[_isNotConn]]"></teamatical-ui-loader>
+
+<div hidden$="[[_isNoPurchaseOrders]]">
+  <div class="subsection" visible>
+    <header>
+      <h1>[[_accountTitle(userInfo.orgName, 'purchase-orders-title', visible)]]</h1>
+      <span>
+        (
+        <span>[[_numItems]][[_numItemsApproximately]]</span>
+        <span hidden="[[!_single]]">[[localize('purchase-orders-qty-item')]]</span>
+        <span hidden="[[!_many]]">[[localize('purchase-orders-qty-items')]]</span>
+        )
+      </span>
+    </header>
+
+    <div id="add-button-container" class="hidden" showen-block$="[[orders.IsAllowCreateNewPurchaseOrder]]">
+      <paper-fab 
+        id="add-button" 
+        aria-label="add"
+        icon="add" 
+        disabled="[[actionNotAllowed]]"
+        mini
+        on-tap="_onAddTap">
+      </paper-fab>
+
+      <paper-spinner-lite 
+        id="search-progress"
+        active="[[searchingProgress]]">
+      </paper-spinner-lite>
+
+    </div>
+
+    <paper-input 
+      id="search"
+      name="search"
+      type="text"
+      label="[[localize('purchase-orders-search-input')]]" 
+      aria-label$="[[localize('purchase-orders-search-input')]]"
+      placeholder="[[localize('purchase-orders-search-placeholder')]]"
+      value="{{orders.search::input}}"
+      required
+      autocomplete="search"
+      error-message="[[localize('purchase-orders-search-invalid')]]">
+    </paper-input>
+
+    <p class="empty-list" hidden$="[[_hasInitialItems]]">
+      [[localize('purchase-orders-empty')]]
+    </p>
+
+    <p class="empty-list" hidden$="[[_hasSearchedItems]]">
+      [[localize('purchase-orders-search-empty')]]
+    </p>
+
+    
+    <div
+      id="list" 
+      class="order-list" 
+      hidden$="[[!_hasSearchedItems]]"
+      draggable="false">
+
+      <iron-list 
+        id="gridList"
+        items="{{orders.items}}" 
+        as="orderi"
+        scroll-target="document"
+        default-physical-count="40">
+          <template>
+            <div 
+              class="order drag-item" 
+              archive$="[[_bool(orderi.isarchive)]]">
+
+              <div class="order-header">
+                <div class="line-horizonal">
+                  <h3>
+                    [[_title(orderi.Title, orderi.PurchaseOrderID, orderi.Created)]]
+
+                    <span class="hidden" showen$="[[orderi.Sandbox]]">
+                      <iron-icon icon="warning" class="warning"></iron-icon>
+                      [[localize('order-testmark')]]
+                    </span>
+                    - 
+                    <span class="status" order-status$="[[orderi.Status]]">
+                      [[localizep('purchase-orders-status-', orderi.Status)]]
+                    </span>
+                  </h3>
+
+                  <paper-icon-button 
+                    hidden="[[_hideEditDelayed]]" 
+                    hidden-animated$="[[_hideEdit]]" 
+                    disabled$="[[_disabled]]" 
+                    class="edit-icon hidden-animated" 
+                    cake="1w2" 
+                    aria-label="edit"
+                    icon="editor:mode-edit" 
+                    on-tap="_startEdit">
+                  </paper-icon-button>
+                </div>
+
+
+                <!-- begin edit -->
+                <div class="edit-fields hidden-animated" hidden$="[[!orderi.editing]]" hidden-animated$="[[!orderi.editingDelayed]]">
+
+                  <h2 class="editing-heading">[[localize('purchase-orders-editing-title')]]</h2>
+
+                  <teamatical-ui-select
+                    class="currency-selector"
+                    caption-text="[[localize('purchase-orders-currency')]]" 
+                    options="[[orders.Currencies]]" 
+                    text-property="title"
+                    value-property="id" 
+                    value="{{orderi.Currency}}"
+                    on-change="onInputChanged"
+                    error-message="[[orderi.notvalid.Currency]]"
+                    invalid="[[_asBool(orderi.notvalid.Currency)]]">
+                  </teamatical-ui-select>
+
+                  <div class="small-inputs">
+                    <div class="row input-row">
+                      <paper-input 
+                        name="TotalAmountOrderLimit" 
+                        type="text" 
+                        label="[[localize('purchase-orders-totalamountorderlimit')]]" 
+                        value="{{orderi.TotalAmountOrderLimit}}" 
+                        autofocus 
+                        required 
+                        maxlength="[[maxlength]]" 
+                        allowed-pattern="[[pattern]]"
+                        on-change="onInputChanged"
+                        error-message="[[orderi.notvalid.TotalAmountOrderLimit]]"
+                        invalid="[[_asBool(orderi.notvalid.TotalAmountOrderLimit)]]"
+                        autocomplete="" 
+                        aria-labelledby="editingHeading">
+                      </paper-input>
+                    </div>
+                    <div class="row input-row">
+                      <paper-input 
+                        name="TotalAmountLimit" 
+                        type="text" 
+                        label="[[localize('purchase-orders-totalamountlimit')]]"
+                        value="{{orderi.TotalAmountLimit}}" 
+                        required 
+                        maxlength="[[maxlength]]" 
+                        allowed-pattern="[[pattern]]"
+                        on-change="onInputChanged"
+                        error-message="[[orderi.notvalid.TotalAmountLimit]]"
+                        invalid="[[_asBool(orderi.notvalid.TotalAmountLimit)]]"
+                        autocomplete="" 
+                        aria-labelledby="editingHeading">
+                      </paper-input>
+                    </div>
+                    <div class="row input-row">
+                      <paper-input 
+                        name="ContactPersonName" 
+                        type="text" 
+                        label="[[localize('purchase-orders-contactpersonname')]]"
+                        value="{{orderi.ContactPersonName}}" 
+                        on-change="onInputChanged"
+                        error-message="[[orderi.notvalid.ContactPersonName]]"
+                        invalid="[[_asBool(orderi.notvalid.ContactPersonName)]]"
+                        autocomplete="" 
+                        aria-labelledby="editingHeading">
+                      </paper-input>
+                    </div>
+                    <div class="row input-row">
+                      <paper-input 
+                        name="ContactPersonEmail" 
+                        type="text" 
+                        label="[[localize('purchase-orders-contactpersonemail')]]"
+                        value="{{orderi.ContactPersonEmail}}" 
+                        on-change="onInputChanged"
+                        error-message="[[orderi.notvalid.ContactPersonEmail]]"
+                        invalid="[[_asBool(orderi.notvalid.ContactPersonEmail)]]"
+                        autocomplete="" 
+                        aria-labelledby="editingHeading">
+                      </paper-input>
+                    </div>
+                    <div class="row input-row">
+                      <paper-input 
+                        name="ContactPersonPhone"
+                        type="text"
+                        label="[[localize('purchase-orders-contactpersonphone')]]"
+                        value="{{orderi.ContactPersonPhone}}"
+                        on-change="onInputChanged"
+                        error-message="[[orderi.notvalid.ContactPersonPhone]]"
+                        invalid="[[_asBool(orderi.notvalid.ContactPersonPhone)]]"
+                        autocomplete=""
+                        aria-labelledby="editingHeading">
+                      </paper-input>
+                    </div>
+                    <div class="row input-row">
+                      <paper-input 
+                        name="PONumberInternal"
+                        type="text"
+                        label="[[localize('purchase-orders-ponumberinternal')]]"
+                        value="{{orderi.PONumberInternal}}"
+                        on-change="onInputChanged"
+                        error-message="[[orderi.notvalid.PONumberInternal]]"
+                        invalid="[[_asBool(orderi.notvalid.PONumberInternal)]]"
+                        autocomplete=""
+                        aria-labelledby="editingHeading">
+                      </paper-input>
+                    </div>
+
+                    <paper-input 
+                      class="small-inputs-mock" 
+                      label="..." 
+                      type="string" 
+                      disabled>
+                    </paper-input>
+
+                  </div>
+                  
+                  <div class="row input-row">
+                    <paper-input 
+                      name="Title" 
+                      type="text" 
+                      label="[[localize('purchase-orders-potitle')]]"
+                      value="{{orderi.Title}}" 
+                      on-change="onInputChanged"
+                      error-message="[[orderi.notvalid.Title]]"
+                      invalid="[[_asBool(orderi.notvalid.Title)]]"
+                      autocomplete="" 
+                      aria-labelledby="editingHeading">
+                    </paper-input>
+                  </div>
+                  <div class="row input-row">
+                    <paper-textarea 
+                      name="Description" 
+                      label="[[localize('purchase-orders-podescription')]]"
+                      value="{{orderi.Description}}" 
+                      on-change="onInputChanged"
+                      error-message="[[orderi.notvalid.Description]]"
+                      invalid="[[_asBool(orderi.notvalid.Description)]]"
+                      autocomplete="" 
+                      aria-labelledby="editingHeading">
+                    </paper-textarea>
+                  </div>
+
+                </div>
+                <!-- end edit -->
+
+                <ul hidden$="[[orderi.editing]]">
+                  <!-- <li>[[localize('purchase-orders-title-status')]] [[localizep('purchase-orders-status-', orderi.Status)]]</li> -->
+                  <li>[[localize('purchase-orders-title-created')]] [[_formatDate(orderi.Created)]]</li>
+                  <!-- <li>[[localize('purchase-orders-title-organization')]] [[orderi.IssuerOrganizationID]]</li>
+                  <li>[[localize('purchase-orders-title-creater')]] [[orderi.IssuerUserID]]</li> -->
+                  <li>[[localize('purchase-orders-title-totalamount-single-limit')]] [[formatLimitPrice(orderi.TotalAmountOrderLimit, orderi.Currency.id)]]</li>
+                  <li>[[localize('purchase-orders-title-totalamount-limit')]] [[formatLimitPrice(orderi.TotalAmountLimit, orderi.Currency.id)]]</li>
+                  <li>[[localize('purchase-orders-title-itemscount')]] [[orderi.OrderCount]]</li>
+                  <li>[[localize('purchase-orders-title-totalamount')]] [[_formatPrice(orderi.TotalAmount, orderi.Currency.id)]]</li>
+
+                  <dom-if if="[[orderi.description]]">
+                    <template>
+                      <li>
+                        [[orderi.description]]
+                      </li>
+                    </template>
+                  </dom-if>
+                </ul>
+
+                <paper-input 
+                  hidden$="[[_hiddenCheckoutCode(orderi.editing, orderi.Status)]]"
+                  class="purchase-order-id" 
+                  label="[[localize('purchase-orders-token-title')]]" 
+                  name="PurchaseOrderID"
+                  type="password"
+                  readonly="true"
+                  value="[[orderi.PurchaseOrderID]]"
+                  disabled$="[[loading]]"
+                  on-keydown="_CopyPurchaseOrderIDTap">
+                  <paper-icon-button slot="suffix" class="copy-code-btn" icon="icons:content-copy" on-tap="_CopyPurchaseOrderIDTap"></paper-icon-button>
+                </paper-input>
+
+                <div hidden$="[[_hiddenCheckoutCode(orderi.editing, orderi.Status)]]">
+									<p class="note-alt">[[localize('purchase-orders-howitworks')]]</p>
+								</div>
+
+                
+              </div>
+              
+              <div class="order-footer">
+
+                <!-- edit buttons -->
+                <teamatical-ui-button 
+                  hidden$="[[!orderi.editing]]"
+                  class="save-btn"
+                  on-tap="saveTap">
+                  [[localize('purchase-orders-btn-save')]]
+                </teamatical-ui-button>
+
+                <teamatical-ui-button 
+                  hidden$="[[!orderi.editing]]"
+                  class="discard-btn"
+                  on-tap="discardTap">
+                  [[localize('purchase-orders-btn-discard')]]
+                </teamatical-ui-button>
+
+
+
+                <!-- list buttons -->
+                <teamatical-ui-button 
+                  disabled$="[[disabledOrderApprove(orderi)]]"
+                  hidden$="[[hideOrderApprove(orderi, orderi.editing)]]"
+                  class="configure-btn" 
+                  href="[[_hrefAccountPurchaseOrder(orderi.PurchaseOrderID)]]">
+                  [[localize('purchase-orders-btn-edit')]]
+                </teamatical-ui-button>
+
+                <teamatical-ui-button 
+                  hidden$="[[hideInvoiceView(orderi, orderi.editing)]]"
+                  class="view-btn" 
+                  href="[[_hrefAccountPurchaseInvoice(orderi.InvoiceID)]]">
+                  [[localize('purchase-orders-btn-view')]]
+                </teamatical-ui-button>
+              </div>
+            </div>
+          </template>
+      </iron-list>
+
+    </div>
+
+    <footer class="progress-container">
+      <paper-spinner-lite 
+        id="loadMoreProgress"
+        class="progress-centered"
+        active="[[_loadMoreProgress(loadingGet, loadingMore)]]">
+      </paper-spinner-lite>
+      
+      <teamatical-ui-button 
+        id="loadMoreBtn"
+        hidden$="[[orders.plast]]"
+        class="hidden-animated slow"
+        hidden-animated$="[[_loadMoreProgress(loadingGet, loadingMore)]]"
+        disabled$="[[loadingGet]]"
+        on-tap="_loadMore">
+        [[localize('purchase-orders-load-more-btn')]]
+      </teamatical-ui-button>
+
+      <div class="end-list" hidden$="[[!_hasNoMoreItems]]">[[localize('purchase-orders-list-end')]]</div>
+    </footer>
+
+  </div>
+</div>
+
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

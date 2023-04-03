@@ -1,0 +1,149 @@
+<app-localstorage-document key="admin-product-fonts-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+				<paper-button class="new-product-font-btn indigo" raised on-tap="newProductFontTap">
+					New Font
+				</paper-button>
+			</div>
+		</div>
+
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="ProductFonts" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id">[[_formatFontFilename(item.FontID)]]</span>
+					<a href="[[_urlViewProductFont(item.FontID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="340px" resizable="true" id="FontID">
+				<template class="header">
+					Font ID
+					<vaadin-grid-filter aria-label="FontID" path="FontID" value="[[_filterFontID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id">[[_formatFontFilename(item.FontID)]]</span>
+					<a href="[[_urlViewProductFont(item.FontID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">
+					Font ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="380px" resizable="true" id="Filename">
+				<template class="header">
+					Filename
+					<vaadin-grid-filter aria-label="Filename" path="Filename" value="[[_filterFilename]]"></vaadin-grid-filter>
+				</template>
+				<template>[[_formatFontFilename(item.Filename)]]</template>
+				<template class="footer-off">
+					Filename
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="380px" resizable="true" id="Family">
+				<template class="header">
+					Family
+					<vaadin-grid-filter aria-label="Family" path="Family" value="[[_filterFamily]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.Family]]</template>
+				<template class="footer-off">
+					Family
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="380px" resizable="true" id="Style">
+				<template class="header">
+					Style
+					<vaadin-grid-filter aria-label="Style" path="Style" value="[[_filterStyle]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.Style]]</template>
+				<template class="footer-off">
+					Style
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="380px" resizable="true" id="CharactersCount">
+				<template class="header">
+					Characters
+				</template>
+				<template>[[item.CharactersCount]]</template>
+				<template class="footer-off">
+					Characters
+				</template>
+			</vaadin-grid-column>
+
+			<!-- <vaadin-grid-column width="210px" resizable="true" id="SideName">
+				<template class="header">
+					SideName
+					<vaadin-grid-filter class="hidden" aria-label="SideName" aria-placeholder="SideName" path="SideName"
+						value="[[_filterSideName]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="SideNameCombo" value="{{_filterSideName}}" style="width:110px;">
+					</vaadin-combo-box>
+				</template>
+				<template>
+					[[item.SideName]]
+				</template>
+				<template class="footer-off">SideName</template>
+			</vaadin-grid-column> -->
+
+		</vaadin-grid>
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-product-fonts-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

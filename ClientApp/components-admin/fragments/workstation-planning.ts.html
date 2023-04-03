@@ -1,0 +1,679 @@
+<iron-media-query query="max-width: 420px" query-matches="{{mobileScreen}}"></iron-media-query>
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="planning"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+
+<div class="maindiv">
+
+	<div class="order-container sticky">
+		<div class="order">
+			<!-- planning -->
+			<div class="order-planning">
+				<div class="sticky-container">
+					<h2>
+						<paper-icon-button 
+							class="refresh-btn" 
+							icon="admin-icons:refresh"
+							title="[[localize('admin-ws-refresh')]]" 
+							disabled="[[loadingAny]]"
+							on-tap="_reloadTap">
+						</paper-icon-button>
+
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+
+						[[localize('admin-ws-planning-title')]]
+						- <teamatical-ui-date-time hour="numeric" minute="numeric" second="numeric" datetime-obj="[[now]]"></teamatical-ui-date-time>
+					</h2>
+
+					<paper-progress id="progress" indeterminate class="" disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+
+
+				<div class="horiz menu-fixed">
+
+					<div class="current-items">
+						
+
+
+						<!-- Tasks -->
+						<div class="order-tasks hide-on-print">
+							<h2>
+								<a id="tasks"></a>
+								[[localize('admin-morder-tasks-title')]]
+								<span class="hidden nowrap" showen$="[[order.Sandbox]]">
+									<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('admin-flag-test')]]
+								</span>
+							</h2>
+						
+							<div class="table stripe">
+								<div class="header">
+									<div>
+										[[localize('admin-morder-type-title')]]
+									</div>
+									<div>
+										[[localize('admin-morder-progress-title')]]
+									</div>
+									<div>
+										[[localize('admin-morder-time-ms-title')]]
+									</div>
+									<div>
+										[[localize('admin-morder-operation-title')]]
+									</div>
+								</div>
+						
+								<dom-repeat items="[[order.Tasks]]" as="taski">
+									<template>
+										<div class="row">
+											<div>
+												[[taski.Type]]
+											</div>
+											<div>
+												<paper-progress class="executing-progress"
+													value="[[_formatProgress(taski.ExecutingOperationProgress)]]"></paper-progress>
+											</div>
+											<div>
+												[[_formatTaskTime(taski.ExecutingTimeMiliseconds)]]
+											</div>
+											<div>
+												[[taski.ExecutingOperation]]
+											</div>
+										</div>
+									</template>
+								</dom-repeat>
+						
+								<dom-if if="[[!LenMore(order.Tasks)]]">
+									<template>
+										<div class="noitems">
+											[[localize('admin-list-noitems')]]
+										</div>
+									</template>
+								</dom-if>
+							</div>
+						</div>
+
+
+						<div class="recent-cell-container-sticky-mock" 
+							style$="height:[[recentUnderScrollRectHeight]]px;" 
+							hidden$="[[!recentUnderScroll]]">
+						</div>
+						<div class="recent-cell-container-sticky" under-scroll$="[[recentUnderScroll]]">
+							<div id="recent-cell-container">
+								<div class="filters-wrapper">
+									<div class="filters">
+										<paper-input 
+											class="search-input" type="string"
+											value="{{filters.Search::input}}"
+											placeholder="[[localize('admin-ws-planning-search-label')]]"  
+											disabled="[[loadingAny]]" 
+											on-keydown="_searchEnter" 
+											on-value-changed="_searchChanged">
+											<paper-icon-button 
+												slot="suffix" 
+												class="help-btn" 
+												icon="admin-icons:help-outline" 
+												on-tap="_searchHelpTap" 
+												title="Search Help">
+											</paper-icon-button>
+										</paper-input>
+
+										<vaadin-date-time-picker 
+											placeholder="From"
+											value="{{targetDateFrom}}" 
+											step="1800"
+											time-placeholder="hh:mm">
+										</vaadin-date-time-picker>
+
+										<vaadin-date-time-picker 
+											placeholder="To"
+											value="{{targetDateTo}}" 
+											step="1800"
+											time-placeholder="hh:mm">
+										</vaadin-date-time-picker>
+		
+										<paper-toggle-button id="sortingbymanhash" checked="{{sort.ManufacturingHash}}" disabled$="[[loadingAny]]" on-change="onScopeChanged">
+											[[localize('admin-ws-planning-sorting-bymanhash')]]
+										</paper-toggle-button>
+		
+										<paper-toggle-button checked="{{filters.NotValid}}" hidden$="[[!userInfo.isAdmin]]" disabled$="[[disabledFiltersNotValid]]" on-change="onScopeChanged"
+											title="Shows not valid items like not finished group-orders or purchase-orders, cancelled orders or intermediate PDF version mismatch, grab for production not checked">
+											<iron-icon class="error" icon="admin-icons:history" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+											[[localize('admin-ws-notvalid-item')]]
+										</paper-toggle-button>
+		
+										<paper-toggle-button checked="{{filters.Sandbox}}" hidden$="[[_sandboxToggleHide(userInfo.isAdmin, userInfo.isPrinter)]]" disabled$="[[disabledFiltersSandbox]]" on-change="onScopeChanged">
+											<iron-icon class="warning" icon="admin-icons:warning" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+											[[localize('admin-ws-test-item')]]
+										</paper-toggle-button>
+		
+										<paper-toggle-button checked="{{filters.AdminAsManufacturer}}" hidden$="[[!userInfo.isAdmin]]" disabled$="[[loadingAny]]" on-change="onScopeChanged"
+											title="Hides Sandbox & Unavailable">
+											[[localize('admin-ws-planning-filter-AdminAsManufacturer', 'manufacturer', order.Manufacturer.ManufacturerName)]]
+										</paper-toggle-button>
+		
+										<dom-if if="[[showManufacturers]]">
+											<template>
+												<div class="man-selection" is-admin>
+													<tmladmin-ui-dropdown-menu 
+														vertical-align="top" 
+														horizontal-align="left"
+														id-property="ManufacturerID"
+														title-property="ManufacturerName"
+														label="[[localize('admin-ws-manufacturer')]]" 
+														disabled="[[loadingAny]]" 
+														value="{{order.Manufacturer}}"
+														value-list="[[order.Manufacturers]]"
+														on-value-changed="onInputChanged"
+														error-message="[[order.notvalid.Currency]]"
+														invalid="[[_asBool(order.notvalid.Currency)]]">
+													</tmladmin-ui-dropdown-menu>
+												</div>
+											</template>
+										</dom-if>
+									</div>
+								</div>
+	
+								<div class="order-buttons">
+									<!-- <paper-checkbox class="hide-on-print" checked="{{order.Settings.IsTestStack}}">
+										<iron-icon class="warning" icon="admin-icons:warning"></iron-icon> Test Stacking
+									</paper-checkbox> -->
+	
+	
+									<div class="spinner">
+										<div class="select-all" hidden$="[[!_asBool(order.Items.content.length)]]">
+											<paper-checkbox class="hide-on-print" disabled$="[[loadingAny]]" checked="{{order.checkboxAll}}"
+												on-change="checkboxAllChangeHandler">
+												<dom-if if="[[!smallScreen]]">
+													<template>
+														[[localize('admin-ws-planning-select-all')]]
+													</template>
+												</dom-if>
+												<dom-if if="[[smallScreen]]">
+													<template>
+														[[localize('admin-ws-planning-select-mobile-all')]]
+													</template>
+												</dom-if>
+												
+											</paper-checkbox>
+										</div>
+
+										<span highlighted hidden$="[[hidden_tasksFlag(order.Tasks)]]">
+											[[localize('admin-tasks')]]
+										</span>
+
+										<span class="count">
+											Qty 
+											<span title="Qty Products Requesting Items">[[countQtyRequestBatchOrder]]</span>
+											/ <span title="Requesting Items">[[countRequestBatchOrder]]</span>
+											/ <span title="All Items">[[countOrderItems]]</span>
+										</span>
+										<paper-button class="order-requestorder-btn" raised disabled="[[disabledRequestBatchOrder]]"
+											on-tap="requestBatchOrderTap">
+											<dom-if if="[[!smallScreen]]">
+												<template>
+													[[localize('admin-ws-planning-request-batch-btn')]]
+												</template>
+											</dom-if>
+											<dom-if if="[[smallScreen]]">
+												<template>
+													[[localize('admin-ws-planning-request-batch-mobile-btn')]]
+												</template>
+											</dom-if>
+										</paper-button>
+										<paper-spinner-lite id="requestorder-progress" class="thick"></paper-spinner-lite>
+									</div>
+	
+								</div>
+	
+							</div>
+						</div>
+
+
+						<div id="list" class="product-list">
+							<iron-list 
+								id="list-virtual"
+								grid
+								items="[[order.Items.content]]" 
+								as="entry"
+								scroll-target="[[scrollTarget]]" 
+								default-physical-count="90">
+
+								<template>
+									<div class="product-item-container" loading$="[[loadingAny]]">
+										<span hidden$="[[!entry.IsNotValid]]">
+											<iron-icon class="error" icon="admin-icons:history" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+											[[localize('admin-ws-notvalid-item')]]
+										</span>
+										<span hidden$="[[!entry.Sandbox]]">
+											<iron-icon class="warning" icon="admin-icons:warning" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+											[[localize('admin-ws-test-item')]]
+										</span>
+										<paper-checkbox 
+											class="hide-on-print"
+											checked="{{entry.selected}}"
+											on-change="checkboxChangeHandler">
+											<!-- [[localize('admin-ws-planning-grab-for-production')]] -->
+										</paper-checkbox>
+
+										<div class="product-item" on-tap="productItemTap" is-admin$="[[entry.AdminOnly]]">
+											<div class="color-title" style$="[[_itemTitleStyle(entry.OrderProductionID)]]"></div>
+											<h4>
+												#: [[_formatIndex(index)]]
+												<!-- [[entry.id]] -->
+
+												<span>| [[localize('admin-ws-planning-consumerid')]] #:</span>
+												<span class="copy-tap" on-tap="_copyTap">[[entry.OrderID]]</span>
+												<a href="[[_urlViewOrder(entry.OrderID)]]" target="_blank" hidden$="[[!userInfo.isAdmin]]" title="View Order"><iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon></a>
+
+												<span>| 
+													<!-- [[localize('admin-ws-planning-productionid')]] -->
+												</span>
+												<span class="copy-tap" on-tap="_copyTap">[[entry.OrderProductionID]]</span>
+												<a href="[[_urlViewOrderProduction(entry.OrderProductionID)]]" target="_blank" hidden$="[[!userInfo.isAdmin]]" title="View Order Production"><iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon></a>
+
+												<dom-if if="[[_asBool(entry.SellerOrganization)]]">
+													<template>
+														<span>| [[localize('admin-ws-planning-sellerorg')]]:</span>
+														<span class="copy-tap" on-tap="_copyTap" copy-content$="[[entry.SellerOrganization.OrganizationID]]">[[entry.SellerOrganization.Name]]</span>
+														<a href="[[_urlViewOrganization(entry.SellerOrganization.OrganizationID)]]" target="_blank" hidden$="[[!userInfo.isAdmin]]" title="View Organization"><iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon></a>
+													</template>
+												</dom-if>
+
+												<dom-if if="[[_asBool(entry.BuyerOrganization)]]">
+													<template>
+														<span>| [[localize('admin-ws-planning-buyerorg')]]:</span>
+														<span class="copy-tap" on-tap="_copyTap" copy-content$="[[entry.BuyerOrganization.OrganizationID]]">[[entry.BuyerOrganization.Name]]</span>
+														<a href="[[_urlViewOrganization(entry.BuyerOrganization.OrganizationID)]]" target="_blank" hidden$="[[!userInfo.isAdmin]]" title="View Organization"><iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon></a>
+													</template>
+												</dom-if>
+											</h4>
+
+											<div>
+												[[_formatDate(entry.Created)]] 
+												([[_formatFileSize(entry.IntermediatePDFSize)]])
+											</div>
+
+											
+											<div class="image-product-grid">
+												<dom-repeat items="[[_computeProductImagesA(entry.Title, entry.ImageUrls)]]" as="imgi">
+													<template>
+											
+														<teamatical-ui-image src="[[imgi.imgUrl]]" alt="[[imgi.title]]" lazy-load lazy-observe=[[lazyObserve]]
+															title$="[[entry.Product.Title]]">
+														</teamatical-ui-image>
+											
+													</template>
+												</dom-repeat>
+											</div>
+
+											<div class="table">
+												<div class="header">
+													<div>
+													</div>
+													<div>
+													</div>
+												</div>
+
+												
+												<div class="row" hidden$="[[entry.Product.GrabForProduction]]">
+													<div>
+														[[localize('admin-ws-planning-grab-for-production')]]
+													</div>
+													<div>
+														<span highlighted$="[[!entry.Product.GrabForProduction]]">[[entry.Product.GrabForProduction]]</span>
+													</div>
+												</div>
+
+												<div class="row" hidden$="[[!_asBool(entry.UnavailableReason)]]">
+													<div>
+														[[localize('admin-ws-planning-notvalidreason')]]
+													</div>
+													<div>
+														<span highlighted>[[entry.UnavailableReason]]</span>
+													</div>
+												</div>
+
+												<div class="row" hidden$="[[!_asBool(entry.GroupShippingID)]]">
+													<div>
+														[[localize('admin-ws-planning-grouporder')]]
+													</div>
+													<div>
+														<span class="copy-tap" on-tap="_copyTap">[[entry.GroupShippingID]]</span>
+														<a href="[[_urlViewGroupShipping(entry.GroupShippingID)]]" target="_blank" hidden$="[[!userInfo.isAdmin]]"
+															title="View Purchase Order">
+															<iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon>
+														</a>
+													</div>
+												</div>
+
+												<div class="row" hidden$="[[!_asBool(entry.StoreID)]]">
+													<div>
+														[[localize('admin-ws-planning-customstore')]]
+													</div>
+													<div>
+														<span class="copy-tap" on-tap="_copyTap">[[entry.StoreID]]</span>
+														<a href="[[_urlViewStore(entry.StoreID)]]" target="_blank" hidden$="[[!userInfo.isAdmin]]"
+															title="View Custom Store">
+															<iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon>
+														</a>
+													</div>
+												</div>
+
+												<div class="row" hidden$="[[!_asBool(entry.PurchaseOrderID)]]">
+													<div>
+														[[localize('admin-ws-planning-purchaseorder')]]
+													</div>
+													<div>
+														<span class="copy-tap" on-tap="_copyTap">[[entry.PurchaseOrderID]]</span>
+														<a href="[[_urlViewPurchaseOrder(entry.PurchaseOrderID)]]" target="_blank" hidden$="[[!userInfo.isAdmin]]"
+															title="View Purchase Order">
+															<iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon>
+														</a>
+													</div>
+												</div>
+
+												<div class="row">
+													<div>
+														[[localize('admin-morder-quantity-title')]]
+													</div>
+													<div>
+														<span class="count">[[entry.Quantity]]</span>
+													</div>
+												</div>
+
+												<div class="row">
+													<div>
+														[[localize('admin-morder-minternalid-title')]]
+													</div>
+													<div>
+														<span class="copy-tap" on-tap="_copyTap">[[entry.Product.ManufactureProductInternalID]]</span>
+													</div>
+												</div>
+
+												<div class="row">
+													<div>
+														[[localize('admin-morder-style-title')]]
+													</div>
+													<div>
+														<span class="copy-tap" on-tap="_copyTap">[[entry.Product.SKU]]</span>
+													</div>
+												</div>
+												
+												<div class="row">
+													<div>
+														[[localize('admin-morder-size-title')]]
+													</div>
+													<div>
+														<span class="copy-tap" on-tap="_copyTap">[[entry.Product.Size]]</span>
+													</div>
+												</div>
+												
+												<div class="row">
+													<div>
+														[[localize('admin-morder-type-title')]]
+													</div>
+													<div>
+														<span class="copy-tap" on-tap="_copyTap">[[entry.Product.Type]]</span>
+													</div>
+												</div>
+
+
+												<!-- <dom-if if="[[entry.StockColor]]">
+													<template>
+														<div class="row">
+															<div>
+																[[localize('admin-morder-stockcolor-title')]]
+															</div>
+															<div>
+																[[entry.StockColor]]
+															</div>
+														</div>
+													</template>
+												</dom-if>
+												
+												<dom-if if="[[entry.Accessories]]">
+													<template>
+														<div class="row">
+															<div>
+																[[localize('admin-morder-accessories-title')]]
+															</div>
+															<div>
+																<div class="accessories">
+																	<dom-repeat items="[[entry.Accessories]]" as="accessi">
+																		<template>
+																			<label>
+																				[[accessi.Name]] 
+																				([[localize('admin-morder-accessory-qty')]]: [[accessi.Quantity]])
+																				<span hidden$="[[!accessi.IsContinous]]">
+																					[[accessi.Size]]
+																				</span>
+																				[[accessi.Units]]
+																			</label>
+																			<dom-if if="[[accessi.Color]]">
+																				<template>
+																					<div class="color" style$="[[_convertBkgColor(accessi.Color.h)]]">
+																						[[accessi.Color.n]]
+																					</div>
+																				</template>
+																			</dom-if>
+																		</template>
+																	</dom-repeat>
+																</div>
+															</div>
+														</div>
+													</template>
+												</dom-if>
+												
+												
+												<dom-if if="[[entry.ThreadColor]]">
+													<template>
+														<div class="row">
+															<div>
+																[[localize('admin-ws-planning-thread-title')]]
+															</div>
+															<div>
+																<div class="thread-color">
+																	<div class="color" style$="[[_convertBkgColor(entry.ThreadColor.h)]]">
+																		[[entry.ThreadColor.n]]
+																	</div>
+																	<span hidden$="[[!_asBool(entry.ThreadQuality)]]">
+																		([[entry.ThreadQuality]])
+																	</span>
+																</div>
+															</div>
+														</div>
+													</template>
+												</dom-if>
+
+
+												<div class="row" hidden$="[[!_asBool(entry.SublimationFabrics)]]">
+													<div>
+														[[localize('admin-morder-sublimationfabrics-title')]]
+													</div>
+													<div>
+														[[_formatArray(entry.SublimationFabrics)]]
+													</div>
+												</div> -->
+											</div>
+											
+										</div>
+
+										<div class="footer"></div>
+									</div>
+								</template>
+							</iron-list>
+						</div>
+
+						<div hidden$="[[hiddenNoItems]]" class="no-items">
+							<span>[[localize('admin-ws-planning-no-items')]]</p>
+						</div>
+
+
+						<!-- <div class="spinner" hidden$="[[order.Items.plast]]">
+							<paper-button class="order-requestorder-btn" raised disabled="[[loadingAny]]" on-tap="loadMoreTap">
+								Load More
+							</paper-button>
+							<paper-spinner-lite id="download-progress" class="thick"></paper-spinner-lite>
+						</div> -->
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+
+
+
+<!-- 
+CAUTION: Fabric printing ONLY
+
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="planning"
+	website-url="[[websiteUrl]]"
+	sticker-printer
+	barcode-scanner
+	loading="{{loadingWS}}"
+	visible="[[visible]]">
+</teamatical-ui-scanner-printer-settings>
+
+-->
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>
+
+
+
+
+
+
+
+
+<tmladmin-ui-dialog id="dialogsearchhelp" class="dialogsearchhelp" disabled$="[[dialogsearchhelp.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button  class="close-dialog-small-btn" icon="admin-icons:close" dialog-dismiss>
+		</paper-icon-button>
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogsearchhelp.loading]]" hidden$="[[!dialogsearchhelp.loading]]">
+			</paper-progress>
+		</div>
+		<h3>
+			[[dialogsearchhelp.title]]
+		</h3>
+	</div>
+	<div slot="body">
+		<div class="help-container">
+			<div>
+			  <p class="help">
+				Filter supports: OrderID, StoreID, SellerOrganization (ID or Name), GroupShippingID, PurchaseOrderID, OrderProductionID, OrderProductionItemID, ProductSKU, ProductType, ProductInternalID, ProductManufacturerID <br />
+			  </p>
+			  <p class="help">
+				You can insert several comma-separated values to filter multiple criteria
+			  </p>
+			  <p class="help">
+				Use '-' to exclude specified values from search
+			  </p>
+			</div>
+		</div>
+	</div>
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			[[localize('admin-dlg-close')]]
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>
+
+
+
+
+
+<paper-dialog id="dialogrequestbatch" proceed no-overlap dynamic-align vertical-align="middle"
+	horizontal-align="center">
+	<h2>[[localize('admin-ws-planning-request-batch-confirm')]]</h2>
+	<paper-dialog-scrollable>
+		<div class="checkbox-container">
+			<paper-checkbox class="hide-on-print" checked="{{dialogrequestbatch.ProductionOnHold}}" disabled$="[[loadingAny]]">
+				<iron-icon class="production-hold" icon="admin-icons:pan-tool"></iron-icon>
+				[[localize('admin-ws-planning-settings-productionhold')]]
+			</paper-checkbox>
+
+			<paper-checkbox class="hide-on-print" checked="{{dialogrequestbatch.SpotColors}}" disabled$="[[loadingAny]]">
+				Spot Colors
+			</paper-checkbox>
+
+			<paper-checkbox class="hide-on-print" checked="{{dialogrequestbatch.IsDraft}}" disabled$="[[loadingAny]]">
+				Is Draft
+			</paper-checkbox>
+
+			<paper-input 
+				class="max-items-per-batch-input" 
+				label="Max Items per Batch" 
+				type="string" 
+				value="{{dialogrequestbatch.MaxItemsPerBatch}}"
+				disabled$="[[loadingAny]]">
+			</paper-input>
+		</div>
+
+		<div>
+			[[localize('admin-morder-processtype-title')]]
+			<paper-menu-button no-animations class="processtype-selection" disabled$="[[loadingAny]]">
+				<div slot="dropdown-trigger">
+					<paper-button raised>
+						<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(dialogrequestbatch.ProcessType.id, 'Bulk')]]"></iron-icon>
+						<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(dialogrequestbatch.ProcessType.id, 'Bulk2')]]"></iron-icon>
+						<iron-icon icon="admin-image:filter" class="stacking hidden" showen-icon$="[[_equal(dialogrequestbatch.ProcessType.id, 'Stacking')]]"></iron-icon>
+						<span>[[localizep('admin-morder-processtype-', dialogrequestbatch.ProcessType.id)]]</span>
+					</paper-button>
+				</div>
+				<paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="value"
+					selected="{{dialogrequestbatch.ProcessType.id}}" no-animations>
+					<dom-repeat items="[[dialogrequestbatch.ProcessTypeList]]" as="processtypei">
+						<template>
+							<paper-item value$="[[processtypei.id]]">
+								<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(processtypei.id, 'Bulk')]]"></iron-icon>
+								<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(processtypei.id, 'Bulk2')]]"></iron-icon>
+								<iron-icon icon="admin-image:filter" class="stacking hidden" showen-icon$="[[_equal(processtypei.id, 'Stacking')]]"></iron-icon>
+								[[localizep('admin-morder-processtype-', processtypei.id)]]
+							</paper-item>
+						</template>
+					</dom-repeat>
+				</paper-listbox>
+			</paper-menu-button>
+		</div>
+		<p>
+			<span class="count">
+				Qty Items 
+				<span title="Qty Products Requesting Items">[[countQtyRequestBatchOrder]]</span>
+				/ <span title="Requesting Items">[[countRequestBatchOrder]]</span>
+				<!--  /  <span title="All Items">[[countOrderItems]]</span> -->
+			</span>
+			are going to be manufactured...are you sure?
+		</p>
+	</paper-dialog-scrollable>
+	
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>Close</paper-button>
+		<paper-button dialog-confirm class="order-requestorder-btn" on-tap="requestBatchOrderConfirmTap">
+			<dom-if if="[[!smallScreen]]">
+				<template>
+					[[localize('admin-ws-planning-request-batch-btn')]]
+				</template>
+			</dom-if>
+			<dom-if if="[[smallScreen]]">
+				<template>
+					[[localize('admin-ws-planning-request-batch-mobile-btn')]]
+				</template>
+			</dom-if>
+		</paper-button>
+	</div>
+</paper-dialog>

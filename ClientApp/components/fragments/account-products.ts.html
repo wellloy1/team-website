@@ -1,0 +1,158 @@
+<app-localstorage-document key="account-products" data="{{localStorage}}"></app-localstorage-document>
+
+<teamatical-products-data 
+  id="products-data" 
+  products="{{products}}" 
+  searching-progress="{{searchingProgress}}"
+  num-items="{{numItems}}"
+  query-params="{{queryParams}}"
+  currency="{{currency}}"
+  loading="{{loading}}" 
+  failure="{{failure}}"
+  user-info="{{userInfo}}" 
+  visible="[[visible]]" 
+  website-url="[[websiteUrl]]">
+</teamatical-products-data>
+
+<teamatical-ui-loader hidden$="[[_isNotConn]]"></teamatical-ui-loader>
+
+<div hidden$="[[_isNoProducts]]">
+  <div class="subsection" visible>
+    <header>
+      <h1>
+        [[_accountTitle(userInfo.orgName, 'products-title', visible)]]
+      </h1>
+      <span>
+        (
+        <span>[[_numItems]][[_numItemsApproximately]]</span>
+        <span hidden="[[!_single]]">[[localize('products-qty-item')]]</span>
+        <span hidden="[[!_many]]">[[localize('products-qty-items')]]</span>
+        )
+      </span>
+
+
+      <paper-icon-button icon="view-stream" on-tap="gripSwitchTap" hidden$="[[!isGrid]]"> 
+      </paper-icon-button>
+      <paper-icon-button icon="view-module" on-tap="gripSwitchTap" hidden$="[[isGrid]]">
+      </paper-icon-button>
+    </header>
+
+    <div id="search-progress-container">
+      <paper-spinner-lite 
+        id="search-progress"
+        active="[[searchingProgress]]">
+      </paper-spinner-lite>
+    </div>
+
+    <paper-input 
+      id="search"
+      name="search"
+      type="text"
+      label="[[localize('products-search-input')]]" 
+      aria-label$="[[localize('products-search-input')]]"
+      placeholder="[[localize('products-search-placeholder')]]"
+      value="{{products.search::input}}"
+      required
+      autocomplete="search"
+      error-message="[[localize('products-search-invalid')]]">
+    </paper-input>
+
+
+    <p class="empty-list" hidden$="[[_hasInitialItems]]">
+      [[localize('products-empty')]]
+    </p>
+    <p class="empty-list" hidden$="[[_hasSearchedItems]]">
+      [[localize('products-search-empty')]]
+    </p>
+
+    <div id="list" class="product-list">
+      <iron-list 
+        grid="[[isGrid]]"
+        id="list-virtual"
+        items="[[products.items]]" 
+        as="producti" 
+        scroll-target="document"
+        default-physical-count="40">
+        <template strip-whitespace>
+          <!-- <a href$="[[_getItemHref(item)]]" rel$="[[_classBool(item.ProductDisabled, 'nofollow', null)]]">
+            <teamatical-ui-list-item item="[[item]]"></teamatical-ui-list-item>
+          </a> -->
+
+          <div class="product-item" archive$="[[_bool(producti.IsArchive)]]">
+            <div class="product-header" hidden$="[[isGrid]]">
+              <h3>
+                [[localize('products-item-title')]]
+                #: <span class="copy-tap" on-tap="_copyTap">[[producti.ProductConfigurationID]]</span>
+                <a href="[[_buildProductUrl(producti)]]">
+                  <iron-icon icon="open-in-new" class="open-in-here"></iron-icon>
+                </a>
+
+                <dom-if if="[[_asBool(producti.User)]]">
+                  <template>
+                    <span class="user"><teamatical-ui-user-inline user="[[producti.User]]" hide-id show-as-line></teamatical-ui-user-inline></span>
+                  </template>
+                </dom-if>
+                
+
+                <paper-icon-button 
+                  class="archive-button" 
+                  icon="icons:archive" 
+                  hidden$="[[producti.IsArchive]]"
+                  disabled1="[[actionNotAllowed]]"
+                  tooltip$="[[localize('products-item-archive-label', 'item', producti.ProductConfigurationID)]]" tooltip-flow="left"
+                  aria-label$="[[localize('products-item-archive-label', 'item', producti.ProductConfigurationID)]]" 
+                  on-tap="_archiveItem">
+                </paper-icon-button>
+        
+                <paper-icon-button 
+                  class="archive-button" 
+                  icon="icons:unarchive" 
+                  hidden$="[[!producti.IsArchive]]"
+                  disabled1="[[actionNotAllowed]]"
+                  tooltip$="[[localize('products-item-unarchive-label', 'item', producti.ProductConfigurationID)]]" tooltip-flow="left"
+                  aria-label$="[[localize('products-item-unarchive-label', 'item', producti.ProductConfigurationID)]]" 
+                  on-tap="_unarchiveItem">
+                </paper-icon-button>
+      
+              </h3>
+            </div>
+            <teamatical-ui-product-item 
+              grid$="[[isGrid]]"
+              entry="[[producti]]" 
+              action-disabled="[[actionNotAllowed]]">
+            </teamatical-ui-product-item>
+          </div>
+
+        </template>
+      </iron-list>
+    </div>
+
+    <div class="detail-buttons progress-container">
+      <paper-spinner-lite 
+        id="loadMoreProgress"
+        class="progress-centered"
+        active="[[_loadMoreProgress(loading, loadingMore)]]">
+      </paper-spinner-lite>
+
+      <teamatical-ui-button
+        id="loadMoreBtn"
+        aria-label$="[[localize('products-btn-more-label')]]"
+        hidden$="[[products.plast]]"
+        class="hidden-animated slow"
+        hidden-animated$="[[_loadMoreProgress(loading, loadingMore)]]"
+        disabled$="[[loading]]"
+        on-tap="moreProductsTap">
+        [[localize('products-btn-more')]]
+      </teamatical-ui-button>
+
+      <div class="end-list" hidden$="[[!_hasNoMoreItems]]">[[localize('products-list-end')]]</div>
+    </div>
+
+  </div>
+</div>
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

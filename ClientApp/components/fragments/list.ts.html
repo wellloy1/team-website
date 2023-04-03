@@ -1,0 +1,83 @@
+<app-route route="[[route]]" pattern="/:category" data="{{routeData}}"></app-route>
+
+<teamatical-category-data 
+  id="categoryData" 
+  route="[[route]]"
+  category-name="[[routeData.category]]" 
+  category="{{category}}" 
+  categories="{{categories}}"
+  role="list"
+  website-url="[[websiteUrl]]"
+  visible="{{visible}}" 
+  failure="{{failure}}"
+  loading="{{loading}}">
+</teamatical-category-data>
+
+<!-- <teamatical-ui-image
+  class="hero-image" 
+  hidden$="[[!userInfo.isAdmin]]"
+  alt="[[category.title]]" 
+  src="[[category.image]]" 
+  placeholder-img="[[category.placeholder]]">
+</teamatical-ui-image> -->
+
+<header>
+  <h1>[[localizeTitle(category.title)]]</h1>
+  <span 
+    hidden$="[[_isNoList(category.items, failure, offline)]]">[[_getPluralizedQuantity(category.items.length)]]</span>
+</header>
+
+<teamatical-ui-loader 
+  hidden$="[[_isNotConn(category.items, failure, offline, loading)]]">
+</teamatical-ui-loader>
+
+<ul id="grid" class="grid" hidden$="[[_isNoList(category.items, failure, offline)]]">
+  <dom-repeat items="[[_getListItems(category.items)]]">
+    <template>
+      <li>
+        <a href$="[[_getItemHref(item)]]" rel$="[[_classBool(item.ProductDisabled, 'nofollow', undefined)]]">
+          <teamatical-ui-list-item 
+            dont-add-background
+            item="[[item]]">
+          </teamatical-ui-list-item>
+        </a>
+      </li>
+    </template>
+  </dom-repeat>
+</ul>
+
+<p class="empty-list" hidden$="[[!_isEmpty(category.items, failure, offline, loading)]]">
+  [[localize('list-category-empty')]]
+</p>
+
+
+<div 
+  id="notfound"
+  hidden$="[[!_notFound(category.items, failure, offline, loading)]]">
+  <div>
+    <iron-icon icon="icons:find-in-page"></iron-icon>
+    <h1>[[localize('list-category-notfound-title')]]</h1>
+    <p>[[localize('list-category-notfound-msg')]]</p>
+  </div>
+  <teamatical-ui-button on-tap="_getMore">[[localize('list-category-notfound-btn')]]</teamatical-ui-button>
+</div>
+
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>
+
+
+<teamatical-ui-list-subcategory 
+  class="showen-animated"
+  showen-animated$="[[!_hideRecentlyViewed]]"
+  subcategory-title="list-subcategory-recentproducts" 
+  subcategory-items="[[category.recentProducts]]" 
+  no-collapsible
+  role="list"
+  aria-label="list"
+  visible="[[visible]]">
+</teamatical-ui-list-subcategory>
+

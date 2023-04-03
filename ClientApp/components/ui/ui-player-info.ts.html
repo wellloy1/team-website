@@ -1,0 +1,147 @@
+<div class="inputs">
+    
+    <h2>[[localize('playerinfo-title')]]</h2>
+
+    <div class="row input-row">
+        <paper-input 
+            id="number"
+            name="PlayerYear"
+            type="string"
+            label="[[localize('playerinfo-input-year')]]" 
+            value="{{playerInfo.PlayerYear}}" 
+            hidden$="[[notYear]]"
+            char-counter
+            maxlength="150"
+            on-value-changed="onInputChanged"
+            error-message="[[playerInfo.notvalid.PlayerYear]]"
+            invalid="[[_asBool(playerInfo.notvalid.PlayerYear)]]">
+        </paper-input>
+    </div>
+
+    <div class="row input-row">
+        <paper-input 
+            id="number"
+            name="PlayerNumber"
+            type="string"
+            label="[[localize('playerinfo-input-number')]]" 
+            value="{{playerInfo.PlayerNumber}}" 
+            hidden$="[[notNumber]]"
+            char-counter
+            maxlength="150"
+            on-value-changed="onInputChanged"
+            error-message="[[playerInfo.notvalid.PlayerNumber]]"
+            invalid="[[_asBool(playerInfo.notvalid.PlayerNumber)]]">
+        </paper-input>
+    </div>
+
+    <div class="row input-row">
+        <paper-input 
+            id="name"
+            name="PlayerName"
+            type="string" 
+            label="[[localize('playerinfo-input-name')]]" 
+            value="{{playerNameUI}}" 
+            hidden$="[[notName]]"
+            char-counter 
+            maxlength="150"
+            on-input="onInputPlayerName"
+            on-value-changed="onInputChanged"
+            error-message="[[playerInfo.notvalid.PlayerName]]"
+            invalid="[[_asBool(playerInfo.notvalid.PlayerName)]]">
+
+            <div slot="suffix" class="case-btns">
+                <paper-icon-button 
+                    disabled$="[[_uppercaseSwitcherDisabled]]"
+                    class="uppercase-icon hidden-animated"
+                    aria-label="uppercase-icon"
+                    cake="1w2" 
+                    hidden-animated$="[[!playerNameUppercase]]"
+                    icon="editor:title" 
+                    tabindex="-1"
+                    tooltip$="[[_uppercaseSwitcherTooltip]]" tooltip-flow="up" tooltip-flow-horiz="left"
+                    on-tap="_makeUppercaseTap">
+                </paper-icon-button>
+
+                <paper-icon-button 
+                    disabled$="[[_uppercaseSwitcherDisabled]]"
+                    class="uppercase-icon hidden-animated"
+                    aria-label="uppercase-icon"
+                    cake="1w2" 
+                    hidden-animated$="[[playerNameUppercase]]"
+                    icon="editor:text-fields" 
+                    tabindex="-1"
+                    tooltip$="[[_uppercaseSwitcherTooltip]]" tooltip-flow="up" tooltip-flow-horiz="left"
+                    on-tap="_makeUppercaseTap">
+                </paper-icon-button>
+
+            </div>
+            
+
+        </paper-input>
+    </div>
+
+    <dom-if if="[[activityOptions]]">
+        <template>
+            <div class="row input-row">
+                <teamatical-ui-select 
+                    hidden$="[[notActivity]]"
+                    caption-text="[[localize('playerinfo-input-activity')]]" 
+                    options="[[activityOptions]]" 
+                    text-property="Name"
+                    value-property="ID" 
+                    value="{{playerInfo.PlayerActivity}}"
+                    on-value-changed="onInputChanged"
+                    error-message="[[playerInfo.notvalid.PlayerActivity]]"
+                    invalid="[[_asBool(playerInfo.notvalid.PlayerActivity)]]">
+                </teamatical-ui-select> 
+
+                <!-- <paper-input 
+                    id="name"
+                    name="PlayerActivity"
+                    type="string" 
+                    label="[[localize('playerinfo-input-activity')]]" 
+                    value="{{playerInfo.PlayerActivity}}" 
+                    hidden$="[[notName]]"
+                    char-counter 
+                    maxlength="30"
+                    on-value-changed="onInputChanged"
+                    error-message="[[playerInfo.notvalid.PlayerActivity]]"
+                    invalid="[[_asBool(playerInfo.notvalid.PlayerActivity)]]">
+                </paper-input> -->
+            </div>
+        </template>
+    </dom-if>
+
+    <dom-if if="[[captainOptions]]">
+        <template>
+            <div class="row input-row">
+                <!-- <dom-if if="[[showTextCaptain]]">
+                    <template>
+                        <paper-input 
+                            id="captain"
+                            type="string" 
+                            label="[[localize('playerinfo-input-captain')]]" 
+                            value="{{playerInfo.PlayerCaptain}}" 
+                            hidden$="[[notCaptain]]"
+                            char-counter 
+                            maxlength="2">
+                        </paper-input>
+                    </template>
+                </dom-if> -->
+
+                <teamatical-ui-select 
+                    hidden$="[[notCaptain]]"
+                    caption-text="[[localize('playerinfo-input-captain')]]" 
+                    options="[[captainOptions]]" 
+                    text-property="Name"
+                    value-property="ID" 
+                    value="{{playerInfo.PlayerCaptain}}"
+                    on-value-changed="onInputChanged"
+                    error-message="[[playerInfo.notvalid.PlayerCaptain]]"
+                    invalid="[[_asBool(playerInfo.notvalid.PlayerCaptain)]]">
+                </teamatical-ui-select> 
+            </div>
+        </template>
+    </dom-if>
+
+</div>

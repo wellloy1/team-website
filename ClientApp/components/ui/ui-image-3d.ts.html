@@ -1,0 +1,86 @@
+<iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
+
+<div id="loader-wrapper" class="loader-wrapper">
+  <div class="loader-main" id="loader"></div>
+</div>
+
+<div 
+  id="track" 
+  class="sprite-container" 
+  on-selectstart="eventNull">
+
+    <div class="icon-container">
+      <iron-icon 
+        id="icon" 
+        icon="icons:360-rotation" 
+        draggable="false"
+      ></iron-icon>
+    </div>
+
+    <img 
+      id="img" 
+      alt$="[[alt]]" 
+      draggable="false" 
+      unselectable="on"
+
+      on-track="_ontrack" 
+      on-selectstart="eventNull"
+      on-dragstart="eventNull" 
+      on-dblclick="onDblClicked"
+      on-mousemove="onMouseMove"
+      on-mouseout="onMouseOut"
+    />
+
+    <div id="buttons-container" class="buttons-container">
+      <paper-icon-button 
+        id="sizemeter" 
+        class="sizemeter"
+        aria-label="sizemeter"
+        hidden$="[[!hasDimensions]]"
+        icon="icons:size-meter" 
+        draggable="false" 
+        on-tap="onSizemeterTap" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+      </paper-icon-button>
+
+      <paper-icon-button 
+        id="zoomout" 
+        class="zoomout"
+        aria-label="zoomout"
+        hidden$="[[!iszoom]]"
+        icon="icons:zoom-out" 
+        draggable="false" 
+        on-tap="onZoomOut" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+      </paper-icon-button>
+
+
+      <paper-icon-button 
+        id="image-before-btn" 
+        class="image-before-btn"
+        aria-label="image-before-btn"
+        icon="image:navigate-before" 
+        disabled="[[disabledImageBefore]]"
+        draggable="false" 
+        on-tap="onImageBefore" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+      </paper-icon-button>
+
+      <paper-icon-button 
+        id="image-next-btn" 
+        class="image-next-btn"
+        aria-label="image-next-btn"
+        icon="image:navigate-next" 
+        disabled="[[disabledImageNext]]"
+        draggable="false" 
+        on-tap="onImageNext" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+      </paper-icon-button>
+
+    </div>
+
+</div>

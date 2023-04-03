@@ -1,0 +1,101 @@
+<dom-if if="[[colorTypeSelector]]">
+  <template>
+    <paper-toggle-button checked="{{selectedColorUI.IsSpot}}">
+      Is Spot Color
+    </paper-toggle-button>
+  </template>
+</dom-if>
+
+
+
+<paper-input 
+  label="Name" 
+  type="string" 
+  value="{{selectedColorUI.n}}"
+  name="n"
+  on-value-changed="onInputChanged"
+  error-message="[[selectedColor.notvalid.Name]]" 
+  invalid="[[_asBool(selectedColor.notvalid.Name)]]">
+</paper-input>
+
+<paper-input 
+  label="Hex" 
+  type="color" 
+  value="{{selectedColorUI.hex}}"
+  name="h"
+  on-value-changed="onInputChanged"
+  error-message="[[selectedColor.notvalid.h]]" 
+  invalid="[[_asBool(selectedColor.notvalid.h)]]">
+</paper-input>
+
+
+<paper-input 
+  label="L" 
+  type="string" 
+  value="{{selectedColorUI.sL}}"
+  name="L"
+  on-value-changed="onInputChanged"
+  error-message="[[selectedColor.notvalid.L]]" 
+  invalid="[[_asBool(selectedColor.notvalid.L)]]">
+</paper-input>
+
+<paper-input 
+  label="a" 
+  type="string" 
+  value="{{selectedColorUI.sa}}"
+  name="a"
+  on-value-changed="onInputChanged"
+  error-message="[[selectedColor.notvalid.a]]" 
+  invalid="[[_asBool(selectedColor.notvalid.a)]]">
+</paper-input>
+
+<paper-input 
+  label="b" 
+  type="string" 
+  value="{{selectedColorUI.sb}}"
+  name="b"
+  on-value-changed="onInputChanged"
+  error-message="[[selectedColor.notvalid.b]]" 
+  invalid="[[_asBool(selectedColor.notvalid.b)]]">
+</paper-input>
+
+<!-- <paper-input 
+  label="[[label]]" 
+  type="string" 
+  value="[[selectedColorText]]" 
+  readonly="true" 
+  disabled$="[[disabled]]">
+
+  <paper-icon-button
+    id="newColorBtn"
+    slot="suffix"
+    class="color-picker-button" 
+    icon="admin-image:color-lens"
+    disabled="[[disabled]]"
+    on-tap="onNewColorTap"
+    title="New">
+  </paper-icon-button>
+
+  <paper-icon-button
+    slot="suffix"
+    class="color-pantone-button" 
+    style$="[[_convertSwColor(selectedColor.h)]]"
+    icon="admin-image:style"
+    disabled="[[disabled]]"
+    on-tap="onPantoneColorTap">
+  </paper-icon-button>
+</paper-input>
+
+<teamatical-ui-color-picker 
+  disabled$="[[disabled]]"
+  colors-palette="[[colorsSwatchPalette]]" 
+  selected-color="{{selectedColor}}">
+</teamatical-ui-color-picker>
+
+<teamatical-ui-pantone-color-picker 
+    id="colorPantonePicker" 
+    draggable="false" 
+    with-backdrop="true" 
+    colors-palette="{{colorsPantonePalette}}" 
+    selected-color="{{selectedColor}}">
+</teamatical-ui-pantone-color-picker> -->

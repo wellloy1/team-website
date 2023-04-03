@@ -1,0 +1,489 @@
+<teamatical-scanner-printer-data
+  id="scanner-printer-data"
+  visible="[[visible]]"
+  website-url="[[websiteUrl]]"
+  connecting="{{connecting}}"
+  connected="{{connected}}"
+  failure="{{failure}}"
+  loading="{{loading}}"
+  active="{{active}}"
+
+
+  barcode-scanner="[[barcodeScanner]]"
+  led-controller="[[ledController]]"
+  weight-scale="[[weightScale]]"
+  sticker-printer="[[stickerPrinter]]"
+  sticker-printer-rfid="[[stickerPrinterRfid]]"
+  rfid="[[rfid]]"
+  video-camera-enabled="[[videoCamera]]"
+  
+
+  weight-units="[[weightUnits]]"
+  video-camera="[[videocameraSelected]]"
+
+
+  rfidscanners="{{rfidscanners}}"
+  scanners="{{scanners}}"
+  printers="{{printers}}"
+  printerfonts="{{printerfonts}}"
+  leds="{{leds}}"
+  scales="{{scales}}"
+  videocameras="{{videocamerasList}}"
+
+  video-modes="{{videoModes}}"
+  video-exposure="{{videoExposure}}"
+  video-focus="{{videoFocus}}"
+  video-zoom="{{videoZoom}}"
+
+  auto-connect
+  auto-reconnect>
+</teamatical-scanner-printer-data>
+
+
+
+<app-localstorage-document 
+  key="ui-scanner-printer-settings-[[storageName]]" 
+  data="{{deviceSettings}}">
+</app-localstorage-document>
+
+
+<iron-media-query query="max-width: 2767px" query-matches="{{mini}}"></iron-media-query> 
+
+<paper-fab 
+  class="button"
+  icon="[[icon]]" 
+  hidden$="[[loading]]"
+  title="[[localize('admin-ws-devicesettings-tooltip')]]"
+  aria-label="open-settings"
+  mini
+  on-tap="_openSettingsTap">
+</paper-fab>
+
+<paper-spinner-lite 
+  class="thick" 
+  active="[[loading]]"> 
+</paper-spinner-lite>
+
+
+
+<div class="layouts-dialogs">
+  <paper-dialog id="scanner_printer_settings_dialog" class="dialog-wide" proceed no-overlap dynamic-align
+    vertical-align="middle" horizontal-align="center" on-iron-overlay-closed="onCloseSettingsDialog">
+    
+    <h2>[[localize('admin-ws-devicesettings')]]</h2>
+
+    <paper-dialog-scrollable>
+      <div class="local-service-on-screen">
+        <div class="local-service-btns">
+          <a href="teamatical:restartlocalserver">
+            <paper-button>[[localize('admin-ws-devicesettings-local-service-restart')]]</paper-button>
+          </a>
+          <a href="teamatical:startlocalserver">
+            <paper-button>[[localize('admin-ws-devicesettings-local-service-start')]]</paper-button>
+          </a>
+          <a href="teamatical:stoplocalserver">
+            <paper-button>[[localize('admin-ws-devicesettings-local-service-stop')]]</paper-button>
+          </a>
+          <paper-toggle-button checked="{{consoleOnScreen}}" disabled$="[[loading]]" on-change="onLocalServiceOnScreenChanged">
+            [[localize('admin-ws-devicesettings-local-service-on-screen')]]
+          </paper-toggle-button>
+        </div>
+      </div>
+
+
+      <div>
+        <span>
+          [[localize('admin-ws-devicesettings-localservice')]]
+          [[status]]
+        </span>
+      </div>
+
+      
+
+      <dom-if if="[[rfid]]">
+        <template>
+            <div class="rfid-scanner-selection">
+              <dom-if if="[[showRfidScanner]]">
+                <template>
+                  <!-- <tmladmin-ui-dropdown-menu 
+                    vertical-align="top" 
+                    horizontal-align="left"
+                    id-property="ScannerId"
+                    title-property="ScannerName"
+                    label$="[[localize('admin-ws-devicesettings-rfidscanner-label')]]"
+                    disabled$="[[cannotChange]]"
+                    value="{{rfidscanner}}"
+                    value-list="[[rfidscanners]]">
+                  </tmladmin-ui-dropdown-menu> -->
+                  
+                  <paper-dropdown-menu-light vertical-align="top" horizontal-align="left"
+                    label="[[localize('admin-ws-devicesettings-rfidscanner-label')]]" value="{{rfidscanner.ScannerName}}" disabled="[[cannotChange]]"
+                    no-label-float1 no-animations>
+                    <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="value" selected="{{rfidscanner.ScannerId}}">
+                      <dom-repeat items="[[rfidscanners]]" as="rfidscanneri">
+                        <template>
+                          <paper-item value$="[[rfidscanneri.ScannerId]]">
+                            [[rfidscanneri.ScannerName]] - (#: [[rfidscanneri.ScannerId]])
+                          </paper-item>
+                        </template>
+                      </dom-repeat>
+                    </paper-listbox>
+                  </paper-dropdown-menu-light>
+                </template>
+              </dom-if>
+            </div>
+        </template>
+      </dom-if>
+
+
+      <dom-if if="[[barcodeScanner]]">
+        <template>
+
+          <dom-if if="[[multiScanners]]">
+            <template>
+              <paper-radio-group 
+                aria-labelledby="label1" 
+                selected="{{multiScannersCount}}" 
+                name="multiScannersCount"
+                style="margin-top: 22px;">
+                <paper-radio-button name="1">1 [[localize('admin-ws-devicesettings-scanners-btn')]]</paper-radio-button>
+                <paper-radio-button name="2">2 [[localize('admin-ws-devicesettings-scanners-btn')]]</paper-radio-button>
+                <paper-radio-button name="3">3 [[localize('admin-ws-devicesettings-scanners-btn')]]</paper-radio-button>
+              </paper-radio-group>
+            </template>
+          </dom-if>
+
+          <div class="scanner-selection">
+            <tmladmin-ui-dropdown-menu
+              vertical-align="top" 
+              horizontal-align="left"
+              id-property="ID"
+              title-property="Title"
+              label="[[localize('admin-ws-devicesettings-scanner-label')]] 1"
+              disabled="[[cannotChange]]"
+              value="{{scanner1}}"
+              value-list="[[scanners]]">
+            </tmladmin-ui-dropdown-menu>
+         
+            <dom-if if="[[showScanner2]]">
+              <template>
+                <tmladmin-ui-dropdown-menu
+                  vertical-align="top" 
+                  horizontal-align="left"
+                  id-property="ID"
+                  title-property="Title"
+                  label="[[localize('admin-ws-devicesettings-scanner-label')]] 2"
+                  disabled="[[cannotChange]]"
+                  value="{{scanner2}}"
+                  value-list="[[scanners]]">
+                </tmladmin-ui-dropdown-menu>
+              </template>
+            </dom-if>
+          
+            <dom-if if="[[showScanner3]]">
+              <template>
+                <tmladmin-ui-dropdown-menu
+                  vertical-align="top" 
+                  horizontal-align="left"
+                  id-property="ID"
+                  title-property="Title"
+                  label="[[localize('admin-ws-devicesettings-scanner-label')]] 3"
+                  disabled="[[cannotChange]]"
+                  value="{{scanner3}}"
+                  value-list="[[scanners]]">
+                </tmladmin-ui-dropdown-menu>
+              </template>
+            </dom-if>
+          </div>
+      
+        </template>
+      </dom-if>
+
+
+
+      
+      <dom-if if="[[stickerPrinter]]">
+        <template>
+
+          <div class="printer-selection">
+            <paper-toggle-button 
+              checked="{{printRfid}}" 
+              disabled$="[[loading]]" 
+              class="hidden" 
+              showen-block$="[[showRfidPrinter]]">
+              [[localize('admin-ws-devicesettings-print-rfid')]]
+            </paper-toggle-button>
+
+            
+            <dom-if if="[[showPrinter]]">
+              <template>
+                <tmladmin-ui-dropdown-menu
+                  vertical-align="top" 
+                  horizontal-align="left"
+                  id-property="ID"
+                  title-property="Title"
+                  label="[[localize('admin-ws-devicesettings-printer-label')]]"
+                  disabled="[[cannotChange]]"
+                  value="{{printer}}"
+                  value-list="[[printers]]">
+                </tmladmin-ui-dropdown-menu>
+
+
+                <paper-expansion-panel header="Fonts" opened="false">
+                  <p class="reload-fonts">
+                    <paper-icon-button 
+                      class="load-font-btn" 
+                      disabled$="[[_fontLoading(loading, printerfonts.*, connected)]]"
+                      icon="admin-icons:refresh"
+                      on-tap="_loadListFontTap">
+                    </paper-icon-button>
+                  </p>
+                  <div class="table">
+                    <dom-repeat items="[[printerfonts]]" as="fonti">
+                      <template>
+                        <div class="row vcenter">
+                          <div class="">
+                            [[fonti.Title]]
+                          </div>
+                          <div>
+                            <paper-icon-button 
+                              class="load-font-btn" 
+                              disabled$="[[_fontLoading(loading, fonti.*, connected)]]"
+                              hidden$="[[fonti.IsInstalled]]"
+                              icon="admin-icons:add"
+                              on-tap="_loadFontTap">
+                            </paper-icon-button>
+                            <paper-icon-button 
+                              class="load-font-btn" 
+                              disabled$="[[_fontLoading(loading, fonti.*, connected)]]"
+                              hidden$="[[_hiddenRemoveFont(fonti.IsInstalled, fonti.ID)]]"
+                              icon="admin-icons:remove"
+                              on-tap="_unloadFontTap">
+                            </paper-icon-button>
+                          </div>
+                          <div>
+                            <!-- <paper-spinner-lite 
+                              active="[[fonti.Loading]]"> 
+                            </paper-spinner-lite> -->
+                            <paper-progress 
+                              class="font-loading-progress" 
+                              hidden$="[[!fonti.Loading]]"
+                              min="0" max="100"
+                              value$="[[_formatProgress(fonti.Progress)]]">
+                            </paper-progress>
+                          </div>
+                        </div>
+                      </template>
+                    </dom-repeat>
+                    <dom-if if="[[LenLess(printerfonts, 1)]]">
+                      <template>
+                        <div class="noitems">
+                          no items
+                        </div>
+                      </template>
+                    </dom-if>
+                  </div>
+                </paper-expansion-panel>
+
+              </template>
+            </dom-if>
+          </div>
+
+        </template>
+      </dom-if>
+
+      
+
+
+
+      <dom-if if="[[ledController]]">
+        <template>
+            <dom-if if="[[sortingDelays]]">
+              <template>
+                <div>
+                  [[localize('admin-ws-devicesettings-leds-sorting-title')]]
+                </div>
+                <div class="leds-selection">
+                  <paper-input label="[[localize('admin-ws-devicesettings-leds-sorting')]]" type="string"
+                    value="{{deviceSettings.SortingDelay}}">
+                    <iron-icon class="timer-picker-button" icon="admin-icons:query-builder" slot="suffix"></iron-icon>
+                  </paper-input>
+            
+                  <paper-input label="[[localize('admin-ws-devicesettings-leds-sorting-acc')]]" type="string"
+                    value="{{deviceSettings.SortingAccessoryDelay}}">
+                    <iron-icon class="timer-picker-button" icon="admin-icons:query-builder" slot="suffix"></iron-icon>
+                  </paper-input>
+                </div>
+              </template>
+            </dom-if>
+            
+            <dom-if if="[[aggregationDelays]]">
+              <template>
+                <div>
+                  [[localize('admin-ws-devicesettings-leds-aggregation-title')]]
+                </div>
+                <div class="leds-selection">
+                  <paper-input label="[[localize('admin-ws-devicesettings-leds-aggregation-front')]]" type="string"
+                    value="{{deviceSettings.AggregationFrontDelay}}">
+                    <iron-icon class="timer-picker-button" icon="admin-icons:query-builder" slot="suffix"></iron-icon>
+                  </paper-input>
+            
+                  <paper-input label="[[localize('admin-ws-devicesettings-leds-aggregation-back')]]" type="string"
+                    value="{{deviceSettings.AggregationBackDelay}}">
+                    <iron-icon class="timer-picker-button" icon="admin-icons:query-builder" slot="suffix"></iron-icon>
+                  </paper-input>
+                </div>
+              </template>
+            </dom-if>
+        </template>
+      </dom-if>
+
+
+      <dom-if if="[[weightScale]]">
+        <template>
+          <div>
+            [[localize('admin-ws-devicesettings-scale-title')]]
+          </div>
+
+          <div class="scale-selection">
+            <paper-input label="[[localize('admin-ws-devicesettings-scale-units')]]" type="string" 
+              readonly1
+              disabled
+              value="{{deviceSettings.WeightScaleUnits}}">
+              <!-- <iron-icon class="timer-picker-button" icon="admin-icons:query-builder" slot="suffix"></iron-icon> -->
+            </paper-input>
+          </div>
+        </template>
+      </dom-if>
+
+
+
+
+      <dom-if if="[[videoCamera]]">
+        <template>
+
+          <div class="video-selection">
+            <dom-if if="[[showVideoCameraSelection]]">
+              <template>
+                <tmladmin-ui-dropdown-menu 
+                  vertical-align="top" 
+                  horizontal-align="left"
+                  id-property="ID"
+                  title-property="Title"
+                  label="[[localize('admin-ws-devicesettings-videocamera-label')]]" 
+                  disabled="[[cannotChange]]"
+                  value="{{videocameraSelected}}"
+                  value-list="[[videocamerasList]]">
+                </tmladmin-ui-dropdown-menu>
+              </template>
+            </dom-if>
+
+            <dom-if if="[[_asBool(videoModes)]]">
+              <template>
+                <tmladmin-ui-dropdown-menu 
+                  vertical-align="top" 
+                  horizontal-align="left"
+                  id-property="mode"
+                  title-property="mode"
+                  label="[[localize('admin-ws-devicesettings-videomode-label')]]" 
+                  disabled="[[cannotChange]]"
+                  value="{{videomode}}"
+                  value-list="[[videoModes]]">
+                </tmladmin-ui-dropdown-menu>
+              </template>
+            </dom-if>
+
+            <div class="table">
+              <dom-if if="[[_asBool(videoExposure)]]">
+                <template>
+                  <div class="row vcenter">
+                    <div>
+                      <div>Exposure: <span class="caption"></span></div>
+                      <paper-slider 
+                        class="video-parameter-slider"
+                        disabled$="[[_disabled(loading, videoExposure.Auto)]]"
+                        editable 
+                        min="[[videoExposure.Min]]" 
+                        max="[[videoExposure.Max]]"
+                        step="[[videoExposure.Step]]" 
+                        value="{{videoExposure.Value}}">
+                      </paper-slider>
+                    </div>
+                    <div class="w10">
+                      <paper-checkbox 
+                        checked="{{videoExposure.Auto}}" 
+                        disabled="[[loading]]">
+                        Auto
+                      </paper-checkbox>
+                    </div>
+                  </div>
+                </template>
+              </dom-if>
+
+              <dom-if if="[[_asBool(videoFocus)]]">
+                <template>
+                  <div class="row vcenter">
+                    <div>
+                      <div>Focus: <span class="caption"></span></div>
+                      <paper-slider 
+                        class="video-parameter-slider"
+                        disabled$="[[_disabled(loading, videoFocus.Auto)]]"
+                        editable 
+                        min="[[videoFocus.Min]]" 
+                        max="[[videoFocus.Max]]"
+                        step="[[videoFocus.Step]]" 
+                        value="{{videoFocus.Value}}">
+                      </paper-slider>
+                    </div>
+
+                    <div class="w10">
+                      <paper-checkbox 
+                        checked="{{videoFocus.Auto}}" 
+                        disabled="[[loading]]">
+                        Auto
+                      </paper-checkbox>
+                    </div>
+                  </div>
+                </template>
+              </dom-if>
+
+              <dom-if if="[[_asBool(videoZoom)]]">
+                <template>
+                  <div class="row vcenter">
+                    <div>
+                      <div>Focus: <span class="caption"></span></div>
+                      <paper-slider 
+                        class="video-parameter-slider"
+                        disabled$="[[_disabled(loading, videoZoom.Auto)]]"
+                        editable 
+                        min="[[videoZoom.Min]]" 
+                        max="[[videoZoom.Max]]"
+                        step="[[videoZoom.Step]]" 
+                        value="{{videoZoom.Value}}">
+                      </paper-slider>
+                    </div>
+
+                    <div class="w10">
+                      <paper-checkbox 
+                        checked="{{videoZoom.Auto}}" 
+                        disabled="[[loading]]">
+                        Auto
+                      </paper-checkbox>
+                    </div>
+                  </div>
+                </template>
+              </dom-if>
+
+            </div>
+          </div>
+        </template>
+      </dom-if>
+
+    </paper-dialog-scrollable>
+
+    <div class="buttons">
+      <paper-button dialog-dismiss autofocus>[[localize('admin-ws-devicesettings-btn-close')]]</paper-button>
+      <paper-button dialog-confirm on-tap="saveSettings">[[localize('admin-ws-devicesettings-btn-save')]]</paper-button>
+    </div>
+  </paper-dialog>
+</div>

@@ -1,0 +1,53 @@
+:host {
+    display: block;
+   
+}
+:host([has-label]) {
+    margin-top: 8px;
+}
+
+:host(:not([invalid])) > p.error {
+  display: none !important;
+}
+
+:host([invalid]) > label {
+  color: var(--paper-input-container-invalid-color, var(--error-color));
+}
+:host([focused]) > label {
+  color: var(--paper-input-container-label-focus);
+}
+
+:host([code-text]) vaadin-rich-text-editor {
+    min-height: 960px;
+    min-height: 960px;
+}
+
+vaadin-rich-text-editor {
+    min-height: 400px;
+    max-height: 960px;
+
+    @apply --tmladmin-ui-richtext-editor-style;
+}
+
+p.error {
+  color: var(--paper-input-container-invalid-color, var(--error-color));
+  font-family: var(--paper-font-caption_-_font-family);
+  -webkit-font-smoothing: var(--paper-font-caption_-_-webkit-font-smoothing);
+  white-space: var(--paper-font-caption_-_white-space);
+  overflow: var(--paper-font-caption_-_overflow);
+  text-overflow: var(--paper-font-caption_-_text-overflow);
+  font-size: var(--paper-font-caption_-_font-size);
+  font-weight: var(--paper-font-caption_-_font-weight);
+  letter-spacing: var(--paper-font-caption_-_letter-spacing);
+  line-height: var(--paper-font-caption_-_line-height);
+    
+  margin: 0px;
+}
+
+
+
+
+label {
+  color: var(--paper-input-container-label);
+}
+

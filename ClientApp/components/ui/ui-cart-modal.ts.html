@@ -1,0 +1,52 @@
+<div>
+  <div class="label" id="message"></div>
+</div>
+
+<div class="layout-horizontal">
+  <teamatical-ui-button 
+    id="viewCartAnchor"
+    class="modal-button"
+    href="/cart"
+    on-tap="close">
+    <span>
+      <iron-icon icon="shopping-cart"></iron-icon>
+      [[localize('cart-modal-viewcart')]]
+    </span>
+  </teamatical-ui-button>
+
+  <!-- <teamatical-ui-button 
+    class="modal-button"
+    href="/checkout"
+    on-tap="close">[[localize('cart-modal-checkout')]]</teamatical-ui-button> -->
+
+  <teamatical-ui-button 
+    id="rosterEdit"
+    class="modal-button hide"
+    on-tap="editrosterTap">
+    [[localize('cart-modal-roster-edit')]]
+  </teamatical-ui-button>
+
+  <teamatical-ui-button 
+    id="addValid"
+    class="modal-button hide"
+    on-tap="addvalidTap">
+    [[localize('cart-modal-roster-addvalid')]]
+  </teamatical-ui-button>
+
+
+  <teamatical-ui-button 
+    id="closeButton"
+    class="modal-button"
+    on-tap="closeTap">
+    [[localize('cart-modal-continue')]]
+  </teamatical-ui-button>
+
+</div>
+
+<paper-icon-button 
+  id="closeBtn"
+  class="close-btn"
+  icon="close"
+  aria-label$="[[localize('cart-modal-close-arialabel')]]" 
+  on-tap="closeTap">
+</paper-icon-button>

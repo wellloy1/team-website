@@ -1,0 +1,199 @@
+<app-localstorage-document key="admin-products-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+				<paper-button class="upload-new-product-btn indigo" raised on-tap="newProductTap">
+					New Product
+				</paper-button>
+			</div>
+		</div>
+		
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid
+			id="grid"
+			aria-label="Products" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			multi-sort1
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.id]]</span>
+					<a href="[[_urlViewProduct(item.id)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</div>
+			</template>
+
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="358px" resizable="true" id="ID">
+				<template class="header">
+					ID
+					<vaadin-grid-filter aria-label="ID" path="ID" value="[[_filterID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="order-id copy-tap" on-tap="_copyTap">[[item.id]]</span>
+					<a href="[[_urlViewProduct(item.id)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</template>
+				<template class="footer-off">ID</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="280px" resizable="true" id="Name">
+				<template class="header">
+					Name
+					<vaadin-grid-filter aria-label="Name" path="Name" value="[[_filterName]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.Name]]</template>
+				<template class="footer-off">Name</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="110px" resizable="true" id="SKU">
+				<template class="header">
+					SKU
+					<vaadin-grid-filter aria-label="SKU" path="SKU" value="[[_filterSKU]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="copy-tap" on-tap="_copyTap">[[item.SKU]]</span>
+				</template>
+				<template class="footer-off">SKU</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="110px" resizable="true" id="DisabledPattern">
+				<template class="header">
+					Disabled Pattern
+					<vaadin-grid-filter class="hidden" aria-label="DisabledPattern"
+						aria-placeholder="DisabledPattern" path="DisabledPattern"
+						value="[[_filterDisabledPattern]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="DisabledPatternCombo" style="width:80px;" clear-button value="{{_filterDisabledPattern}}">
+					</vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted$="[[item.DisabledPattern]]">
+						[[item.DisabledPattern]]
+					</span>
+				</template>
+				<template class="footer-off">Disabled Pattern</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="110px" resizable="true" id="Enabled">
+				<template class="header">
+					Enabled
+					<vaadin-grid-filter class="hidden" aria-label="Enabled"
+						aria-placeholder="Enabled" path="Enabled"
+						value="[[_filterEnabled]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="EnabledCombo" style="width:80px;" value="{{_filterEnabled}}">
+					</vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted$="[[!item.Enabled]]">
+						[[item.Enabled]]
+					</span>
+				</template>
+				<template class="footer-off">Enabled</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="110px" resizable="true" id="Currency">
+				<template class="header">
+					Currency
+					<vaadin-grid-filter class="hidden" aria-label="Currency"
+						aria-placeholder="Currency" path="Currency"
+						value="[[_filterCurrency]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="CurrencyCombo" style="width:80px;" value="{{_filterCurrency}}">
+					</vaadin-combo-box>
+				</template>
+				<template>
+					[[item.Currency]]
+				</template>
+				<template class="footer-off">Currency</template>
+			</vaadin-grid-column>
+
+			<!-- <vaadin-grid-column width="110px" flex-grow="0" resizable="true" id="Price">
+				<template class="header">
+					<vaadin-grid-sorter path="Price">Price</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Price" path="Price" value="[[_filterPrice]]"></vaadin-grid-filter>
+				</template>
+				<template>[[_priceV(item.Price, item.Currency)]]</template>
+				<template class="footer-off">Price</template>
+			</vaadin-grid-column> -->
+
+			<vaadin-grid-column width="350px" resizable="true" id="Keywords">
+				<template class="header">
+					Keywords
+					<vaadin-grid-filter aria-label="Keywords" path="Keywords" value="[[_filterKeywords]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<div class="bigtext-cell">
+						<div>[[item.Keywords]]</div>
+					</div>
+				</template>
+				<template class="footer-off">Keywords</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column resizable="true" id="Description">
+				<template class="header">
+					Description
+					<vaadin-grid-filter aria-label="Description" path="Description" value="[[_filterDescription]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<div class="bigtext-cell">
+						<div>[[item.Description.length]] 
+							<dom-if if="[[_asBool(item.Description)]]">
+								<template>chars</template>
+							</dom-if>
+						</div>
+					</div>
+				</template>
+				<template class="footer-off">Description</template>
+			</vaadin-grid-column>
+
+		</vaadin-grid>
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-products-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+		
+	</div>
+</div>

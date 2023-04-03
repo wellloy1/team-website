@@ -1,0 +1,279 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+		
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<span highlighted hidden$="[[hidden_tasksFlag(order.Tasks)]]">
+						[[localize('admin-tasks')]]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					<span class="warning hidden" showen$="[[order.Sandbox]]"><iron-icon icon="admin-icons:warning"></iron-icon> TEST</span>
+					Purchase Order #: 
+
+					<span class="copy-tap" on-tap="_copyTap">[[order.PurchaseOrderID]]</span>
+					([[_formatDate(order.Created)]])
+					<span>
+						- Issuer Organization #: 
+						<span class="copy-tap" on-tap="_copyTap">[[order.IssuerOrganizationID]]</span>
+						<a href="[[_urlViewOrganization(order.IssuerOrganizationID)]]">
+							<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+						</a>
+					</span>
+				</h3>
+
+				<div class="table po-order-details">
+					<!-- <li>Created: [[_formatDate(order.Created)]]</li> -->
+					<div class="row"><div>Status</div><div>[[order.Status]]</div></div>
+					<div class="row"><div>Is Approvable</div><div><span highlighted$="[[order.IsApprovable]]">[[order.IsApprovable]]</span></div></div>
+					<div class="row"><div>Closed</div><div><span highlighted$="[[order.Closed]]">[[order.Closed]]</span></div></div>
+					<div class="row"><div>Partner Fee Not Used</div><div><span highlighted$="[[order.PartnerFeeNotUsed]]">[[order.PartnerFeeNotUsed]]</span></div></div>
+					<div class="row"><div>Issuer User</div><div>
+						<teamatical-ui-user-inline user="[[order.IssuerUser]]" show-as-line></teamatical-ui-user-inline>
+					</div></div>
+					<div class="row"><div>Purchase Order Name</div><div>[[order.Title]]</div></div>
+					<div class="row"><div>Purchase Order Description (public)</div><div>[[order.Description]]</div></div>
+					<div class="row"><div>Purchase Order Number Internal</div><div>[[order.PONumberInternal]]</div></div>
+					<!-- <li>Issuer OrganizationID: [[order.IssuerOrganizationID]]</li> -->
+					<div class="row"><div>Issuer Organization Name</div><div>[[order.IssuerOrganizationName]]</div></div>
+					<div class="row"><div>Order Count</div><div>[[order.OrderCount]]</div></div>
+					<div class="row"><div>Total Amount Limit</div><div>[[formatLimitPrice(order.TotalAmountLimit, order.Currency)]]</div></div>
+					<div class="row"><div>Total Amount Order Limit</div><div>[[formatLimitPrice(order.TotalAmountOrderLimit, order.Currency)]]</div></div>
+					<!-- <li>NeedRefund: [[order.NeedRefund]]</li> -->
+					<div class="row warning" hidden$="[[!order.NeedRefund]]"><div>Amount need to refund</div><div>[[_formatPrice(order.AmountForRefund, order.Currency)]]</div></div>
+				</div>
+
+
+				<div class="buttons">
+
+					<paper-button
+						class="order-close-btn" 
+						disabled$="[[_disabled(loadingAny, order.CanClose)]]" 
+						raised 
+						on-tap="closeOrderConfirmTap">
+						Mark as Closed
+					</paper-button>
+					<paper-dialog id="dialog-close" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm</h2>
+						<p>
+							Are you sure to mark as closed?
+						</p>
+						<div class="buttons">
+							<paper-button dialog-dismiss autofocus>Dismiss</paper-button>
+							<paper-button dialog-confirm on-tap="closeOrderTap">Mark as Closed</paper-button>
+						</div>
+					</paper-dialog>
+
+
+					<paper-button 
+						class="create-invoice-btn"
+						disabled$="[[_disabled(loadingAny, order.CanCreateInvoice)]]"
+						raised 
+						on-tap="createInvoiceConfirmTap">
+						Create Invoice
+					</paper-button>
+					<paper-dialog id="dialog-createinvoice" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm</h2>
+						<p>
+							Are you sure to create invoice?
+						</p>
+						<div class="buttons">
+							<paper-button dialog-dismiss autofocus>Close</paper-button>
+							<paper-button dialog-confirm on-tap="createInvoiceTap">Create</paper-button>
+						</div>
+					</paper-dialog>
+
+
+
+
+					<paper-button
+						class="order-approve-btn" 
+						disabled$="[[_disabled(loadingAny, order.IsApprovable)]]" 
+						raised 
+						on-tap="approveOrderConfirmTap">
+						Payment Accepted
+					</paper-button>
+					<paper-dialog id="dialog-approve" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm</h2>
+						<p>
+							Are you sure to approve payment?
+						</p>
+						<div class="buttons">
+							<paper-button dialog-dismiss autofocus>Close</paper-button>
+							<paper-button dialog-confirm on-tap="approveOrderTap">Approve</paper-button>
+						</div>
+					</paper-dialog>
+
+					
+					<paper-button
+						class="order-needrefund-btn" 
+						disabled$="[[_disabled(loadingAny, order.NeedRefund)]]" 
+						raised 
+						on-tap="needrefundOrderConfirmTap">
+						Mark as Refunded
+					</paper-button>
+					<paper-dialog id="dialog-needrefund" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm</h2>
+						<p>
+							Are you sure to mark as refunded?
+						</p>
+						<div class="buttons">
+							<paper-button dialog-dismiss autofocus>Close</paper-button>
+							<paper-button dialog-confirm on-tap="needrefundOrderTap">Confirm</paper-button>
+						</div>
+					</paper-dialog>
+				
+
+
+					<!-- <div class="order-not-cancelable" hidden$="[[hideCancelableMsg(order)]]">
+						[[localize('order-not-cancelable', 'oid', order.id)]]
+					</div> -->
+
+					<!-- <paper-button
+							class="order-resnapshot-btn" 
+							disabled$="[[loading]]" 
+							hidden$="[[hideResnapshotBtn(order)]]" 
+							raised 
+							on-tap="resnapshotOrderTap">
+							Resnapshot Order
+					</paper-button>
+
+					<paper-dialog 
+						id="dialogcancel" 
+						proceed 
+						no-overlap 
+						horizontal-align="left" 
+						vertical-align="top">
+						<h2>[[localize('order-button-cancel', 'oid', order.id)]]</h2>
+						<paper-dialog-scrollable>
+							Cancel order will be proceed with refund...are you sure?
+
+							<paper-textarea label="Refund reason" value="{{dialogcancel_reason}}"></paper-textarea>
+
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss>Close</paper-button>
+							<paper-button dialog-confirm on-tap="cancelOrderConfirm">Cancel Order</paper-button>
+							<paper-button dialog-confirm autofocus on-tap="cancelOrderRefundConfirm">Cancel And Refund</paper-button>
+						</div>
+					</paper-dialog>
+
+					<div class="spinner">
+						<paper-button class="order-sync-btn" raised 
+							disabled$="[[!order.IntermediatePDFExist]]"
+							on-tap="_onDownload">
+							Intermediate Production File Download
+						</paper-button>
+						<paper-spinner-lite id="downloadProgress" class="thick"></paper-spinner-lite>
+					</div> -->
+				</div>
+
+			</div>
+
+
+			
+			<div class="order-items" id="order-items">
+				<h4>
+					Purchase Order Items
+				</h4>
+
+				<div scrollable-x>
+					<div class="table">
+						<div class="header">
+							<div>
+								OrderID
+							</div>
+							<div>
+								Status
+							</div>
+							<div>
+								Amount
+							</div>
+							<div>
+								Need Refund
+							</div>
+						</div>
+					
+						<dom-repeat items="[[order.items]]" as="itemi">
+							<template>
+								<div class="row">
+									<div>
+										<span class="copy-tap" on-tap="_copyTap">[[itemi.OrderID]]</span>
+										<a href="[[_urlViewOrder(itemi.OrderID)]]">
+											<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+										</a>
+									</div>
+									<div>
+										[[itemi.Status]]
+									</div>
+									<div>
+										[[_formatPrice(itemi.Amount, order.Currency)]]
+									</div>
+									<div>
+										[[itemi.NeedRefund]]
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+						<dom-if if="[[LenLess(order.items)]]">
+							<template>
+								<div class="noitems">
+									no items
+								</div>
+							</template>
+						</dom-if>
+					</div>
+				</div>
+				<!-- endtable -->
+			</div>
+
+			
+			<div class="order-footer">
+				<div class="total-items">
+					<dom-repeat items="[[_computeTotalsVisible(order.totals)]]" as="totali">
+						<template>
+							<div class$="total-row {{totali.class}}">
+								<div>[[totali.title]]</div>
+								<div>[[_formatTotalsItem(totali.id, totali.amount, order.Currency)]]</div>
+							</div>
+						</template>
+					</dom-repeat>
+				</div>
+			</div>
+
+
+			<!-- Tasks -->
+			<tmladmin-ui-task-list 
+				class="order-tasks"
+				title="Tasks"
+				tasks="[[order.Tasks]]">
+			</tmladmin-ui-task-list>
+		
+
+			<!-- History -->
+			<tmladmin-ui-changes-history
+				class="order-history"
+				title="Purchase Order History"
+				items="[[order.History]]">
+			</tmladmin-ui-changes-history>
+		</div>
+	</div>
+</div>

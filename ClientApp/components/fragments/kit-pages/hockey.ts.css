@@ -1,0 +1,410 @@
+:host {
+	--title-color: #214253;
+	--background-darkcolor: #5E808E;
+	--text-darkcolor: white;
+	--background-darkercolor: #214253;
+	--text-darkercolor: white;
+	--background-darklighercolor: #72919B;
+	--text-darklighercolor: white;	
+
+	--background-accentcolor: #57AF48;
+	--background-accentcolor-hover: #64BC51;
+	--background-accentcolor-shadow: white;
+	--text-accentcolor: white;
+}
+
+.hockey-backgound {
+	background-image: url('../../images/kits/hockey/bgnd2.png') ;
+}
+
+.hero-text {
+	font-size: 7.7em;
+	line-height: 1.3em;
+	font-weight: bold;
+	text-align: center;
+	text-transform: uppercase;
+
+    position: absolute;
+    bottom: 54px;
+    left: 0px;
+    right: 0px;
+    color: white;
+    filter: drop-shadow(4px 6px 0px #000);
+}
+.hero-section {
+	background-color: #11202B;
+	position: relative;
+}
+
+.image {
+	display: block;
+    height: auto;
+    width: 100%;
+    max-width: var(--app-page-width);
+    margin: 0px auto;
+    padding: 0px;
+    /* max-width: 978px;
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%);
+    border-radius: 5px;
+    max-width: var(--teamatical-ui-description-img_-_max-width, 978px); */
+}
+/* .image::before {
+	content: "";
+	display: block;
+	padding-top: 56.16%;
+} */
+
+.images img {
+	display: block;
+    height: auto;
+    width: 100%;
+    margin: 0px auto;
+    padding: 0px;
+}
+
+.dark-section {
+	background-color: var(--background-darkcolor);
+	/* min-height: 246px; */
+    overflow: hidden;
+}
+.dark-section.small {
+	min-height: 52px;
+}
+
+.dark-section.s1 .text {
+    padding: 0px 10px;
+	/* padding-top: 30px; */
+}
+.darkligher-section.s3 {
+	background-color: var(--background-darklighercolor);
+    overflow: hidden;
+	min-height: 248px;
+
+	display: flex;
+  	justify-content: center;
+  	align-content: center;
+  	flex-direction: column;
+}
+.darkligher-section.s3 p {
+    font-size: 1.16em;
+	font-weight: lighter;
+    color:  var(--text-darklighercolor);
+    font-style: italic;
+    max-width: 780px;
+    margin: 0 auto;
+    text-align: center;
+}
+.dark-section.s3 {
+	min-height: 98px;
+}
+.darker-section.s2 {
+	background-color: var(--background-darkercolor);
+    overflow: hidden;
+	min-height: 52px;
+}
+
+.dark-section .text {
+	margin: 0 auto;
+    color: var(--text-darkcolor);
+    text-transform: uppercase;
+    font-weight: lighter;
+    font-size: 2em;
+    line-height: 1.5em;
+    text-align: center;
+    max-width: var(--app-page-width);
+
+	display: flex;
+    justify-content: center;
+    align-items: center;
+    /* min-height: 120px; */
+}
+.button a {
+	text-decoration: none;
+}
+.button a:hover {
+	text-decoration: none;
+}
+.button a:active {
+	text-decoration: none;
+}
+.section-block .button button,
+.dark-section .button button {
+	display: block;
+	margin: 30px auto;
+}
+.triple-block {
+	margin: 0 auto;
+}
+.triple-block.width {
+	max-width: var(--app-page-width);
+}
+.triple-block h1 {
+	text-transform: uppercase;
+    font-weight: normal;
+    font-size: 2em;
+    line-height: 1.5em;
+	padding: 30px;
+    text-align: center;
+	color: var(--title-color);
+}
+.triple-block p {
+    font-weight: lighter;
+	padding: 30px 30px;
+    text-align: center;
+    font-size: 1.2em;
+    line-height: 1.2em;
+	color: var(--title-color);
+}
+
+.text-thin-block {
+	max-width: 767px;
+	margin: 0 auto;
+	margin-bottom: 90px;
+    margin-top: 40px;
+}
+.text-thin-block h2 {
+	text-transform: uppercase;
+	text-align: center;
+    font-size: 1.6em;
+    line-height: 1.6em;
+	color: var(--title-color);
+}
+.text-thin-block p {
+	text-align: center;
+    font-size: 1.2em;
+    line-height: 1.2em;
+}
+
+.triple-block.darkcolor .link a {
+    color: #408CCB;
+}
+.triple-block.darkcolor {
+	background-color: var(--background-darkcolor);
+	color: var(--text-darkcolor);
+}
+.triple-block.darkercolor {
+	background-color: var(--background-darkercolor);
+	color: var(--text-darkercolor);
+}
+
+.triple-block-container {
+    display: flex;
+}
+.triple-block-container.width {
+	max-width: var(--app-page-width);
+	margin: 0 auto;
+	padding: 30px 0px;
+}
+.triple-block .block-p3 {
+    width: 33.3%;
+}
+
+.triple-block .title.upper {
+	text-align: center;
+	text-transform: uppercase;
+	font-size: 1.7em;
+    font-weight: bold;
+	line-height: 1.7em;
+}
+.triple-block .link,
+.triple-block .text {
+	text-align: center;
+	font-size: 1.1em;
+    font-weight: lighter;
+    line-height: 1.1em;
+}
+.triple-block .text.big {
+	min-height: 100px;
+}
+.triple-block .text.accent {
+	font-weight: bolder;
+}	
+.triple-block.darkercolor .link a,
+.triple-block.darkcolor .link a {
+	color: #408CCB;
+}
+.triple-block.darkercolor .link a:hover,
+.triple-block.darkcolor .link a:hover {
+	filter: brightness(115%);
+}
+.triple-block.darkercolor .link a:active,
+.triple-block.darkcolor .link a:active {
+	filter: brightness(85%);
+}
+
+.vertical-block {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: space-around;
+	align-items: center;
+	align-content: center;
+    /* display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: flex-start;
+	align-items: stretch;
+	align-content: stretch; */
+}
+.vertical-block > * {
+    margin: 26px 36px;
+}
+.triple-block.darkcolor .triple-block-container .vertical-block {
+	margin: 26px 95px;
+}
+
+
+
+
+.double-block {
+	margin: 0 auto;
+}
+.double-block.width {
+	max-width: var(--app-page-width);
+}
+.double-block h1 {
+	text-transform: uppercase;
+    font-weight: normal;
+    font-size: 2em;
+    line-height: 1.5em;
+	padding: 30px;
+    text-align: center;
+	color: var(--title-color);
+}
+.double-block p {
+    font-weight: lighter;
+	padding: 30px 30px;
+    text-align: center;
+    font-size: 1.2em;
+    line-height: 1.2em;
+	color: var(--title-color);
+}
+.double-block-container {
+    display: flex;
+}
+.double-block-container.width {
+	max-width: var(--app-page-width);
+	margin: 0 auto;
+	padding: 30px 0px;
+}
+.double-block .block-p2 {
+    width: 50%;
+}
+.double-block .block-p5 {
+    width: 20%;
+}
+
+
+
+button.green {
+	outline: none;
+	text-transform: uppercase;
+	/* font-size: 1.5em; */
+	font-weight: 400;
+	cursor: pointer;
+	padding: 14px 42px;
+	margin: 22px 16px;
+	border: none;
+	border-radius: 10px;
+	background-color: var(--background-accentcolor);
+	color: var(--text-accentcolor);
+	
+	will-change: filter;
+
+    -moz-transition: all .15s ease-in;
+    -webkit-transition: all .15s ease-in;
+    -o-transition: all .15s ease-in;
+	transition: all .15s ease-in;
+}
+button.green:hover {
+	background-color: var(--background-accentcolor-hover);
+}
+button.green:focus {
+	background-color: var(--background-accentcolor-hover);
+	-webkit-filter: drop-shadow( 0 0 0.75rem var(--background-accentcolor-shadow) );
+	filter: drop-shadow( 0 0 0.75rem var(--background-accentcolor-shadow) );
+}
+button.green:active {
+	-webkit-filter: drop-shadow( 0 0 0.3rem var(--background-accentcolor-shadow) ); 
+	filter: drop-shadow( 0 0 0.3rem var(--background-accentcolor-shadow) );
+}
+
+
+
+@media (max-width: 767px) {
+	button.green {
+		margin: 15px 10px;
+	}
+	.hero-text {
+		font-size: 3.7em;
+		bottom: 12px;
+	}
+	.triple-block .text.big {
+		min-height: unset;
+	}
+	.dark-section .text {
+		font-size: 1.2em;
+		line-height: 1.3em;
+		height: unset;
+	}
+	.dark-section.small {
+		min-height: 26px;
+	}
+	.triple-block h1 {
+		padding: 10px;
+		font-size: 1.2em;
+		line-height: 1.3em;
+	}
+	.triple-block p {
+		padding: 0px 10px;
+		font-size: 1em; 
+		line-height: 1em;
+	}
+	.text-thin-block {
+		margin-bottom: 0px;
+    	margin-top: 0px;
+    	padding: 6px;
+	}
+	.text-thin-block h2 {
+		font-size: 1.2em;
+		line-height: 1.2em;
+	}
+	.text-thin-block p {
+		font-size: 1em;
+		line-height: 1em;
+	}
+	.triple-block .block-p3 {
+		width: unset;
+	}
+	.triple-block-container {
+		flex-direction: column;
+	}
+	.triple-block.darkcolor .triple-block-container .vertical-block {
+		margin: 8px 8px;
+	}
+	.triple-block.darkcolor .triple-block-container .vertical-block > * {
+		margin: 10px 26px;
+	}
+	.double-block-container {
+		flex-direction: column;
+	}
+	.double-block .block-p2 {
+		width: unset;
+	}
+	.double-block .block-p5 {
+		width: unset;
+	}
+}
+
+@media (max-width: 1200px) {
+	.hero-text {
+		font-size: 5.7em;
+		bottom: 12px;
+	}
+	.br-mobile {
+		display: none;
+	}
+	.triple-block.darkcolor .triple-block-container .vertical-block {
+		margin: 26px 42px;
+	}
+}

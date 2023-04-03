@@ -1,0 +1,627 @@
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="replacements"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+
+<div class="maindiv">
+
+	<div class="order-container sticky">
+		<div class="order">
+			<!-- Replacements -->
+			<div class="order-replacements">
+				<div class="sticky-container">
+					<h2>
+						<paper-icon-button 
+							class="refresh-btn" 
+							icon="admin-icons:refresh"
+							title="[[localize('admin-ws-refresh')]]" 
+							disabled="[[loadingAny]]"
+							on-tap="_reloadTap">
+						</paper-icon-button>
+
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+
+						[[localize('admin-ws-replacements-title')]] 
+						| [[localize('admin-ws-replacements-batch-qty')]]: [[order.ManufactureOrders.length]]
+						<!-- - Order #: [[order.CurrentBatch.ManufactureOrderID]] -->
+						- [[localize('admin-ws-replacements-title2')]] #: [[order.CurrentBatch.BatchID]]
+						| [[_formatDate(order.CurrentBatch.Created)]]
+					</h2>
+
+					<paper-progress id="progress" indeterminate class="" disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+
+				<div class="horiz menu-fixed">
+
+					<div class="menu">
+						<paper-listbox 
+							attr-for-selected="id" 
+							selected="[[order.CurrentBatch.BatchID1]]"
+							on-selected-item-changed="onSelectedBatch">
+
+							<dom-repeat items="[[order.ManufactureOrders]]" as="morderi">
+								<template>
+									<paper-item disabled>[[morderi.ManufactureOrderID]]</paper-item>
+					
+									<dom-repeat items="[[morderi.Batches]]" as="batchi">
+										<template>
+											<paper-item id="[[batchi.BatchID]]" on-tap="selectBatchTap" disabled="[[loadingAny]]">
+												<span class="batch-name">[[_batchName(batchi.BatchID)]]</span>
+												<span class="batch-date">[[_formatDate(batchi.Created)]]</span>
+
+												<iron-icon class="warning hidden" showen$="[[batchi.Sandbox]]" icon="admin-icons:warning" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+												<iron-icon class="production hidden" showen$="[[_asBool(batchi.IsPDFsFrozen)]]" icon="admin-icons:check-circle"></iron-icon>
+												<iron-icon class="production hidden" showen$="[[_asBool(batchi.PushedToFtp)]]" icon="admin-icons:cloud-done" title="[[_formatDate(batchi.PushedToFtp)]]"></iron-icon>
+												<iron-icon class="production hidden" showen-icon$="[[_asBool(batchi.IsRasterized)]]" icon="admin-image:gradient"></iron-icon>
+												<iron-icon class="error hidden" showen-icon$="[[_asBool(batchi.IsRasterizedError)]]" icon="admin-image:gradient"></iron-icon>
+												<iron-icon class="production hidden" showen-icon$="[[_asBool(batchi.IsPrinting)]]" icon="admin-icons:print"></iron-icon>
+												<iron-icon class="hidden" showen-icon$="[[_asBool(batchi.IsPrinted)]]" icon="admin-icons:print"></iron-icon>
+												<iron-icon class="error hidden" showen-icon$="[[_asBool(batchi.IsPrintedError)]]" icon="admin-icons:print"></iron-icon>
+											</paper-item>
+										</template>
+									</dom-repeat>
+								</template>
+							</dom-repeat>
+
+						</paper-listbox>
+					</div>
+
+
+
+					<div class="current-batch width100">
+					
+						<div class="horiz">
+							<paper-input id="newbarcode" label="[[localize('admin-ws-replacements-barcode-label')]]" name="barcode"
+								class="barcode-input" type="string" disabled="[[loadingAny]]" on-value-changed="onInputChanged"
+								on-keydown="_barcodeEnter">
+								<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+								<paper-icon-button slot="suffix" class="barcode-btn" icon="admin-icons:arrow-downward" on-tap="_barcodeTap">
+								</paper-icon-button>
+							</paper-input>
+
+
+							<dom-if if="[[showManufacturers]]">
+								<template>
+									<div class="man-selection" is-admin>
+										<tmladmin-ui-dropdown-menu 
+											vertical-align="top" 
+											horizontal-align="left"
+											id-property="ManufacturerID"
+											title-property="ManufacturerName"
+											label="[[localize('admin-ws-manufacturer')]]"
+											disabled$="[[loadingAny]]" 
+											value="{{order.Manufacturer}}"
+											value-list="[[order.Manufacturers]]"
+											on-value-changed="onInputChanged"
+											error-message="[[order.notvalid.Manufacturer]]"
+											invalid="[[_asBool(order.notvalid.Manufacturer)]]">
+										</tmladmin-ui-dropdown-menu>
+									</div>
+								</template>
+							</dom-if>
+						</div>
+						
+						<dom-if if="[[order.IsDuplicate]]">
+							<template>
+								<p class="invalid">
+									[[localize('admin-ws-replacements-item-duplicate')]]
+								</p>
+							</template>
+						</dom-if>
+						
+						<dom-if if="[[order.Invalid]]">
+							<template>
+								<p class="invalid">
+									[[localize('admin-ws-replacements-item-invalid')]]
+								</p>
+							</template>
+						</dom-if>
+
+						
+
+						<paper-expansion-panel 
+							class="hidden" showen$="[[_asBool(order.Product)]]"
+							no-toggle-header1 no-toggle-btn1 
+							header="[[localize('admin-ws-sewing-info-product')]] [[order.Product.ManufactureProductInternalID]], [[order.Product.Size]], [[order.Product.Type]]">
+							<tmladmin-production-sewing-item 
+								showen
+								responsive-images-off
+								entry="[[order]]" visible="true"
+								website-url="[[websiteUrl]]" action-disabled="[[loadingAny]]">
+							</tmladmin-production-sewing-item>
+						</paper-expansion-panel>
+
+
+						<div class="section-layout" product$="[[_asBool(order.Product)]]">
+							<div>
+								<!-- PARTS -->
+								<dom-if if="[[order.Parts.length]]">
+									<template>
+										<div class="order-parts-list">
+											<h4>
+												[[localize('admin-ws-replacements-parts-title')]]
+												(# [[order.SewingPartsCount]] / [[order.ProductCount]]) | 
+												[[order.Product.ManufactureProductInternalID]], [[order.Product.Size]],
+												[[order.Product.Type]]
+												<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline"
+													title="[[localize('admin-ws-replacements-addall-tooltip')]]" on-tap="_addRepAllTap">
+												</paper-icon-button>
+											</h4>
+								
+								
+											<dom-repeat items="[[order.Parts]]" as="parti">
+												<template>
+													<div class="order-part-item" is-replaced$="[[parti.IsReplaced]]">
+														<div hidden$="[[!_morethen(parti.ReplacedCount, 0)]]">
+															[[localize('admin-ws-replacements-partsreplaced-title')]] [[parti.ReplacedCount]]
+														</div>
+														<teamatical-ui-image 
+															src="[[parti.ImageUrl]]" 
+															alt="[[parti.PartName]]" 
+															lazy-load
+															lazy-observe=[[lazyObserve]] 
+															title$="[[parti.PartName]]">
+														</teamatical-ui-image>
+														<dom-if if="[[_asBool(parti.ImageUrlBack)]]">
+															<template>
+																<teamatical-ui-image 
+																	class="clickable back"
+																	src="[[parti.ImageUrlBack]]" 
+																	alt="[[parti.PartName]] Sendwich Back" 
+																	lazy-load 
+																	lazy-observe=[[lazyObserve]] 
+																	title$="[[parti.PartName]] Sendwich Back">
+																</teamatical-ui-image>
+															</template>
+														</dom-if>
+
+														<div hidden$="[[!_asBool(parti.PartNumber)]]">
+															[[parti.PartNumber]]
+														</div>
+														<div>
+															[[parti.PartName]]
+														</div>
+														<div>
+															[[parti.Fabric]]
+														</div>
+														<!-- <div class="vertical-barcode">
+															<span class="pdf-barcode">*[[parti.Barcode]]*</span><br />
+															[[parti.Barcode]]
+														</div> -->
+														<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline"
+															disabled$="[[loadingAny]]" on-tap="_addRepTap">
+														</paper-icon-button>
+													</div>
+												</template>
+								
+											</dom-repeat>
+										</div>
+								
+										<dom-if if="[[order.IsDuplicate]]">
+											<template>
+												<p class="invalid">
+													[[localize('admin-ws-replacements-item-duplicate')]]
+												</p>
+											</template>
+										</dom-if>
+								
+									</template>
+								</dom-if>
+							</div>
+
+							<div>
+								<!-- Replacements -->
+								<div class="order-replacementitems-list hidden" showen$="[[_asBool(order.CurrentBatch)]]">
+									<h4>
+										[[localize('admin-ws-replacements-items-title')]] (# [[order.CurrentBatch.Items.length]])
+								
+										<span class="hidden" showen$="[[order.CurrentBatch.Sandbox]]">
+											<iron-icon icon="admin-icons:warning" class="warning"></iron-icon>
+											[[localize('admin-ws-test-item')]]
+										</span>
+									</h4>
+									
+								
+									<div scrollable-x>
+										<div class="width100">
+							
+											<iron-list items="[[order.CurrentBatch.Items]]" as="repli" scroll-target="[[scrollTarget]]" default-physical-count="40">
+												<template>
+													<div class="replace-list-item row vcenter" style="z-index: 1;"
+														removed$="[[repli.removing]]" 
+														is-disabled$="[[repli.Disabled]]"
+														is-locked$="[[repli.UnfrozenPDF]]"
+														is-bounding$="[[repli.Bounding]]">
+
+
+														<div class="part-batch-id centered">
+															[[repli.BatchID]]
+															<span class="hidden" showen$="[[repli.Sandbox]]">
+																<iron-icon icon="admin-icons:warning" class="warning"
+																	title="[[localize('admin-ws-test-item')]]"></iron-icon>
+																<!-- [[localize('admin-ws-test-item')]] -->
+															</span>
+														</div>
+
+														<div class="part-name centered">
+															[[repli.PartName]]
+														</div>
+
+														<div class="part-image centered">
+															<dom-if if="[[repli.ImageUrl]]">
+																<template>
+																	<teamatical-ui-image 
+																		src="[[repli.ImageUrl]]" 
+																		alt="[[repli.PartName]]" 
+																		class="clickable"
+																		on-tap="onProductPartImageTap"
+																		lazy-load
+																		lazy-observe=[[lazyObserve]] 
+																		title$="[[repli.PartName]]">
+																	</teamatical-ui-image>
+
+																	<dom-if if="[[_asBool(repli.ImageUrlBack)]]">
+																		<template>
+																			<teamatical-ui-image 
+																				class="clickable back"
+																				src="[[repli.ImageUrlBack]]" 
+																				alt="[[repli.PartName]] Sendwich Back" 
+																				lazy-load 
+																				lazy-observe=[[lazyObserve]] 
+																				title$="[[repli.PartName]] Sendwich Back">
+																			</teamatical-ui-image>
+																		</template>
+																	</dom-if>
+
+																</template>
+															</dom-if>
+
+															<dom-if if="[[repli.ImageSvg]]">
+																<template>
+																	<teamatical-ui-image-svg 
+																		class="repl-image-svg clickable"
+																		on-tap="onProductPartImageTap"
+																		svg-src="[[repli.ImageSvg]]">
+																	</teamatical-ui-image-svg>
+																</template>
+															</dom-if>
+
+															<paper-spinner-lite slot="prefix" class="thick" active="[[repli.loadingAny]]"
+																hidden$="[[!repli.loadingAny]]"></paper-spinner-lite>
+															<dom-if if="[[repli.Invalid]]">
+																<template>
+																	<h3>
+																		[[localize('admin-ws-replacements-item-invalid')]]
+																	</h3>
+																</template>
+															</dom-if>
+														</div>
+
+														<div class="part-count centered">
+															#: [[_formatCount(repli.Count)]]
+														</div>
+
+														<div class="part-flags">
+															<span hidden$="[[_noneFlag(repli.IsFullRollReplacement, repli.IsDuplicate, repli.Disabled, repli.UnfrozenPDF, repli.Bounding)]]">
+																[[localize('admin-ws-replacements-item-none')]]
+															</span>
+															<span highlighted hidden$="[[!repli.IsFullRollReplacement]]">
+																[[localize('admin-ws-replacements-item-IsFullRollReplacement')]]
+															</span>
+															<span highlighted hidden$="[[!repli.IsDuplicate]]">
+																[[localize('admin-ws-replacements-item-duplicate')]]
+															</span>
+															<span highlighted hidden$="[[!repli.Disabled]]">
+																[[localize('admin-ws-replacements-item-processed')]]
+															</span>
+															<span highlighted hidden$="[[!repli.UnfrozenPDF]]">
+																[[localize('admin-ws-replacements-item-locked')]]
+															</span>
+															<span highlighted hidden$="[[!repli.Bounding]]">
+																[[localize('admin-ws-replacements-item-bounding')]]
+															</span>
+														</div>
+														
+
+														<div class="part-reasontype">
+															<div class="reason-selection">
+																<!-- <teamatical-ui-select 
+																	class="reason-selector" 
+																	caption-text="[[localize('admin-ws-replacements-item-reasontype')]]" 
+																	disabled$="[[loadingAny]]" 
+																	options="[[reasonTypeList]]" 
+																	text-property="title"
+																	value-property="id" 
+																	value="{{repli.ReasonType}}"
+																	on-change="_reasonSelectorChanged">
+																</teamatical-ui-select> -->
+
+																<!-- <paper-radio-group 
+																	aria-labelledby="labelReasonType" 
+																	selected="{{repli.ReasonType}}"
+																	name="ReasonType"
+																	on-value-changed="onInputChanged"
+																	error-message="[[repli.notvalid.ReasonType]]" 
+																	invalid="[[_asBool(repli.notvalid.ReasonType)]]">
+																	<dom-repeat items="[[reasonTypeList]]" as="reasontypei">
+																		<template>
+																			<paper-radio-button
+																				class="reasontype-radio"
+																				name="[[reasontypei.id]]"
+																				label="[[reasontypei.title]]">
+																				<span class="reasontype-hightlight">[[reasontypei.title]]</span>
+																			</paper-radio-button>
+																		</template>
+																	</dom-repeat>
+																</paper-radio-group> -->
+																
+																<div>
+																	<label id="labelReason">Reason &gt;&gt;&gt;</label>
+																	<paper-radio-group 
+																		class="reason-group"
+																		aria-labelledby="labelReason" 
+																		selected="{{repli.Reason.id}}"
+																		name="Reason"
+																		on-paper-radio-group-changed="_reasonSelectorChanged">
+																		<dom-repeat items="[[order.ReasonCategorized]]" as="reasoncati">
+																			<template>
+																				<h5 hidden$="[[_equal(reasoncati.id, 'empty')]]">
+																					<iron-icon icon$="[[_reasonIcon(reasoncati.id)]]"></iron-icon>
+																					[[reasoncati.title]]
+																				</h5>
+																				<dom-repeat items="[[reasoncati.reasons]]" as="reasoni">
+																					<template>
+																						<paper-radio-button
+																							class="reason-radio"
+																							disabled$="[[loadingAny]]" 
+																							name$="[[reasoni.id]]"
+																							label$="[[reasoni.title]]">
+																							<span class="reason-hightlight">
+																								[[reasoni.title]]
+																							</span>
+																						</paper-radio-button>
+																					</template>
+																				</dom-repeat>
+																			</template>
+																		</dom-repeat>
+																	</paper-radio-group>
+																</div>
+															</div>
+														</div>
+														
+								
+														<div class="part-btns-1">
+															<div class="spinner">
+																<paper-button 
+																	class="order-replaceroll-btn" 
+																	raised
+																	on-tap="_onReplaceRollTap"
+																	hidden$="[[repli.DisableFullRollReplacement]]"
+																	disabled="[[_disabledReplaceRoll(loadingAny, repli.Disabled)]]">
+																	[[localize('admin-ws-qa-btn-replaceroll')]]
+																</paper-button>
+															</div>
+														</div>
+
+														<div class="part-btns-2">
+															<paper-icon-button slot="suffix" class="remove-btn" icon="admin-icons:close"
+																disabled="[[loadingAny]]" on-tap="_removeRepTap">
+															</paper-icon-button>
+														</div>
+													</div>
+												</template>
+											</iron-list>
+											<dom-if if="[[!LenMore(order.CurrentBatch.Items)]]">
+												<template>
+													<div class="noitems">
+														[[localize('admin-list-noitems')]]
+													</div>
+												</template>
+											</dom-if>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+
+
+						
+
+
+
+
+						
+						<!-- No Batch -->
+						<div hidden$="[[hiddenNoBatch]]" class="no-batch">
+							<span>[[localize('admin-ws-replacements-no-batch')]]</p>
+						</div>
+
+						<div class="order-buttons">
+							<paper-button class="order-push-btn" raised disabled$="[[disabledPush]]" on-tap="pushReplacementsTap">
+								[[localize('admin-ws-replacements-push-btn')]]
+							</paper-button>
+							
+							<paper-dialog id="dialogpush" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+								<h2>[[localize('admin-ws-replacements-dlg-push')]]</h2>
+								<paper-dialog-scrollable>
+									<div class="checkbox-container">
+										<paper-checkbox id="dialogpush_spotcolors" class="hide-on-print" disabled$="[[loadingAny]]">
+											Spot Colors
+										</paper-checkbox>
+									</div>
+
+									<p>[[localize('admin-ws-replacements-dlg-push-msg')]]</p>
+								</paper-dialog-scrollable>
+								<div class="buttons">
+									<paper-button dialog-dismiss>[[localize('admin-dialog-close')]]</paper-button>
+									<paper-button dialog-confirm autofocus on-tap="pushReplacementsConfirmTap">
+										[[localize('admin-ws-replacements-push-btn')]]</paper-button>
+								</div>
+							</paper-dialog>
+
+
+							<paper-dialog id="dialogcount" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center" style="width: 400px;">
+								<h2>[[localize('admin-ws-replacements-dlg-count')]]</h2>
+								<paper-dialog-scrollable>
+									<p>[[localize('admin-ws-replacements-dlg-count-msg')]]</p>
+									<teamatical-ui-quantity
+										style="display: inline-block; width: 120;"
+										caption-text="[[localize('admin-ws-replacements-dlg-count')]]" 
+										value="{{dialogcount.parti.Count}}"
+										debouncing="{{dialogcount.debouncing.Count}}"
+										debouncing-input="0"
+										debouncing-button="0">
+									</teamatical-ui-quantity>
+								</paper-dialog-scrollable>
+								<div class="buttons">
+									<paper-button dialog-dismiss>[[localize('admin-dialog-close')]]</paper-button>
+									<paper-button dialog-confirm autofocus on-tap="_addRepConfirmTap">
+										[[localize('admin-ws-replacements-count-btn')]]</paper-button>
+								</div>
+							</paper-dialog>
+						</div>
+
+						
+						<!-- Tasks -->
+						<div class="order-tasks hidden" showen-block$="[[_asBool(order.CurrentBatch.Tasks)]]">
+
+							<h3>
+								<paper-icon-button class="refresh-btn" icon="admin-icons:refresh" title="[[localize('admin-ws-refresh')]]"
+									on-tap="_reloadTap" disabled="[[loadingAny]]"></paper-icon-button>
+								[[localize('admin-ws-printing-preparations-title')]]
+							</h3>
+
+
+							<div class="table-container-scroll">
+								<div class="table stripe">
+									<div class="header">
+										<div>
+											[[localize('admin-ws-printing-preparations-type')]]
+										</div>
+										<div>
+											[[localize('admin-ws-printing-preparations-progress')]]
+										</div>
+										<div>
+											[[localize('admin-ws-printing-preparations-time')]]
+										</div>
+										<div>
+											[[localize('admin-ws-printing-preparations-operation')]]
+										</div>
+									</div>
+
+									<dom-repeat items="[[order.CurrentBatch.Tasks]]" as="taski">
+										<template>
+											<div class="row">
+												<div>
+													[[taski.Type]]
+												</div>
+												<div>
+													<paper-progress class="executing-progress"
+														value="[[_formatProgress(taski.ExecutingOperationProgress)]]"></paper-progress>
+												</div>
+												<div>
+													[[_formatTaskTime(taski.ExecutingTimeMiliseconds)]]
+												</div>
+												<div>
+													[[taski.ExecutingOperation]]
+												</div>
+											</div>
+										</template>
+									</dom-repeat>
+								</div>
+							</div>
+						</div>
+
+				
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+
+
+
+<div class="fbuttons-container">
+	<paper-fab 
+		class="button-sorting" 
+		hidden$="[[!_isBackBtn(queryParams.backurl, 'workstation-sorting')]]"
+		label="S" 
+		disabled$="[[loadingAny]]"
+		title$="[[localize('admin-ws-replacements-sorting-back-tooltip')]]" mini on-tap="backReplacementsTap">
+	</paper-fab>
+	<paper-fab 
+		class="button-bundling" 
+		hidden$="[[!_isBackBtn(queryParams.backurl, 'workstation-bundling')]]"
+		label="B" 
+		disabled$="[[loadingAny]]"
+		title$="[[localize('admin-ws-replacements-bundling-back-tooltip')]]" mini on-tap="backReplacementsTap">
+	</paper-fab>
+</div>
+
+
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="replacements"
+	website-url="[[websiteUrl]]"
+	barcode-scanner
+	loading="{{loadingWS}}"
+	hidden$="[[tabletMode]]"
+	visible="[[_scannerUIVisible(visible, tabletMode)]]">
+</teamatical-ui-scanner-printer-settings>
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>
+
+
+
+
+
+<paper-dialog id="dialogzoom" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<paper-dialog-scrollable>
+		<dom-if if="[[zoomimgi.ImageUrl]]">
+			<template>
+				<teamatical-ui-image 
+					style="width: 576px; height: 768px;" 
+					src="[[zoomimgi.ImageUrl]]"
+					alt="[[zoomimgi.PartName]]" 
+					lazy-load 
+					lazy-observe=[[lazyObserve]]>
+				</teamatical-ui-image>
+			</template>
+		</dom-if>
+
+		<dom-if if="[[zoomimgi.ImageSvg]]">
+			<template>
+				<teamatical-ui-image-svg 
+					style="width: 576px; height: 768px;"
+					svg-src="[[zoomimgi.ImageSvg]]"
+					alt="[[zoomimgi.PartName]]">
+				</teamatical-ui-image-svg>
+			</template>
+		</dom-if>
+	</paper-dialog-scrollable>
+</paper-dialog>
+
+
+<paper-dialog id="dialogconfirm-replaceroll" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>[[localize('admin-ws-roll-inspection-dlg-title')]]</h2>
+	<paper-dialog-scrollable>
+		[[localize('admin-ws-roll-inspection-dlg-msg')]]
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>[[localize('admin-dlg-close')]]</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="replacerollConfirmTap">[[localize('admin-ws-roll-inspection-replaceroll-btn')]]
+		</paper-button>
+	</div>
+</paper-dialog>

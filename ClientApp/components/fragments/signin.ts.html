@@ -1,0 +1,24 @@
+<div class="hidden" showen$="[[_showProgress]]">
+  <h3>[[localize('signin-authorizing')]]</h3>
+</div>
+
+
+
+<div class="hidden" showen$="[[_showSuccess]]">
+  <h3>[[localize('signin-authorized-successfully')]]</h3>
+</div>
+
+
+
+<div class="hidden" showen$="[[_showStaticNonAuthorized]]">
+  <h3>[[localize('signin-notauth')]]</h3>
+  <p>[[localize('signin-notauth-desc')]]</p>
+  <teamatical-ui-button on-tap="_tryReconnect">[[localize('signin-notauth-go')]]</teamatical-ui-button>
+</div>
+
+
+<div class="hidden" showen$="[[_showStaticIsAuthorized]]">
+  <h3>[[localize('signin-isauth')]]</h3>
+  <p>[[localize('signin-isauth-desc')]]</p>
+  <teamatical-ui-button on-tap="_goAccountTap">[[localize('signin-isauth-go')]]</teamatical-ui-button>
+</div>

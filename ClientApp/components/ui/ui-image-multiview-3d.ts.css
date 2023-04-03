@@ -1,0 +1,612 @@
+:host {
+    display: block;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+
+    --teamatical-ui-image-3d-margin: 16px;
+    --teamatical-ui-image-3d-margin-l2: 68px;
+    --teamatical-ui-image-3d-margin-z: 8px;
+    --teamatical-ui-image-3d-margin-l-r: 0px;
+    --teamatical-ui-image-3d-scale: 1;
+
+    border-radius: 8px;
+}
+
+:host([iszoom-mobile]) {
+    overflow: hidden !important;
+    position: absolute !important;
+    top: 0px !important; 
+    left: 0px !important; 
+    bottom: 0px !important; 
+    right: 0px !important;
+    z-index: 10 !important; 
+    margin: 0 !important; 
+    max-height: unset !important; 
+    max-width: unset !important; 
+    width: unset !important; 
+    height: unset !important; 
+    background-color: white;
+}
+:host([iszoom-mobile]) .sprite-container {
+    bottom: 0px !important;
+}
+
+:host([is3d-loaded]:not([iszoom])) > div > img {
+    cursor: ew-resize;
+}
+
+.swipe-3d-tips {
+    opacity: 0;
+    visibility: hidden;
+}
+:host([is3d-loaded]:not([iszoom])) .swipe-3d-tips {
+    visibility: visible;
+    opacity: 1;
+}
+
+:host([is3d-loaded][iszoom]) > div > img {
+    cursor: pointer;
+}
+:host([is3d-loaded][iszoom]) > div > div > div > .icon-3d {
+    pointer-events: none;
+}
+:host([icon-3d-left]) > div > div > div > .icon-3d {
+    top: 2px;
+    right: 16px;
+    left: initial;
+}
+
+:host([isloaded][is3d]:not([is3d-loaded])) > div > div > div > .icon-3d {
+    -moz-animation: blink normal 1s infinite ease-in-out;
+    -webkit-animation: blink normal 1s infinite ease-in-out;
+    -ms-animation: blink normal 1s infinite ease-in-out;
+    animation: blink normal 1s infinite ease-in-out;
+    pointer-events: none;
+}
+:host([isloaded][is3d]:not([is3d-loaded])[is3d-warn]) > div > div > div > .icon-3d {
+    fill: var(--paper-orange-900);
+    -moz-animation: blink normal 0.5s infinite ease-in-out;
+    -webkit-animation: blink normal 0.5s infinite ease-in-out;
+    -ms-animation: blink normal 0.5s infinite ease-in-out;
+    animation: blink normal 0.5s infinite ease-in-out;
+    pointer-events: none;
+}
+
+:host([is3d-loaded][iszoom]) > div > .overlay-container,
+:host([is3d-loaded][iszoom]) > div > div > div > .icon-3d {
+    opacity: 0;
+    cursor: pointer;
+}
+:host([is3d-loaded]:not([iszoom])) > div > .overlay-container, 
+:host([is3d-loaded]:not([iszoom])) > div > div > div > .icon-3d {
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+:host([is3d-error]) > div > div > div > .icon-3d {
+    fill: var(--error-color);
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+:host(:not([allow-image-before])) .image-before-btn,
+:host(:not([allow-image-next])) .image-next-btn,
+:host(:not([allow-image-selector])) .view-selector {
+    display: none;
+}
+.image-before-btn:focus,
+.image-next-btn:focus,
+:host(:hover) .image-before-btn,
+:host(:hover) .image-next-btn {
+    opacity: 1;
+    transition: all .2s ease-in-out;
+}
+
+.loader-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    /* display: inline-block; */
+    margin: 0 auto;
+    /* bottom: 0; */
+}
+.loader-wrapper > img {
+    pointer-events: none;
+}
+.loader-wrapper:after {
+    padding-top: 133.33%;
+    display: block;
+    content: '';
+}
+.loader-main {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+
+    background-size: cover;
+    background-position: center;
+
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-drag: none; 
+    -webkit-user-drag: none;
+}
+
+.icon-container {
+    position:relative;
+    pointer-events: none;
+}
+.icon-container > .icon-wrapper {
+    position: absolute;
+    top: 0px;
+    left: var(--teamatical-ui-image-3d-margin);
+    pointer-events: none;
+    @apply --layout-vertical;
+}
+.icon-container > .icon-wrapper > paper-icon-button,
+.icon-container > .icon-wrapper > iron-icon {
+    width:48px;
+    height:48px;
+
+    user-select: none;
+    -webkit-user-select: none;
+    z-index: 1;
+    pointer-events: none;
+
+    transition: opacity .2s ease-out;
+    opacity: 0;
+
+    --iron-icon: {
+        fill: var(--light-theme-secondary-color);
+        -webkit-filter: drop-shadow( 0px 0px 2px #fff ); 
+                filter: drop-shadow( 0px 0px 2px #fff );
+    };
+}
+.icon-container > .icon-wrapper > paper-icon-button {
+    padding: 0px;
+    pointer-events: auto;
+}
+
+.overlay-container {
+    pointer-events: none;
+    position: relative;
+    will-change: contents;
+    /* width: 100%;
+    height: 100%; */
+    margin: 0 auto;
+    display:inline-block;
+}
+.overlay-container > * {
+    pointer-events: none;
+}
+
+.overlay-container > img {
+    position: relative;
+    margin: 0 auto;
+}
+.overlay-container > teamatical-ui-image-svg {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    fill: var(--light-theme-secondary-color);
+    -webkit-filter: drop-shadow( 0px 0px 2px #fff ); 
+            filter: drop-shadow( 0px 0px 2px #fff );
+}
+.overlay-container > .overlay-sizes {
+    position: absolute;
+    transform: translateZ(0);
+    top: 0px;
+    left: 0px;
+    right: 0px;
+
+    user-select: none;
+    -webkit-user-select: none;
+    pointer-events: none;
+
+    fill: var(--light-theme-secondary-color);
+    color: var(--light-theme-secondary-color);
+    -webkit-filter: drop-shadow( 0px 0px 2px #fff ) !important; 
+            filter: drop-shadow( 0px 0px 2px #fff ) !important;
+    font-size: 4em;
+
+    @apply --teamatical-ui-image-caption;
+}
+
+
+.buttons-container {
+    will-change: contents;
+    pointer-events: none;
+    /* position:relative; */
+    /* width: 100%; */
+    /* height: 100%; */
+    /* position: absolute; */
+    /* top: 0; */
+    /* right: 0; */
+    /* left: 0; */
+
+    /* opacity: 0; */
+}
+/* :host(:not([isloaded])) .buttons-container {
+    opacity: 1;
+} */
+.buttons-container > .view-selector,
+.buttons-container > paper-icon-button {
+    pointer-events:auto;
+}
+:host([is-resizing]) .buttons-container {
+    opacity: 0;
+}
+
+:host([is-youth]:not([iszoom])) > div > div > div > .icon-youth,
+:host([is-reversible]:not([iszoom])) > div > div > div > .icon-reversible {
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+.sizemeter {
+    position: absolute;
+    transform: translateZ(0);
+    top: 0px;
+    left: var(--teamatical-ui-image-3d-margin-l2);
+    user-select: none;
+    -webkit-user-select: none;
+    --iron-icon: {
+        fill: var(--light-theme-secondary-color);
+        -webkit-filter: drop-shadow( 0px 0px 2px #fff ) !important; 
+                filter: drop-shadow( 0px 0px 2px #fff ) !important;
+    };
+    --paper-icon-button: {
+        width: 48px;
+        height: 48px;
+    };
+}
+
+:host([draw-dimensions]) .sizemeter {
+    --iron-icon: {
+        fill: var(--paper-blue-700);
+    };
+}
+:host([iszoom]) .sizemeter {
+    opacity: 0;
+    /* transition: opacity 0.5s ease-out; */
+}
+
+/* :host([draw-dimensions]:not([isloaded])) .sizemeter { */
+:host(:not([isloaded])) .sizemeter {
+    -moz-animation: blink normal 1s infinite ease-in-out;
+    -webkit-animation: blink normal 1s infinite ease-in-out;
+    -ms-animation: blink normal 1s infinite ease-in-out;
+    animation: blink normal 1s infinite ease-in-out;
+}
+
+:host([iszoom][is-zoom-loading]) .zoomout {
+    -moz-animation: blink normal 1s infinite ease-in-out;
+    -webkit-animation: blink normal 1s infinite ease-in-out;
+    -ms-animation: blink normal 1s infinite ease-in-out;
+    animation: blink normal 1s infinite ease-in-out;
+}
+:host([small-screen][iszoom]) {
+    border-radius: 0px;
+}
+:host([small-screen][iszoom]) .zoomout {
+    position: -webkit-sticky;
+    position: sticky;
+    padding: 0px;
+}
+
+:host([tooltip-overlow-mode]) .sprite-container {
+    overflow: unset;
+}
+
+:host([small-screen][is-zoom-animation]) .sprite-container,
+:host([small-screen][iszoom]) .sprite-container {
+    border-radius: 0px;
+    overflow: unset;
+}
+:host(:not([small-screen])[is-change-view-animation]) div.sprite-container,
+:host(:not([small-screen])[is-zoom-animation]) div.sprite-container,
+:host(:not([small-screen])[iszoom]) div.sprite-container {
+    overflow: hidden;
+}
+
+.zoomin {
+    /* cursor: zoom-in; */
+    position: absolute;
+    transform: translateZ(0);
+    top: 0px;
+    right: var(--teamatical-ui-image-3d-margin-z);
+    user-select: none;
+    -webkit-user-select: none;
+    --iron-icon: {
+        fill: var(--light-theme-secondary-color);
+        -webkit-filter: drop-shadow( 0px 0px 2px #fff ) !important; 
+                filter: drop-shadow( 0px 0px 2px #fff ) !important;
+    };
+    --paper-icon-button: {
+        width: 48px;
+        height: 48px;
+    };
+}
+
+.zoomout {
+    /* cursor: zoom-out; */
+    position: absolute;
+    top: 0px;
+    right: var(--teamatical-ui-image-3d-margin-z);
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    --iron-icon: {
+        fill: var(--light-theme-secondary-color);
+        -webkit-filter: drop-shadow( 0px 0px 2px #fff ); 
+                filter: drop-shadow( 0px 0px 2px #fff );
+    };
+    --paper-icon-button: {
+        width: 48px;
+        height: 48px;
+    };
+}
+
+.image-next-btn,
+.image-before-btn {
+    position: absolute;
+    top: 50%;
+    margin-top: -28px;
+    --paper-icon-button: {
+        width: 56px;
+        height: 56px;
+    };
+
+    opacity: 0;
+    transition: all .2s ease-in-out;
+
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    --iron-icon: {
+        fill: var(--light-theme-secondary-color);
+        -webkit-filter: drop-shadow( 0px 0px 2px #fff ); 
+                filter: drop-shadow( 0px 0px 2px #fff );
+    };
+}
+.image-next-btn[disabled],
+.image-before-btn[disabled] {
+    --iron-icon: {
+        fill: var(--app-disabled-color);
+    };
+}
+
+.image-before-btn {
+    left: var(--teamatical-ui-image-3d-margin-l-r);
+}
+.image-next-btn {
+    right: var(--teamatical-ui-image-3d-margin-l-r);
+}
+
+ul.view-selector {
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 100%;
+    /* margin-left: 0; */
+
+    list-style: none;
+    display: block;
+    /* display: table; */
+    text-align: center;
+    padding: 0;
+
+    /* margin-top: -28px; */
+    /* --paper-icon-button: {
+        width: 56px;
+        height: 56px;
+    }; */
+
+    /* opacity: 0;
+    transition: all .2s ease-in-out; */
+
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    /* --iron-icon: {
+        fill: var(--light-theme-secondary-color);
+        -webkit-filter: drop-shadow( 0px 0px 2px #fff ); 
+                filter: drop-shadow( 0px 0px 2px #fff );
+    }; */
+}
+
+.view-selector li {
+    list-style: none;
+    margin: 0 .8rem;
+    height: 0;
+    position: relative;
+    
+    display: inline-block;
+    height: 20px;
+    line-height: 20px;
+    width: 32px;
+    margin: 0 5px;
+    padding: 0;
+    cursor: pointer;
+
+}
+.view-selector li button {
+    display: block;
+    outline: 0;
+    line-height: 0;
+    font-size: 0;
+    background: transparent;
+    color: transparent;
+    padding: 5px;
+    cursor: pointer;
+
+    
+    width: .58333rem;
+    height: .58333rem;
+    margin: 0 auto;
+    border-radius: 50%;
+
+    border: 0;
+    border: 1px solid white;
+
+    opacity: 0.85;
+    background-color: #ccc;
+    
+    /* transition: all 0.3s cubic-bezier(.36,-0.64,.34,1.76); */
+    transition: all .3s ease-in;
+}
+.view-selector li[selected] button {
+    background-color: #464c59;
+}
+.view-selector li button:focus {
+    /* transform: scale(1.25); */
+    box-shadow: 0 1px 3px 0 var(--app-accent-button-color);
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+}
+
+.sprite-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: inline-block;
+
+    text-align: center;
+
+    border-radius: 8px;
+    border: 0;
+    /* overflow: hidden;  tooltip-overlow-mode */
+    overflow: hidden;
+
+    @apply --teamatical-ui-image-sprite-container;
+}
+
+img {
+    @apply --layout-fit; /*default if no --teamatical-ui-image-img */
+    @apply --teamatical-ui-image-img;
+
+
+    /* touch-action: pan-y; moved to code */
+    
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0 auto;
+
+    background-size: cover;
+    background-repeat: no-repeat;  /* chrome-edge - on android was falling without it */
+    will-change: transform, contents;
+
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-drag: none; 
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none; /* disable the IOS popup when long-press on a link */
+
+    -ms-interpolation-mode: bicubic;
+
+    opacity: 0;
+    -moz-transform: scale(var(--teamatical-ui-image-3d-scale));
+    -webkit-transform: scale(var(--teamatical-ui-image-3d-scale));
+    transform: scale(var(--teamatical-ui-image-3d-scale));
+
+    pointer-events: none;
+}
+img[selected] {
+    pointer-events: unset;
+
+    opacity: 1;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    transform: scale(1);
+}
+
+:host([dev]) .sprite-container {
+    background-color: rgba(var(--app-accent-color-rgb), 0.61);
+}
+:host([animation]) img {
+    transition: transform 0.4s cubic-bezier(.36, -0.64, .34, 1.16), opacity 0.3s;
+}
+:host([animation][iszoom]) img {
+    transition: transform .4s ease-in-out;
+}
+
+
+
+@media (max-width: 767px) {
+    .image-next-btn,
+    .image-before-btn {
+        opacity: 1;
+    }
+    .view-selector {
+        bottom: -16px;
+    }
+}
+
+
+
+@-moz-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+} 
+@-webkit-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+@-ms-keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+} 
+@keyframes blink {
+    0% {
+        opacity:1;
+    }
+    50% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+} 
+
+
+
+@media print {
+    .icon-3d,
+    .buttons-container {
+        display: none;
+    }
+}

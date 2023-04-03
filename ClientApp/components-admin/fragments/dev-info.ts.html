@@ -1,0 +1,354 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+		
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="reloadTap">
+					</paper-icon-button>
+					<paper-checkbox 
+						class="auto-refresh-checkbox" 
+						title="Auto Refresh (10s)" 
+						checked="{{checkboxAutoRefresh}}">
+					</paper-checkbox>
+
+					Dev Info
+				</h3>
+
+				<div class="buttons">
+					<!-- <paper-button
+							class="reload-btn" 
+							disabled$="[[loading]]" 
+							raised 
+							on-tap="reloadTap">
+							Reload
+					</paper-button> -->
+
+					<paper-button
+							class="cache-reset-btn" 
+							disabled$="[[loading]]" 
+							hidden$="[[hideCacheResetBtn(order)]]" 
+							raised 
+							on-tap="resetCacheTap">
+							Cache Reset
+					</paper-button>
+
+					<paper-button
+							class="font-reset-btn" 
+							disabled$="[[loading]]" 
+							hidden$="[[hideFontResetBtn(order)]]" 
+							raised 
+							on-tap="resetFontTap">
+							Fonts Reset
+					</paper-button>
+
+					<paper-button
+							class="color-reset-btn" 
+							disabled$="[[loading]]" 
+							hidden$="[[hideColorResetBtn(order)]]" 
+							raised 
+							on-tap="resetColorTap">
+							Colors Reset
+					</paper-button>
+
+					<paper-dialog id="dialogconfirm" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>[[confirm_title]]</h2>
+						<paper-dialog-scrollable>
+							[[confirm_message]]
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss>Close</paper-button>
+							<paper-button dialog-confirm autofocus on-tap="dialogConfirmTap">[[confirm_okbtn]]</paper-button>
+						</div>
+					</paper-dialog>
+					
+					<!-- 
+					<paper-dialog id="dialog_signalreport" class="dialog-wide" proceed no-overlap dynamic-align vertical-align="middle"
+						horizontal-align="center">
+						<h2>Signaling Monitor Report</h2>
+						<paper-dialog-scrollable>
+					
+							<h4>
+								Signaling Monitor Report
+							</h4>
+							<json-viewer json="[[order.SignalMonitorReport]]"></json-viewer>
+					
+						</paper-dialog-scrollable>
+					
+						<div class="buttons">
+							<paper-button dialog-dismiss autofocus>Close</paper-button>
+						</div>
+					</paper-dialog> 
+					-->
+				</div>
+
+			</div>
+
+			<paper-tabs selected="{{serverSelectedIndex}}" scrollable autoselect autoselect-delay="0" style$="[[serverTabsStyle(order.ServerItems, serverSelectedIndex)]]">
+				<dom-repeat items="[[order.ServerItems]]" as="serveri">
+					<template>
+						<paper-tab style$="[[serverTabStyle(serveri)]]" on-tap="_onServerTabTap">
+							<span>[[serveri.MachineName]]</span>
+							<dom-if if="[[serveri.IsCurrentServer]]">
+								<template strip-whitespace>
+									<span>(*)</span>
+								</template>
+							</dom-if>
+							<span hidden$="[[!serveri.ServerInfo.IsPlanner]]">&nbsp;[P]</span>
+						</paper-tab>
+					</template>
+				</dom-repeat>
+			</paper-tabs>
+
+			<div class="server-info" hidden$="[[!_asBool(serverSelected)]]">
+				
+				<div class="section-info">
+					<h4>
+						Build Info
+					</h4>
+				
+					<div class="table">
+						<div class="row">
+							<div class="w20">Website Version</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'BuildWebsiteVersion')]]">[[serverSelected.ServerInfo.BuildWebsiteVersion]]</div>
+						</div>
+						<div class="row">
+							<div>Stripe Version</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'StripeVersion')]]">[[serverSelected.ServerInfo.StripeVersion]]</div>
+						</div>
+						<div class="row">
+							<div>Release Notes</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'BuildPackageReleaseNotes')]]">[[serverSelected.ServerInfo.BuildPackageReleaseNotes]]</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="section-info">
+					<h4>
+						Database Info
+					</h4>
+				
+					<div class="table">
+						<div class="row">
+							<div class="w20">DB Migration Version</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'DBMigrationVersion')]]">[[serverSelected.ServerInfo.DBMigrationVersion]]</div>
+						</div>
+						<div class="row">
+							<div>DB Requests Charged</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'DatabaseRequestCharge')]]">[[_formatDouble(serverSelected.ServerInfo.DatabaseRequestCharge, 0)]]</div>
+						</div>
+
+						<dom-repeat items="[[serverSelected.ServerInfo.DatabaseRequestCharges]]" as="dbchrgi">
+							<template>
+								<div class="row">
+									<div>[[dbchrgi.Category]]</div>
+									<div class="number">[[_formatDouble(dbchrgi.Value)]]</div>
+								</div>
+							</template>
+						</dom-repeat>
+					</div>
+				</div>
+
+				<div class="section-info">
+					<h4>
+						Machine Info
+
+						<span hidden$="[[!serverSelected.ServerInfo.IsPlanner]]">- [Is Planner]</span>
+						<paper-button
+							class="kill-website-btn" 
+							disabled$="[[loading]]" 
+							title="Hard kill (use SHIFT)"
+							raised 
+							on-tap="restartWebsiteTap">
+							Restart Node (SF)
+						</paper-button>
+					</h4>
+
+					<div class="table">
+						<div class="row">
+							<div class="w20">Machine Name - Process ID</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'MachineName')]]">[[serverSelected.ServerInfo.MachineName]]</div>
+						</div>
+						<div class="row">
+							<div>OS Version</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'VersionOS')]]">[[serverSelected.ServerInfo.VersionOS]]</div>
+						</div>
+						<div class="row">
+							<div>CPU Cores</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'CoresCPU')]]">[[serverSelected.ServerInfo.CoresCPU]]</div>
+						</div>
+						<div class="row">
+							<div>Local IP</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'LocalIP')]]">[[serverSelected.ServerInfo.LocalIP]]</div>
+						</div>
+						<div class="row">
+							<div>Registered in REDIS</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'Timestamp')]]">[[serverSelected.ServerInfo.Timestamp]]</div>
+						</div>
+						<div class="row">
+							<div>Started</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'StartedTime')]]">[[serverSelected.ServerInfo.StartedTime]]</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="section-info">
+					<h4>
+						Unamanaged Cache
+					</h4>
+				
+					<div class="table">
+						<div class="row">
+							<div class="w20">Unamanaged Cache Size</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'UnamanagedCacheSize')]]">[[serverSelected.ServerInfo.UnamanagedCacheSize]]</div>
+						</div>
+						<div class="row">
+							<div>Unmanaged Cache Count</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'UnmanagedCacheCount')]]">[[serverSelected.ServerInfo.UnmanagedCacheCount]]</div>
+						</div>
+						<div class="row">
+							<div>Unmanaged Cache Efficiency</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'UnmanagedCacheEfficiency')]]">[[serverSelected.ServerInfo.UnmanagedCacheEfficiency]]</div>
+						</div>
+						<div class="row">
+							<div>Unamanaged Cache Last Requested Key</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'UnamanagedCacheLastRequestedKey')]]">[[serverSelected.ServerInfo.UnamanagedCacheLastRequestedKey]]</div>
+						</div>
+						<div class="row">
+							<div>Unamanaged Cache Press Candidate Key</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'UnamanagedCachePressCandidateKey')]]">[[serverSelected.ServerInfo.UnamanagedCachePressCandidateKey]]</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="section-info">
+					<h4>
+						<span>Cluster Signaling Info</span>
+						<paper-button
+							class="signal-report-btn" 
+							disabled$="[[loading]]" 
+							raised 
+							on-tap="showSignalReportTap">
+							Show Signal Report
+						</paper-button>
+					</h4>
+
+					<div class="table">
+						<div class="row">
+							<div class="w20"># Connection Lost</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'SignalConnectionLostCounter')]]">[[serverSelected.ServerInfo.SignalConnectionLostCounter]]</div>
+						</div>
+						<div class="row">
+							<div># Connection Restored</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'SignalConnectionRestoredCounter')]]">[[serverSelected.ServerInfo.SignalConnectionRestoredCounter]]</div>
+						</div>
+						<div class="row">
+							<div># Signal Received</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'SignalReceivedCounter')]]">[[serverSelected.ServerInfo.SignalReceivedCounter]]</div>
+						</div>
+						<div class="row">
+							<div># Signal Sent</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'SignalSentCounter')]]">[[serverSelected.ServerInfo.SignalSentCounter]]</div>
+						</div>
+
+						<div class="row">
+							<div>Cache Reseted At</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'CacheResetTimestamp')]]">[[serverSelected.ServerInfo.CacheResetTimestamp]]</div>
+						</div>
+						<div class="row">
+							<div>Font Index Updated At</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'FontIndexUpdatedTimestamp')]]">[[serverSelected.ServerInfo.FontIndexUpdatedTimestamp]]</div>
+						</div>
+						<div class="row">
+							<div>Base Colors Updated At</div>
+							<div data-diff$="[[_check(serverSelectedIndex, 'BaseColorsUpdatedTimestamp')]]">[[serverSelected.ServerInfo.BaseColorsUpdatedTimestamp]]</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="server-info renderer" hidden$="[[!_asBool(serverSelected)]]">
+				<div class="section-info">
+					<h4>
+						Renderer
+					</h4>
+
+					<div class="buttons">
+						<paper-button
+							class="restart-renderer-btn" 
+							disabled$="[[loading]]" 
+							raised 
+							on-tap="restartRendererTap">
+							Restart Renderer (lost all recent task data)
+						</paper-button>
+
+						<paper-button
+							class="kill-ghostscript-btn" 
+							disabled$="[[loading]]" 
+							raised 
+							on-tap="killGhostscriptTap">
+							Kill Ghostscript
+						</paper-button>
+					</div>
+				
+					<pre>[[serverSelected.ServerInfo.Renderer]]</pre>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+<tmladmin-ui-dialog id="dialogdetails" disabled$="[[dialogdetails.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button 
+			class="close-dialog-small-btn" 
+			icon="admin-icons:close"
+			dialog-dismiss>
+		</paper-icon-button>		
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogdetails.loading]]"
+				hidden$="[[!dialogdetails.loading]]">
+			</paper-progress>
+		</div>
+		<div class="dialog-title">
+			<h3 style="margin-right: auto;">[[dialogdetails.title]]</h3>
+
+			<paper-icon-button slot="suffix" class="copy-json-btn" style="margin: -7px 12px;"
+				aria-label="copy-json-btn"
+				icon="icons:content-copy"
+				on-tap="copyJsonDetailsTap">
+			</paper-icon-button>
+			<paper-toggle-button checked="{{viewasjson}}">JSON Viewer</paper-toggle-button>
+		</div>
+	</div>
+
+	<div slot="body">
+		<div class="details-cell white">
+			<pre hidden$="[[viewasjson]]">[[dialogdetails.Details]]</pre>
+			<json-viewer hidden$="[[!viewasjson]]" json="[[dialogdetails.Details]]"></json-viewer>
+		</div>
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			Close
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>

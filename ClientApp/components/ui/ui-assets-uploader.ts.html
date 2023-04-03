@@ -1,0 +1,77 @@
+<input 
+    id="paste-input" 
+    type="text" 
+    on-focus="onFocus"
+    on-blur="onBlur"
+    on-paste="onPaste"
+    tabindex="1"
+    readonly
+/>
+
+<input 
+    id="file-input" 
+    tabindex="-1"
+    type="file" 
+    name$="[[name]]" 
+    required$="[[required]]" 
+    multiple$="[[multiple]]" 
+    accept$="[[accept]]" 
+    capture$="[[capture]]"
+/>
+
+<div class="invalid">[[errorMessage]]</div>
+
+<div class="layout vertical center center-justified">
+    <iron-icon 
+        on-tap="_onFilePickerTap"
+        class="file-picker" 
+        hidden$="[[hasFiles]]"
+        icon="image:add-a-photo">
+    </iron-icon>
+    <div 
+        unselectable="on"
+        hidden$="[[hasFiles]]" 
+        class="title">
+        [[localize('assetsuploader-drophere')]]
+    </div>
+
+    <div class="error small">[[lastError.message]]</div>
+
+        
+    <dom-repeat items="[[files]]">
+        <template>
+            <div class="file-name small" on-tap="onTableTap">
+                <span>[[item.name]]</span> 
+                <paper-icon-button 
+                    class="delete-button" 
+                    icon="close" 
+                    tooltip$="[[localize('assetsuploader-filelist-remove-label')]]" tooltip-flow="left"
+                    aria-label$="[[localize('assetsuploader-filelist-remove-label')]]" 
+                    on-tap="_removeFileTap">
+                </paper-icon-button>
+            </div>
+
+            <div class="file-img">
+                <div class="file-img-container">
+                    <img 
+                        src="[[item.imgUrl]]" 
+                        draggable="false" 
+                        img-orientation$="[[item.imgOrientation]]" 
+                        style$="[[imgStyle]]"
+                    />
+                </div>
+                <div 
+                    class="progress-circle hidden-animated" 
+                    aria-valuemin="0" 
+                    aria-valuemax="100" 
+                    aria-valuenow$="[[item.progress]]" 
+                    hidden-animated$="[[item.progressHide]]" 
+                    processing$="[[item.processing]]">
+                    <span class="p-h"></span>
+                    <span class="p-f"></span>
+                    <span class="p-t">[[item.progressText]]</span>
+                </div>
+            </div>
+        </template>
+    </dom-repeat>
+</div>

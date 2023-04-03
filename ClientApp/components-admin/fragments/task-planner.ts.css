@@ -1,0 +1,46 @@
+:host {
+	display: block;
+	padding: 0px;
+	height: 100%;
+}
+
+.planner-items {
+	background-color: white;
+	border-radius: 6px;
+}
+
+paper-button {
+	width: 120px;
+	--paper-button: {
+		padding: 0.5em 0.37em;
+	};
+}
+paper-button.run-force {
+	--paper-button: {
+		background: var(--paper-green-600);
+		color: white;
+	};
+}
+paper-button.retry {
+	--paper-button: {
+		background: var(--paper-indigo-600);
+		color: white;
+	};
+}
+
+paper-button.cancel {
+	--paper-button: {
+		background: var(--paper-red-600);
+		color: white;
+	};
+}
+
+/* paper-progress {
+    display: inline-block;
+    width: 100%;
+    margin: 20px 0;
+} */
+paper-progress.executing-progress {
+    --paper-progress-active-color: var(--paper-blue-500);
+    --paper-progress-secondary-color: var(--paper-blue-100);	
+}

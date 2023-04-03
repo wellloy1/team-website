@@ -1,0 +1,189 @@
+<iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
+<app-localstorage-document key="ui-image-multiview-3d-flags" data="{{localStorage}}"></app-localstorage-document>
+
+
+<div id="loader-wrapper" class="loader-wrapper">
+  <!-- <img src="[[_trans_image()]]" /> -->
+
+  <div 
+    id="loader" 
+    class="loader-main" 
+    style$="[[_loaderStyle(selectedViewIsLoading)]]">
+  </div>
+</div>
+
+<div 
+  id="track" 
+  class="sprite-container" 
+  style$="[[_containerStyle(selectedIndex, views_state, views_state.*)]]"
+  on-selectstart="eventNull">
+
+    <div class="icon-container">
+      <div class="icon-wrapper">
+
+        <paper-icon-button 
+          class="icon-3d"
+          aria-label="icon-3d"
+          hidden$="[[!is3d]]"
+          icon="icons:360-rotation" 
+          draggable="false"
+          on-tap="on3DTap" 
+          tooltip$="[[localize('ui-image-multiview-360btn-tooptip')]]" tooltip-flow="down" tooltip-flow-horiz="right"
+          on-dragstart="eventNull" 
+          on-selectstart="eventNull">
+        </paper-icon-button>
+
+        <!-- <iron-icon 
+          class="icon-3d"
+          hidden$="[[!is3d]]"
+          icon="icons:360-rotation" 
+          draggable="false">
+        </iron-icon> -->
+
+        <!-- <iron-icon 
+          class="icon-reversible"
+          hidden$="[[!isReversible]]"
+          icon="teamatical:reversible-icon" 
+          draggable="false">
+        </iron-icon> -->
+
+        <!-- <iron-icon 
+          class="icon-youth"
+          hidden$="[[!isYouth]]"
+          icon="teamatical:youth-icon" 
+          draggable="false">
+        </iron-icon> -->
+
+      </div>
+    </div>
+
+    
+    <dom-repeat items="[[views_state]]" as="viewi">
+      <template>
+        <img
+          class="product-view" 
+          src="[[_viewSource(viewi.src, viewi.is3dLoaded, viewi.keep3d, viewi.ImageUrl, viewi.ImageUrlZoom, viewi.zoomloaded.15, index)]]"
+          selected$="[[viewi.Selected]]"
+          style$="[[_viewStyle(selectedIndex, index, pv, viewi, viewi.*, zoomPinch)]]"
+          index$="[[index]]"
+          alt$="[[alt]]" 
+          draggable="false" 
+          unselectable="on"
+          on-selectstart="eventNull"
+          on-dragstart="eventNull" 
+          on-mousemove="onMouseMove"
+          on-track="onTrack" 
+          on-transitionend="onTransitionEnd"
+          on-dblclick="onDblClicked"
+          on-load="onPreviewLoaded"
+          on-error="onPreviewLoadError"
+        />
+      </template>
+    </dom-repeat>
+
+    <div id="overlay-container" class="overlay-container">
+      <img src="[[_trans_image()]]" alt="trans" />
+
+      <!-- overlays -->
+      <dom-repeat items="[[overlays]]" as="overlayi">
+        <template>
+          <teamatical-ui-image-svg svg-src="[[overlayi]]"></teamatical-ui-image-svg>
+        </template>
+      </dom-repeat>
+
+      <teamatical-ui-image-svg class="swipe-3d-tips hidden-animated" hidden-animated$="[[hideSwipeTip]]" svg-src="[[swipeTipSvg]]"></teamatical-ui-image-svg>
+
+      <dom-if if="[[_asBool(caption)]]">
+        <template>
+          <div class="overlay-sizes">
+            [[caption]]
+          </div>
+        </template>
+      </dom-if>
+    </div>
+
+
+    <div id="buttons-container" class="buttons-container">
+      <img src="[[_trans_image()]]" alt="trans" />
+
+      
+      <paper-icon-button 
+        id="sizemeter" 
+        class="sizemeter"
+        aria-label="sizemeter"
+        hidden$="[[!isMeasureBtn]]"
+        disabled="[[!hasDimensions]]"
+        icon="icons:size-meter" 
+        draggable="false" 
+        tooltip$="[[localize('ui-image-multiview-sizemeter-tooptip')]]" tooltip-flow="down" tooltip-flow-horiz="right"
+        on-tap="onSizemeterTap" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+      </paper-icon-button>
+
+      <paper-icon-button 
+        id="zoomin" 
+        class="zoomin hidden-animated"
+        aria-label="zoomin"
+        disabled="[[!isZoomInBtn]]"
+        hidden-animated$="[[!isZoomInBtn]]"
+        icon="icons:zoom-in" 
+        draggable="false" 
+        tooltip$="[[localize('ui-image-multiview-zoom-tooptip')]]" tooltip-flow="down" tooltip-flow-horiz="left"
+        on-tap="onZoomIn" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+      </paper-icon-button>
+
+      <h3 class="caption">[[caption]]</h3>
+
+      <paper-icon-button 
+        id="zoomout" 
+        class="zoomout hidden-animated"
+        aria-label="zoomout"
+        disabled="[[!isZoomOutBtn]]"
+        hidden-animated$="[[!isZoomOutBtn]]"
+        icon="icons:zoom-out" 
+        draggable="false" 
+        on-tap="onZoomOut" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+      </paper-icon-button>
+
+
+      <paper-icon-button 
+        id="image-before-btn" 
+        class="image-before-btn"
+        aria-label="image-before-btn"
+        icon="image:navigate-before" 
+        disabled="[[disabledImageBefore]]"
+        draggable="false" 
+        on-tap="onImageBefore" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+      </paper-icon-button>
+
+      <paper-icon-button 
+        id="image-next-btn" 
+        class="image-next-btn"
+        aria-label="image-next-btn"
+        icon="image:navigate-next" 
+        disabled="[[disabledImageNext]]"
+        draggable="false" 
+        on-tap="onImageNext" 
+        on-dragstart="eventNull" 
+        on-selectstart="eventNull">
+      </paper-icon-button>
+
+      <ul class="view-selector" on-track="onSelectorTrack">
+        <dom-repeat items="[[views_state]]" as="viewi">
+          <template>
+            <li selected$="[[viewi.Selected]]" on-tap="onTapSelector">
+              <button type="button" data-role="none" role="button" tabindex="0">[[index]]</button>
+            </li>
+          </template>
+        </dom-repeat>
+      </ul>
+    </div>
+
+</div>

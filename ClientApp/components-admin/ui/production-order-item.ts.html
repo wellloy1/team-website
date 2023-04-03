@@ -1,0 +1,424 @@
+<iron-media-query query="max-width: 767px" query-matches="{{smallScreen}}"></iron-media-query>
+
+<div class="horiz">
+	<div id="image-product-grid" class="image-product-grid">
+		<dom-repeat items="[[productImages]]" as="imgi">
+			<template>
+				<!-- <a class="link-over-object" href$="[[(entry)]]"> -->
+				<teamatical-ui-image src="[[imgi.imgUrl]]" alt="[[imgi.title]]" lazy-load lazy-observe=[[lazyObserve]]
+					title$="[[entry.Product.Title]]">
+				</teamatical-ui-image>
+				<!-- </a> -->
+			</template>
+		</dom-repeat>
+	</div>
+
+	<div class="detail-container">
+		<div class="name">
+			#: <span class="copy-tap" on-tap="_copyTap">[[entry.id]]</span>
+			<a href="[[_urlViewOrderProduction(entry.id)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+
+
+			<span class="status-bar">
+				<tmladmin-ui-progress-icon type="printing" status="[[entry.PrintStatus]]"></tmladmin-ui-progress-icon>
+				<tmladmin-ui-progress-icon type="transferring" status="[[entry.TransferringStatus]]"></tmladmin-ui-progress-icon>
+				<tmladmin-ui-progress-icon type="cutting" status="[[entry.CuttingStatus]]"></tmladmin-ui-progress-icon>
+				<tmladmin-ui-progress-icon type="sewing" status="[[entry.SewingStatus]]"></tmladmin-ui-progress-icon>
+				<tmladmin-ui-progress-icon type="qa" status="[[entry.QAStatus]]"></tmladmin-ui-progress-icon>
+				<tmladmin-ui-progress-icon type="aggregation" status="[[entry.AggregationStatus]]"></tmladmin-ui-progress-icon>
+				<tmladmin-ui-progress-icon type="shipping-labels" status="[[entry.ShippingLabelsStatus]]"></tmladmin-ui-progress-icon>
+				<tmladmin-ui-progress-icon type="shipping-rfid" status="[[entry.ShippingRFIDStatus]]"></tmladmin-ui-progress-icon>
+				<tmladmin-ui-progress-icon type="shipping" status="[[entry.ShippingStatus]]"></tmladmin-ui-progress-icon>
+			</span>
+			  
+			<span class="hidden" showen$="[[entry.Sandbox]]">
+				<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> TEST
+			</span>
+
+			<paper-spinner-lite class="thick"></paper-spinner-lite>
+			<paper-button 
+				class="order-item-reprocess-btn" raised 
+				on-tap="reprocessConfirmTap"
+				disabled$="[[_dis(actionDisabled, entry.CanBeValidated)]]">
+				Reprocess Order Item
+			</paper-button>
+		</div>
+
+		<div class="detail">
+
+			<div class="table">
+				<!-- <div class="header">
+					<div>
+					</div>
+					<div>
+					</div>
+				</div> -->
+			
+				<div class="row">
+					<div>
+						Status
+					</div>
+					<div>
+						[[entry.Status]]
+					</div>
+				</div>
+
+				
+				<div class="row">
+					<div>
+						Created
+					</div>
+					<div>
+						[[_formatDate(entry.Created)]]
+					</div>
+				</div>
+
+				<div class="row">
+					<div>
+						Intermediate PDF Size
+					</div>
+					<div>
+						<div class="download">
+							<div>[[_formatFileSize(entry.IntermediatePDFSize)]]</div>
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+							<a target="_blank" href="[[_urlDownloadOrderProductionItem(entry.id)]]" 
+								data-id$="[[entry.id]]"
+								on-tap="_onDownloadTap">Download PDF</a>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div>
+						Intermidiate Version
+					</div>
+					<div>
+						[[entry.IntermidiateVersion]]
+
+						<paper-spinner-lite class="thick"></paper-spinner-lite>
+						<paper-button 
+							class="order-item-reset_intermidiate-btn" raised 
+							on-tap="resetIntermidiateVersionTap" 
+							disabled$="[[actionDisabled]]">
+							Reset Intermidiate Version
+						</paper-button>
+					</div>
+				</div>
+
+				<div class="row" hidden$="[[!_asBool(entry.PlanningUnavailableReason)]]">
+					<div>
+						[[localize('admin-ws-planning-notvalidreason')]]
+					</div>
+					<div>
+						<span highlighted>[[entry.PlanningUnavailableReason]]</span>
+					</div>
+				</div>
+
+				<div class="row" hidden$="[[!_asBool(entry.HasSublimation)]]">
+					<div>
+						Has Sublimation
+					</div>
+					<div>
+						<span highlighted$="[[entry.HasSublimation]]">[[entry.HasSublimation]]</span>
+					</div>
+				</div> 
+			
+				<div class="row" hidden$="[[!_asBool(entry.HasVinyl)]]">
+					<div>
+						Has Vinyl
+					</div>
+					<div>
+						<span highlighted$="[[entry.HasVinyl]]">[[entry.HasVinyl]]</span>
+					</div>
+				</div>
+			
+				<div class="row">
+					<div>
+						[[localize('admin-morder-quantity-title')]]
+					</div>
+					<div>
+						<span class="count">[[entry.Quantity]]</span>
+					</div>
+				</div>
+
+				<div class="row">
+					<div>
+						Prefered Packing Quantity
+					</div>
+					<div>
+						<span class="count">[[entry.PreferedPackingQuantity]]</span>
+						<paper-spinner-lite class="thick"></paper-spinner-lite>
+						<paper-button 
+							class="order-item-setpackingopt-btn" raised 
+							on-tap="preferedPackingQuantityTap" 
+							disabled$="[[_dis(actionDisabled, entry.CanSetPackingOptions)]]"
+						>Set Packing Options</paper-button>
+					</div>
+				</div>
+			
+				<div class="row">
+					<div>
+						QA Label
+					</div>
+					<div>
+						<span>[[entry.QALabel.title]]</span>
+					</div>
+				</div>
+
+				<div class="row">
+					<div>
+						[[localize('admin-morder-minternalid-title')]]
+					</div>
+					<div>
+						[[entry.Product.ManufactureProductInternalID]]
+					</div>
+				</div>
+			
+				<div class="row">
+					<div>
+						[[localize('admin-morder-style-title')]]
+					</div>
+					<div>
+						[[entry.Product.SKU]]
+					</div>
+				</div>
+			
+				<div class="row">
+					<div>
+						[[localize('admin-morder-size-title')]]
+					</div>
+					<div>
+						<span class="size">[[entry.Product.Size]]</span>
+					</div>
+				</div>
+			
+				<div class="row">
+					<div>
+						[[localize('admin-morder-type-title')]]
+					</div>
+					<div>
+						[[entry.Product.Type]]
+					</div>
+				</div>
+			
+			
+				<dom-if if="[[entry.StockColor]]">
+					<template>
+						<div class="row">
+							<div>
+								[[localize('admin-morder-stockcolor-title')]]
+							</div>
+							<div>
+								[[entry.StockColor]]
+							</div>
+						</div>
+					</template>
+				</dom-if>
+			
+				
+				<dom-if if="[[entry.Accessories]]">
+					<template>
+						<div class="row">
+							<div>
+								[[localize('admin-morder-accessories-title')]]
+							</div>
+							<div>
+								<div class="accessories">
+									<dom-repeat items="[[entry.Accessories]]" as="accessi">
+										<template>
+											<label>
+												[[accessi.Name]] ([[localize('admin-morder-accessory-qty')]]:
+												[[accessi.Quantity]])
+												<span hidden$="[[!accessi.IsContinous]]">
+													[[accessi.Size]]
+												</span>
+												[[accessi.Units]]
+											</label>
+											<dom-if if="[[accessi.Color]]">
+												<template>
+													<div class="color" style$="[[_convertBkgColor(accessi.Color.h)]]">
+														[[accessi.Color.n]]
+													</div>
+												</template>
+											</dom-if>
+										</template>
+									</dom-repeat>
+								</div>
+							</div>
+						</div>
+					</template>
+				</dom-if>
+			
+			
+				<dom-if if="[[entry.ThreadColor]]">
+					<template>
+						<div class="row">
+							<div>
+								[[localize('admin-ws-planning-thread-title')]]
+							</div>
+							<div>
+								<div class="thread-color">
+									<div class="color" style$="[[_convertBkgColor(entry.ThreadColor.h)]]">
+										[[entry.ThreadColor.n]]
+									</div>
+									<span hidden$="[[!_asBool(entry.ThreadQuality)]]">
+										([[entry.ThreadQuality]])
+									</span>
+								</div>
+							</div>
+						</div>
+					</template>
+				</dom-if>
+			
+			
+				<div class="row" hidden$="[[!_asBool(entry.SublimationFabrics)]]">
+					<div>
+						[[localize('admin-morder-sublimationfabrics-title')]]
+					</div>
+					<div>
+						[[_formatArray(entry.SublimationFabrics)]]
+						<dom-if if="[[!entry.SublimationFabrics.length]]">
+							<template>
+								NA
+							</template>
+						</dom-if>
+					</div>
+				</div>
+
+				<div class="row" hidden$="[[!_asBool(entry.SublimationFabricComposition)]]">
+					<div>
+						Sublimation Fabric Composition
+					</div>
+					<div>
+						[[entry.SublimationFabricComposition]]
+					</div>
+				</div>
+
+				<div class="row" hidden$="[[!_asBool(entry.SublimationFabricWeightGramms)]]">
+					<div>
+						Sublimation Fabric Weight
+					</div>
+					<div>
+						<span>[[_formatWeightW(entry.SublimationFabricWeightGramms, 'g')]]</span> [g]
+					</div>
+				</div>
+				
+			</div>
+
+
+			<div>
+				Manufacture Orders:
+				<dom-if if="[[!entry.ManufactureOrders.length]]">
+					<template>
+						NA
+					</template>
+				</dom-if>
+				<div class="as-list">
+					<dom-repeat items="[[_formatManufactureOrders(entry.ManufactureOrders)]]" as="morderi">
+						<template>
+							<dom-repeat items="[[morderi.Batches]]" as="batchi">
+								<template>
+									<div hidden$="[[!_asBool(batchi.Items)]]">
+										<a href="[[_urlViewManOrderItemSet(batchi.ManufactureOrderID, batchi.BatchID, entry.id)]]"
+											data-oid$="[[batchi.ManufactureOrderID]]" 
+											data-id$="[[batchi.BatchID]]">
+											<span>[[batchi.ManufactureOrderID]]</span>
+											- <span>[[batchi.BatchID]]</span>
+										</a>
+										<dom-if if="[[userInfo.isAdmin]]">
+											<template>
+												<paper-icon-button 
+													is-admin
+													class="barcodes-btn hide-on-print" icon="admin-icons:fingerprint" disabled="[[loadingAny]]"
+													on-tap="showBarcodesTap">
+												</paper-icon-button>
+											</template>
+										</dom-if>
+									</div>
+								</template>
+							</dom-repeat>
+
+
+							
+							<!-- <div class="nowrap">
+								<a href="[[_urlViewManOrderItemSet(morderi.ManufactureOrderID, morderi.ItemSetID, morderi.ItemID)]]"
+									data-oid$="[[morderi.ManufactureOrderID]]" data-id$="[[morderi.ItemSetID]]">
+									<dom-if if="[[morderi.ItemID]]">
+										<template>
+											[[morderi.ItemID]] -
+										</template>
+									</dom-if>
+									[[morderi.ItemSetID]] - [[morderi.ManufactureOrderID]]
+								</a>
+							</div> -->
+						</template>
+					</dom-repeat>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
+<div class="order-shipment">
+	<h4>
+		Shipment
+	</h4>
+
+	<div class="table">
+		<div class="header">
+			<div>
+				Carrier
+			</div>
+			<div>
+				Track Number
+			</div>
+			<div>
+				Place
+			</div>
+			<div>
+				# Shipped
+			</div>
+		</div>
+
+		<dom-repeat items="[[entry.Tracking]]" as="tracki">
+			<template>
+				<div class="row">
+					<div>
+						[[tracki.Carrier]]
+					</div>
+					<div title="Track Number">
+						<span class="copy-tap" on-tap="_copyTap">[[tracki.TrackingNumber]]</span>
+					</div>
+					<div>
+						[[tracki.Place]]
+					</div>
+					<div>
+						[[tracki.ShippedCount]]
+					</div>
+				</div>
+			</template>
+		</dom-repeat>
+
+		<dom-if if="[[!LenMore(entry.Tracking)]]">
+			<template>
+				<div>
+					<div class="noitems">
+						no items
+					</div>
+				</div>
+			</template>
+		</dom-if>
+	</div>
+</div>
+
+
+<tmladmin-ui-changes-history
+	class="order-history"
+	inline
+	title="History"
+	items="[[entry.History]]">
+</tmladmin-ui-changes-history>
+
+

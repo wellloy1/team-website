@@ -1,0 +1,315 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Product Label #: 
+					<span class="order-id copy-tap" on-tap="_copyTap">[[order.ProductLabelID]]</span>
+				</h3>
+
+				<div class="buttons">
+					<paper-button 
+						class="order-resnapshot-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveLabelConfirmTap">
+						Save Label
+					</paper-button>
+				
+					<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm Label to Save</h2>
+						<paper-dialog-scrollable>
+							Product Label #: [[order.ProductLabelID]] is going to be saved...are you sure?
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss>Close</paper-button>
+							<paper-button dialog-confirm autofocus on-tap="saveLabelTap">Save Label</paper-button>
+						</div>
+					</paper-dialog>
+				
+
+					
+					<div class="order-dangersection-btn">
+						<paper-button 
+							class="order-clone-btn" 
+							disabled$="[[loading]]" 
+							hidden$="[[hideCloneBtn(order)]]" 
+							raised
+							on-tap="cloneLabelTap">
+							Clone Label
+						</paper-button>
+					</div>
+				</div>
+				
+				<div class="order-inputs">
+					<h4>
+						Details:
+					</h4>
+					
+					<div>
+						<paper-checkbox checked="{{order.Disabled}}" disabled$="[[loadingAny]]">
+							Disabled
+						</paper-checkbox>
+	
+						<div class="small-inputs">
+							<div class="selection">
+								<tmladmin-ui-dropdown-menu 
+									style="width:100%"
+									vertical-align="top" 
+									horizontal-align="left"
+									id-property="id"
+									title-property="title"
+									label="Type"
+									disabled$="[[loading]]" 
+									value="{{order.Type}}"
+									value-list="[[order.TypeList]]"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.Type]]"
+									invalid="[[_asBool(order.notvalid.Type)]]">
+								</tmladmin-ui-dropdown-menu>
+							</div>
+	
+							<div class="selection">
+								<tmladmin-ui-dropdown-menu 
+									style="width:100%"
+									vertical-align="top" 
+									horizontal-align="left"
+									id-property="id"
+									title-property="title"
+									label="Manufacturer"
+									disabled$="[[loading]]" 
+									value="{{order.Manufacturer}}"
+									value-list="[[order.ManufacturerList]]"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.Manufacturer]]"
+									invalid="[[_asBool(order.notvalid.Manufacturer)]]">
+								</tmladmin-ui-dropdown-menu>
+							</div>
+	
+	
+							<paper-input 
+								label="Name" 
+								type="string" 
+								value="{{order.Name}}"
+								name="Name"
+								on-value-changed="onInputChanged"
+								error-message="[[order.notvalid.Name]]" 
+								invalid="[[_asBool(order.notvalid.Name)]]">
+							</paper-input>
+													
+							<paper-input 
+								class="small-inputs-mock" 
+								label="..." 
+								type="string" 
+								disabled>
+							</paper-input>
+						</div>
+
+					</div>
+				</div>
+
+
+				<div class="order-inputs">
+					<h4>
+						ZPL:
+
+						<span style="float: right; margin-top: -14px;">
+							<paper-icon-button class="show-help-btn" icon="admin-icons:help-outline"
+								on-tap="showHelpTap">
+							</paper-icon-button>
+						</span>
+					</h4>
+
+					<div class="order-zpl-body">
+						<div>
+							<paper-textarea 
+								id="zpl-body-main"
+								class="zpl-body-main"
+								label="ZPL Body:" 
+								value="{{order.ZPLBody}}"
+								on-value-changed="onInputChanged" 
+								error-message="[[order.notvalid.ZPLBody]]" 
+								invalid="[[_asBool(order.notvalid.ZPLBody)]]">
+							</paper-textarea>
+
+							<div>
+								<h5>Image to ZPL Converter</h5>
+								<teamatical-ui-image-uploader 
+									id="image-uploader" 
+									accept="image/png"
+									visible="[[visible]]"
+									files="{{imgList}}">
+								</teamatical-ui-image-uploader>
+								
+								<paper-textarea 
+									label="ZPL Image Body:" 
+									class="zpl-img-body-main"
+									value="{{imgZPLBody}}"
+									readonly="true"
+									on-value-changed="onInputChanged">
+								</paper-textarea>
+							</div>
+						</div>
+
+						<div class="zpl-image">
+							<div class="horiz-container">
+
+								<div class="order-variable-subtitutions">
+									<div class="table">
+										<div class="header">
+										  <div>
+											Label Size (in)
+										  </div>
+										</div>
+									  
+										<div class="row vcenter">
+											<div class="">
+												[[order.LabelWidth]]
+												x
+												[[order.LabelHeight]]
+											</div>
+										</div>
+									</div>
+
+									<paper-progress 
+										id="progress" 
+										indeterminate 
+										class="" 
+										disabled$="[[!loading]]">
+									</paper-progress>
+									
+									<div class="buttons">
+										<paper-button 
+											class="order-copy-btn" 
+											disabled$="[[loading]]" 
+											hidden$="[[hideRedrawBtn(order)]]" 
+											raised
+											title="Redraw without saving (Ctrl+B)"
+											on-tap="redrawLabelTap">
+											Redraw Label
+										</paper-button>
+					
+					
+										<paper-button 
+											class="order-copy-btn" 
+											disabled$="[[loading]]" 
+											hidden$="[[hideCopyBtn(order)]]" 
+											raised
+											on-tap="copyLabelTap">
+											Copy ZPL Label
+										</paper-button>
+									</div>
+	
+
+									<div class="table">
+										<dom-repeat items="[[order.VariableSubtitutions]]" as="vsubi">
+										  <template>
+											<div class="row vcenter">
+												<!-- <div class="">
+													[[vsubi.VariableName]]
+												</div> -->
+												<div class="">
+													<paper-textarea  
+														label="[[vsubi.VariableName]]"
+														type="string" 
+														disabled$="[[loadingAny]]" 
+														value="{{vsubi.ExampleValue}}">
+													</paper-textarea>
+												</div>
+												<div>
+													<div class="horiz-container">
+														<paper-icon-button 
+															slot="suffix" 
+															class="select-varname-btn"
+															icon="admin-icons:search"
+															on-tap="selectVarNameTap">
+														</paper-icon-button>
+		
+														<paper-icon-button 
+															slot="suffix" 
+															class="copy-varname-btn"
+															icon="admin-icons:content-copy"
+															on-tap="copyVarNameTap">
+														</paper-icon-button>
+													</div>
+												</div>
+											</div>
+										  </template>
+										</dom-repeat>
+									</div>
+								</div>
+
+								<div class="zpl-image-preview">
+									<img src="[[order.PreviewImageUrl]]">
+								</div>
+							</div>
+							
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+<tmladmin-ui-dialog id="dialogdetails" disabled$="[[dialogdetails.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button 
+			class="close-dialog-small-btn" 
+			icon="admin-icons:close"
+			dialog-dismiss>
+		</paper-icon-button>		
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogdetails.loading]]"
+				hidden$="[[!dialogdetails.loading]]">
+			</paper-progress>
+		</div>
+		<div class="dialog-title">
+			<h3 style="margin-right: auto;">[[dialogdetails.title]]</h3>
+			<!-- <paper-icon-button slot="suffix" class="copy-json-btn" style="margin: -7px 12px;"
+				aria-label="copy-json-btn"
+				icon="icons:content-copy"
+				on-tap="copyJsonDetailsTap">
+			</paper-icon-button> -->
+			<!-- <paper-toggle-button checked="{{viewasjson}}">JSON Viewer</paper-toggle-button> -->
+		</div>
+	</div>
+
+	<div slot="body">
+		<div class="details-cell white">
+			<pre>[[dialogdetails.Details]]</pre>
+		</div>
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			Close
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>

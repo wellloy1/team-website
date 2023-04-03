@@ -1,0 +1,250 @@
+<app-route route="[[route]]" pattern="/:gid" data="{{routeData}}"></app-route>
+
+<teamatical-store-group-data 
+  id="store-group-data" 
+  gid="[[routeData.gid]]"
+  participants="{{participants}}" 
+  num-items="{{numItems}}"
+  query-params="{{queryParams}}"
+  searching-progress="{{searchingProgress}}"
+  user-info="{{userInfo}}" 
+  website-url="[[websiteUrl]]"
+  loading="{{loading}}" 
+  failure="{{failure}}"
+  visible="[[visible]]" 
+  saving="{{saving}}">
+</teamatical-store-group-data>
+
+
+<teamatical-ui-loader hidden$="[[_isNotConn]]"></teamatical-ui-loader>
+
+<div hidden$="[[_isNoParticipants]]">
+  <div class="subsection" visible>
+    <header>
+      <h1 hidden$="[[orderView]]">
+        <span>[[localize('store-group-title')]]</span>
+
+        <paper-icon-button 
+          class="store-group-print" 
+          aria-label$="[[localize('store-group-print-aria-label')]]" 
+          icon="print" 
+          on-tap="_printTap">
+        </paper-icon-button>
+      </h1>
+      
+      <span hidden$="[[hideCountTitle]]">
+        (
+        <span>[[_numItems]][[_numItemsApproximately]]</span>
+        <span hidden="[[!_single]]">[[localize('store-group-qty-item')]]</span>
+        <span hidden="[[!_many]]">[[localize('store-group-qty-items')]]</span>, 
+        <span>[[localize('store-group-participant-counts', 'OrderCount', participants.OrderCount, 'OrderItemCount', participants.OrderItemCount)]]</span>
+        )
+      </span>
+    </header>
+
+    <div id="search-progress-container" hidden$="[[!searchingProgress]]">
+      <paper-spinner-lite 
+        id="search-progress"
+        active="[[searchingProgress]]">
+      </paper-spinner-lite>
+    </div>
+
+    <!-- <paper-input 
+      id="search"
+      name="search"
+      hidden$="[[_hideSearchInput]]"
+      type="text"
+      label="[[localize('store-group-search-input')]]" 
+      aria-label$="[[localize('store-group-search-input')]]"
+      placeholder="[[localize('store-group-search-placeholder')]]"
+      value="{{participants.search::input}}"
+      required
+      autocomplete="search"
+      error-message="[[localize('store-group-search-invalid')]]">
+    </paper-input> -->
+
+    <dom-if if="[[participants.Tracking]]">
+      <template>
+        <div class="shipment-tracking">
+          <div class="table">
+            <div class="header">
+              <div>
+                [[localize('store-group-tracking-Carrier')]]
+              </div>
+              <div>
+                [[localize('store-group-tracking-TrackingNumber')]]
+              </div>
+              <div>
+                [[localize('store-group-tracking-Place')]]
+              </div>
+              <div>
+                [[localize('store-group-tracking-ShippedCount')]]
+              </div>
+            </div>
+  
+            <dom-repeat items="[[participants.Tracking]]" as="tracki">
+              <template>
+                <div class="row">
+                  <div>
+                    [[tracki.Carrier]]
+                  </div>
+                  <div>
+                    [[tracki.TrackingNumber]]
+                  </div>
+                  <div>
+                    [[tracki.Place]]
+                  </div>
+                  <div>
+                    [[tracki.ShippedCount]]
+                  </div>
+                </div>
+              </template>
+            </dom-repeat>
+  
+            <dom-if if="[[!LenMore(participants.Tracking)]]">
+              <template>
+                <div class="noitems">
+                  [[localize('store-group-tracking-noitems')]]
+                </div>
+              </template>
+            </dom-if>
+          </div>
+        </div>
+      </template>
+    </dom-if>
+
+
+
+    <div hidden$="[[_hasInitialItems]]">
+      <p class="empty-list">
+        [[localize('store-group-empty')]]
+      </p>
+    </div>
+    
+    <div hidden$="[[_hasSearchedItems]]">
+      <p class="empty-list">
+        [[localize('store-group-search-empty')]]
+      </p>
+    </div>
+
+    <iron-list id="list" class="participant-list" 
+      items="{{participants.items}}" as="participanti" 
+      scroll-target="document" default-physical-count="40">
+      <template>
+        <div class="participant">
+          <div class="participant-header">
+            <h3>
+              <div>
+                <span>#[[formatIndex(index)]] : [[participanti.BillLastName]] [[participanti.BillFirstName]]
+                  - [[participanti.AccountEmail]], [[participanti.AccountPhone]]
+                </span>
+                <span>([[localize('store-group-participant-counts', 'OrderCount', participanti.OrderCount, 'OrderItemCount', participanti.OrderItemCount)]])</span>
+              </div>
+            </h3>
+          </div>
+
+          <div class="participant-items">
+            <div class="table">
+              <div class="header">
+                <div>
+                </div>
+                <div>
+                  [[localize('store-group-participant-details')]]
+                </div>
+                <div>
+                  [[localize('store-group-participant-qty')]]
+                </div>
+              </div>
+              <dom-repeat items="[[participanti.Items]]" as="itemi">
+                <template>
+                  <div class="row vcenter participant-item">
+                    <div class="w20">
+                      <!-- tooltip$="[[itemi.ProductTitle]]" -->
+                      <div id="image-product-grid" class="image-product-grid">
+                        <dom-repeat items="[[_computeProductImagesA(itemi.ProductTitle, itemi.ImageUrls)]]" as="imgi">
+                          <template>
+                            <teamatical-ui-image 
+                              src="[[imgi.imgUrl]]" 
+                              alt="[[imgi.title]]" 
+                              lazy-load="[[lazyload]]"
+                              lazy-observe=[[lazyObserve]]>
+                            </teamatical-ui-image>
+                          </template>
+                        </dom-repeat>
+                      </div>
+                    </div>
+                    <div>
+                      <!-- details -->
+                      <div>
+                        [[localize('store-group-participant-orderid')]]
+                        [[itemi.OrderID]]
+                      </div>
+                      <div>
+                        [[localize('store-group-participant-producttitle')]]
+                        [[itemi.ProductTitle]]
+                      </div>
+                      <dom-if if="[[itemi.Player]]">
+                        <template>
+                          <div>
+                            [[localize('store-group-participant-player')]]
+                            [[_formatPlayer(itemi.Player)]]
+                          </div>
+                        </template>
+                      </dom-if>
+                      <div>
+                        [[localize('store-group-participant-size')]]
+                        [[_formatSize(itemi.Sizes)]]
+                      </div>
+                      <dom-if if="[[itemi.CustomOption]]">
+                        <template>
+                          <div>
+                            [[itemi.CustomOptionTitle]]:
+                            <span>
+                              [[itemi.CustomOption]]
+                            </span>
+                          </div>
+                        </template>
+                      </dom-if>
+
+                    </div>
+                    <div class="w10">
+                      [[itemi.Quanity]]
+                    </div>
+                  </div>
+                </template>
+              </dom-repeat>
+            </div>
+        </div>
+      </template>
+    </iron-list>
+
+    <div class="detail-buttons progress-container">
+      <dom-if if="[[arch]]">
+        <template>
+          <teamatical-ui-button 
+            class="view-participants-btn" 
+            on-tap="backToStoreArchTap">
+                [[localize('store-group-btn-backarch')]]
+          </teamatical-ui-button>
+        </template>
+      </dom-if>
+      
+      <dom-if if="[[!arch]]">
+        <template>
+          <teamatical-ui-button 
+            class="backtostore-btn" 
+            on-tap="backToStoreTap">
+                [[localize('store-group-btn-back')]]
+          </teamatical-ui-button>
+        </template>
+      </dom-if>
+    </div>
+
+  </div>
+</div>
+
+<teamatical-ui-network-warning 
+  hidden$="[[!failure]]" 
+  offline="[[offline]]" 
+  on-try-reconnect="_tryReconnect">
+</teamatical-ui-network-warning>

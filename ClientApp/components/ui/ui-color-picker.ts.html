@@ -1,0 +1,20 @@
+
+<div id="colors" class="colorlist">
+    <ul>
+        <dom-repeat items="[[colorsPalette]]" as="coli">
+            <template>
+                <li selected$="[[_sel(coli, selectedColor)]]"
+                    tooltip$="[[coli.n]]">
+                    <iron-icon
+                        tabindex$="[[_tabindex(focused)]]"
+                        icon="[[colorIcon]]" 
+                        slot="suffix"
+                        style$="[[_convertSwColor(coli.h)]]"
+                        on-tap="onColorSelectTap"
+                        on-keydown="onColorSelectKeydown">
+                    </iron-icon>
+                </li>
+            </template>
+        </dom-repeat>
+    </ul>
+</div>

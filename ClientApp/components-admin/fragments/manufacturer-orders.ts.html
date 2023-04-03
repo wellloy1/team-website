@@ -1,0 +1,443 @@
+<app-localstorage-document key="admin-manufacture-orders-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress id="progress" indeterminate class="" disabled$="[[!loadingAny]]">
+			</paper-progress>
+	
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+				
+				<div class="spinner hidden" showen-flex$="[[showenBuildReportBtn]]">
+					<paper-button class="download-report-btn indigo" disabled$="[[loadingAny]]" raised on-tap="downloadReportTap">
+						Build Report
+					</paper-button>
+					<paper-spinner-lite class="thick"></paper-spinner-lite>
+				</div>
+			</div>
+		</div>
+
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid 
+			id="grid" 
+			aria-label="ManufactureOrders" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]" 
+			loading="{{loading}}" 
+			page-size="[[pageSize]]" 
+			column-reordering-allowed
+			height-by-rows 
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span style="white-space: nowrap;">
+						<span class="order-id copy-tap" on-tap="_copyTap">[[item.id]]</span>
+						<a href="[[_urlViewManOrderItemSet(item.id, 'null')]]" 
+						   data-oid$="[[item.id]]" 
+						   data-id$="[[item.InitialManufactureItemSetID]]"
+						><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+					</span><br />
+					<span class="status-bar">
+						<tmladmin-ui-progress-icon type="freeze" status="[[item.FreezeStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="pushed to ftp" status="[[item.PushStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="rasterize" status="[[item.RasterizeStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="printing" status="[[item.PrintStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="transferring" status="[[item.TransferringStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="cutting" status="[[item.CuttingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="sorting" status="[[item.SortingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="bundling" status="[[item.BundlingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="sewing" status="[[item.SewingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="qa" status="[[item.QAStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="aggregation" status="[[item.AggregationStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-labels" status="[[item.ShippingLabelsStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-rfid" status="[[item.ShippingRFIDStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping" status="[[item.ShippingStatus]]"></tmladmin-ui-progress-icon>
+					</span>
+				</div>
+			</template>
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="260px" flex-grow="0" resizable="true" id="ID">
+				<template class="header">
+					ID
+					<vaadin-grid-filter aria-label="ID" path="ID" value="[[_filterID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span style="white-space: nowrap;">
+						<span class="order-id copy-tap" on-tap="_copyTap">[[item.id]]</span>
+						<a href="[[_urlViewManOrderItemSet(item.id, 'null')]]" 
+						   data-oid$="[[item.id]]" 
+						   data-id$="[[item.InitialManufactureItemSetID]]"
+						><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+					</span><br />
+					<span class="status-bar">
+						<tmladmin-ui-progress-icon type="freeze" status="[[item.FreezeStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="pushed to ftp" status="[[item.PushStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="rasterize" status="[[item.RasterizeStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="printing" status="[[item.PrintStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="transferring" status="[[item.TransferringStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="cutting" status="[[item.CuttingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="sorting" status="[[item.SortingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="bundling" status="[[item.BundlingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="sewing" status="[[item.SewingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="qa" status="[[item.QAStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="aggregation" status="[[item.AggregationStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-labels" status="[[item.ShippingLabelsStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-rfid" status="[[item.ShippingRFIDStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping" status="[[item.ShippingStatus]]"></tmladmin-ui-progress-icon>
+					</span>
+				</template>
+				<template class="footer-off">ID</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column  width="150px" flex-grow="0" resizable="true" id="OrderID">
+				<template class="header">
+					OrderID
+					<vaadin-grid-filter aria-label="OrderID" path="OrderID" value="[[_filterOrderID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="copy-tap" on-tap="_copyTap">[[item.OrderID]]</span>
+				</template>
+				<template class="footer-off">
+					OrderID
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="260px" flex-grow="0" text-align="start" resizable="true" id="Batches">
+				<template class="header">
+					Batches
+					<vaadin-grid-filter aria-label="Batches" aria-placeholder="Batches" path="Batch" value="[[_filterBatches]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<dom-repeat items="[[item.ItemSets]]" as="itemseti">
+						<template>
+							<span style="white-space:nowrap;">
+								<span class="order-id copy-tap" on-tap="_copyTap">[[itemseti.ManufactureItemSetID]]</span>
+								<a href="[[_urlViewManOrderItemSet(item.id, itemseti.ManufactureItemSetID)]]" 
+								   data-oid$="[[item.id]]" 
+								   data-id$="[[itemseti.ManufactureItemSetID]]"
+								><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+								<span hidden$="[[!_showTargetShipDateInfuture(itemseti.TargetShipDate.ms, item.Status)]]">
+									| 
+									<span date-is-gone$="[[!_isTargetShipDateInfuture(itemseti.TargetShipDate.ms)]]">
+										[[_formatDate(itemseti.TargetShipDate)]]
+									</span>
+								</span>
+								<!-- <dom-if if="[[_showTargetShipDateInfuture(itemseti.TargetShipDate.ms, item.Status)]]">
+									<template>
+										<teamatical-ui-date-time 
+											show-count-down
+											count-down-template="D~ h~ m~"
+											hidden$="[[!_isTargetShipDateInfuture(itemseti.TargetShipDate.ms)]]"
+											visible="[[visible]]"
+											hour="numeric" minute="numeric" second="numeric"
+											datetime-obj="[[itemseti.TargetShipDate]]">
+										</teamatical-ui-date-time>
+	
+										<teamatical-ui-date-time 
+											visible="[[visible]]"
+											date-is-gone$="[[!_isTargetShipDateInfuture(itemseti.TargetShipDate.ms)]]"
+											hour="numeric" minute="numeric" second="numeric"
+											datetime-obj="[[itemseti.TargetShipDate]]">
+										</teamatical-ui-date-time>
+									</template>
+								</dom-if> -->								
+							</span>
+							<br />
+							<span class="status-bar">
+								<tmladmin-ui-progress-icon type="freeze" status="[[itemseti.FreezeStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="pushed to ftp" status="[[itemseti.PushStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="rasterize" status="[[itemseti.RasterizeStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="printing" status="[[itemseti.PrintStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="transferring" status="[[itemseti.TransferringStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="cutting" status="[[itemseti.CuttingStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="sorting" status="[[itemseti.SortingStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="bundling" status="[[itemseti.BundlingStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="sewing" status="[[itemseti.SewingStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="qa" status="[[itemseti.QAStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="aggregation" status="[[itemseti.AggregationStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="shipping-labels" status="[[itemseti.ShippingLabelsStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="shipping-rfid" status="[[itemseti.ShippingRFIDStatus]]"></tmladmin-ui-progress-icon>
+								<tmladmin-ui-progress-icon type="shipping" status="[[itemseti.ShippingStatus]]"></tmladmin-ui-progress-icon>
+							</span>
+							<br />
+						</template>
+					</dom-repeat>
+				</template>
+				<template class="footer-off">Batches</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="170px" flex-grow="0" resizable="true" id="ProcessType">
+				<template class="header">
+					Process Type
+					<vaadin-grid-filter class="hidden" aria-label="ProcessType" aria-placeholder="ProcessType" path="ProcessType"
+						value="[[_filterProcessType]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="ProcessTypeCombo" style="width:150px;" value="{{_filterProcessType}}"></vaadin-combo-box>
+				</template>
+				<template>
+					<span class="nowrap">
+						<iron-icon icon="admin-image:burst-mode" class="bulk hidden" showen-icon$="[[_equal(item.ProcessType, 'Bulk')]]"></iron-icon> 
+						<iron-icon icon="admin-image:filter" class="stacking hidden" showen-icon$="[[_equal(item.ProcessType, 'Stacking')]]"></iron-icon>
+						[[item.ProcessType]]
+					</span>
+				</template>
+				<template class="footer-off">Process Type</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="110px" flex-grow="0" resizable="true" id="Sandbox">
+				<template class="header">
+					Type
+					<dom-if if="[[_viewTestOrders(userInfo.isAdmin, userInfo.isPrinter)]]">
+						<template>
+							<vaadin-grid-filter class="hidden" aria-label="Sandbox" aria-placeholder="Sandbox" path="Sandbox"
+								value="[[_filterSandbox]]"></vaadin-grid-filter>
+							<vaadin-combo-box id="SandboxCombo" style="width:80px;" value="{{_filterSandbox}}"></vaadin-combo-box>
+						</template>
+					</dom-if>
+				</template>
+				<template>
+					<span class="hidden nowrap" showen$="[[item.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> TEST
+					</span>
+
+					<span class="hidden nowrap" showen$="[[!item.Sandbox]]">
+						<iron-icon icon="admin-icons:verified-user" class="production"></iron-icon> PROD.
+					</span>
+
+				</template>
+				<template class="footer-off">Type</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="220px" resizable="true" id="Created">
+				<template class="header">
+					<vaadin-grid-sorter path="Created">Created</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Created" aria-placeholder="Created" path="Created" value="[[_filterCreated]]"></vaadin-grid-filter>
+				</template>
+				<template>[[_formatDate(item.Created)]]</template>
+				<template class="footer-off">Created</template>
+			</vaadin-grid-column>
+			
+			
+
+			
+			<vaadin-grid-column width="210px" resizable="true" id="Status">
+				<template class="header">
+					Status
+					<vaadin-grid-filter class="hidden" aria-label="Status" aria-placeholder="Status" path="Status"
+						value="[[_multiSelect(_filterStatus)]]"></vaadin-grid-filter>
+					<multiselect-combo-box id="StatusCombo" selected-items="{{_filterStatus}}" clear-button-visible></multiselect-combo-box>
+				</template>
+				<template>
+					<iron-icon icon="admin-icons:verified-user" class="production hidden" showen-icon$="[[_equal(item.Status, 'ready for manufacture')]]"></iron-icon> 
+					<iron-icon icon="admin-icons:pan-tool" class="production-hold hidden" showen-icon$="[[_equal(item.Status, 'production hold')]]"></iron-icon>
+					[[item.Status]]
+				</template>
+				<template class="footer-off">Status</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="110px" resizable="true" id="PrintingTunningsCount">
+				<template class="header">
+					Sent To Print
+				</template>
+				<template>
+					<p>
+					[[item.PrintingTunningsPushed]] / [[item.PrintingTunningsCount]]
+					<iron-icon class="production hidden" showen-icon$="[[_asBool(item.IsPDFsFrozen)]]" icon="admin-icons:check-circle"></iron-icon>
+					<iron-icon class="production" hidden$="[[!_equalNotZero(item.PrintingTunningsPushed, item.PrintingTunningsCount)]]" icon="admin-icons:cloud-done"></iron-icon>
+					</p>
+				</template>
+				<template class="footer-off">
+					Sent To Print
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="110px" resizable="true" id="TotalProductSKUsCount">
+				<template class="header">
+					# Styles
+				</template>
+				<template>
+					[[item.TotalProductSKUsCount]]
+				</template>
+				<template class="footer-off">
+					# Styles
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="110px" resizable="true" id="TotalProductsCount">
+				<template class="header">
+					# Products
+				</template>
+				<template>
+					[[item.TotalProductsCount]]
+				</template>
+				<template class="footer-off">
+					# Products
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="110px" resizable="true" id="TotalProductsCountQa">
+				<template class="header">
+					# QA Products
+				</template>
+				<template>
+					[[item.TotalProductsCountQa]]
+				</template>
+				<template class="footer-off">
+					# QA Products
+				</template>
+			</vaadin-grid-column>
+			
+
+			<vaadin-grid-column width="110px" resizable="true" id="TotalFabricsCount">
+				<template class="header">
+					# Fabrics
+				</template>
+				<template>
+					[[item.TotalFabricsCount]]
+				</template>
+				<template class="footer-off">
+					# Fabrics
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="110px" resizable="true" id="TotalFabricsLengthMeters">
+				<template class="header">
+					Total Fabrics Length (yd)
+				</template>
+				<template>
+					[[_formatMeters(item.TotalFabricsLengthMeters, 'yd')]]
+				</template>
+				<template class="footer-off">
+					Total Fabrics Length (yd)
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="110px" resizable="true" id="TotalFabricsLengthWithoutReplacementsMeters">
+				<template class="header">
+					Total Fabrics Length Without Replacements (yd)
+				</template>
+				<template>
+					[[_formatMeters(item.TotalFabricsLengthWithoutReplacementsMeters, 'yd')]]
+				</template>
+				<template class="footer-off">
+					Total Fabrics Length Without Replacements (yd)
+				</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="110px" resizable="true" id="TotalFabricsReplacementsOverhead">
+				<template class="header">
+					[[localize('admin-morder-set-TotalFabricsReplacementsOverhead-title')]]
+				</template>
+				<template>
+					[[_formatDoubleAsPercent(item.TotalFabricsReplacementsOverhead, 1)]]
+				</template>
+				<template class="footer-off">
+					[[localize('admin-morder-set-TotalFabricsReplacementsOverhead-title')]]
+				</template>
+			</vaadin-grid-column>
+
+			<!-- <vaadin-grid-column width="110px" resizable="true" id="TotalFabricsCount">
+				<template class="header">
+					# Rasterized / Error
+				</template>
+				<template>
+					[[printingi.RasterizedCount]] / [[printingi.RasterizedErrorCount]]
+				</template>
+				<template class="footer-off">
+					# Rasterized / Error
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="110px" resizable="true" id="TotalFabricsCount">
+				<template class="header">
+					# Printed / Error
+				</template>
+				<template>
+					[[printingi.PrintedCount]] / [[printingi.PrintedErrorCount]]
+				</template>
+				<template class="footer-off">
+					# Printed / Error
+				</template>
+			</vaadin-grid-column> -->
+
+			<vaadin-grid-column width="110px" resizable="true" id="ShippingAggregatedCount">
+				<template class="header">
+					# Hub Shipments
+				</template>
+				<template>
+					[[item.ShippingAggregatedCount]]
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="110px" resizable="true" id="ShippingCount">
+				<template class="header">
+					# Shippings
+				</template>
+				<template>
+					[[item.ShippingCount]]
+				</template>
+			</vaadin-grid-column>
+
+
+			<dom-if if="[[userInfo.isAdmin]]">
+				<template>
+
+					<vaadin-grid-column width="340px" resizable="true" id="ManufacturerID">
+						<template class="header">
+							Manufacturer
+							<vaadin-grid-filter aria-label="ManufacturerID" path="ManufacturerID" value="[[_filterManufacturerID]]"></vaadin-grid-filter>
+						</template>
+						<template>
+							<span hidden$="[[!item.ManufacturerID]]">
+								<b>[[item.ManufacturerName]]</b><br /> 
+								#: <span class="copy-tap" on-tap="_copyTap">[[item.ManufacturerID]]</span>
+								<a href="[[_urlViewManufacturer(item.ManufacturerID)]]">
+									<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+								</a>
+							</span>
+						</template>
+					</vaadin-grid-column>
+
+				</template>
+			</dom-if>
+
+		</vaadin-grid>
+		
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-manufacture-orders-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+		
+	</div>
+</div>

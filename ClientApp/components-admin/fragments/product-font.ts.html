@@ -1,0 +1,370 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Font #: [[_formatFontFilename(order.FontID)]] 
+
+					<paper-icon-button 
+						class="download-icon" 
+						disabled="[[_disabledDownloadFont]]"
+						aria-label="download-icon" 
+						cake="1w2" icon="file-download"
+						title="Download Font File"
+						on-tap="_downloadFontTap">
+					</paper-icon-button>					
+				</h3>
+
+				<div class="buttons">
+					<dom-if if="[[newFilename]]">
+						<template>
+							<paper-button 
+								class="order-save-font-btn hidden" 
+								disabled$="[[loading]]" 
+								showen-flex$="[[!hideSaveBtn(order)]]" 
+								raised
+								on-tap="parseFontTap">
+								Parse Font
+							</paper-button>
+						</template>
+					</dom-if>
+					
+					<dom-if if="[[!newFilename]]">
+						<template>
+							<paper-button 
+								class="order-save-font-btn hidden" 
+								disabled$="[[loading]]" 
+								showen-flex$="[[!hideSaveBtn(order)]]" 
+								raised
+								on-tap="saveFontTap">
+								Save Font
+							</paper-button>
+						</template>
+					</dom-if>
+
+				
+				
+					<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+						<h2>Confirm Font to Save</h2>
+						<paper-dialog-scrollable>
+							Font #: [[order.FontID]] is going to be saved...are you sure?
+							<!-- <paper-textarea label="Refund reason" value="{{dialogcancel_reason}}"></paper-textarea> -->
+						</paper-dialog-scrollable>
+						<div class="buttons">
+							<paper-button dialog-dismiss>Close</paper-button>
+							<paper-button dialog-confirm autofocus on-tap="saveFontConfirm">Save Font</paper-button>
+						</div>
+					</paper-dialog>
+
+					<!-- <paper-button 
+						class="order-clone-btn hidden" 
+						disabled$="[[loading]]" 
+						showen$="[[!hideCloneBtn(order)]]" 
+						raised
+						on-tap="cloneFontTap">
+						Clone Font
+					</paper-button> -->
+			
+				</div>
+
+				<p class="note-alt margin">Updated fonts will be applied after servers restart (new fonts update automaticaly)!</p>
+
+
+				<!-- FONT FACES -->
+				<dom-repeat items="[[order.FontfaceList]]" as="fontfacei">
+					<template>
+						<div class="order-inputs">
+							<h4>
+								[[fontfacei.FaceIndex]] - [[fontfacei.Family]]-[[fontfacei.Style]]:
+							</h4>
+		
+							<div class="checkbox-inputs">
+								<paper-checkbox 
+									checked="{{fontfacei.CapitalIsTailBegin}}"
+									title="">
+									Capital Is Tail Begin
+								</paper-checkbox>
+		
+								<paper-checkbox 
+									checked="{{fontfacei.FirstCapital}}"
+									title="">
+									First Capital
+								</paper-checkbox>
+		
+								<paper-checkbox 
+									checked="{{fontfacei.ToLower}}"
+									title="">
+									To Lower
+								</paper-checkbox>
+		
+								<paper-checkbox 
+									checked="{{fontfacei.ToUpper}}"
+									title="">
+									To Upper
+								</paper-checkbox>
+							</div>
+
+							<div class="small-inputs">
+
+								<paper-input 
+									label="[[_titleFilename(newFilename)]]" 
+									readonly$="[[!newFilename]]"
+									type="string" 
+									value="{{order.Filename}}"
+									name="Filename"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.Filename]]" 
+									invalid="[[_asBool(order.notvalid.Filename)]]">
+								</paper-input>
+
+								<paper-input 
+									label="Family (read-only)" 
+									type="string" 
+									readonly
+									value="{{fontfacei.Family}}"
+									name="Family"
+									on-value-changed="onInputChanged"
+									error-message="[[fontfacei.notvalid.Family]]" 
+									invalid="[[_asBool(fontfacei.notvalid.Family)]]">
+								</paper-input>
+		
+								<paper-input 
+									label="Style (read-only)" 
+									type="string" 
+									readonly
+									value="{{fontfacei.Style}}"
+									name="Style"
+									on-value-changed="onInputChanged"
+									error-message="[[fontfacei.notvalid.Style]]" 
+									invalid="[[_asBool(fontfacei.notvalid.Style)]]">
+								</paper-input>
+		
+								<paper-input 
+									label="CharactersCount (read-only)" 
+									type="string" 
+									readonly
+									value="{{fontfacei.CharactersCount}}"
+									name="CharactersCount"
+									on-value-changed="onInputChanged"
+									error-message="[[fontfacei.notvalid.CharactersCount]]" 
+									invalid="[[_asBool(fontfacei.notvalid.CharactersCount)]]">
+								</paper-input>
+		
+								<paper-input 
+									label="Multiplier (A)" 
+									type="string" 
+									value="{{fontfacei.Multiplier}}"
+									name="Multiplier"
+									on-value-changed="onInputChanged"
+									error-message="[[fontfacei.notvalid.Multiplier]]" 
+									invalid="[[_asBool(fontfacei.notvalid.Multiplier)]]">
+								</paper-input>
+
+								<paper-input 
+									label="Multiplier (1)" 
+									type="string" 
+									value="{{fontfacei.Multiplier1}}"
+									name="Multiplier1"
+									on-value-changed="onInputChanged"
+									error-message="[[fontfacei.notvalid.Multiplier1]]" 
+									invalid="[[_asBool(fontfacei.notvalid.Multiplier1)]]">
+								</paper-input>
+
+								<paper-input 
+									label="TailBegin" 
+									type="string" 
+									value="{{fontfacei.TailBegin}}"
+									name="TailBegin"
+									on-value-changed="onInputChanged"
+									error-message="[[fontfacei.notvalid.TailBegin]]" 
+									invalid="[[_asBool(fontfacei.notvalid.TailBegin)]]">
+								</paper-input>
+
+								<paper-input 
+									label="TailEnd" 
+									type="string" 
+									value="{{fontfacei.TailEnd}}"
+									name="TailEnd"
+									on-value-changed="onInputChanged"
+									error-message="[[fontfacei.notvalid.TailEnd]]" 
+									invalid="[[_asBool(fontfacei.notvalid.TailEnd)]]">
+								</paper-input>
+
+
+
+								<paper-input 
+									class="small-inputs-mock" 
+									label="..." 
+									type="string" 
+									disabled>
+								</paper-input>
+							</div>
+
+							<div class="tails">
+								<!-- item-label-path="name" item-value-path="symbol" -->
+								<multiselect-combo-box 
+									label="Tails"
+									placeholder="Add"
+									items="[[fontfacei.CharactersSeparated]]"
+									selected-items="{{fontfacei.Tails}}" 
+									clear-button-visible>
+									<template>
+										<span class="symbol">[[item]]</span>
+									</template>
+								</multiselect-combo-box>
+							</div>
+
+
+
+							<!-- replaces -->
+							<div class="replace-list">
+								<h4>
+									Replaces:
+								</h4>
+
+								<div class="new-item-input">
+									<paper-input id="newpm" class="small-input newinput" type="string"
+										label="New Replace" 
+										name="ReplaceNew" 
+										on-value-changed="onInputChanged"
+										data-fontface-index$="[[index]]"
+										error-message="[[fontfacei.notvalid.ReplaceNew]]"
+										invalid="[[_asBool(fontfacei.notvalid.ReplaceNew)]]">
+										<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+										<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline" on-tap="addReplaceTap">
+										</paper-icon-button>
+									</paper-input>
+								</div>
+
+								<dom-if if="[[fontfacei.notvalid.Replace]]">
+									<template>
+										<div class="notvalid alert">
+											<pre>
+												[[fontfacei.notvalid.Replace]]
+											</pre>
+										</div>
+									</template>
+								</dom-if>
+
+								<div scrollable-x>
+									<div class="table">
+										<div class="header">
+											<div>
+												From
+											</div>
+											<div>
+												To
+											</div>
+											<div></div>
+										</div>
+										<dom-repeat items="[[fontfacei.Replace]]" as="replacei">
+											<template>
+												<div class="row">
+													<div has-errors$="[[replacei.notvalid.From]]" title="[[_tooltip(replacei.notvalid.From)]]">
+														[[replacei.From]]
+													</div>
+													<div has-errors$="[[replacei.notvalid.To]]" title="[[_tooltip(replacei.notvalid.To)]]">
+														[[replacei.To]]
+													</div>
+													<div style="width: 260px;">
+														<div class="horiz">
+															<paper-icon-button class="upward-btn" icon="admin-icons:arrow-upward" on-tap="upwardReplaceTap"></paper-icon-button>
+															<paper-icon-button class="downward-btn" icon="admin-icons:arrow-downward" on-tap="downwardReplaceTap"></paper-icon-button>
+															<paper-button raised1 class="edit-btn" disabled$="[[loading]]" on-tap="editReplaceTap">Edit</paper-button>
+															<paper-button raised1 class="delete-btn" disabled$="[[loading]]" on-tap="deleteReplaceTap">Delete</paper-button>
+														</div>
+													</div>
+												</div>
+											</template>
+										</dom-repeat>
+										<dom-if if="[[!LenMore(fontfacei.Replace)]]">
+											<template>
+												<div class="noitems">
+													[[localize('admin-list-noitems')]]
+												</div>
+											</template>
+										</dom-if>
+									</div>
+								</div>
+							</div>
+
+							
+
+
+							<div class="font-characters">
+								<paper-progress 
+									indeterminate
+									class="fontloaderprogress"
+									aria-label="fontloader-progress"
+									hidden$="[[!loadingFont]]">
+								</paper-progress>
+
+								<paper-textarea 
+									label="Characters (read-only)" 
+									readonly
+									value="{{fontfacei.Characters}}"
+									name="Characters"
+									on-value-changed="onInputChanged"
+									error-message="[[order.notvalid.Characters]]" 
+									invalid="[[_asBool(order.notvalid.Characters)]]">
+								</paper-textarea>
+							</div>
+						</div>
+					</template>
+				</dom-repeat>
+			</div>
+
+
+
+
+			<div class="replace-dialogs">
+				<paper-dialog id="dialog_replace" class="dialog-wide-none" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center"
+					on-iron-overlay-closed="onCloseEditItemDialog">
+					<h2>[[dialog_replace.title]]</h2>
+					<paper-dialog-scrollable>
+						<!-- <h4>#: [[dialog_replace.id]]</h4> -->
+						<paper-input label="From" type="string" value="{{dialog_replace.editItem.From::input}}"
+							name="dialog_replace.editItem.From" 
+							on-value-changed="onInputChanged"
+							error-message="[[dialog_replace.editItem.notvalid.From]]"
+							invalid="[[_asBool(dialog_replace.editItem.notvalid.From)]]">
+						</paper-input>
+
+						<paper-input label="To" type="string" value="{{dialog_replace.editItem.To::input}}"
+							name="dialog_replace.editItem.To" 
+							on-value-changed="onInputChanged"
+							error-message="[[dialog_replace.editItem.notvalid.To]]"
+							invalid="[[_asBool(dialog_replace.editItem.notvalid.To)]]">
+						</paper-input>
+					</paper-dialog-scrollable>
+			
+					<div class="buttons">
+						<paper-button dialog-dismiss autofocus>Close</paper-button>
+						<paper-button dialog-confirm on-tap="saveReplaceTap">[[dialog_replace.saveBtn]]</paper-button>
+					</div>
+				</paper-dialog>
+			</div>
+
+
+		</div>
+	</div>
+</div>

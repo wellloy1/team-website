@@ -1,0 +1,75 @@
+<script>
+    var Teamatical;
+    (function (Teamatical)
+    {
+        'use strict';
+        var ts = Date.now()
+        window.polymerSkipLoadingFontRoboto = true
+        var addScript = Teamatical.addScript
+        var evilishere = Teamatical._browser.evilishere
+        var tmapp = document.getElementById("tmapp");
+
+        //switch locale before init
+        const LOCALESCOPE = "website"
+        const STORAGEKEY_LANG = "lang-" + LOCALESCOPE
+        const STORAGEKEY_DATA = "lang-data-" + LOCALESCOPE
+        if (sessionStorage) 
+        { 
+            if (Teamatical.LocaleDefault && Teamatical.LocaleJSON && sessionStorage.getItem(STORAGEKEY_LANG) == null)
+            {
+                console.log('locale switched by server', Teamatical.LocaleDefault, Teamatical.LocaleJSON)
+                sessionStorage.setItem(STORAGEKEY_LANG, Teamatical.LocaleDefault)
+                sessionStorage.setItem(STORAGEKEY_DATA, JSON.stringify(Teamatical.LocaleJSON))
+            }
+        }
+
+        //run
+        if (evilishere) 
+        { 
+            if (tmapp) { tmapp.setAttribute("evilbrowser", "") }
+        }
+        else
+        {
+            document.addEventListener("WebComponentsReady", function componentsReady(e)
+            {
+                document.removeEventListener("WebComponentsReady", componentsReady, false);
+                ts = Date.now() - ts;
+                // console.log('wc: ' + ts)
+
+                if (window.sessionStorage)
+                {
+                    //CAUTION: once it came from Razor - it sticks to customStore until tab to be closed....
+                    var customlogoStylesDOM = document.querySelector('#teamatical-customlogo-styles')
+                    var iconsetAppDOM = document.querySelector('iron-iconset-svg[name="teamatical-app"]')
+                    var appDOM = document.querySelector('teamatical-app#tmapp')
+
+                    if (appDOM && window.sessionStorage['customstoreByQuery'])
+                    {
+                        appDOM.setAttribute('customstore-by-query', window.sessionStorage['customstoreByQuery'])
+                    }
+                    else if (appDOM && appDOM.getAttribute('customstore-by-query'))
+                    {
+                        window.sessionStorage['customstoreByQuery'] = appDOM.getAttribute('customstore-by-query')
+                    }
+
+                    if (window.sessionStorage['customLogo'] == 'true')
+                    {
+                        appDOM.setAttribute('custom-logo', true)
+                        if (customlogoStylesDOM !== null) { customlogoStylesDOM.innerHTML = window.sessionStorage['customlogoStyles'] }
+                        if (iconsetAppDOM !== null) { iconsetAppDOM.innerHTML = window.sessionStorage['customlogoSVG'] }
+                    }
+                    else if (appDOM && appDOM.hasAttribute('custom-logo') && customlogoStylesDOM && iconsetAppDOM)
+                    {
+                        window.sessionStorage['customLogo'] = true
+                        window.sessionStorage['customlogoStyles'] = customlogoStylesDOM.innerHTML
+                        window.sessionStorage['customlogoSVG'] = iconsetAppDOM.innerHTML
+                    }
+                }
+                
+                if (tmapp) { addScript(Teamatical.scriptPath + "/teamatical-app.js", true) }
+            });
+        }
+
+
+    })(Teamatical || (Teamatical = {}))
+</script>

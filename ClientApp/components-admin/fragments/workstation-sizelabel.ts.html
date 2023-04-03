@@ -1,0 +1,111 @@
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="sizelabel"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+
+<div class="maindiv horiz">
+	<div class="order-container sticky">
+		<div class="order">
+			<!-- sizelabel -->
+			<div class="order-sizelabel" hidden$="[[!order]]">
+				<div class="sticky-container">
+					<h2>
+						<paper-icon-button 
+							class="refresh-btn" 
+							icon="admin-icons:refresh"
+							title="[[localize('admin-ws-refresh')]]" 
+							disabled="[[loadingAny]]"
+							on-tap="_reloadTap">
+						</paper-icon-button>
+
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+
+						[[localize('admin-ws-sizelabel-title')]]
+					</h2>
+
+					<paper-progress 
+						id="progress" 
+						indeterminate 
+						class="" 
+						disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+				
+				<div class="main">
+					<paper-input id="newbarcode" label="[[localize('admin-ws-sizelabel-barcode-label')]]" name="barcode" class="barcode-input" type="string" disabled="[[loadingAny]]" on-value-changed="onInputChanged"
+						on-keydown="_barcodeEnter">
+						<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+						<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:arrow-downward" on-tap="_barcodeTap">
+						</paper-icon-button>
+					</paper-input>
+
+					<dom-if if="[[order.Invalid]]">
+						<template>
+							<h3 class="invalid">
+								[[localize('admin-ws-sizelabel-item-invalid')]]
+							</h3>
+						</template>
+					</dom-if>
+					
+					<dom-if if="[[order.WrongPart]]">
+						<template>
+							<h3 class="invalid part">
+								[[localize('admin-ws-sizelabel-item-wrongpart')]]
+							</h3>
+						</template>
+					</dom-if>
+
+
+
+					<dom-if if="[[order.Size]]">
+						<template>
+							<div class="size">
+								<h4>
+									[[localize('admin-ws-sizelabel-size-title')]]
+
+									<span class="hidden" showen$="[[order.Sandbox]]">
+										<iron-icon icon="admin-icons:warning" class="warning" title="[[localize('admin-ws-test-item')]]"></iron-icon> [[localize('admin-ws-test-item')]]
+									</span>
+								</h4>
+								<p>[[order.Size.Name]]</p>
+							</div>
+						</template>
+					</dom-if>
+
+
+				</div>
+
+			</div>
+
+			<div class="order-buttons">
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+
+<!-- 
+CAUTION: due android app passes barcode via JS callback
+
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="sizelabel"
+	website-url="[[websiteUrl]]"
+	sticker-printer
+	barcode-scanner
+	loading="{{loadingWS}}"
+	visible="[[visible]]">
+</teamatical-ui-scanner-printer-settings>
+
+-->
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>

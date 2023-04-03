@@ -1,0 +1,566 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Custom Store #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.StoreID]]</span>
+					<a href="[[_urlConsumerViewStore(order.StoreID, order.BaseUrl)]]" target="_blank"><iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon></a>
+					([[_formatDate(order.Created)]] -  
+					[[_formatDate(order.Updated)]])
+					- items #: [[order.ItemsCount]]
+				</h3>
+
+
+				<div class="buttons">
+					<paper-button 
+						class="order-save-btn" 
+						disabled$="[[loadingAny]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveTap">
+						Save
+					</paper-button>
+				</div>
+
+				<div class="order-inputs detail-section">
+					<h4>
+						Details
+					</h4>
+
+					<paper-input label="Title (readonly)" type="string" readonly
+								value="{{order.Title}}"
+								name="Title" 
+								disabled$="[[loadingAny]]"
+								on-value-changed="onInputChanged" 
+								error-message="[[order.notvalid.Title]]"
+								invalid="[[_asBool(order.notvalid.Title)]]">
+					</paper-input>
+
+					<dom-if if="[[!isOrganization]]">
+						<template>
+							<div class="spinner">
+								<paper-checkbox 
+									class="admin-caution"
+									checked="{{order.NoQuantityLimits}}" 
+									on-change="noQtyLimitsChecked" 
+									disabled$="[[loadingAny]]">
+									No Quantity Limits
+								</paper-checkbox>
+								<paper-spinner-lite class="thick"></paper-spinner-lite>
+							</div>
+						</template>
+					</dom-if>
+
+					<div class="spinner">
+						<paper-checkbox 
+							class="admin-caution"
+							checked="{{order.InPublicCatalog}}" 
+							on-change="inPublicCatalogChecked" 
+							disabled$="[[loadingAny]]">
+							In Public Catalog (Stores Indexer)
+						</paper-checkbox>
+						<paper-spinner-lite class="thick"></paper-spinner-lite>
+					</div>
+
+					<dom-if if="[[!isOrganization]]">
+						<template>
+		
+							<paper-checkbox checked="{{order.LockCustomize}}" disabled>
+								Lock Customize (readonly)
+							</paper-checkbox>
+
+							<paper-checkbox checked="{{order.DisableTierPriceModel}}" disabled>
+								Disable Tier PriceModel (readonly)
+							</paper-checkbox>
+
+							<paper-checkbox checked="{{order.HidePrices}}" disabled>
+								Hide Prices (readonly)
+							</paper-checkbox>
+
+							<paper-checkbox checked="{{order.IsArchive}}" disabled>
+								Is Archive (readonly)
+							</paper-checkbox>
+						</template>
+					</dom-if>
+					
+
+					
+
+					<div class="">
+						<dom-if if="[[!isOrganization]]">
+							<template>
+								<paper-input label="Sorting Index" placeholder="Sorting Index" value="[[order.IndexPublicCatalog]]" type="number">
+									<paper-icon-button	
+										slot="suffix"
+										class="add-btn" 
+										icon="admin-icons:arrow-downward" 
+										disabled$="[[loadingAny]]" 
+										on-tap="sortingIndexTap">
+									</paper-icon-button>
+									<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+								</paper-input>
+
+								<div class="selection">
+									<tmladmin-ui-dropdown-menu 
+										vertical-align="top" 
+										horizontal-align="left"
+										id-property="ID"
+										title-property="Name"
+										label="Prefered Shipping Hub"
+										disabled$="[[loadingAny]]" 
+										value="{{order.PreferedHub}}"
+										value-list="[[order.PreferedHubList]]"
+										error-message="[[order.notvalid.PreferedHub]]"
+										invalid="[[_asBool(order.notvalid.PreferedHub)]]">
+									</tmladmin-ui-dropdown-menu>
+								</div>
+
+								<dom-if if="[[_asBool(order.CurrencyRegions)]]">
+									<template>
+										<div class="selection">
+											<tmladmin-ui-dropdown-menu 
+												vertical-align="top" 
+												horizontal-align="left"
+												id-property="id"
+												title-property="title"
+												label="Currency Region"
+												disabled$="[[loadingAny]]" 
+												value="{{order.CurrencyRegion}}"
+												value-list="[[order.CurrencyRegions]]"
+												error-message="[[order.notvalid.CurrencyRegion]]"
+												invalid="[[_asBool(order.notvalid.CurrencyRegion)]]">
+											</tmladmin-ui-dropdown-menu>
+										</div>
+									</template>
+								</dom-if>
+							</template>
+						</dom-if>
+						
+						<!-- <paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input> -->
+					</div>
+				</div>
+			</div>
+			
+
+			
+			<dom-if if="[[!isOrganization]]">
+				<template>
+					<div class="order-organization-bind">
+						<h4>
+							Organization Bind
+						</h4>
+						
+						
+						<div hidden$="[[!order.BindToOrganization]]" class="horiz-container">
+							<paper-checkbox 
+								checked="[[!order.BindToOrganization]]" 
+								disabled$="[[loadingAny]]" 
+								on-change="unbindOrganizationChecked" 
+								class="admin-caution">
+								Unbind Organization
+							</paper-checkbox>
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+
+							<dom-if if="[[order.Organization]]">
+								<template>
+									<span>
+										<b>[[order.Organization.Name]]</b>
+										<a href$="[[_urlViewOrganization(order.Organization.OrganizationID)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a> 
+									</span>
+								</template>
+							</dom-if>
+						</div>
+
+						<p class="note-alt margin warning" hidden$="[[!order.BindToOrganization]]">
+							CAUTION: DON'T USE ORGANIZATION UNBIND FUNCTION WITHOUT BIG NECESSITY! YOU DO IT ON YOUR OWN RISK!
+						</p>
+
+
+						
+
+		
+						<div hidden$="[[order.BindToOrganization]]">
+							<paper-input label="Bind Organization" placeholder="Organization ID" type="string" style="display: inline-block;">
+								<paper-icon-button	
+									slot="suffix" 						
+									class="add-btn" 
+									icon="admin-icons:add-circle-outline" 
+									disabled$="[[loadingAny]]" 
+									on-tap="bindOrganizationTap">
+								</paper-icon-button>
+								<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+							</paper-input>
+						</div>
+					</div>
+				</template>
+			</dom-if>
+
+
+
+
+
+			
+			<div class="order-store-admins">
+				<h4>Store Admins:</h4>
+				<div class="horiz-container" hidden$="[[isOrganization]]">
+					<tmladmin-ui-search-input 
+						id="newuser"
+						label="New Store Admin User"
+						search-type="user"
+						sid$="[[order.StoreID]]"
+						visible="[[visible]]"
+						website-url="[[websiteUrl]]">
+					</tmladmin-ui-search-input>
+					<paper-spinner-lite class="thick"></paper-spinner-lite>
+				</div>
+				<div scrollable-x>
+					<div class="table">
+						<div class="header">
+							<div>
+								User
+							</div>
+							<div>
+								Administration Since
+							</div>
+							<!-- InviterUser, InvitationEmail -->
+							<div>
+								&nbsp;
+							</div>
+						</div>
+				
+						<dom-repeat items="[[order.Administrators]]" as="admini">
+							<template>
+								<div class="row vcenter">
+									<div>
+										<teamatical-ui-user-inline user="[[admini.User]]"></teamatical-ui-user-inline>
+									</div>
+									<div>
+										[[_formatDate(admini.AdministratorSince)]]
+									</div>
+									<div>
+										<span>
+											<paper-spinner-lite class="thick"></paper-spinner-lite>
+											<paper-icon-button 
+												class="remove-btn" 
+												icon="admin-icons:close" 
+												disabled$="[[loadingAny]]" 
+												sid$="[[order.StoreID]]"
+												on-tap="_removeTap">
+											</paper-icon-button>
+										</span>
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+				
+						<dom-if if="[[!LenMore(order.Administrators)]]">
+							<template>
+								<div>
+									<div class="noitems">
+										no items
+									</div>
+								</div>
+							</template>
+						</dom-if>
+					</div>
+				</div>
+			</div>
+
+
+
+
+
+			<div class="order-store-admin_invites">
+				<h4>Store Admins Invites:</h4>
+					<div>
+						<paper-input id="newadmin" label="Invited Admin Email" type="string">
+							<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+							<paper-icon-button	
+								slot="suffix"
+								class="add-btn" 
+								icon="admin-icons:add-circle-outline" 
+								sid$="[[order.StoreID]]"
+								disabled$="[[loadingAny]]" 
+								on-tap="_addInviteTap"></paper-icon-button>
+						</paper-input>
+					</div>
+					<!-- InvitedByUser, InvitedTime, email -->
+					<div scrollable-x>
+						<div class="table">
+							<div class="header">
+								<div>
+									Email
+								</div>
+								<div>
+									Invited Time
+								</div>
+								<div>
+									Invited By User
+								</div>
+								<div>
+									&nbsp;
+								</div>
+							</div>
+							<dom-repeat items="[[order.Invited]]" as="invitei">
+								<template>
+									<div class="row vcenter">
+										<div>
+											[[invitei.email]]
+										</div>
+										<div>
+											[[_formatDate(invitei.InvitedTime)]]
+										</div>
+										<div>
+											<teamatical-ui-user-inline user="[[invitei.InvitedByUser]]">
+											</teamatical-ui-user-inline>
+										</div>
+										<div>
+											<span>
+												<paper-spinner-lite class="thick"></paper-spinner-lite>
+												<paper-icon-button 
+													class="remove-btn" 
+													icon="admin-icons:close" 
+													sid$="[[order.StoreID]]"
+													disabled$="[[loadingAny]]" 
+													on-tap="_removeInviteTap">
+												</paper-icon-button>
+											</span>
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+							<dom-if if="[[!LenMore(order.Invited)]]">
+								<template>
+									<div>
+										<div class="noitems">
+											no items
+										</div>
+									</div>
+								</template>
+							</dom-if>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+			<div class="order-tax-certificates">
+				<h4>
+					Buyer Tax Certificates
+					<dom-if if="[[_yesItems(order.TaxCertificates, order.TaxCertificates.*)]]">
+						<template>
+						([[order.TaxCertificates.length]])
+						</template>
+					</dom-if>
+				</h4>
+			
+				<div class="horiz">
+					<vaadin-combo-box 
+						label="USA State" 
+						class="us-state"
+						placeholder="State" 
+						items="[[usaStates]]" 
+						item-value-path="ID" 
+						item-label-path="Name" 
+						value="{{addTaxCert.State}}">
+					</vaadin-combo-box>
+					<vaadin-date-picker 
+						label="Expiration Date"
+						disabled$="[[loadingAny]]"
+						value="{{addTaxCert.ExpirationDate}}">
+					</vaadin-date-picker>
+					<paper-icon-button slot="suffix" class="add-btn" 
+						icon="admin-icons:add-circle-outline" 
+						disabled="[[_disAddTaxCert(order.TaxCertificates.length, loadingAny)]]" 
+						on-tap="addNewTaxCertTap">
+					</paper-icon-button>
+					<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+				</div>
+			
+				<dom-if if="[[order.notvalid.TaxCertificates]]">
+					<template>
+						<div class="notvalid alert">
+							<pre>
+								[[order.notvalid.TaxCertificates]]
+							</pre>
+						</div>
+					</template>
+				</dom-if>
+			
+				<div scrollable-x>
+					<div class="table">
+						<div class="header">
+							<!-- <div>
+								Tax Certificate ID
+							</div> -->
+							<div>
+								State (Shipping Address)
+							</div>
+							<div>
+								Expiration Date
+							</div>
+							<div>
+								Description
+							</div>
+							<div class="w25_">
+								<!-- buttons -->
+							</div>
+						</div>
+				
+						<dom-repeat items="[[order.TaxCertificates]]" as="taxcerti">
+							<template>
+								<div class="row vcenter">
+									<!-- <div>
+										[[taxcerti.TaxCertificateID]]
+									</div> -->
+									<div>
+										<span has-errors$="[[taxcerti.notvalid.State]]">[[taxcerti.State]]</span>
+									</div>
+									<div>
+										<span has-errors$="[[taxcerti.notvalid.ExpirationDate]]" highlighted$="[[taxcerti.IsExpired]]">[[_formatDateOnlyNoTZ(taxcerti.ExpirationDate)]]</span>
+									</div>
+									<div>
+										<span has-errors$="[[taxcerti.notvalid.Description]]">[[taxcerti.Description]]</span>
+									</div>
+									<div>
+										<div class="horiz" style="white-space: nowrap;">
+											<paper-icon-button class="upward-btn" icon="admin-icons:arrow-upward" on-tap="upwardTaxCertTap"></paper-icon-button>
+											<paper-icon-button class="downward-btn" icon="admin-icons:arrow-downward" on-tap="downwardTaxCertTap"></paper-icon-button>
+				
+											<paper-button raised1 on-tap="editTaxCertTap" class="edit-btn" disabled$="[[loadingAny]]">Edit</paper-button>
+											<paper-button raised1 on-tap="deleteTaxCertTap" class="delete-btn" disabled$="[[loadingAny]]">Delete</paper-button>
+										</div>
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+					</div>
+					<dom-if if="[[!LenMore(order.TaxCertificates)]]">
+						<template>
+							<div class="noitems">
+								no items
+							</div>
+						</template>
+					</dom-if>
+				</div>
+			</div>
+
+
+			<dom-if if="[[!isOrganization]]">
+				<template>
+					<tmladmin-ui-changes-history
+						class="order-history"
+						title="History"
+						items="[[order.History]]">
+					</tmladmin-ui-changes-history>
+				</template>
+			</dom-if>
+
+		</div>
+	</div>
+</div>
+
+
+
+
+<!-- 
+<paper-dialog 
+	id="dialogcancel" 
+	proceed 
+	no-overlap 
+	horizontal-align="left" 
+	vertical-align="top">
+	<h2>Group Shipping Cancelation and Refund</h2>
+	<paper-dialog-scrollable>
+		Cancel Group Shipping  will be proceed with orders refund...are you sure?
+	</paper-dialog-scrollable>
+
+	<div class="buttons">
+		<paper-button dialog-dismiss autofocus>Close</paper-button>
+		<paper-button dialog-confirm on-tap="cancelConfirm">Cancel And Refund</paper-button>
+	</div>
+</paper-dialog> -->
+
+
+<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Confirm Custom Store to Save</h2>
+	<paper-dialog-scrollable>
+		Custom Store #: [[order.StoreID]] is going to be saved...are you sure?
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="saveConfirmTap">Save Custom Store</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialog_taxcert" class="dialog-wide" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>[[editTaxCertTitle]]</h2>
+	<paper-dialog-scrollable style="min-height: 260px;">
+		<div style="min-height: 260px;">
+		<vaadin-combo-box 
+			label="USA State" 
+			class="us-state"
+			placeholder="State" 
+			items="[[usaStates]]" 
+			item-value-path="ID" 
+			item-label-path="Name" 
+			value="{{editTaxCert.State}}"
+			name="editTaxCert.State"
+			on-value-changed="onInputChanged" 
+			error-message="[[editTaxCert.notvalid.State]]"
+			invalid="[[_asBool(editTaxCert.notvalid.State)]]">
+		</vaadin-combo-box>
+
+		<vaadin-date-picker 
+			label="Expiration Date"
+			disabled$="[[loadingAny]]"
+			on-change="taxcertNewExpirationDateChanged"
+			value="{{editTaxCert.ExpirationDate}}"
+			name="editTaxCert.ExpirationDate"
+			on-value-changed="onInputChanged" 
+			error-message="[[editTaxCert.notvalid.ExpirationDate]]"
+			invalid="[[_asBool(editTaxCert.notvalid.ExpirationDate)]]">
+		</vaadin-date-picker>
+
+		<paper-textarea 
+			label="Description" type="string" 
+			value="{{editTaxCert.Description::input}}" 
+			name="editTaxCert.Description"
+			on-value-changed="onInputChanged" 
+			error-message="[[editTaxCert.notvalid.Description]]"
+			invalid="[[_asBool(editTaxCert.notvalid.Description)]]">
+		</paper-textarea>
+		</div>
+	</paper-dialog-scrollable>
+
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="applyTaxCertBtnTap">[[applyTaxCertBtn]]</paper-button>
+	</div>
+</paper-dialog>

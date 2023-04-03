@@ -1,0 +1,323 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsimulated Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Deal Profile Simulation for Product Configuration #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.ProductConfigurationID]]</span>
+				</h3>
+
+				<div class="buttons">
+					<paper-button 
+						class="order-save-view-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="simulateTap">
+						Simulate
+					</paper-button>
+				
+					<dom-if if="[[order.HasDraft]]">
+						<template>
+							<paper-checkbox 
+								disabled$="[[loadingAny]]" 
+								checked="{{order.UseDraft}}">
+								Use Draft
+							</paper-checkbox>
+						</template>
+					</dom-if>
+					<!-- <div class="order-dangersection-btn">
+					</div> -->
+				</div>
+				
+				<div class="order-inputs details-section">
+					<h4>
+						Input Conditions:
+					</h4>
+
+					<paper-checkbox 
+						disabled$="[[loadingAny]]" 
+						checked="{{order.DirectShipping}}">
+						Use Direct Shipping
+					</paper-checkbox>
+		
+					
+					<div class="small-inputs">
+						<div class="selection">
+							<tmladmin-ui-dropdown-menu 
+								vertical-align="top" 
+								horizontal-align="left"
+								id-property="id"
+								title-property="title"
+								label="Point Of Purchase"
+								disabled$="[[loadingAny]]" 
+								value="{{order.PointOfPurchase}}"
+								value-list="[[order.PointsOfPurchase]]"
+								error-message="[[order.notvalid.PointOfPurchase]]"
+								invalid="[[_asBool(order.notvalid.PointOfPurchase)]]">
+							</tmladmin-ui-dropdown-menu>
+						</div>
+
+						<div class="selection">
+							<tmladmin-ui-dropdown-menu 
+								vertical-align="top" 
+								horizontal-align="left"
+								id-property="id"
+								title-property="title"
+								label="Payment Type"
+								disabled$="[[loadingAny]]" 
+								value="{{order.PaymentType}}"
+								value-list="[[order.PaymentTypes]]"
+								error-message="[[order.notvalid.PaymentType]]"
+								invalid="[[_asBool(order.notvalid.PaymentType)]]">
+							</tmladmin-ui-dropdown-menu>
+						</div>
+					</div>
+
+					<div class="small-inputs">
+						<paper-input 
+							label="Quantity" 
+							type="number" 
+							value="{{order.Quantity}}"
+							name="Quantity"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.Quantity]]" 
+							invalid="[[_asBool(order.notvalid.Quantity)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Shipping Cost (¢)" 
+							type="number" 
+							value="{{order.ShippingCost}}"
+							name="ShippingCost"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.ShippingCost]]" 
+							invalid="[[_asBool(order.notvalid.ShippingCost)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Tax (¢)" 
+							type="number" 
+							value="{{order.Tax}}"
+							name="Tax"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.Tax]]" 
+							invalid="[[_asBool(order.notvalid.Tax)]]">
+						</paper-input>
+
+						
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+
+				</div>
+			</div>
+
+
+			<div class="order-body">
+				<div class="order-inputs graph-section">
+					<h4 class="h4-flex">
+						<span>Simulation Diagram:</span>
+						<span>
+							<paper-toggle-button checked="{{showVariables}}">
+								Show Variables
+							</paper-toggle-button>
+						</span>
+						<!-- <span>
+							<paper-icon-button class="help-btn hide-on-print" 
+								icon="admin-icons:help-outline"
+								disabled="[[loadingAny]]"
+								on-tap="showHelpTap">
+							</paper-icon-button>
+						</span>-->
+
+						<span class="right-section">
+							<paper-icon-button class="revert-btn hide-on-print" 
+								icon="admin-icons:highlight-off"
+								disabled="[[loadingAny]]"
+								on-tap="revertDiagramXmlConfirmDialogTap">
+							</paper-icon-button>
+						</span>
+					</h4>
+
+					
+					<dom-if if="[[LenMore(order.Errors)]]">
+						<template>
+							<dom-repeat items="[[order.Errors]]" as="erri">
+								<template>
+									<span class="alert invalid-line alert-border">
+										[[erri.Message]]
+									</span>
+								</template>
+							</dom-repeat>
+						</template>
+					</dom-if>
+
+
+					<!-- DIAGRAM -->
+					<div id="diagram-container"></div>
+
+
+					<!-- OBLIGATIONS -->
+					<div class="obligations-list">
+						<!-- <h4>
+							Obligations:
+						</h4> -->
+					
+						<div scrollable-x>
+							<div class="table">
+								<div class="header centered">
+									<div>
+										<!-- Type -->
+									</div>
+									<div>
+										Participant
+									</div>
+									<div>
+										Payment Split
+									</div>
+									<div>
+										Profit
+									</div>
+									<div>
+										Obligations
+									</div>
+									<div>
+										<!-- btns -->
+									</div>
+								</div>
+						
+								<dom-repeat items="[[obligationsReport]]" as="obli">
+									<template>
+										<div class="row vcenter">
+											<div class="centered">
+												<b>[[obli.type]]</b>
+											</div>
+											<div class="centered">
+												[[obli.title]]
+											</div>
+											<div class="centered">
+												<dom-repeat items="[[obli.PaymentSplit]]" as="vali">
+													<template>
+														<p>[[_formatObligValue(vali)]]</p>
+													</template>
+												</dom-repeat>
+												<dom-if if="[[!LenMore(obli.PaymentSplit)]]">
+													<template>
+														<div class="noitems">
+															--//--
+														</div>
+													</template>
+												</dom-if>
+											</div>
+											<div class="centered">
+												<dom-repeat items="[[obli.Profit]]" as="vali">
+													<template>
+														<p>[[_formatObligValue(vali)]]</p>
+													</template>
+												</dom-repeat>
+												<dom-if if="[[!LenMore(obli.Profit)]]">
+													<template>
+														<div class="noitems">
+															--//--
+														</div>
+													</template>
+												</dom-if>
+											</div>
+											<div class="centered">
+												<dom-repeat items="[[obli.Obligations]]" as="vali">
+													<template>
+														<p>[[_formatObligValue(vali)]]</p>
+													</template>
+												</dom-repeat>
+												<dom-if if="[[!LenMore(obli.Obligations)]]">
+													<template>
+														<div class="noitems">
+															--//--
+														</div>
+													</template>
+												</dom-if>
+											</div>
+											<div>
+												<!-- <paper-spinner-lite class="thick"></paper-spinner-lite>
+												<paper-button on-tap="_onDownload" data-id$="[[order.id]]" raised>
+													-download-
+												</paper-button> -->
+											</div>
+										</div>
+									</template>
+								</dom-repeat>
+						
+								<dom-if if="[[!LenMore(obligationsReport)]]">
+									<template>
+										<div>
+											<div class="noitems">
+												Oops, no obligations
+											</div>
+										</div>
+									</template>
+								</dom-if>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+<!-- dialogs -->
+<tmladmin-ui-dialog id="dialogrevert" disabled$="[[dialogrevert.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button class="close-dialog-small-btn" icon="admin-icons:close" dialog-dismiss></paper-icon-button>
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogrevert.loading]]" hidden$="[[!dialogrevert.loading]]"></paper-progress>
+		</div>
+		<h2>
+			Revert Confirm
+		</h2>
+	</div>
+
+	<div slot="body">
+		<p>Rervert to Default Diagram ...are you sure?</p>
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			[[localize('admin-dialog-close')]]
+		</paper-button>
+		<paper-button dialog-confirm class="revert-btn" on-tap="revertDiagramXmlTap">
+			Revert
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>

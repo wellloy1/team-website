@@ -1,0 +1,46 @@
+<!-- <iron-icon class="branded-icon" icon="communication:phonelink-setup"></iron-icon> -->
+
+<paper-icon-button 
+  id="shareButton"
+  icon="[[buttonIcon]]"
+  disabled$="[[_shareBtnDisabled]]" 
+  aria-label$="[[localize('share-btn-arealabel')]]"
+  on-tap="_onShareBtnTap">
+</paper-icon-button>
+
+
+<div 
+  id="shareMenu" 
+  class="social-list hidden-animated"
+  hidden-animated$="[[!opened]]">
+  <div>
+    <paper-icon-button href="email" aria-label$="[[localize('share-email-arealabel')]]" hidden$="[[!email]]" disabled="[[_disabledHidden(email, opened)]]" style="color:#000000" class="social-icon" icon="communication:email" on-tap="_barandShareTap"></paper-icon-button>
+  </div>
+  <div>
+    <paper-icon-button href="facebook" aria-label$="[[localize('share-facebook-arealabel')]]" hidden$="[[!facebook]]" disabled="[[_disabledHidden(facebook, opened)]]" style="color:#3B5998" class="social-icon" cake="1w2" icon="brand:facebook" on-tap="_barandShareTap"></paper-icon-button>
+  </div>
+  <div>
+    <paper-icon-button href="google" aria-label$="[[localize('share-google-arealabel')]]" hidden$="[[!google]]" disabled="[[_disabledHidden(google, opened)]]" style="color:#DC4E41" class="social-icon" icon="brand:google" on-tap="_barandShareTap"></paper-icon-button>
+  </div>
+  <div>
+    <paper-icon-button href="twitter" aria-label$="[[localize('share-twitter-arealabel')]]" hidden$="[[!twitter]]" disabled="[[_disabledHidden(twitter, opened)]]" style="color:#1DA1F2" class="social-icon" icon="brand:twitter" on-tap="_barandShareTap"></paper-icon-button>
+  </div>
+  <div>
+    <paper-icon-button href="vk" aria-label$="[[localize('share-vk-arealabel')]]" hidden$="[[!vk]]" disabled="[[_disabledHidden(vk, opened)]]" style="color:#6383A8" class="social-icon" icon="brand:vk" on-tap="_barandShareTap"></paper-icon-button>
+  </div>
+  <div>
+    <paper-icon-button href="blogger" aria-label$="[[localize('share-blogger-arealabel')]]" hidden$="[[!blogger]]" disabled="[[_disabledHidden(blogger, opened)]]" style="color:#F38936" class="social-icon" icon="brand:blogger" on-tap="_barandShareTap"></paper-icon-button>
+  </div>
+  <div>
+    <paper-icon-button href="tumblr" aria-label$="[[localize('share-tumblr-arealabel')]]" hidden$="[[!tumblr]]" disabled="[[_disabledHidden(tumblr, opened)]]" style="color:#36465D" class="social-icon" icon="brand:tumblr" on-tap="_barandShareTap"></paper-icon-button>
+  </div>
+  <div>
+    <paper-icon-button href="reddit" aria-label$="[[localize('share-reddit-arealabel')]]" hidden$="[[!reddit]]" disabled="[[_disabledHidden(reddit, opened)]]" style="color:#FF4500" class="social-icon" icon="brand:reddit" on-tap="_barandShareTap"></paper-icon-button>
+  </div>
+  <div>
+    <paper-icon-button href="telegram" aria-label$="[[localize('share-telegram-arealabel')]]" hidden$="[[!telegram]]" disabled="[[_disabledHidden(telegram, opened)]]" style="color:#419FD9" class="social-icon" icon="brand:telegram" on-tap="_barandShareTap"></paper-icon-button>
+  </div>
+  <div>
+    <paper-icon-button href="clipboard" aria-label$="[[localize('share-clipboard-arealabel')]]" hidden$="[[!clipboard]]" disabled="[[_disabledHidden(clipboard, opened)]]" style="color:#000" class="social-icon" icon="icons:content-copy" on-tap="_barandShareTap"></paper-icon-button>
+  </div>
+</div>

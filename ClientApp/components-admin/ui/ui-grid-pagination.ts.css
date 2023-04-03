@@ -1,0 +1,94 @@
+:host {
+	display: block;
+}
+
+::-webkit-scrollbar{width:2px;height:2px;}
+::-webkit-scrollbar-button{width:2px;height:2px;}
+
+.pager {
+	display: flex;
+	/* flex-wrap: nowrap; */
+}
+.pagesize-selector {
+	background-color: white;
+
+	white-space: nowrap;
+
+	display: flex;
+	justify-content: flex-end;
+}
+:host([fixed]).pagesize-selector {
+	position: absolute;
+	right: 0px;
+    top: -6px;
+	width: 280px;
+    min-width: 280px;
+}
+
+.pagesize-selector teamatical-ui-select {
+	width: 60px;
+	margin: 0px 8px;
+    margin-top: -24px;
+}
+
+#pages-container {
+	width: 100%;
+    /* margin-right: 100px; */
+	overflow-x: auto;
+}
+#pages {
+	display: flex;
+	height: 100%;
+	/* flex-wrap: wrap;
+	margin: 20px;
+    margin-right: 100px; */
+	
+	/* height: 44px; */
+}
+
+.pagesize-selector > button,
+#pages > button {
+	user-select: none;
+	padding: 5px;
+	margin: 0 5px;
+	border-radius: 10%;
+	border: 0;
+	background: transparent;
+	font: inherit;
+	outline: none;
+	cursor: pointer;
+}
+
+.pagesize-selector > button:not([disabled]):not([selected]):hover,
+.pagesize-selector > button:not([disabled]):not([selected]):focus,
+#pages > button:not([disabled]):not([selected]):hover,
+#pages > button:not([disabled]):not([selected]):focus {
+	color: var(--default-primary-color);
+	background-color: #eee;
+}
+
+.pagesize-selector > button:not([disabled])[selected]:hover,
+#pages > button:not([disabled])[selected]:hover {
+	opacity: 0.75;
+}
+
+.pagesize-selector > button[selected],
+#pages > button[selected] {
+	font-weight: bold;
+	color: white;
+	background-color: var(--default-primary-color);
+}
+
+.pagesize-selector > button[disabled],
+#pages > button[disabled] {
+	color: gainsboro;
+	cursor: default;
+}
+
+
+
+/* @media (max-width: 767px) {
+	.pagesize-selector {
+		right: 0px;
+	}
+} */

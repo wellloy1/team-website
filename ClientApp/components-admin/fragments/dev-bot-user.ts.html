@@ -1,0 +1,37 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+		
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					Create User
+				</h3>
+
+				<div>
+					<paper-input id="urlInput" label="UserID" type="string" value="{{order.UserID}}">
+						<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+					</paper-input>
+				</div>
+
+				<div class="buttons">
+					<paper-button
+							class="decode-btn" 
+							disabled$="[[loading]]" 
+							raised 
+							on-tap="createTap">
+							Create
+					</paper-button>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+</div>

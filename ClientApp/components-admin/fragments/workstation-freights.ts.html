@@ -1,0 +1,861 @@
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="freights"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+<div class="maindiv">
+	<div class="order-container sticky">
+		<div class="order">
+			<!-- freights -->
+			<div class="order-freights">
+				<div class="sticky-container">
+					<h2>
+						<span class="hidden" showen$="[[hasUnsavedChanges]]">
+							<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('admin-flag-unsaved')]]
+						</span>
+	
+						<paper-icon-button 
+							class="refresh-btn" 
+							icon="admin-icons:refresh"
+							title="[[localize('admin-ws-refresh')]]" 
+							disabled="[[loadingAny]]"
+							on-tap="_reloadTap">
+						</paper-icon-button>
+
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+						[[localize('admin-ws-freights-title')]] 
+						|
+						 [[localize('admin-ws-freights-qty')]]: [[order.Freights.length]]
+						<span class="hidden" showen$="[[order.FreightsHasMore]]">+</span>
+
+						<dom-if if="[[_asBool(order.CurrentFreight)]]">
+							<template>
+								- [[localize('admin-ws-freights-title2')]] #: [[order.CurrentFreight.FreightID]]
+								| [[_formatDate(order.CurrentFreight.Created)]]
+							</template>
+						</dom-if>
+					</h2>
+
+					<paper-progress id="progress" indeterminate class="" disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+
+				<div class="horiz menu-fixed">
+
+					<div class="menu">
+						<paper-listbox 
+							id="menu"
+							attr-for-selected="id" 
+							selected="[[order.CurrentFreight.FreightID1]]"
+							on-selected-item-changed="onSelectedFreight">
+							<dom-repeat items="[[order.Freights]]" as="freighti">
+								<template>
+									<paper-item 
+										id="[[freighti.FreightID]]" 
+										on-tap="selectFreightMenuTap" 
+										disabled="[[loadingAny]]">
+										<span 
+											class="menu-freight-name" 
+											title$="[[freighti.FreightID]]">
+											[[_freightMenuName(freighti.FreightID, freighti.Name)]]
+										</span>
+										<span 
+											class="menu-freight-date">
+											[[_formatDate(freighti.Created)]]
+										</span>
+										<span 
+											class="menu-freight-invoicenumber">
+											[[freighti.InvoiceNumber]]
+										</span>
+
+										<iron-icon icon="admin-icons:warning" class="menu-freight-test warning hidden" showen-icon$="[[freighti.Sandbox]]" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+									</paper-item>
+								</template>
+							</dom-repeat>
+						</paper-listbox>
+					</div>
+
+
+
+					<!-- CURRENT -->
+					<div class="current-freight">
+						<div class="first-line">
+							<paper-input 
+								id="newbarcode" name="barcode"
+								class="barcode-input" type="string"
+								label="[[localize('admin-ws-freights-barcode-label')]]" 
+								disabled="[[loadingAny]]" 
+								on-value-changed="onInputChanged"
+								on-keydown="_barcodeEnter">
+								<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+								<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:arrow-downward" on-tap="_barcodeTap">
+								</paper-icon-button>
+							</paper-input>
+					
+
+							<dom-if if="[[showManufacturers]]">
+								<template>
+									<div class="man-selection" is-admin>
+										<tmladmin-ui-dropdown-menu 
+											vertical-align="top" 
+											horizontal-align="left"
+											id-property="ManufacturerID"
+											title-property="ManufacturerName"
+											label="[[localize('admin-ws-manufacturer')]]"
+											disabled$="[[loadingAny]]" 
+											value="{{order.Manufacturer}}"
+											value-list="[[order.Manufacturers]]"
+											on-value-changed="onInputChanged"
+											error-message="[[order.notvalid.Manufacturer]]"
+											invalid="[[_asBool(order.notvalid.Manufacturer)]]">
+										</tmladmin-ui-dropdown-menu>
+									</div>
+								</template>
+							</dom-if>
+						</div>
+						<dom-if if="[[order.Invalid]]">
+							<template>
+								<h3 class="invalid">
+									[[_formatInvalid(order.Invalid, order.InvalidMessage, 'admin-ws-freights-item-invalid')]]
+								</h3>
+							</template>
+						</dom-if>
+						
+						
+						<div class="freight-details order-inputs hidden" showen-block$="[[_asBool(order.CurrentFreight)]]">
+							<h4>
+								<iron-icon icon="admin-icons:warning" class="warning hidden" showen-icon$="[[order.CurrentFreight.Sandbox]]" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+								<!-- [[localize('admin-ws-freights-frieght-title')]] -->
+								[[order.CurrentFreight.NameServer]]
+
+								([[localize('admin-ws-freights-created-title')]]: [[_formatDate(order.CurrentFreight.Created)]])
+								<!-- #: [[order.CurrentFreight.FreightID]] -->
+
+								<span hidden$="[[!_asBool(order.CurrentFreight.InvoiceNumber)]]">
+									| Invoice Number #: [[order.CurrentFreight.InvoiceNumber]]
+								</span>
+
+								<span class="hidden" showen$="[[order.CurrentFreight.Sandbox]]">
+									<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> TEST
+								</span>
+							</h4>
+
+							<div class="frieght-buttons hidden" showen-flex$="[[_asBool(order.CurrentFreight)]]">
+								<div class="spinner">
+									<paper-button class="order-save-btn" raised disabled="[[disabledSave]]" on-tap="_onSaveTap">
+										[[localize('admin-ws-freights-save-btn')]]
+									</paper-button>
+									<paper-spinner-lite class="thick"></paper-spinner-lite>
+								</div>
+
+								<div class="spinner">
+									<paper-button class="order-buildreportairfreight-btn" raised 
+										disabled="[[_dis_buildreportairfreight(loadingAny, order.CurrentFreight.CarrierServerID, order.CurrentFreight.Containers.0.ShippingDepartureLabelImageUrl)]]" 
+										on-tap="_onBuildReportAirFreightTap">
+										[[localize('admin-ws-freights-buildreportairfreight-btn', 'carrier', order.CurrentFreight.CarrierServerTitle)]]
+									</paper-button>
+									<paper-spinner-lite class="thick"></paper-spinner-lite>
+								</div>
+
+								<div class="spinner" hidden$="[[_hide_departurelabel(order.CurrentFreight.Containers.0.ShippingDepartureLabelImageUrl)]]">
+									<paper-button class="order-departure-label-btn" raised 
+										disabled="[[_dis_departurelabel(loadingAny, order.CurrentFreight.Containers.0.ShippingDepartureLabelImageUrl)]]" 
+										on-tap="_onDepartureLabelDialogTap">
+										[[localize('admin-ws-freights-departure-label-btn')]]
+									</paper-button>
+									<paper-spinner-lite class="thick"></paper-spinner-lite>
+								</div>
+
+								<div class="spinner" hidden$="[[_hide_cancel_departurelabel(order.CurrentFreight.Containers.0.ShippingDepartureLabelImageUrl)]]">
+									<paper-button class="order-cancel-departure-label-btn" raised 
+										disabled="[[_dis_cancel_departurelabel(loadingAny, order.CurrentFreight.Containers.0.ShippingDepartureLabelImageUrl)]]" 
+										on-tap="_onCancelDepartureLabelDialogTap">
+										[[localize('admin-ws-freights-cancel-departure-label-btn')]]
+									</paper-button>
+									<paper-spinner-lite class="thick"></paper-spinner-lite>
+								</div>
+
+								
+
+								<div class="order-dangersection-btns">
+									<div class="spinner">
+										<paper-button class="order-departured-btn" raised disabled="[[loadingAny]]" on-tap="_onDeparturedDialogTap">
+											[[localize('admin-ws-freights-departured-btn')]]
+										</paper-button>
+										<paper-spinner-lite class="thick"></paper-spinner-lite>
+									</div>
+
+									<div class="spinner">
+										<paper-button class="order-buildreport-btn" raised
+											disabled="[[_dis_buildreport(loadingAny, order.CurrentFreight.Containers.0.ShippingDepartureLabelImageUrl)]]" 
+											on-tap="_onBuildShipInvoiceTap">
+											[[localize('admin-ws-freights-buildshipinvoice-btn')]]
+										</paper-button>
+										<paper-spinner-lite class="thick"></paper-spinner-lite>
+									</div>
+	
+
+									<div>
+										<div class="spinner">
+											<paper-button class="order-dispose-btn" raised 
+												disabled="[[_dis_dispose(loadingAny, order.CurrentFreight.IsDisposable)]]" 
+												on-tap="_onDisposeDialogTap">
+												[[localize('admin-ws-freights-dispose-btn')]]
+											</paper-button>
+											<paper-spinner-lite class="thick"></paper-spinner-lite>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="small-inputs">
+								<!-- <paper-input 
+									label="Invoice Number (read-only)" 
+									type="string" 
+									readonly
+									value="[[order.CurrentFreight.InvoiceNumber]]"
+									name="InvoiceNumber"
+									on-value-changed="onInputChanged"
+									error-message="[[order.CurrentFreight.notvalid.InvoiceNumber]]" 
+									invalid="[[_asBool(order.CurrentFreight.notvalid.InvoiceNumber)]]">
+								</paper-input> -->
+
+								<paper-input 
+									label="[[localize('admin-ws-freights-frieght-name')]]" 
+									type="string" 
+									value="{{order.CurrentFreight.Name}}"
+									name="Name"
+									disabled="[[loadingAny]]"
+									on-value-changed="onInputChanged"
+									error-message="[[order.CurrentFreight.notvalid.Name]]" 
+									invalid="[[_asBool(order.CurrentFreight.notvalid.Name)]]">
+								</paper-input>
+
+								<paper-input 
+									label="[[localize('admin-ws-freights-container-tracknumber')]]" 
+									type="string" 
+									value="{{order.CurrentFreight.TrackNumber}}"
+									name="TrackNumber"
+									disabled="[[loadingAny]]"
+									on-value-changed="onInputChanged"
+									error-message="[[order.CurrentFreight.notvalid.TrackNumber]]" 
+									invalid="[[_asBool(order.CurrentFreight.notvalid.TrackNumber)]]">
+									<!-- <paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite> -->
+									<paper-icon-button slot="suffix" 
+										class="use-trackforall-btn" 
+										style=""
+										icon="admin-icons:assignment-returned" 
+										on-tap="_useTrackNumberForAllContainersTap" 
+										title="Copy Track Number to all shipping Containers if empty (to replace Tap+Shift)">
+									</paper-icon-button>
+								</paper-input>
+
+								<div class="carrier-selection" hidden$="[[!LenMore(order.CurrentFreight.CarriersList)]]">
+									<tmladmin-ui-dropdown-menu 
+										vertical-align="top" 
+										horizontal-align="left"
+										id-property="id"
+										title-property="title"
+										disabled="[[_dis_departurecarrier(loadingAny, order.CurrentFreight.Containers.0.ShippingDepartureLabelImageUrl)]]"
+										label="[[localize('admin-ws-freights-carrier-select')]]" 
+										value="{{order.CurrentFreight.Carrier}}"
+										value-list="[[order.CurrentFreight.CarriersList]]"
+										on-value-changed="onInputChanged"
+										error-message="[[order.CurrentFreight.notvalid.Carrier]]"
+										invalid="[[_asBool(order.CurrentFreight.notvalid.Carrier)]]">
+									</tmladmin-ui-dropdown-menu>
+								</div>
+	
+								<vaadin-date-time-picker 
+									label="[[localize('admin-ws-freights-DepartureDate')]]" 
+									value="{{departureDateTime}}" 
+									disabled="[[_dis_departuredate(loadingAny, order.CurrentFreight.Containers.0.ShippingDepartureLabelImageUrl)]]"
+									error-message="[[order.CurrentFreight.notvalid.DepartureDateTime]]" 
+									invalid="[[_asBool(order.CurrentFreight.notvalid.DepartureDateTime)]]" 
+									on-change="departureDateTimeChangedEvent" 
+									step="1800" 
+									time-placeholder="hh:mm">
+								</vaadin-date-time-picker>
+
+								<paper-input 
+									class="small-inputs-mock" 
+									label="..." 
+									type="string" 
+									disabled>
+								</paper-input>
+							</div>
+
+							
+							<dom-repeat items="[[order.CurrentFreight.DepartureWarningList]]" as="deparwarni">
+								<template>
+									<p class="note-alt margin warning" warning-key$="[[deparwarni.WarningKey]]">
+										[[deparwarni.WarningMessage]]
+									</p>
+								</template>
+							</dom-repeat>
+							
+	
+							<div class="dialogs-container">
+								<paper-dialog id="dialogdepartured" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+									<h2>[[localize('admin-ws-freights-departured-title')]]</h2>
+									<paper-dialog-scrollable>
+										[[localize('admin-ws-freights-departured-msg', 'freightid', order.CurrentFreight.FreightID)]]
+									</paper-dialog-scrollable>
+									<div class="buttons">
+										<paper-button dialog-confirm on-tap="_onDeparturedTap" class="order-departured-btn">[[localize('admin-ws-freights-departured-btn')]]</paper-button>
+										<paper-button dialog-dismiss>[[localize('admin-dlg-close')]]</paper-button>
+									</div>
+								</paper-dialog>
+
+								<paper-dialog id="dialogdeparturelabel" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+									<h2>[[localize('admin-ws-freights-departure-label-title')]]</h2>
+									<paper-dialog-scrollable>
+										[[localize('admin-ws-freights-departure-label-msg', 'freightid', order.CurrentFreight.FreightID)]]
+									</paper-dialog-scrollable>
+									<div class="buttons">
+										<paper-button dialog-confirm on-tap="_onDepartureLabelTap" class="order-departure-label-btn">[[localize('admin-ws-freights-departure-label-btn')]]</paper-button>
+										<paper-button dialog-dismiss>[[localize('admin-dlg-close')]]</paper-button>
+									</div>
+								</paper-dialog>
+
+								<paper-dialog id="dialogcanceldeparturelabel" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+									<h2>[[localize('admin-ws-freights-cancel-departure-label-title')]]</h2>
+									<paper-dialog-scrollable>
+										[[localize('admin-ws-freights-cancel-departure-label-msg', 'freightid', order.CurrentFreight.FreightID)]]
+									</paper-dialog-scrollable>
+									<div class="buttons">
+										<paper-button dialog-confirm on-tap="_onCancelDepartureLabelTap" class="order-cancel-departure-label-btn">[[localize('admin-ws-freights-cancel-departure-label-btn')]]</paper-button>
+										<paper-button dialog-dismiss>[[localize('admin-dlg-close')]]</paper-button>
+									</div>
+								</paper-dialog>
+	
+								<paper-dialog id="dialogdispose" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+									<h2>[[localize('admin-ws-freights-dispose-title')]]</h2>
+									<paper-dialog-scrollable>
+										[[localize('admin-ws-freights-dispose-msg', 'freightid', order.CurrentFreight.FreightID)]]
+									</paper-dialog-scrollable>
+									<div class="buttons">
+										<paper-button dialog-confirm on-tap="_onDisposeTap" class="order-dispose-btn">[[localize('admin-ws-freights-dispose-btn')]]</paper-button>
+										<paper-button dialog-dismiss>[[localize('admin-dlg-close')]]</paper-button>
+									</div>
+								</paper-dialog>
+							</div>
+
+							<!-- totals -->
+							<div class="table totals">
+								<div class="header">
+									<div class="centered">
+										[[localize('admin-ws-freights-freight-terminal')]]
+									</div>
+									<div class="centered">
+										[[localize('admin-ws-freights-freight-TotalContainers')]]
+									</div>
+									<div class="centered">
+										[[localize('admin-ws-freights-freight-TotalPacks')]]
+									</div>
+									<div class="centered">
+										[[localize('admin-ws-freights-freight-TotalItems')]]
+									</div>
+									<div class="centered">
+										[[localize('admin-ws-freights-freight-TotalWeight')]]
+									</div>
+								</div>
+				
+								<div class="row vcenter">
+									<div class="centered">
+										<span class="shipping-hub">[[order.CurrentFreight.Terminal]]</span>
+									</div>
+									<div class="centered">
+										[[order.CurrentFreight.TotalContainers]]
+									</div>
+									<div class="centered">
+										[[order.CurrentFreight.TotalPacks]]
+									</div>
+									<div class="centered">
+										[[order.CurrentFreight.TotalItems]]
+									</div>
+									<div class="centered">
+										[[_formatWeightW(order.CurrentFreight.WeightGrams, 'kg')]]
+									</div>
+								</div>
+							</div>
+						
+						</div>
+
+
+						
+						<div class="containter-list hidden" showen-block$="[[_asBool(order.CurrentFreight)]]">
+							<h4>
+								<!-- [[localize('admin-ws-freights-frieght-containers-title')]] -->
+							</h4>
+							<div class="containter-list-items">
+								<dom-if if="[[_asBool(order.CurrentFreight.ShipAddress)]]">
+									<template>
+										<div class="containter-list-item as-freight">
+											<div class="title-container">
+												[[localize('admin-ws-freights-title2')]] #: 
+												<span>[[order.CurrentFreight.FreightID]]</span>
+											</div>
+											<div class="created-container">
+												([[localize('admin-ws-freights-created-title')]]: 
+												[[_formatDate(order.CurrentFreight.Created)]])
+											</div>
+
+											<div class="gap-container">
+												<dom-if if="[[order.CurrentFreight.LabelImageUrls]]">
+													<template>
+														<div class="shipping-labels">
+															<dom-repeat items="[[order.CurrentFreight.LabelImageUrls]]" as="urli" index-as="urlinx">
+																<template>
+																	<div class="preview-img">
+																		<img src="[[urli]]" alt="[[order.CurrentFreight.FreightID]] - [[_formatIndex(urlinx)]]" />
+																	</div>
+																</template>
+															</dom-repeat>
+														</div>
+													</template>
+												</dom-if>
+												<dom-if if="[[order.CurrentFreight.Label]]">
+													<template>
+														<paper-fab 
+															class="button print-carrier-label"
+															icon="admin-icons:print"
+															disabled$="[[_dis_printdeparturelabel(loadingAny, order.CurrentFreight.Label)]]"
+															title$="print departure label"
+															mini-no
+															on-tap="printCarrierFreightLabelTap">
+														</paper-fab>
+													</template>
+												</dom-if>
+
+												<div class="table">
+													<!-- <div class="row vbottom">
+														<div class="right">
+															[[localize('admin-ws-freights-container-tracknumber')]]
+														</div>
+														<div class="centered">
+															<paper-input 
+																label="[[localize('admin-ws-freights-container-tracknumber')]]" 
+																type="string" 
+																value="{{containeri.TrackNumber}}"
+																name="TrackNumber"
+																on-value-changed="onInputChanged"
+																error-message="[[containeri.notvalid.TrackNumber]]" 
+																invalid="[[_asBool(containeri.notvalid.TrackNumber)]]">
+															</paper-input>
+														</div>
+													</div>
+													<div class="row">
+														<div class="right">
+															[[localize('admin-ws-freights-container-serialrefindex')]]
+														</div>
+														<div class="centered">
+															[[containeri.SerialReferenceIndex]]
+														</div>
+													</div>
+													<div class="row vcenter">
+														<div class="right">
+															[[localize('admin-ws-freights-container-SSCC')]]
+														</div>
+														<div class="centered">
+															[[containeri.SSCC]]
+														</div>
+													</div> -->
+													<div class="row vcenter">
+														<div class="right">
+															Invoice Organization Name
+														</div>
+														<div class="centered">
+															[[order.CurrentFreight.InvoiceOrganizationName]]
+														</div>
+													</div>
+
+													<div class="row vcenter">
+														<div class="right">
+															&nbsp;
+														</div>
+														<div class="centered">
+															&nbsp;
+														</div>
+													</div>
+
+													<!-- shipping charges -->
+													<div class="row vcenter">
+														<div class="right">
+															Ship Charges
+														</div>
+														<div class="centered">
+															[[_priceObjectV(order.CurrentFreight.ShipCharges)]]
+														</div>
+													</div>
+													<div class="row vcenter">
+														<div class="right">
+															Ship Charges Local
+														</div>
+														<div class="centered">
+															[[_priceObjectV(order.CurrentFreight.ShipChargesLocal)]]
+														</div>
+													</div>
+
+													<div class="row vcenter">
+														<div class="right">
+															&nbsp;
+														</div>
+														<div class="centered">
+															&nbsp;
+														</div>
+													</div>
+
+													<!-- address -->
+													<div class="row vcenter">
+														<div class="right">
+															[[localize('order-title-firstname')]]
+														</div>
+														<div class="centered">
+															[[order.CurrentFreight.ShipFirstName]]
+														</div>
+													</div>
+													<div class="row vcenter">
+														<div class="right">
+															[[localize('order-title-lastname')]]
+														</div>
+														<div class="centered">
+															[[order.CurrentFreight.ShipLastName]]
+														</div>
+													</div>
+													<div class="row vcenter">
+														<div class="right">
+															[[localize('order-title-address')]]
+														</div>
+														<div class="centered">
+															[[order.CurrentFreight.ShipAddress]]
+														</div>
+													</div>
+													<div class="row vcenter">
+														<div class="right">
+															[[localize('order-title-city')]]
+														</div>
+														<div class="centered">
+															[[order.CurrentFreight.ShipCity]]
+														</div>
+													</div>
+													<div class="row vcenter">
+														<div class="right">
+															[[localizeByCountry('order-title-state', order.ShipCountryCode)]]
+														</div>
+														<div class="centered">
+															[[order.CurrentFreight.ShipState]]
+														</div>
+													</div>
+													<div class="row vcenter">
+														<div class="right">
+															[[localizeByCountry('order-title-zip', order.ShipCountryCode)]]
+														</div>
+														<div class="centered">
+															[[order.CurrentFreight.ShipZip]]
+														</div>
+													</div>
+													<div class="row vcenter">
+														<div class="right">
+															[[localize('order-title-country')]]
+														</div>
+														<div class="centered">
+															[[order.CurrentFreight.ShipCountry]]
+														</div>
+													</div>
+													<div class="row vcenter">
+														<div class="right">
+															[[localize('order-title-company')]]
+														</div>
+														<div class="centered">
+															[[order.CurrentFreight.ShipCompany]]
+														</div>
+													</div>
+													<div class="row vcenter">
+														<div class="right">
+															[[localize('order-title-email')]]
+														</div>
+														<div class="centered">
+															[[order.CurrentFreight.AccountEmail]]
+														</div>
+													</div>
+													<div class="row vcenter">
+														<div class="right">
+															[[localize('order-title-phone')]]
+														</div>
+														<div class="centered">
+															[[order.CurrentFreight.AccountPhone]]
+														</div>
+													</div>
+
+												</div>
+											</div>
+										</div>
+									</template>
+								</dom-if>
+
+								<dom-repeat items="[[order.CurrentFreight.Containers]]" as="containeri">
+									<template>
+										<div class="containter-list-item">
+											<div class="remove-container">
+												<paper-spinner-lite class="thick"></paper-spinner-lite>
+												<paper-icon-button 
+													class="remove-btn" 
+													icon="admin-icons:close" 
+													on-tap="_removeContainerTap">
+												</paper-icon-button>
+											</div>
+											<div class="title-container">
+												Container #: 
+												<span>[[containeri.ID]]</span>
+												<!-- <a href="[[_urlViewShippingContainer(containeri.ID)]]" target="_blank">
+													<iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon>
+												</a> -->
+											</div>
+											<div class="created-container">
+												([[localize('admin-ws-freights-created-title')]]: [[_formatDate(containeri.Created)]])
+											</div>
+
+											<div class="gap-container">
+
+												<dom-repeat items="[[containeri.DepartureWarningList]]" as="deparwarni">
+													<template>
+														<p class="note-alt margin warning" warning-key$="[[deparwarni.WarningKey]]">
+															[[deparwarni.WarningMessage]]
+															<dom-if if="[[_asBool(deparwarni.WarningImage)]]">
+																<template>
+																	<paper-icon-button class="show-container-label-btn" 
+																		icon="admin-icons:tab" 
+																		on-tap="showContainerLabelTap">
+																	</paper-icon-button>
+																</template>
+															</dom-if>
+														</p>
+													</template>
+												</dom-repeat>
+
+												
+												<div class="table">
+													<div class="header">
+														<div class="centered">
+															[[localize('admin-ws-freights-container-weight')]]
+														</div>
+														<div class="centered">
+															[[localize('admin-ws-freights-container-packages')]]
+														</div>
+														<div class="centered">
+															[[localize('admin-ws-freights-container-carton')]]
+														</div>
+													</div>
+									
+													<div class="row vcenter">
+														<!-- [[_formatDate(containeri.Created)]] -->
+														<div class="centered">
+															[[_formatWeightW(containeri.WeightGrams, 'kg')]]
+														</div>
+														<div class="centered">
+															[[containeri.PackagesCount]]
+														</div>
+														<div class="centered">
+															[[containeri.Carton.title]]
+														</div>
+													</div>
+												</div>
+												
+												<div class="shipping-labels">
+													<dom-if if="[[containeri.ShippingLabelImageUrl]]">
+														<template>
+															<div class="preview-img">
+																<!-- air freight -->
+																<img src="[[containeri.ShippingLabelImageUrl]]" alt="[[containeri.ID]]" />
+															</div>
+															
+														</template>
+													</dom-if>
+													<dom-if if="[[containeri.ShippingDepartureLabelImageUrl]]">
+														<template>
+															<div class="preview-img">
+																<img src="[[containeri.ShippingDepartureLabelImageUrl]]" alt="[[containeri.ID]]" />
+																<paper-fab 
+																	class="button print-carrier-label"
+																	icon="admin-icons:print"
+																	disabled$="[[_dis_printdeparturelabel(loadingAny, containeri.ShippingDepartureLabel)]]"
+																	title$="print departure label"
+																	mini-no
+																	on-tap="printCarrierLabelTap">
+																</paper-fab>
+															</div>
+														</template>
+													</dom-if>
+												</div>
+												
+
+												<div class="table">
+													<div class="row vbottom">
+														<div class="right">
+															[[localize('admin-ws-freights-container-tracknumber')]]
+														</div>
+														<div class="centered">
+															<paper-input 
+																label="[[localize('admin-ws-freights-container-tracknumber')]]" 
+																type="string" 
+																value="{{containeri.TrackNumber}}"
+																name="TrackNumber"
+																on-value-changed="onInputChanged"
+																error-message="[[containeri.notvalid.TrackNumber]]" 
+																invalid="[[_asBool(containeri.notvalid.TrackNumber)]]">
+															</paper-input>
+														</div>
+													</div>
+													<div class="row">
+														<div class="right">
+															[[localize('admin-ws-freights-container-serialrefindex')]]
+														</div>
+														<div class="centered">
+															[[containeri.SerialReferenceIndex]]
+														</div>
+													</div>
+													<div class="row vcenter">
+														<div class="right">
+															[[localize('admin-ws-freights-container-SSCC')]]
+														</div>
+														<div class="centered">
+															[[containeri.SSCC]]
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</template>
+								</dom-repeat>
+							</div>
+							<div class="noitems hidden" showen-block$="[[!LenMore(order.CurrentFreight.Containers)]]">
+								[[localize('admin-list-noitems')]]
+							</div>
+						</div>
+
+						<paper-dialog id="dialog_containerlabel" class="dialog_containerlabel" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+							<h2>[[containerlabel.Title]]</h2>
+							<paper-dialog-scrollable>
+								<teamatical-ui-image 
+									style="width: 576px; height: 768px; margin: 0 auto;" 
+									src="[[containerlabel.ImageUrl]]"
+									alt="[[containerlabel.Alt]]"
+									lazy-load lazy-observe=[[lazyObserve]]>
+								</teamatical-ui-image>
+							</paper-dialog-scrollable>
+							<div class="buttons">
+								<paper-button dialog-dismiss autofocus>Close</paper-button>
+							</div>
+						</paper-dialog>
+
+
+
+						<div hidden$="[[hiddenNoItemsYet]]" class="no-items-yet">
+							<span>[[localize('admin-ws-freights-noitem')]]</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+
+<div class="layouts-dialogs">
+	<tmladmin-ui-dialog id="newfreight_dialog" class="newfreight-dialog" scroll-target="[[scrollTarget]]">
+	  <div slot="header">
+		<paper-icon-button 
+		  class="close-dialog-small-btn" 
+		  icon="admin-icons:close"
+		  dialog-dismiss>
+		</paper-icon-button>
+		
+		<h2>
+		  <iron-icon icon="[[icon]]"></iron-icon>
+		  [[localize('admin-ws-freights-newfreight-title')]]
+		  <paper-spinner-lite 
+			class="thick" 
+			active="[[loading]]"> 
+		  </paper-spinner-lite>
+		</h2>
+	  </div>
+	
+	  <div slot="body">
+		<paper-input
+          label="[[localize('admin-ws-freights-frieght-name')]]" 
+          class="filter-input" 
+          type="string" 
+          disabled="[[loadingAny]]" 
+          value="{{newfreight.Name}}"
+          on-value-changed="onInputChanged">
+        </paper-input>
+
+		<!-- <vaadin-date-time-picker 
+			label="[[localize('admin-ws-freights-DepartureDate')]]" 
+			value="{{newfreight.DepartureDateTime}}" 
+			step="1800"
+			time-placeholder="hh:mm">
+		</vaadin-date-time-picker> -->
+	  </div>
+	
+	  <div slot="footer">
+		<div class="buttons">
+			<paper-button 
+				class="danger" 
+				dialog-confirm 
+				on-tap="addNewFreightTap">
+				[[localize('admin-ws-freights-btn-add')]]
+			</paper-button>
+
+			<paper-button dialog-dismiss autofocus>
+				[[localize('admin-dlg-close')]]
+			</paper-button>
+		</div>
+	  </div>
+	
+	</tmladmin-ui-dialog>
+</div>
+
+
+
+
+<!-- top fab buttons -->
+<div class="fbuttons-container">
+	<paper-fab 
+		class="button add-new-freight"
+		icon="admin-icons:add"
+		disabled$="[[loadingAny]]"
+		title$="[[localize('admin-ws-freights-newfreight-tooltip')]]"
+		mini-no
+		on-tap="addNewFreightDialogTap">
+	</paper-fab>
+
+	<div class="button batch-name"
+		title="Invoice Number" 
+		hidden$="[[!_asBool(order.CurrentFreight.InvoiceNumber)]]">
+		<span>[[order.CurrentFreight.InvoiceNumber]]</span>
+	</div>
+	
+</div>
+
+
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="freights"
+	website-url="[[websiteUrl]]"
+	barcode-scanner
+	sticker-printer
+	loading="{{loadingWS}}"
+	visible="[[visible]]">
+</teamatical-ui-scanner-printer-settings>
+
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>

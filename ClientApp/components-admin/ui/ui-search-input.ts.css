@@ -1,0 +1,26 @@
+:host {
+    display: block;
+}
+
+
+.user-selection {
+    position: relative;
+}
+.user-selection > * {
+    z-index: 1;
+    position: absolute;
+    width: 770px;
+	background-color: white;
+	box-shadow: 0 0 5px 5px rgba(168, 168, 168, 0.2) !important;
+}
+
+.user-selection paper-item {
+    cursor: pointer;
+}
+
+
+@media (max-width: 767px) {
+    .user-selection > * {
+        width: 570px;
+    }
+}

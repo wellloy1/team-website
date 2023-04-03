@@ -1,0 +1,448 @@
+<iron-media-query query="max-width: 420px" query-matches="{{mobileScreen}}"></iron-media-query>
+
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="containerizing"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+
+<div class="maindiv horiz">
+	<div class="order-container sticky">
+		<div class="order">
+			<!-- containerizing -->
+			<div class="order-containerizing" hidden$="[[!order]]">
+				<div class="sticky-container">
+					<h2>
+						<paper-icon-button 
+							class="refresh-btn" 
+							icon="admin-icons:refresh"
+							title="[[localize('admin-ws-refresh')]]" 
+							disabled="[[loadingAny]]"
+							on-tap="_reloadTap">
+						</paper-icon-button>
+
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+
+						[[localize('admin-ws-containerizing-title')]]
+					</h2>
+
+					<paper-progress 
+						id="progress" 
+						indeterminate 
+						class="" 
+						disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+				
+				<div class="main">
+					<div class="first-line">
+						<tmladmin-ui-barcode-input
+							id="barcodeinput" 
+							label$="[[localize('admin-ws-containerizing-barcode-label')]]" 
+							name="barcode" 
+							class="barcode-input" 
+							type="string" 
+							disabled$="[[disabledBarcodeInput]]" 
+							loading$="[[loadingCmd]]" 
+							containerizing-mode
+							scanned-barcodes="{{scannedBarcodes}}"
+							related-barcodes="[[relatedBarcodes]]"
+							on-barcode-changed="onInputChanged"
+							on-barcode-enter="onBarcodeInputEnter">
+						</tmladmin-ui-barcode-input>
+				
+						<dom-if if="[[showManufacturers]]">
+							<template>
+								<div class="man-selection" is-admin>
+									<tmladmin-ui-dropdown-menu 
+										vertical-align="top" 
+										horizontal-align="left"
+										id-property="ManufacturerID"
+										title-property="ManufacturerName"
+										label="[[localize('admin-ws-manufacturer')]]"
+										disabled$="[[loadingAny]]" 
+										value="{{order.Manufacturer}}"
+										value-list="[[order.Manufacturers]]"
+										on-value-changed="onInputChanged"
+										error-message="[[order.notvalid.Manufacturer]]"
+										invalid="[[_asBool(order.notvalid.Manufacturer)]]">
+									</tmladmin-ui-dropdown-menu>
+								</div>
+							</template>
+						</dom-if>
+					</div>
+
+					<dom-if if="[[order.Invalid]]">
+						<template>
+							<h3 class="invalid">
+								[[_formatInvalid(order.Invalid, order.InvalidMessage, 'admin-ws-containerizing-item-invalid')]]
+							</h3>
+						</template>
+					</dom-if>
+
+					<div id="content">
+						<div class="order-tags">
+
+							<div class="order-tags-buttons">
+	
+								<div class="spinner">
+									<paper-button class="order-resettags-btn" raised disabled="[[disabledResetTags]]" on-tap="_onResetTagsTap">
+										[[localize('admin-ws-containerizing-tags-reset')]]
+									</paper-button>
+									<paper-spinner-lite class="thick"></paper-spinner-lite>
+								</div>
+	
+								<div class="spinner">
+									<paper-checkbox dialog-dialogremovemissing
+										is-not-danger class="order-removemissing-btn"
+										checked="{{order.RemoveMissing}}" 
+										on-change="checkboxRemoveMissingChangeHandler"
+										disabled="[[loadingAny]]">
+										Skip Missing Items
+									</paper-checkbox>
+									<paper-button class="order-aircontainer-btn" raised disabled="[[disabledAirContainer]]" on-tap="_onAirContainerTap">
+										[[localize('admin-ws-containerizing-tags-containter')]]
+									</paper-button>
+									<paper-spinner-lite class="thick"></paper-spinner-lite>
+								</div>
+	
+								<div class="spinner" hidden$="[[!userInfo.isAdmin]]">
+									<paper-button class="order-testtags-btn" raised disabled="[[disabledResetTags]]" on-tap="onTestTagsTap">
+										[[localize('admin-ws-containerizing-tags-test')]]
+									</paper-button>
+									<paper-spinner-lite class="thick"></paper-spinner-lite>
+								</div>
+	
+								<paper-toggle-button checked="{{showHistorgram}}" disabled$="[[loadingAny]]">
+									Historgram
+								</paper-toggle-button>
+							</div>
+	
+							<div>
+								<paper-progress 
+									id="cooldown_progress" 
+									value="[[cooldownProgress]]"
+									class="cooldown_progress">
+								</paper-progress>
+							</div>
+	
+							<div class="scanned-tags">
+								<h4>
+									[[localize('admin-ws-containerizing-tags-title')]] 
+									<dom-if if="[[_morethen(order.Container.InputPackage.Items.length, 0)]]">
+										<template>
+											([[order.Container.InputPackage.Items.length]])
+										</template>
+									</dom-if>
+									
+									[[_formatDate(order.Container.Created)]]
+									<span class="hidden" showen$="[[order.Container.Sandbox]]">
+										<iron-icon icon="admin-icons:warning" class="warning" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+										[[localize('admin-ws-test-item')]]
+									</span>
+								</h4>
+	
+								<div class="filter-countainer">
+									<paper-slider 
+										disabled="[[loadingAny]]"
+										pin 
+										snaps 
+										editable1 
+										max-markers1="10"
+										min="-100" max="-1"
+										step="1" value="{{filter_dB}}">
+									</paper-slider>
+								</div>
+	
+								<div class="histogram-countainer"  hidden$="[[!showHistorgram]]">
+									<canvas id="histogramChart"></canvas>
+								</div>
+	
+	
+								<div class="scanned-tags-list">
+									<!-- <iron-list 
+										id="list-virtual"
+										grid
+										items="[[_filterAlreadyPacked(order.Container.InputPackage.Items, order.Container.AlreadyPacked)]]" 
+										as="itemi"
+										scroll-target="[[scrollTarget]]" 
+										default-physical-count="90"> -->
+									<dom-repeat 
+										items="[[_filterAlreadyPacked(order.Container.InputPackage.Items, order.Container.AlreadyPacked)]]" 
+										as="itemi">
+										<template>
+											<div class="scanned-tags-list-item">
+												<div class="horiz-container">
+													<span style="align-self:center;">[[itemi.RFID]]</span>
+													<paper-icon-button
+														tabindex="-1" 
+														class="help-btn" 
+														icon="admin-icons:help-outline" 
+														on-tap="_showBarcodeDetailsTap">
+													</paper-icon-button>
+												</div>
+												<div>
+													<p>[[itemi.SignalStrength]]dB / #: [[itemi.VisibilityCount]]</p>
+												</div>
+												<div>
+													<p>Seen: [[_formatTimestamp(itemi.SeenTime)]]</p>
+												</div>
+												<div>
+													<p hidden$="[[!itemi.Unknown]]" class="error">Unknown</p>
+													<p hidden$="[[!itemi.Invalid]]" class="error">Invalid</p>
+													<p hidden$="[[!itemi.Missing]]" class="warning">Missing</p>
+													<p hidden$="[[!_isScanned(itemi)]]" class="warning">Scanned</p>
+												</div>
+												<div>
+													<p>[[itemi.InvalidReason]]</p>
+												</div>
+											</div>
+										</template>
+									</dom-repeat>
+	
+									<dom-if if="[[_filterAlreadyPackedNoItems(order.Container.InputPackage.Items, order.Container.AlreadyPacked)]]">
+										<template>
+											<div class="noitems">
+												no items
+											</div>
+										</template>
+									</dom-if>
+								</div>
+								
+							</div>
+						</div>
+
+						<div class="order-continer">
+							<div class="order-continer-buttons">
+								<paper-toggle-button checked="{{showItemFixed}}" disabled$="[[loadingAny]]">
+									Pop up Invalid or Missing
+								</paper-toggle-button>
+							</div>
+
+
+							<div class="order-continer-info" hidden$="[[!_asBool(order.Container)]]">
+								<dom-if if="[[_asBool(order.Container.Label.ImageUrl)]]">
+									<template>
+		
+										<div class="zpl-image">
+											<div>
+												<img src="[[order.Container.Label.ImageUrl]]" />
+											</div>
+										</div>
+		
+									</template>
+								</dom-if>
+								
+								<div>
+									<h4>
+										[[localize('admin-ws-containerizing-container-title')]] 
+										
+										<dom-if if="[[_morethen(order.Container.Packages.length, 0)]]">
+											<template>
+												(#: <span>[[order.Container.Packages.length]]</span>)
+											</template>
+										</dom-if>
+		
+										<dom-if if="[[_asBool(order.Container.InvoiceOrganizationName)]]">
+											<template>
+												| <span>[[order.Container.InvoiceOrganizationName]]</span>
+											</template>
+										</dom-if>
+		
+										<span class="hidden" showen$="[[order.Container.Sandbox]]">
+											<iron-icon icon="admin-icons:warning" class="warning" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+											[[localize('admin-ws-test-item')]]
+										</span>
+									</h4>
+		
+		
+									<h1>[[order.Container.ID]]</h1>
+									<p class="barcode">[[order.Container.Barcode]]</p>
+									<p>[[order.Container.Barcode]]</p>
+		
+									
+		
+									<div class="order-buttons">
+		
+										<div class="carton-selection">
+											<tmladmin-ui-dropdown-menu 
+												vertical-align="top" 
+												horizontal-align="left"
+												id-property="id"
+												title-property="title"
+												label="[[localize('admin-ws-containerizing-carton-select')]]"
+												disabled="[[disabledSetCartonContainer]]"
+												value="{{order.Container.Carton}}"
+												value-list="[[order.Container.Cartons]]"
+												on-value-changed="onInputChanged"
+												error-message="[[order.Container.notvalid.Carton]]"
+												invalid="[[_asBool(order.Container.notvalid.Carton)]]">
+											</tmladmin-ui-dropdown-menu>
+										</div>
+			
+										<div class="spinner" >
+											<paper-button class="order-printcontainer-btn" raised disabled="[[disabledPrintContainer]]"
+												on-tap="onPrintContainerTap">
+												[[localize('admin-ws-containerizing-tags-printcontainer')]]
+											</paper-button>
+											<paper-spinner-lite class="thick"></paper-spinner-lite>
+										</div>
+		
+										<div class="spinner right">
+											<paper-button class="order-printcontainer-dispose-btn" raised disabled="[[disabledDisposeContainer]]"
+												on-tap="onDisposeContainerTap">
+												[[localize('admin-ws-containerizing-tags-disposecontainer')]]
+											</paper-button>
+											<paper-spinner-lite class="thick"></paper-spinner-lite>
+										</div>
+		
+									</div>
+								</div>
+		
+								
+							</div>
+		
+							<div class="order-continer-packages">
+								<h4 hidden$="[[!order.Container.Packages.length]]">
+									[[localize('admin-ws-containerizing-container-packed-title')]]
+								</h4>
+								<dom-repeat items="[[order.Container.Packages]]" as="packagei" index-as="packageinx">
+									<template>
+										<div class="package" 
+											package-missing$="[[packagei.Missing]]" 
+											package-invalid$="[[packagei.Invalid]]">
+											<span>([[packagei.Items.length]])</span>
+											<span hidden$="[[!packagei.Missing]]">
+												- <span class="package-missing">Missing</span>
+											</span>
+											<span hidden$="[[!packagei.Invalid]]">
+												- <span class="package-invalid">Invalid</span>
+												<span hidden$="[[!packagei.InvalidReason]]">: <span class="package-invalid">[[packagei.InvalidReason]]</span></span>
+											</span>
+											<p>
+												<span class="barcode">[[packagei.Barcode]]</span>
+												[[packagei.Barcode]] 
+												<paper-icon-button
+													tabindex="-1" 
+													class="help-btn" 
+													icon="admin-icons:help-outline" 
+													on-tap="_showBarcodeDetailsTap">
+												</paper-icon-button>
+											</p>
+		
+											<dom-repeat items="[[packagei.Items]]" as="itemi" index-as="iteminx">
+												<template>
+													<div class="package-item" 
+														item-missing$="[[itemi.Missing]]" 
+														item-invalid$="[[itemi.Invalid]]">
+														<div class="package-item-info">
+															<a id$="A[[itemi.RFID]]"></a>
+
+															<p>[[itemi.RFID]]</p>
+															<p hidden$="[[!itemi.Missing]]">Item Missing</p>
+															<p hidden$="[[!itemi.Invalid]]">Item Invalid</p>
+															<dom-if if="[[itemi.InvalidReason]]">
+																<template>
+																	<p><span>[[itemi.InvalidReason]]</span></p>
+																</template>
+															</dom-if>
+														</div>
+														<paper-icon-button
+															tabindex="-1" 
+															class="help-btn" 
+															icon="admin-icons:help-outline" 
+															on-tap="_showBarcodeDetailsTap">
+														</paper-icon-button>
+													</div>
+
+													<dom-if if="[[_or(itemi.Missing, itemi.Invalid)]]">
+														<template strip-whitespace>
+															<div class="package-item popup clickable" 
+																item-missing$="[[itemi.Missing]]" 
+																item-invalid$="[[itemi.Invalid]]" 
+																on-tap="gotoAnchor" 
+																anchor$="[[anchorSelector(itemi.RFID)]]"
+																style$="[[_anchorIndexStyle(order.Container.Packages, packagei.Items, packageinx, iteminx)]]">
+																<p>[[itemi.RFID]]</p>
+																<p hidden$="[[!itemi.Missing]]">Item Missing</p>
+																<p hidden$="[[!itemi.Invalid]]">Item Ivalid</p>
+															</div>
+														</template>
+													</dom-if>
+												</template>
+											</dom-repeat>
+								
+											<div class="zpl-image" hidden$="[[!_asBool(packagei.ShippingLabelImageUrl)]]">
+												<div>
+													<img src="[[packagei.ShippingLabelImageUrl]]" />
+												</div>
+											</div>
+										</div>
+									</template>
+								</dom-repeat>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+
+			<div class="order-buttons">
+				<!--  -->
+			</div>
+			
+		</div>
+	</div>
+</div>
+
+
+
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="containerizing"
+	website-url="[[websiteUrl]]"
+	rfid
+	barcode-scanner
+	sticker-printer
+	loading="{{loadingWS}}"
+	visible="[[visible]]">
+</teamatical-ui-scanner-printer-settings>
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>
+
+
+<tmladmin-ui-dialog id="dialogremovemissing" class="dialogremovemissing" disabled$="[[dialogremovemissing.loading]]" scroll-target="[[scrollTarget]]" on-tmladmin-ui-dialog-closed="onCloseDialogRemoveMissing">
+	<div slot="header">
+		<paper-icon-button  class="close-dialog-small-btn" icon="admin-icons:close" dialog-dismiss>
+		</paper-icon-button>
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogremovemissing.loading]]" hidden$="[[!dialogremovemissing.loading]]">
+			</paper-progress>
+		</div>
+		<h3>
+			Skip Missing Items Confirmation
+		</h3>
+	</div>
+	<div slot="body">
+		<p>Are you sure about to SKIP MISSING items (lost items on your own responsibility)?</p>
+	</div>
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			[[localize('admin-dlg-close')]]
+		</paper-button>
+		<paper-button dialog-confirm
+				class="order-removemissing-btn"
+				disabled$="[[loadingAny]]"
+				raised
+				on-tap="dialogremovemissingConfirmTap">
+			<!-- <iron-icon icon="admin-icons:print"></iron-icon>-->
+			Skip Missing Items
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>

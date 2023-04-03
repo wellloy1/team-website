@@ -1,0 +1,609 @@
+<app-localstorage-document key="admin-orders-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress 
+				id="progress" 
+				indeterminate 
+				class="" 
+				disabled$="[[!loading]]">
+			</paper-progress>
+
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+
+				<div class="spinner" hidden$="[[!showenBuildReportBtn]]">
+					<paper-button class="download-report-btn indigo" disabled$="[[loadingAny]]" raised on-tap="downloadReportTap">
+						Build Report
+					</paper-button>
+					<paper-spinner-lite class="thick"></paper-spinner-lite>
+				</div>
+			</div>
+		</div>
+		
+
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+		
+		<vaadin-grid
+			id="grid"
+			aria-label="Orders" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]"
+			loading="{{loading}}"
+			page-size="[[pageSize]]"
+			column-reordering-allowed
+			height-by-rows
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span style="white-space: nowrap;">
+						<span class="order-id copy-tap" on-tap="_copyTap">[[item.id]]</span>
+						<span hidden$="[[!item.Archive]]" archive$="[[item.Archive]]">[A]</span>
+						<a href="[[_urlViewOrder(item.id)]]" class="iron-icon">
+							<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+						</a>
+					</span><br />
+					<span class="status-bar">
+						<tmladmin-ui-progress-icon type="printing" status="[[item.PrintStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="transferring" status="[[item.TransferringStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="cutting" status="[[item.CuttingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="sewing" status="[[item.SewingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="qa" status="[[item.QAStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="aggregation" status="[[item.AggregationStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-labels" status="[[item.ShippingLabelsStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-rfid" status="[[item.ShippingRFIDStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping" status="[[item.ShippingStatus]]"></tmladmin-ui-progress-icon>
+					</span>
+				</div>
+			</template>
+
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="290px" resizable="true" id="ID">
+				<template class="header">
+					ID
+					<vaadin-grid-filter aria-label="ID" path="ID" value="[[_filterID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span style="white-space: nowrap;">
+						<span class="order-id copy-tap" on-tap="_copyTap">[[item.id]]</span>
+						<span hidden$="[[!item.Archive]]" archive$="[[item.Archive]]">[A]</span>
+						<a href="[[_urlViewOrder(item.id)]]" class="iron-icon">
+							<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+						</a>
+					</span><br />
+					<span class="status-bar">
+						<tmladmin-ui-progress-icon type="printing" status="[[item.PrintStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="transferring" status="[[item.TransferringStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="cutting" status="[[item.CuttingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="sewing" status="[[item.SewingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="qa" status="[[item.QAStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="aggregation" status="[[item.AggregationStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-labels" status="[[item.ShippingLabelsStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-rfid" status="[[item.ShippingRFIDStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping" status="[[item.ShippingStatus]]"></tmladmin-ui-progress-icon>
+					</span>
+				</template>
+				<template class="footer-off">ID</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="290px" flex-grow="0" resizable="true" id="Status">
+				<template class="header">
+					Status
+					<vaadin-grid-filter class="hidden" aria-label="Status" aria-placeholder="Status" path="Status"
+						value="[[_multiSelect(_filterStatus)]]"></vaadin-grid-filter>
+					<multiselect-combo-box id="StatusCombo" selected-items="{{_filterStatus}}" clear-button-visible></multiselect-combo-box>
+				</template>
+				<template>
+					<span class$="[[_className(item.Status, 'status')]]">[[item.Status]]</span>
+				</template>
+				<template class="footer-off">Status</template>
+			</vaadin-grid-column>
+
+
+			<vaadin-grid-column width="160px" flex-grow="0" resizable="true" id="Sandbox">
+				<template class="header">
+					Sandbox
+					<vaadin-grid-filter class="hidden" aria-label="Sandbox" aria-placeholder="Sandbox" path="Sandbox" value="[[_filterSandbox]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="SandboxCombo" value="{{_filterSandbox}}" style="width:140px;"></vaadin-combo-box>
+				</template>
+				<template>
+					<span class="hidden" showen$="[[item.Sandbox]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [[localize('order-testmark')]]
+					</span>
+				</template>
+				<template class="footer-off">Sandbox</template>
+			</vaadin-grid-column>
+
+			<dom-if if="[[!isOrganization]]">
+				<template>
+
+					<vaadin-grid-column width="160px" flex-grow="0" resizable="true" id="Archive">
+						<template class="header">
+							Archive
+							<vaadin-grid-filter class="hidden" aria-label="Archive" aria-placeholder="Archive" path="Archive" value="[[_filterArchive]]"></vaadin-grid-filter>
+							<vaadin-combo-box id="ArchiveCombo" value="{{_filterArchive}}" style="width:140px;"></vaadin-combo-box>
+						</template>
+						<template>
+							<span highlighted$="[[item.Archive]]">
+								[[item.Archive]]
+							</span>
+						</template>
+						<template class="footer-off">Archive</template>
+					</vaadin-grid-column>
+	
+
+					<vaadin-grid-column width="200px" flex-grow="0" resizable="true" id="PaymentMethod">
+						<template class="header">
+							Payment Gateway / Method
+							<vaadin-grid-filter class="hidden" aria-label="PaymentMethod" aria-placeholder="PaymentMethod" path="PaymentMethod"
+								value="[[_filterPaymentMethod]]"></vaadin-grid-filter>
+							<vaadin-combo-box id="PaymentMethodCombo" value="{{_filterPaymentMethod}}" style="width:180px;"></vaadin-combo-box>
+						</template>
+						<template>
+							<dom-if if="[[_equal(item.PaymentMethod, 'testPayment')]]">
+								<template>
+									<span class="nowrap">
+										<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> 
+										[[localizep('admin-payment-', item.PaymentMethod)]]
+									</span>
+								</template>
+							</dom-if>
+							<dom-if if="[[_equal(item.PaymentMethod, 'chargeFreePayment')]]">
+								<template>
+									<span class="nowrap">
+										<!-- <iron-icon icon="admin-icons:warning" class="warning"></iron-icon>  -->
+										[[localizep('admin-payment-', item.PaymentMethod)]]
+									</span>
+								</template>
+							</dom-if>
+							<dom-if if="[[_equal(item.PaymentMethod, 'PO')]]">
+								<template>
+									<span class="nowrap">
+										<!-- <iron-icon icon="admin-icons:warning" class="warning"></iron-icon>  -->
+										[[localizep('admin-payment-', item.PaymentMethod)]]
+									</span>
+								</template>
+							</dom-if>
+							<dom-if if="[[_equal(item.PaymentMethod, 'PayPal')]]">
+								<template>
+									<iron-icon icon="admin-brands:paypal" class="paymethod-list paypal"></iron-icon> 
+								</template>
+							</dom-if>
+							<dom-if if="[[_equal(item.PaymentMethod, '2C2P')]]">
+								<template>
+									<iron-icon icon="admin-brands:p2cp2" class="paymethod-list p2c2p"></iron-icon> 
+								</template>
+							</dom-if>
+							<dom-if if="[[_equal(item.PaymentMethod, 'SP')]]">
+								<template>
+									<iron-icon icon="admin-brands:stripe" class="paymethod-list stripe"></iron-icon> 
+								</template>
+							</dom-if>
+						</template>
+					</vaadin-grid-column>
+
+					<vaadin-grid-column width="140px" flex-grow="0" resizable="true" id="PaymentType">
+						<template class="header">
+							Payment Type
+						</template>
+						<template>
+							<teamatical-ui-payment-type 
+								icon-namespace="admin-brands:"
+								as-admin
+								pay-type="[[item.PaymentType]]"
+								pay-method="[[item.PaymentMethod]]">
+							</teamatical-ui-payment-type>
+						</template>
+						<template class="footer-off">
+							Payment Type
+						</template>
+					</vaadin-grid-column>
+				</template>
+			</dom-if>
+
+
+			<vaadin-grid-column width="340px" resizable="true" id="SellerOrganizationID">
+				<template class="header">
+					Seller Organization
+					<vaadin-grid-filter aria-label="SellerOrganizationID" path="SellerOrganizationID" value="[[_filterSellerOrganizationID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span hidden$="[[!item.SellerOrganization]]">
+						<b>[[item.SellerOrganization.Name]]</b><br /> 
+						#: <span class="copy-tap" on-tap="_copyTap">[[item.SellerOrganization.OrganizationID]]</span>
+						<a href="[[_urlViewOrganization(item.SellerOrganization.OrganizationID)]]">
+							<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+						</a>
+					</span>
+				</template>
+				<template class="footer-off">
+					Seller Organization
+				</template>
+			</vaadin-grid-column>
+
+
+			<dom-if if="[[!isOrganization]]">
+				<template>
+
+					<vaadin-grid-column width="340px" resizable="true" id="FactoryInvoiceOrganizationID">
+						<template class="header">
+							Factory Invoice Organization
+							<vaadin-grid-filter aria-label="FactoryInvoiceOrganizationID" path="FactoryInvoiceOrganizationID" value="[[_filterFactoryInvoiceOrganizationID]]"></vaadin-grid-filter>
+						</template>
+						<template>
+							<span hidden$="[[!item.FactoryInvoiceOrganization]]">
+								<b>[[item.FactoryInvoiceOrganization.Name]]</b><br /> 
+								#: <span class="copy-tap" on-tap="_copyTap">[[item.FactoryInvoiceOrganization.OrganizationID]]</span>
+								<a href="[[_urlViewOrganization(item.FactoryInvoiceOrganization.OrganizationID)]]">
+									<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+								</a>
+							</span>
+						</template>
+						<template class="footer-off">
+							Factory Invoice Organization
+						</template>
+					</vaadin-grid-column>
+
+					<vaadin-grid-column width="340px" resizable="true" id="BuyerOrganizationID">
+						<template class="header">
+							Buyer Organization
+							<vaadin-grid-filter aria-label="BuyerOrganizationID" path="BuyerOrganizationID" value="[[_filterBuyerOrganizationID]]"></vaadin-grid-filter>
+						</template>
+						<template>
+							<span hidden$="[[!item.BuyerOrganization]]">
+								<b>[[item.BuyerOrganization.Name]]</b><br /> 
+								#: <span class="copy-tap" on-tap="_copyTap">[[item.BuyerOrganization.OrganizationID]]</span>
+								<a href="[[_urlViewOrganization(item.BuyerOrganization.OrganizationID)]]">
+									<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+								</a>
+							</span>
+						</template>
+						<template class="footer-off">
+							Buyer Organization
+						</template>
+					</vaadin-grid-column>
+
+					<vaadin-grid-column width="340px" resizable="true" id="HostOrganizationID">
+						<template class="header">
+							Host Organization
+							<vaadin-grid-filter aria-label="HostOrganizationID" path="HostOrganizationID" value="[[_filterHostOrganizationID]]"></vaadin-grid-filter>
+						</template>
+						<template>
+							<span hidden$="[[!item.HostOrganization]]">
+								<b>[[item.HostOrganization.Name]]</b><br /> 
+								#: <span class="copy-tap" on-tap="_copyTap">[[item.HostOrganization.OrganizationID]]</span>
+								<a href="[[_urlViewOrganization(item.HostOrganization.OrganizationID)]]">
+									<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+								</a>
+							</span>
+						</template>
+						<template class="footer-off">
+							Host Organization
+						</template>
+					</vaadin-grid-column>
+
+				</template>
+			</dom-if>
+
+			<vaadin-grid-column width="290px" flex-grow="0" resizable="true" id="Created">
+				<template class="header">
+					<vaadin-grid-sorter path="Created">Created</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Created" aria-placeholder="Created" path="Created" value="[[_filterCreated]]"></vaadin-grid-filter>
+				</template>
+				<template>[[_formatDate(item.Created)]]</template>
+				<template class="footer-off">Created</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="360px" resizable="true" id="UserID">
+				<template class="header">
+					User ID
+					<vaadin-grid-filter aria-label="UserID" aria-placeholder="UserID" path="UserID" value="[[_filterUserID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<teamatical-ui-user-inline user="[[item.User]]">
+					</teamatical-ui-user-inline>
+				</template>
+			</vaadin-grid-column>
+	
+			<vaadin-grid-column width="290px" flex-grow="0" resizable="true" id="StoreIDs">
+				<template class="header">
+					Store IDs
+					<vaadin-grid-filter aria-label="Store ID" path="StoreIDs" value="[[_filterStoreIDs]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<dom-repeat items="[[item.StoreIDs]]" as="storei" index-as="storeinx">
+						<template>
+							<span class="copy-tap" on-tap="_copyTap">[[storei]]</span><dom-if if="[[_notLast(item.StoreIDs, storeinx)]]"><template>,</template></dom-if>
+						</template>
+					</dom-repeat>
+				</template>
+				<template class="footer-off">Store IDs</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="290px" flex-grow="0" resizable="true" id="ProductIDs">
+				<template class="header">
+					Product/Config IDs
+					<vaadin-grid-filter aria-label="Product ID" path="ProductIDs" value="[[_filterProductIDs]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<dom-if if="[[_equal(item.ProductIDs.length, 1)]]">
+						<template>
+							<dom-repeat items="[[item.ProductIDs]]" as="producti" index-as="productinx">
+								<template>
+									<span class="copy-tap" on-tap="_copyTap">[[producti]]</span><dom-if if="[[_notLast(item.ProductIDs, productinx)]]"><template>,</template></dom-if>
+								</template>
+							</dom-repeat>
+						</template>
+					</dom-if>
+					<dom-if if="[[LenMore(item.ProductIDs, 1)]]">
+						<template>
+							ProductIDs: [[item.ProductIDs.length]]
+						</template>
+					</dom-if>
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="290px" resizable="true" id="Email">
+				<template class="header">
+					Email
+					<vaadin-grid-filter aria-label="Email" aria-placeholder="Email" path="AccountEmail" value="[[_filterEmail]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="copy-tap" on-tap="_copyTap">[[item.AccountEmail]]</span>
+				</template>
+				<template class="footer-off">Email</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="290px" flex-grow="0" resizable="true" id="AccountPhone">
+				<template class="header">
+					Phone Number
+					<vaadin-grid-filter aria-label="Phone Number" path="AccountPhone" value="[[_filterAccountPhone]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.AccountPhone]]</template>
+				<template class="footer-off">
+					Phone Number
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="290px" resizable="true" id="ShipFirstName">
+				<template class="header">
+					Ship First Name
+					<vaadin-grid-filter aria-label="Ship First Name" path="ShipFirstName" value="[[_filterShipFirstName]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.ShipFirstName]]</template>
+				<template class="footer-off">First Name</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="290px" resizable="true" id="ShipLastName">
+				<template class="header">
+					Ship Last Name
+					<vaadin-grid-filter aria-label="Ship Last Name" path="ShipLastName" value="[[_filterShipLastName]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.ShipLastName]]</template>
+				<template class="footer-off">
+					Ship Last Name
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="290px" flex-grow="0" resizable="true" id="ShipCountry">
+				<template class="header">
+					Ship Country
+					<vaadin-grid-filter class="hidden" aria-label="ShipCountry" aria-placeholder="ShipCountry" path="ShipCountry" value="[[_filterShipCountry]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="ShipCountryCombo" style="width:120px;" value="{{_filterShipCountry}}"></vaadin-combo-box>
+				</template>
+				<template>[[item.ShipCountry]]</template>
+				<template class="footer-off">
+					Ship Country
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="290px" resizable="true" id="BillFirstName">
+				<template class="header">
+					Bill First Name
+					<vaadin-grid-filter aria-label="Bill First Name" path="BillFirstName" value="[[_filterBillFirstName]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.BillFirstName]]</template>
+				<template class="footer-off">
+					Bill First Name
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="290px" resizable="true" id="BillLastName">
+				<template class="header">
+					Bill Last Name
+					<vaadin-grid-filter aria-label="Bill Last Name" path="BillLastName" value="[[_filterBillLastName]]"></vaadin-grid-filter>
+				</template>
+				<template>[[item.BillLastName]]</template>
+				<template class="footer-off">
+					Bill Last Name
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" flex-grow="0" resizable="true" id="MerchandiseTotal">
+				<template class="header">Merchandise Total</template>
+				<template>[[_priceObjectV(item.MerchandiseTotal, item.Currency)]]</template>
+				<template class="footer-off">Merchandise Total</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" flex-grow="0" resizable="true" id="Tax">
+				<template class="header">Tax</template>
+				<template>[[_priceObjectV(item.Tax, item.Currency)]]</template>
+				<template class="footer-off">Tax</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" flex-grow="0" resizable="true" id="ShipmentTotal">
+				<template class="header">Shipment</template>
+				<template>[[_priceObjectV(item.ShipmentTotal, item.Currency)]]</template>
+				<template class="footer-off">Shipment</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" flex-grow="0" resizable="true" id="Total">
+				<template class="header">Total</template>
+				<template>
+					<span refunded$="[[_morethen(item.PaymentRefund.Value, 0)]]">
+						[[_priceObjectV(item.Total, item.Currency)]]
+					</span>
+				</template>
+				<template class="footer-off">Total</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" flex-grow="0" resizable="true" id="PaymentRefund">
+				<template class="header">Payment Refund</template>
+				<template>
+					<span refunded$="[[_morethen(item.PaymentRefund.Value, 0)]]">
+						[[_priceObjectV(item.PaymentRefund, item.Currency)]]
+					</span>
+				</template>
+				<template class="footer-off">Payment Refund</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" flex-grow="0" resizable="true" id="PaymentFee">
+				<template class="header">Payment Fee</template>
+				<template>[[_priceObjectV(item.PaymentFee)]]</template>
+				<template class="footer-off">Payment Fee</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="120px" flex-grow="0" resizable="true" id="PaymentAppFee">
+				<template class="header">
+					<span>Payment App Fee</span>
+				</template>
+				<template>
+					[[_priceObjectV(item.PaymentAppFee)]]
+				</template>
+			</vaadin-grid-column>
+
+			<dom-if if="[[!isOrganization]]">
+				<template>
+					<vaadin-grid-column width="120px" flex-grow="0" resizable="true" id="PartnerFee">
+						<template class="header">
+							Seller Organization (Partner) Fee
+						</template>
+						<template>
+							[[_priceObjectV(item.PartnerFee)]]
+						</template>
+						<template class="footer-off">
+							Seller Organization (Partner) Fee
+						</template>
+					</vaadin-grid-column>
+
+					<vaadin-grid-column width="120px" flex-grow="0" resizable="true" id="ShippingCharge">
+						<template class="header">Shipping Carrier Fee</template>
+						<template>
+							[[_priceObjectV(item.ShippingCharge)]]
+							<dom-if if="[[item.ShippingCharge.Shared]]">
+								<template>[Shared]</template>
+							</dom-if>
+							<dom-if if="[[item.ShippingCharge.Incomplete]]">
+								<template>[Incomplete]</template>
+							</dom-if>
+							<dom-if if="[[item.ShippingCharge.InvalidOrMixedCurrency]]">
+								<template>[InvalidOrMixedCurrency]</template>
+							</dom-if>
+						</template>
+						<template class="footer-off">Shipping Carrier Fee</template>
+					</vaadin-grid-column>
+				</template>
+			</dom-if>
+
+			<vaadin-grid-column width="120px" flex-grow="0" resizable="true" id="PaymentNet">
+				<template class="header">
+					Payment Net
+				</template>
+				<template>[[_priceObjectV(item.PaymentNet)]]</template>
+				<template class="footer-off">
+					Payment Net
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="80px" resizable="true" id="QuantityOfItems">
+				<template class="header">
+					Quantity Of Items
+				</template>
+				<template>
+					<span>[[item.QuantityOfItems]]</span>
+				</template>
+				<template class="footer-off">
+					Quantity Of Items
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="80px" resizable="true" id="NumberOfStyles">
+				<template class="header">
+					Number Of Styles
+				</template>
+				<template>
+					<span>[[item.NumberOfStyles]]</span>
+				</template>
+				<template class="footer-off">
+					Number Of Styles
+				</template>
+			</vaadin-grid-column>
+			
+			
+			<vaadin-grid-column width="280px" resizable="true" id="IgnoreSuggestionValidation">
+				<template class="header">
+					Was Ignored Address Suggestion
+					<vaadin-grid-filter class="hidden" aria-label="IgnoreSuggestionValidation" aria-placeholder="IgnoreSuggestionValidation" path="IgnoreSuggestionValidation" value="[[_filterIgnoreSuggestionValidation]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="IgnoreSuggestionValidationCombo" style="width:80px;" value="{{_filterIgnoreSuggestionValidation}}"></vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted$="[[item.IgnoreSuggestionValidation]]">
+						[[item.IgnoreSuggestionValidation]]
+					</span>
+				</template>
+				<template class="footer-off">
+					Was Ignored Address Suggestion
+				</template>
+			</vaadin-grid-column>
+			
+			<vaadin-grid-column width="280px" resizable="true" id="PaymentFeeDistributionMode">
+				<template class="header">
+					Payment Fee Distribution Mode
+					<vaadin-grid-filter class="hidden" aria-label="PaymentFeeDistributionMode" aria-placeholder="PaymentFeeDistributionMode" path="PaymentFeeDistributionMode" value="[[_filterPaymentFeeDistributionMode]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="PaymentFeeDistributionModeCombo" style="width:210px;" value="{{_filterPaymentFeeDistributionMode}}"></vaadin-combo-box>
+				</template>
+				<template>
+					<span highlighted-off$="[[item.PaymentFeeDistributionMode]]">
+						[[_formatFeeDistributionMode(item.PaymentFeeDistributionMode)]]
+					</span>
+				</template>
+				<template class="footer-off">
+					Payment Fee Distribution Mode
+				</template>
+			</vaadin-grid-column>
+
+		</vaadin-grid>
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				fixed
+				localstorage-key="admin-orders-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+	</div>
+</div>

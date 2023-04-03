@@ -1,0 +1,550 @@
+<dom-if if="[[isSeparator]]">
+  <template>
+    <h4 hidden$="[[editing]]">
+      [[item.title]]
+    </h4>
+
+    <dom-if if="[[editing]]">
+      <template>
+        <div class="separator-edit">
+          <iron-icon
+            class="move-icon hidden-animated"
+            drag-handler
+            hidden$="[[_hideEditDelayed]]"
+            hidden-animated$="[[_hideEdit]]"
+            icon="open-with">
+          </iron-icon>
+
+          <!-- <paper-icon-button 
+            hidden="[[_hideEditDelayed]]" 
+            hidden-animated$="[[_hideEdit]]" 
+            disabled$="[[isFirst]]"
+            class="upward-icon hidden-animated"
+            aria-label="upward-icon"
+            cake="1w2" 
+            icon="arrow-upward" 
+            on-tap="_upwardTap">
+          </paper-icon-button>
+
+          <paper-icon-button 
+            hidden="[[_hideEditDelayed]]" 
+            hidden-animated$="[[_hideEdit]]" 
+            disabled$="[[isLast]]"
+            class="downward-icon hidden-animated"
+            aria-label="downward-icon"
+            cake="1w2" 
+            icon="arrow-downward" 
+            on-tap="_downwardTap">
+          </paper-icon-button> -->
+
+
+          <paper-icon-button 
+            hidden="[[_hideEditDelayed]]" 
+            hidden-animated$="[[_hideEdit]]" 
+            hidden2$="[[isCutted]]" 
+            class="content-cut hidden-animated"
+            aria-label="content-cut"
+            cake="1w2" 
+            tooltip$="[[localize('store-item-cut-tooltip')]]"
+            icon="icons:check-box-outline-blank" 
+            on-tap="_cutItemTap">
+          </paper-icon-button>
+          <paper-icon-button 
+            hidden="[[_hideEditDelayed]]" 
+            hidden-animated$="[[_hideEdit]]" 
+            hidden2$="[[!isCutted]]" 
+            class="content-cut hidden-animated"
+            aria-label="content-cut"
+            cake="1w2" 
+            tooltip$="[[localize('store-item-uncut-tooltip')]]"
+            icon="icons:check-box" 
+            on-tap="_uncutItemTap">
+          </paper-icon-button>
+
+          <paper-icon-button 
+            hidden="[[_hideEditDelayed]]" 
+            hidden-animated$="[[_hideEdit]]" 
+            hidden2$="[[isCutted]]" 
+            disabled$="[[!isPaste]]"
+            class="content-paste hidden-animated"
+            aria-label="content-paste"
+            cake="1w2" 
+            tooltip$="[[localize('store-item-paste-tooltip')]]"
+            icon="image:control-point-duplicate" 
+            on-tap="_pasteAfterItemTap">
+          </paper-icon-button>
+
+          
+          <paper-input 
+              hidden$="[[_hideEditDelayed]]"
+              id="title"
+              name="title"
+              class="title-edit"
+              type="text"
+              label="[[localize('store-item-separator-title-label')]]"
+              value="{{item.titleEdit}}" 
+              autocomplete="store-item-separator-title">
+              <paper-icon-button 
+                slot="suffix"
+                class="close-icon hidden-animated"
+                aria-label="close-icon"
+                cake="1w2" 
+                icon="close" 
+                tabindex="-1"
+                on-tap="_deleteTap">
+              </paper-icon-button>
+          </paper-input>
+        </div>
+      </template>
+    </dom-if>
+
+  </template>
+</dom-if>
+
+
+
+
+
+
+<dom-if if="[[!isSeparator]]">
+  <template>
+    <div class="frame">
+
+      <div class="close-container">
+        <dom-if if="[[editing]]">
+          <template>
+            <iron-icon
+              class="move-icon hidden-animated"
+              drag-handler$="[[smallScreen]]"
+              hidden$="[[_hideEditDelayed]]"
+              hidden-animated$="[[_hideEdit]]"
+              icon="open-with">
+            </iron-icon>
+
+            <paper-icon-button 
+              class="close-icon hidden-animated"
+              hidden="[[_hideEditDelayed]]" 
+              hidden-animated$="[[_hideEdit]]" 
+              aria-label="close-icon"
+              tooltip$="[[localize('store-item-remove-tooltip')]]"
+              cake="1w2" 
+              icon="close" 
+              tabindex="-1"
+              on-tap="_deleteTap">
+            </paper-icon-button>
+
+            <!-- <paper-icon-button 
+              hidden="[[_hideEditDelayed]]" 
+              hidden-animated$="[[_hideEdit]]" 
+              disabled$="[[isFirst]]"
+              class="upward-icon hidden-animated"
+              aria-label="upward-icon"
+              cake="1w2" 
+              icon="arrow-upward" 
+              on-tap="_upwardTap">
+            </paper-icon-button>
+
+            <paper-icon-button 
+              hidden="[[_hideEditDelayed]]" 
+              hidden-animated$="[[_hideEdit]]" 
+              disabled$="[[isLast]]"
+              class="downward-icon hidden-animated"
+              aria-label="downward-icon"
+              cake="1w2" 
+              icon="arrow-downward" 
+              on-tap="_downwardTap">
+            </paper-icon-button> -->
+
+            <paper-icon-button 
+              hidden="[[_hideEditDelayed]]" 
+              hidden-animated$="[[_hideEdit]]" 
+              hidden2$="[[isCutted]]" 
+              class="content-cut hidden-animated"
+              aria-label="content-cut"
+              cake="1w2" 
+              tooltip$="[[localize('store-item-cut-tooltip')]]"
+              icon="icons:check-box-outline-blank" 
+              on-tap="_cutItemTap">
+            </paper-icon-button>
+            <paper-icon-button 
+              hidden="[[_hideEditDelayed]]" 
+              hidden-animated$="[[_hideEdit]]" 
+              hidden2$="[[!isCutted]]" 
+              class="content-cut hidden-animated"
+              aria-label="content-cut"
+              cake="1w2" 
+              tooltip$="[[localize('store-item-uncut-tooltip')]]"
+              icon="icons:check-box" 
+              on-tap="_uncutItemTap">
+            </paper-icon-button>
+
+            <paper-icon-button 
+              hidden="[[_hideEditDelayed]]" 
+              hidden-animated$="[[_hideEdit]]" 
+              hidden2$="[[isCutted]]" 
+              disabled$="[[!isPaste]]"
+              class="content-paste hidden-animated"
+              aria-label="content-paste"
+              cake="1w2" 
+              tooltip$="[[localize('store-item-paste-tooltip')]]"
+              icon="image:control-point-duplicate" 
+              on-tap="_pasteAfterItemTap">
+            </paper-icon-button>
+
+          </template>
+        </dom-if>
+
+        <dom-if if="[[_asBool(item.SKU)]]">
+          <template>
+            <span class="sku">
+              [[localize('detail-product-sku')]]
+              [[item.SKU]]
+            </span>
+          </template>
+        </dom-if>
+        
+        <!-- <iron-icon
+          hidden="[[_hideEditDelayed]]" 
+          hidden-animated$="[[_hideEdit]]" 
+          style="color:#3B5998" 
+          class="grab-icon hidden-animated"
+          cake="1w2" 
+          icon="open-with">
+        </iron-icon> -->
+
+        <!-- <dom-if if="[[item.quickcustomize]]">
+          <template>
+            <iron-icon 
+              hidden="[[!_hideEditDelayed]]" hidden-animated$="[[!_hideEdit]]" 
+              tooltip$="[[localize('store-item-quickcustomize-tooltip')]]" tooltip-flow="down"
+              class="quickcustomize-flag hidden-animated" cake="1w2" icon="image:brush">
+            </iron-icon>
+          </template>
+        </dom-if> -->
+
+      </div>
+      
+
+      <div class="product-disabled" hidden$="[[!item.ProductDisabled]]" hidden2$="[[editing]]">
+        <div>
+          <p>[[_stringOrLocalize(item.ProductDisabledReason, 'detail-disabled-mark')]]</p>
+        </div>
+      </div>
+
+      <div class="product-disabled product-hidden" hidden$="[[!item.ProductHidden]]" hidden2$="[[editing]]">
+        <div>
+          <p>[[localize('detail-hidden-mark')]]</p>
+        </div>
+      </div>
+
+      <dom-if if="[[!editing]]">
+        <template>
+          <a href="[[_urlItem(item, editing)]]" rel$="[[_classBool(item.ProductDisabled, 'nofollow', null)]]">
+            <teamatical-ui-image 
+              id="img"
+              src="[[item.image]]" 
+              alt="[[item.title]]"
+              placeholder-img="[[_formatPlaceholder(item.imageembedded)]]"
+              placeholder-error
+              loading-on-update="true"
+              lazy-load
+              hover-effect>
+            </teamatical-ui-image>
+          </a>
+        </template>
+      </dom-if>
+      
+      <dom-if if="[[editing]]">
+        <template>
+          <teamatical-ui-image 
+            id="img"
+            src="[[item.image]]" 
+            alt="[[item.title]]"
+            draggable="false"
+            drag-handler$="[[!smallScreen]]"
+            lazy-load
+            hover-effect>
+          </teamatical-ui-image>
+        </template>
+      </dom-if>
+
+
+
+
+      <!-- <dom-if if="[[!branded]]">
+        <template> -->
+          
+          <dom-if if="[[priceDiscounts.length]]">
+            <template>
+              <div class="discount" editing$="[[editing]]" hidden$="[[editing]]">
+                <div>
+                  <dom-repeat items="[[priceDiscounts]]" as="disi">
+                    <template>
+                      <p>[[disi]]</p>
+                    </template>
+                  </dom-repeat>
+                </div>
+              </div>
+            </template>
+          </dom-if>
+          
+          
+          <div class="title">
+            <span>
+              <div class="product-patterns-disabled hidden" showen-inline-block$="[[item.ProductPatternsDisabled]]">
+                <div>
+                  <p>[[localize('detail-disabledpatterns-mark')]]</p>
+                </div>
+              </div>
+       
+              [[formatTitle(item.title, item.titleEdit)]]
+            </span>
+          </div>
+          
+          
+          <div class="price-container" hidden$="[[editing]]">
+            <dom-if if="[[priceRegularShow]]">
+              <template>
+                <span class="price">[[priceRegular]]</span>
+              </template>
+            </dom-if>
+          
+            <dom-if if="[[!priceRegularShow]]">
+              <template>
+                <div>
+                  <span class="price_new">[[priceSale]]</span>
+                  <span class="price_old">[[priceList]]</span>
+                </div>
+              </template>
+            </dom-if>
+          </div>
+    <!-- 
+        </template>
+      </dom-if> -->
+
+      <!-- <dom-if if="[[branded]]">
+        <template>
+          <div class="title branded">
+            <span>
+              [[formatTitle(item.title, item.titleEdit)]]
+            </span>
+          </div>
+        </template>
+      </dom-if> -->
+      
+
+      <!-- details -->
+      <dom-if if="[[editing]]">
+        <template>
+          <div 
+            class="details-edit" 
+            role="dialog" 
+            aria-modal="true"
+            on-tap="onEditDetailsTap"
+            on-wheel="onWheel"
+            drag-handler$="[[!editingDetails]]"
+            is-editing-details$="[[editingDetails]]">
+            <div>
+              <div class="details-frame">
+                <div class="details-mobile-btn">
+                  <div>
+                    <span has-errors$="[[_asBool(item.notvalid.profit)]]">
+                      [[localizeTitle(isOrganization, editingDetails, item.price, item.ProductDisabledReason)]]
+                    </span>
+                    <span has-errors$="[[_asBool(item.notvalid.profit)]]">
+                      [[item.notvalid.profit]]
+                    </span>
+
+                    <span hidden-off$="[[editingDetails]]">
+                      <iron-icon class="customtitle-flag hidden" showen-icon$="[[_asBool(item.titleEdit)]]"
+                        has-errors$="[[_asBool(item.notvalid.title)]]"
+                        tooltip$="[[localize('store-item-customtitle-tooltip')]]" tooltip-flow="up" tooltip-flow-horiz="right"
+                        cake="1w2" icon="editor:title">
+                      </iron-icon>
+                      <iron-icon 
+                        class="quickcustomize-flag hidden" 
+                        showen-icon$="[[item.quickcustomize]]"
+                        tooltip$="[[localize('store-item-quickcustomize-tooltip')]]" tooltip-flow="up" tooltip-flow-horiz="right"
+                        cake="1w2" icon="image:brush">
+                      </iron-icon>
+                      <iron-icon 
+                        class="mock-icon" 
+                        cake="1w2" icon="">
+                      </iron-icon>
+                    </span>
+                  </div>
+                  <span class="hidden" showen$="[[!isOrganization]]" has-errors$="[[_asBool(item.notvalid.profit)]]">
+                    [[priceRegular]]
+                  </span>
+                  <span class="profit-title" has-errors$="[[_asBool(item.notvalid.profit)]]">
+                    <b>[[localize('store-item-profit-CP')]]</b> [[profitOutput]]
+                  </span>
+
+                  <paper-icon-button 
+                    hidden-animated$="[[!editingDetails]]" 
+                    class="close-icon-detail hidden-animated"
+                    aria-label="close-icon"
+                    cake="1w2" 
+                    icon="done" 
+                    on-tap="closeDetailsTap">
+                  </paper-icon-button>
+                </div>
+
+                <div class="details-input">
+
+                  <div class="hidden" showen$="[[isOrganization]]">
+                    <div class="table" has-errors$="[[_asBool(item.notvalid.profit)]]">
+                      <div class="row">
+                        <div class="w20"><b>[[localize('store-item-profit-MR')]]</b></div>
+                        <div>[[profitMROutput]]</div>
+                      </div>
+                      <div class="row">
+                        <div><b>[[localize('store-item-profit-B2B2C')]]</b></div>
+                        <div>[[profitB2B2COutput]]</div>
+                      </div>
+                      <div class="row">
+                        <div><b>[[localize('store-item-profit-Fee')]]</b></div>
+                        <div>[[profitFeeOutput]]</div>
+                      </div>
+                      <div class="row">
+                        <div tooltip$="[[localize('store-item-profit-StripeFee-tooltip')]]" tooltip-flow="up"
+                        hidden$="[[!_asBool(profitStripeFeeOutput)]]"><b>[[localize('store-item-profit-StripeFee')]]</b></div>
+                        <div hidden$="[[!_asBool(profitStripeFeeOutput)]]">[[profitStripeFeeOutput]]</div>
+                      </div>
+                      <div class="row">
+                        <div tooltip$="[[localize('store-item-profit-Seller-tooltip')]]" tooltip-flow="up"
+                        hidden$="[[!_asBool(profitSellerOutput)]]"><b>[[localize('store-item-profit-Seller')]]</b></div>
+                        <div hidden$="[[!_asBool(profitSellerOutput)]]">[[profitSellerOutput]]</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- <paper-slider 
+                    id="profitSliderEditVal"
+                    name="profit"
+                    class="profit hidden"
+                    showen-block$="[[_profitSliderPV(isOrganization, isProfitVal)]]"
+                    disabled$="[[!editingDetails]]"
+                    pin
+                    min="[[item.profitBase]]"
+                    max="[[item.profitBaseMax]]"
+                    value="{{item.profitSliderEditVal::input}}" 
+                    secondary-progress="[[item.profitSliderInitialVal]]"
+                    on-value-changed="onSliderProfitValChanged"
+                    editable-off>
+                  </paper-slider>
+
+                  <paper-slider 
+                    id="profitSliderEdit"
+                    name="profit"
+                    class="profit hidden"
+                    showen-block$="[[_profitSliderPP(isOrganization, isProfitVal)]]"
+                    disabled$="[[!editingDetails]]"
+                    value="{{item.profitSliderEdit::input}}" 
+                    pin
+                    step="100"
+                    min="0"
+                    max="[[item.profitMax]]"
+                    secondary-progress="[[item.profitSliderInitial]]"
+                    on-value-changed="onSliderProfitChanged"
+                    editable-off>
+                  </paper-slider> -->
+
+                  <paper-input 
+                      id="profit"
+                      name="profit"
+                      class="hidden"
+                      showen$="[[isOrganization]]"
+                      disabled$="[[!editingDetails]]"
+                      type="text"
+                      label="[[profitOutputLabel]]"
+                      value="{{item.profitEdit}}" 
+                      on-value-changed="onInputProfitChanged"
+                      autocomplete="store-item-profit">
+                      <!-- <div class="profit-mode" slot="suffix">
+                        <paper-icon-button
+                          class="hidden-animated slow"
+                          icon="editor:monetization-on"
+                          disabled
+                          hidden-animated$="[[!isProfitVal]]"
+                          on-tap="switchProfitModeTap"
+                          tooltip$="[[localize('store-item-profit-value-tooltip')]]" tooltip-flow="up" tooltip-flow-horiz="left"
+                          tabindex="-1">
+                        </paper-icon-button>
+                        <paper-icon-button
+                          class="hidden-animated slow"
+                          icon="image:timelapse"
+                          disabled
+                          hidden-animated$="[[isProfitVal]]"
+                          on-tap="switchProfitModeTap"
+                          tooltip$="[[localize('store-item-profit-percent-tooltip')]]" tooltip-flow="up" tooltip-flow-horiz="left"
+                          tabindex="-1">
+                        </paper-icon-button>
+                      </div> -->
+                  </paper-input>
+                  
+
+                  <paper-input 
+                      id="title"
+                      name="title"
+                      class="title-edit"
+                      disabled$="[[!editingDetails]]"
+                      type="text"
+                      on-value-changed="onInputTitleChanged"
+                      label="[[localize('store-item-title-label')]]"
+                      value="{{item.titleEdit}}" 
+                      char-counter
+                      autocomplete="store-item-title">
+                  </paper-input>
+
+                  <div class="toggles">
+                    <div class="toggle-container">
+                      <iron-icon icon="help-outline" tooltip$="[[localize('store-item-quickcustomize-toggle-tooltip')]]" tooltip-flow="up" tooltip-flow-horiz="right"></iron-icon>
+                      <paper-toggle-button 
+                          class="quickcustomize hidden-animated" 
+                          disabled$="[[!editingDetails]]"
+                          checked="{{item.quickcustomize}}">
+                          [[localize('store-customize-quick')]]
+                      </paper-toggle-button>
+                    </div>
+
+                    <dom-if if="[[canHideItem]]">
+                      <template>
+                        <div class="toggle-container">
+                          <iron-icon icon="help-outline" tooltip$="[[localize('store-item-hideitem-toggle-tooltip')]]" tooltip-flow="up" tooltip-flow-horiz="right"></iron-icon>
+                          <paper-toggle-button 
+                              class="hideitem hidden-animated" 
+                              disabled$="[[!editingDetails]]"
+                              checked="{{item.ProductHidden}}">
+                              [[localize('store-hide-item')]]
+                          </paper-toggle-button>
+                        </div>
+                      </template>
+                    </dom-if>
+                    
+
+                    <dom-if if="[[canNobadges]]">
+                      <template>
+                        <div class="toggle-container">
+                          <iron-icon icon="help-outline" tooltip$="[[localize('store-item-nobadges-toggle-tooltip')]]" tooltip-flow="up" tooltip-flow-horiz="right"></iron-icon>
+                          <paper-toggle-button 
+                              class="nobadges hidden-animated" 
+                              disabled$="[[!editingDetails]]"
+                              checked="{{item.nobadges}}">
+                              [[localize('store-no-badges')]]
+                          </paper-toggle-button>
+                        </div>
+                      </template>
+                    </dom-if>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </dom-if>
+
+    </div>
+  </template>
+</dom-if>

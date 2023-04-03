@@ -1,0 +1,222 @@
+<app-localstorage-document key="admin-production-orders-columns" data="{{columnsSettings}}"></app-localstorage-document>
+
+<div class="maindiv-grid">
+	<div>
+		<div class="panel-top">
+			<paper-progress id="progress" indeterminate class="" disabled$="[[!loadingAny]]">
+			</paper-progress>
+	
+			<div class="buttons list">
+				<paper-icon-button 
+					class="refresh-btn" 
+					icon="admin-icons:refresh" 
+					title="Refresh" 
+					on-tap="_refreshTap">
+				</paper-icon-button>
+				<!-- <paper-button class="refresh-btn" disabled$="[[loadingCmd]]" raised on-tap="refreshTap">
+					Refresh
+				</paper-button> -->
+		
+				<!-- <paper-button class="planner-start-process-btn purple" disabled$="[[loadingCmd]]" raised on-tap="startDlgTap">
+					Request Batch Order
+				</paper-button> -->
+			</div>
+		</div>
+		
+		<!-- <paper-dialog id="dialogconfirm"  proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+			<h2>Confirmation</h2>
+			<paper-dialog-scrollable>
+				Are you sure you'd like to Request Batch Order?
+			</paper-dialog-scrollable>
+			<div class="buttons">
+				<paper-button dialog-dismiss autofocus>Close</paper-button>
+				<paper-button dialog-confirm on-tap="startTap">Request</paper-button>
+			</div>
+		</paper-dialog> -->
+
+		
+		<x-data-provider data-provider="{{dataProvider}}"></x-data-provider>
+
+		<vaadin-grid 
+			id="grid" 
+			aria-label="ProductionOrders" 
+			theme="no-border column-borders wrap-cell-content row-stripes compact"
+			data-provider="[[dataProvider]]" 
+			loading="{{loading}}" 
+			page-size="[[pageSize]]" 
+			column-reordering-allowed
+			height-by-rows 
+			on-active-item-changed="_onActiveItemChanged">
+
+			<template class="row-details">
+				<div class="details-cell white">
+					<span style="white-space: nowrap;">
+						<span class="order-id copy-tap" on-tap="_copyTap">[[item.id]]</span>
+						<a href="[[_urlViewOrderProduction(item.id)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+					</span><br />
+					<span class="status-bar">
+						<tmladmin-ui-progress-icon type="printing" status="[[item.PrintStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="transferring" status="[[item.TransferringStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="cutting" status="[[item.CuttingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="sewing" status="[[item.SewingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="qa" status="[[item.QAStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="aggregation" status="[[item.AggregationStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-labels" status="[[item.ShippingLabelsStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-rfid" status="[[item.ShippingRFIDStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping" status="[[item.ShippingStatus]]"></tmladmin-ui-progress-icon>
+					</span>
+				</div>
+			</template>
+
+			
+			<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+				<template class="header">#</template>
+				<template>[[_formatPageN(index, item)]]</template>
+				<template class="footer-off">#</template>
+			</vaadin-grid-column>
+			
+			<vaadin-grid-column width="340px" resizable="true" id="ID">
+				<template class="header">
+					Production Order ID
+					<vaadin-grid-filter aria-label="id" path="id" value="[[_filterid]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span style="white-space: nowrap;">
+						<span class="order-id copy-tap" on-tap="_copyTap">[[item.id]]</span>
+						<a href="[[_urlViewOrderProduction(item.id)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+					</span><br />
+					<span class="status-bar">
+						<tmladmin-ui-progress-icon type="printing" status="[[item.PrintStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="transferring" status="[[item.TransferringStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="cutting" status="[[item.CuttingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="sewing" status="[[item.SewingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="qa" status="[[item.QAStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="aggregation" status="[[item.AggregationStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-labels" status="[[item.ShippingLabelsStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-rfid" status="[[item.ShippingRFIDStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping" status="[[item.ShippingStatus]]"></tmladmin-ui-progress-icon>
+					</span>
+				</template>
+				<template class="footer-off">
+					Production Order ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="220px" flex-grow="0" resizable="true" id="Created">
+				<template class="header">
+					<vaadin-grid-sorter path="Created">Created</vaadin-grid-sorter>
+					<vaadin-grid-filter aria-label="Created" aria-placeholder="Created" path="Created" value="[[_filterCreated]]"></vaadin-grid-filter>
+				</template>
+				<template>[[_formatDate(item.Created)]]</template>
+				<template class="footer-off">Created</template>
+			</vaadin-grid-column>
+			
+			<vaadin-grid-column resizable="true" id="OrderID">
+				<template class="header">
+					Order ID
+					<vaadin-grid-filter aria-label="OrderID" path="OrderID" value="[[_filterOrderID]]"></vaadin-grid-filter>
+				</template>
+				<template>
+					<span class="copy-tap" on-tap="_copyTap">[[item.OrderID]]</span>
+					<dom-if if="[[userInfo.isAdmin]]">
+						<template>
+							<a href="[[_urlViewOrder(item.OrderID)]]">
+								<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+							</a>
+						</template>
+					</dom-if>
+				</template>
+				<template class="footer-off">
+					Order ID
+				</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="160px" flex-grow="0" resizable="true" id="GrabForProduction">
+				<template class="header">
+					GrabForProduction
+					<vaadin-grid-filter class="hidden" aria-label="GrabForProduction" aria-placeholder="GrabForProduction"
+						path="GrabForProduction" value="[[_filterGrabForProduction]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="GrabForProductionCombo" style="width:120px" value="{{_filterGrabForProduction}}">
+					</vaadin-combo-box>
+				</template>
+				<template>
+					[[item.GrabForProduction]]
+				</template>
+				<template class="footer-off">GrabForProduction</template>
+			</vaadin-grid-column>
+
+			<vaadin-grid-column width="210px" flex-grow="0" resizable="true" id="Status">
+				<template class="header">
+					Status
+					<vaadin-grid-filter class="hidden" aria-label="Status" aria-placeholder="Status" path="Status" value="[[_filterStatus]]"></vaadin-grid-filter>
+					<vaadin-combo-box id="StatusCombo" value="{{_filterStatus}}"></vaadin-combo-box>
+				</template>
+				<template>
+					<span class$="[[_className(item.Status, 'status')]]">[[item.Status]]</span>
+				</template>
+				<template class="footer-off">Status</template>
+			</vaadin-grid-column>
+
+			<dom-if if="[[userInfo.isAdmin]]">
+				<template>
+					<vaadin-grid-column width="110px" flex-grow="0" resizable="true" id="Sandbox">
+						<template class="header">
+							Sandbox
+							<vaadin-grid-filter class="hidden" aria-label="Sandbox" aria-placeholder="Sandbox" path="Sandbox" value="[[_filterSandbox]]"></vaadin-grid-filter>
+							<vaadin-combo-box id="SandboxCombo" value="{{_filterSandbox}}" style="width:80px;"></vaadin-combo-box>
+						</template>
+						<template>
+							<span class="hidden nowrap" showen$="[[item.Sandbox]]">
+								<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> TEST
+							</span>
+						</template>
+						<template class="footer-off">Sandbox</template>
+					</vaadin-grid-column>
+				</template>
+			</dom-if>
+
+			<dom-if if="[[userInfo.isAdmin]]">
+				<template>
+
+					<vaadin-grid-column width="340px" resizable="true" id="ManufacturerID">
+						<template class="header">
+							ManufacturerID
+							<vaadin-grid-filter aria-label="ManufacturerID" path="ManufacturerID" value="[[_filterManufacturerID]]"></vaadin-grid-filter>
+						</template>
+						<template>
+							<span hidden$="[[!item.ManufacturerID]]">
+								<b>[[item.ManufacturerName]]</b><br /> 
+								#: <span class="copy-tap" on-tap="_copyTap">[[item.ManufacturerID]]</span>
+							</span>
+						</template>
+					</vaadin-grid-column>
+
+				</template>
+			</dom-if>
+
+
+
+
+		</vaadin-grid>
+
+
+
+		<div class="panel-bottom">
+			<tmladmin-ui-grid-pagination 
+				visible="[[visible]]"
+				loading="[[loadingAny]]"
+				localstorage-key="admin-production-orders-pagesize"
+				page-size="{{pageSize}}"
+				pfirst="[[pfirst]]"
+				plast="[[plast]]"
+				ptoken="[[ptoken]]"
+				ptoken_next="[[ptoken_next]]"
+				total-elements="[[totalElements]]"
+				total-pages="[[totalPages]]"
+				page="[[page]]"
+				pages="[[pages]]">
+			</tmladmin-ui-grid-pagination>
+		</div>
+
+	</div>
+</div>

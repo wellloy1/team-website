@@ -1,0 +1,1407 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+		
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<span highlighted hidden$="[[hidden_tasksFlag(order.Tasks)]]">
+						[[localize('admin-tasks')]]
+					</span>
+
+					<paper-icon-button class="refresh-btn"
+									   icon="admin-icons:refresh"
+									   title="Refresh"
+									   on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Order #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.id]]</span>
+					
+					<span class="warning hidden" showen$="[[order.Sandbox]]"><iron-icon icon="admin-icons:warning"></iron-icon> TEST</span>
+					<span class="warning hidden" showen$="[[order.Archive]]"><iron-icon icon="admin-icons:warning"></iron-icon> [A]</span>
+					<span class="warning hidden" showen$="[[order.ShipmentMethod.notverified]]"><iron-icon icon="admin-icons:warning"></iron-icon> SHIP</span>
+					
+					([[_formatDate(order.Created)]])
+
+					<span class="status-bar">
+						<tmladmin-ui-progress-icon type="printing" status="[[order.PrintStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="transferring" status="[[order.TransferringStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="cutting" status="[[order.CuttingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="sewing" status="[[order.SewingStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="qa" status="[[order.QAStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="aggregation" status="[[order.AggregationStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-labels" status="[[order.ShippingLabelsStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping-rfid" status="[[order.ShippingRFIDStatus]]"></tmladmin-ui-progress-icon>
+						<tmladmin-ui-progress-icon type="shipping" status="[[order.ShippingStatus]]"></tmladmin-ui-progress-icon>
+					</span>
+
+
+					<dom-if if="[[!isOrganization]]">
+						<template>
+							<span hidden$="[[!_asBool(order.OrderProductionID)]]"> 
+								- Production Order #: 
+								<span class="copy-tap" on-tap="_copyTap">[[order.OrderProductionID]]</span>
+							</span>
+							<span hidden$="[[_asBool(order.OrderProductionID)]]"> - Production Order #: Not Ready Yet</span>
+							<a hidden$="[[!_asBool(order.OrderProductionID)]]" href="[[_urlViewOrderProduction(order.OrderProductionID)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a>
+						</template>
+					</dom-if>
+
+				</h3>
+
+
+				<!-- buttons -->
+				<div class="buttons">
+					<dom-if if="[[!isOrganization]]">
+						<template>
+							<div class="selection">
+								<tmladmin-ui-dropdown-menu 
+									vertical-align="top" 
+									horizontal-align="left"
+									class$="[[_className(order.Status.id, 'status')]]"
+									class-item="status"
+									label="Customer Order Status"
+									disabled$="[[disableStatusSelection(loading)]]"
+									value="{{order.Status}}"
+									value-list="[[order.StatusList]]"
+									error-message="[[order.notvalid.Status]]"
+									invalid="[[_asBool(order.notvalid.Status)]]">
+								</tmladmin-ui-dropdown-menu>
+	
+								<paper-button raised
+									class="order-updatestatus-btn"  
+									on-tap="updateStatusTap"
+									disabled$="[[disableStatusSelection(loadingAny)]]">
+									Update Order Status
+								</paper-button>
+							</div>
+						</template>
+					</dom-if>
+
+
+					<paper-button raised
+						class="order-save-details-btn" 
+						disabled$="[[loadingAny]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						on-tap="saveDetailTap">
+						Save Details
+					</paper-button>
+
+
+
+					<dom-if if="[[!isOrganization]]">
+						<template>
+							<paper-button 
+									class="order-resnapshot-btn"
+									disabled$="[[loadingAny]]"
+									hidden$="[[hideResnapshotBtn(order)]]"
+									raised
+									on-tap="resnapshotOrderTap">
+								Resnapshot Images Order
+							</paper-button>
+
+							<paper-button 
+									class="order-push2prodorsync-btn"
+									disabled$="[[loadingAny]]"
+									raised
+									on-tap="push2prodorsyncOrderTap">
+								Push to Production If Applicable
+							</paper-button>
+
+							<paper-button raised
+								class="order-collect-details-btn" 
+								disabled$="[[loadingAny]]" 
+								on-tap="collectOrderDetailsTap">
+								Collect All Order Status
+							</paper-button>
+						</template>
+					</dom-if>
+
+					
+
+					<div class="order-dangersection-btn">
+						<dom-if if="[[!isOrganization]]">
+							<template>
+								<paper-button 
+									class="order-reinitiate-btn"
+									disabled$="[[loadingAny]]"
+									hidden$="[[hideReinitiateBtn(order, userInfo.isAlmighty)]]"
+									raised
+									on-tap="reinitiateOrderTap">
+									Reinitiate Order
+								</paper-button>
+							</template>
+						</dom-if>
+
+						<paper-button class="order-cancel-btn"
+							disabled$="[[loadingAny]]"
+							hidden$="[[hideCancelBtn(order)]]"
+							raised
+							on-tap="cancelOrderTap">
+							[[localize('order-button-cancel', 'oid', order.id)]]
+						</paper-button>
+
+						<div class="order-not-cancelable" hidden$="[[hideCancelableMsg(order)]]">
+							[[localize('order-not-cancelable', 'oid', order.id)]]
+						</div>
+					</div>
+
+					<!-- <div class="spinner">
+						<paper-button class="order-sync-btn" raised
+							disabled$="[[!order.IntermediatePDFExist]]"
+							on-tap="_onDownload">
+							Intermediate Production File Download
+						</paper-button>
+						<paper-spinner-lite id="downloadProgress" class="thick"></paper-spinner-lite>
+					</div> -->
+				</div>
+
+				<div class="order-payment-history">
+					<h4>
+						[[localize('order-title-paymenthistory')]]
+						<dom-if if="[[_yesItems(order.PaymentHistory, order.PaymentHistory.*)]]">
+							<template>
+							([[order.PaymentHistory.length]])
+							</template>
+						</dom-if>
+					
+						<paper-button class="order-sync-btn"
+									  disabled$="[[loadingAny]]"
+									  hidden$="[[hideSyncBtn(order)]]"
+									  raised
+									  on-tap="syncOrderTap">
+							[[localize('order-button-sync', 'oid', order.id)]]
+						</paper-button>
+
+						<!-- <paper-button class="order-refund-btn"
+									  disabled$="[[loadingAny]]"
+									  hidden$="[[hideRefundBtn(order)]]"
+									  raised
+									  on-tap="refundOrderTap">
+							Full Refund
+						</paper-button> -->
+					</h4>
+
+					<!-- <div class="row">
+						<div>Payment Method</div> 
+						<div>
+							
+						</div>
+					</div>
+
+					<div class="row">
+						<div>Payment Type</div> 
+						<div>
+							
+						</div>
+					</div>
+
+					 -->
+
+					<div scrollable-x>
+						<div class="table">
+							<div class="header hcenter">
+								<div>
+									[[localize('order-paymenthistory-date')]]
+								</div>
+								<div>
+									Gateway / Method
+								</div>
+								<div>
+									[[localize('order-paymenthistory-type')]]
+								</div>
+								<div>
+									[[localize('order-paymenthistory-kind')]]
+								</div>
+								<div>
+									[[localize('order-paymenthistory-reason')]]
+								</div>
+								<div>
+									[[localize('order-paymenthistory-status')]]
+								</div>
+								<div>
+									&nbsp;
+								</div>
+								<div>
+									&nbsp;
+								</div>
+							</div>
+
+							<dom-repeat items="[[order.PaymentHistory]]" as="payi">
+								<template>
+									<div class="row vcenter hcenter">
+										<div>
+											[[_formatDate(payi.TimeStamp)]]
+										</div>
+										<div>
+											<dom-if if="[[_equal(payi.PaymentMethod.id, 'testPayment')]]">
+												<template>
+													<span class="nowrap">
+														<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> 
+														[[localizep('admin-payment-', payi.PaymentMethod.id)]]
+													</span>
+												</template>
+											</dom-if>
+											<dom-if if="[[_equal(payi.PaymentMethod.id, 'chargeFreePayment')]]">
+												<template>
+													<span class="nowrap">
+														[[localizep('admin-payment-', payi.PaymentMethod.id)]]
+													</span>
+												</template>
+											</dom-if>
+											<dom-if if="[[_equal(payi.PaymentMethod.id, 'PO')]]">
+												<template>
+													<span class="nowrap">
+														[[localizep('admin-payment-', payi.PaymentMethod.id)]]
+													</span>
+												</template>
+											</dom-if>
+											<dom-if if="[[_equal(payi.PaymentMethod.id, 'PayPal')]]">
+												<template>
+													<iron-icon icon="admin-brands:paypal" class="paymethod-hist paypal"></iron-icon> 
+												</template>
+											</dom-if>
+											<dom-if if="[[_equal(payi.PaymentMethod.id, '2C2P')]]">
+												<template>
+													<iron-icon icon="admin-brands:p2cp2" class="paymethod-hist p2c2p"></iron-icon> 
+												</template>
+											</dom-if>
+											<dom-if if="[[_equal(payi.PaymentMethod.id, 'SP')]]">
+												<template>
+													<iron-icon icon="admin-brands:stripe" class="paymethod-hist stripe"></iron-icon> 
+												</template>
+											</dom-if>
+										</div>
+										<div>
+											<teamatical-ui-payment-type 
+												icon-namespace="admin-brands:"
+												as-admin
+												pay-type="[[payi.PaymentType]]"
+												pay-method="[[payi.PaymentMethod.id]]"
+												pay-kind="[[payi.Kind]]">
+											</teamatical-ui-payment-type>
+										</div>
+										<div>
+											<!-- refunded$="[[_morethen(payi.PaymentRefund.Value, 0)]]" -->
+											[[_formatPayKind(payi.Kind, payi.Amount, order.Currency)]]
+										</div>
+										<div>
+											[[_formatReason(payi.Reason)]]
+										</div>
+										<div>
+											[[_formatPayStatus(payi.Status, order.PaymentHistory)]]
+										</div>
+
+										<div>
+											<paper-button raised on-tap="showPayData" hidden$="[[!payi.PaymentData]]" style="white-space:nowrap;">View Details</paper-button>
+										</div>
+										<div>
+											<paper-button raised on-tap="onPayRow" hidden$="[[!isCheckoutCodePay(payi)]]">
+												Purchase&nbsp;Order&nbsp;<iron-icon icon="admin-icons:launch" class="open-in-here"></iron-icon>
+											</paper-button>
+											<paper-button raised on-tap="onPayRow" hidden$="[[!isStripePay(payi)]]">
+												Stripe&nbsp;Dashbord&nbsp;<iron-icon icon="admin-icons:launch" class="open-in-new"></iron-icon>
+											</paper-button>
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+						</div>
+					</div>
+				</div>
+								
+
+				<tmladmin-ui-richtext-editor 
+					id="notes"
+					label="Notes"
+					is-auto-html
+					value="{{order.Notes}}"
+					name="Notes"
+					disabled$="[[loadingAny]]"
+					on-value-changed="onInputChanged"
+					error-message="[[order.notvalid.Notes]]"
+					invalid="[[_asBool(order.notvalid.Notes)]]">
+				</tmladmin-ui-richtext-editor>
+
+
+
+				<div class="order-details-container ship-bill-address-and-details">
+					<div class="order-inputs">
+						<dom-if if="[[!_asBool(order.GroupShippingID)]]">
+							<template>
+								<h4>[[localize('order-title-shipaddress')]]</h4>
+							</template>
+						</dom-if>
+						<dom-if if="[[_asBool(order.GroupShippingID)]]">
+							<template>
+								<h4>[[localize('order-title-shiphomeaddress')]]</h4>
+							</template>
+						</dom-if>
+
+						<div class="">
+							<paper-input label="[[localize('order-title-firstname')]]" type="string" value="{{order.ShipFirstName}}" disabled$="[[loadingAny]]"
+										 name="ShipFirstName" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipFirstName]]"
+										 invalid="[[_asBool(order.notvalid.ShipFirstName)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-lastname')]]" type="string" value="{{order.ShipLastName}}" disabled$="[[loadingAny]]"
+										 name="ShipLastName" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipLastName]]"
+										 invalid="[[_asBool(order.notvalid.ShipLastName)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-address')]]" type="string" value="{{order.ShipAddress}}" disabled$="[[loadingAny]]"
+										 name="ShipAddress" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipAddress]]"
+										 invalid="[[_asBool(order.notvalid.ShipAddress)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-address2')]]" type="string" value="{{order.ShipAddress2}}" disabled$="[[loadingAny]]"
+										 name="ShipAddress2" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipAddress2]]"
+										 invalid="[[_asBool(order.notvalid.ShipAddress2)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-address3')]]" type="string" value="{{order.ShipAddress3}}" disabled$="[[loadingAny]]"
+										 name="ShipAddress3" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipAddress3]]"
+										 invalid="[[_asBool(order.notvalid.ShipAddress3)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-city')]]" type="string" value="{{order.ShipCity}}" disabled$="[[loadingAny]]"
+										 name="ShipCity" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipCity]]"
+										 invalid="[[_asBool(order.notvalid.ShipCity)]]">
+							</paper-input>
+
+							<paper-input label="[[localizeByCountry('order-title-state', order.ShipCountryCode)]]" type="string" value="{{order.ShipState}}"  disabled$="[[loadingAny]]"
+										 name="ShipState" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipState]]"
+										 invalid="[[_asBool(order.notvalid.ShipState)]]">
+							</paper-input>
+
+							<paper-input label="[[localizeByCountry('order-title-zip', order.ShipCountryCode)]]"
+										 type="string" value="{{order.ShipZip}}" name="ShipZip"  disabled$="[[loadingAny]]"
+										 on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipZip]]"
+										 invalid="[[_asBool(order.notvalid.ShipZip)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-country')]]" type="string" value="{{order.ShipCountry}}"  disabled$="[[loadingAny]]"
+										 name="ShipCountry" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipCountry]]"
+										 invalid="[[_asBool(order.notvalid.ShipCountry)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-company')]]" type="string" value="{{order.ShipCompany}}"  disabled$="[[loadingAny]]"
+										 name="ShipCompany" on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipCompany]]"
+										 invalid="[[_asBool(order.notvalid.ShipCompany)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-tax')]]" type="string" value="{{order.ShipTaxID}}" name="ShipTaxID"  disabled$="[[loadingAny]]"
+										 on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipTaxID]]"
+										 invalid="[[_asBool(order.notvalid.ShipTaxID)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-eori')]]" type="string" value="{{order.ShipEORI}}" name="ShipEORI"  disabled$="[[loadingAny]]"
+										 on-value-changed="onInputChanged" error-message="[[order.notvalid.ShipEORI]]"
+										 invalid="[[_asBool(order.notvalid.ShipEORI)]]">
+							</paper-input>
+
+						</div>
+
+						<div class="table order-details">
+						</div>
+					</div>
+
+
+					<div class="order-inputs">
+						<h4>
+							[[localize('order-title-billaddress')]]
+						</h4>
+
+						<div class="">
+							<paper-input label="[[localize('order-title-firstname')]]" type="string" value="{{order.BillFirstName}}" disabled$="[[loadingAny]]"
+										 name="BillFirstName" on-value-changed="onInputChanged" error-message="[[order.notvalid.BillFirstName]]"
+										 invalid="[[_asBool(order.notvalid.BillFirstName)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-lastname')]]" type="string" value="{{order.BillLastName}}" disabled$="[[loadingAny]]"
+										 name="BillLastName" on-value-changed="onInputChanged" error-message="[[order.notvalid.BillLastName]]"
+										 invalid="[[_asBool(order.notvalid.BillLastName)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-address')]]" type="string" value="{{order.BillAddress}}" disabled$="[[loadingAny]]"
+										 name="BillAddress" on-value-changed="onInputChanged" error-message="[[order.notvalid.BillAddress]]"
+										 invalid="[[_asBool(order.notvalid.BillAddress)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-address2')]]" type="string" value="{{order.BillAddress2}}" disabled$="[[loadingAny]]"
+										 name="BillAddress2" on-value-changed="onInputChanged" error-message="[[order.notvalid.BillAddress2]]"
+										 invalid="[[_asBool(order.notvalid.BillAddress2)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-address3')]]" type="string" value="{{order.BillAddress3}}" disabled$="[[loadingAny]]"
+										 name="BillAddress3" on-value-changed="onInputChanged" error-message="[[order.notvalid.BillAddress3]]"
+										 invalid="[[_asBool(order.notvalid.BillAddress3)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-city')]]" type="string" value="{{order.BillCity}}" name="BillCity" disabled$="[[loadingAny]]"
+										 on-value-changed="onInputChanged" error-message="[[order.notvalid.BillCity]]"
+										 invalid="[[_asBool(order.notvalid.BillCity)]]">
+							</paper-input>
+
+							<paper-input label="[[localizeByCountry('order-title-state', order.BillCountryCode)]]" type="string" value="{{order.BillState}}" disabled$="[[loadingAny]]"
+										 name="BillState" on-value-changed="onInputChanged" error-message="[[order.notvalid.BillState]]"
+										 invalid="[[_asBool(order.notvalid.BillState)]]">
+							</paper-input>
+
+							<paper-input label="[[localizeByCountry('order-title-zip', order.BillCountryCode)]]" type="string" value="{{order.BillZip}}" name="BillZip" disabled$="[[loadingAny]]"
+										 on-value-changed="onInputChanged" error-message="[[order.notvalid.BillZip]]"
+										 invalid="[[_asBool(order.notvalid.BillZip)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-country')]]" type="string" value="{{order.BillCountry}}" disabled$="[[loadingAny]]"
+										 name="BillCountry" on-value-changed="onInputChanged" error-message="[[order.notvalid.BillCountry]]"
+										 invalid="[[_asBool(order.notvalid.BillCountry)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-company')]]" type="string" value="{{order.BillCompany}}" name="BillCompany" disabled$="[[loadingAny]]"
+										 on-value-changed="onInputChanged" error-message="[[order.notvalid.BillCompany]]"
+										 invalid="[[_asBool(order.notvalid.BillCompany)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-tax')]]" type="string" value="{{order.BillTaxID}}" name="BillTaxID" disabled$="[[loadingAny]]"
+										 on-value-changed="onInputChanged" error-message="[[order.notvalid.BillTaxID]]"
+										 invalid="[[_asBool(order.notvalid.BillTaxID)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-eori')]]" type="string" value="{{order.BillEORI}}" name="BillEORI" disabled$="[[loadingAny]]"
+										 on-value-changed="onInputChanged" error-message="[[order.notvalid.BillEORI]]"
+										 invalid="[[_asBool(order.notvalid.BillEORI)]]">
+							</paper-input>
+						</div>
+					</div>
+
+
+					<div class="order-inputs">
+						<h4>
+							[[localize('order-title-details')]]
+						</h4>
+
+						<div class="">
+							<paper-input label="[[localize('order-title-email')]]" type="string" value="{{order.AccountEmail}}" name="AccountEmail" disabled$="[[loadingAny]]"
+										 on-value-changed="onInputChanged" error-message="[[order.notvalid.AccountEmail]]"
+										 invalid="[[_asBool(order.notvalid.AccountEmail)]]">
+							</paper-input>
+
+							<paper-input label="[[localize('order-title-phone')]]" type="string" value="{{order.AccountPhone}}" disabled$="[[loadingAny]]"
+										 name="AccountPhone" on-value-changed="onInputChanged" error-message="[[order.notvalid.AccountPhone]]"
+										 invalid="[[_asBool(order.notvalid.AccountPhone)]]">
+							</paper-input>
+
+							<div class="table order-details">
+								<div class="row">
+									<div>
+										User
+									</div>
+									<div>
+										<teamatical-ui-user-inline user="[[order.User]]">
+										</teamatical-ui-user-inline>
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										[[localize('order-title-created')]]
+									</div>
+									<div>
+										[[_formatDate(order.Created)]]
+									</div>
+								</div>
+
+
+								
+
+								<div class="row">
+									<div>
+										Payment Net
+									</div>
+									<div>
+										[[_priceObjectV(order.PaymentNet)]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										Payment Fee
+									</div>
+									<div>
+										[[_priceObjectV(order.PaymentFee)]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										Payment Fee Distribution Mode 
+									</div>
+									<div>
+										[[_formatFeeDistributionMode(order.PaymentFeeDistributionMode)]]
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										<span>Payment App Fee</span>
+									</div>
+									<div>
+										[[_priceObjectV(order.PaymentAppFee)]]
+									</div>
+								</div>
+
+								<dom-if if="[[!isOrganization]]">
+									<template>
+										<div class="row">
+											<div>
+												Seller Organization (Partner) Fee
+											</div>
+											<div>
+												[[_priceObjectV(order.PartnerFee)]]
+											</div>
+										</div>
+										
+
+										<div class="row">
+											<div>
+												Shipping Carrier Fee
+											</div>
+											<div>
+												[[_priceObjectV(order.ShippingCharge)]]
+												<dom-if if="[[order.ShippingCharge.Shared]]">
+													<template>[Shared]</template>
+												</dom-if>
+												<dom-if if="[[order.ShippingCharge.Incomplete]]">
+													<template>[Incomplete]</template>
+												</dom-if>
+												<dom-if if="[[order.ShippingCharge.InvalidOrMixedCurrency]]">
+													<template>[InvalidOrMixedCurrency]</template>
+												</dom-if>
+											</div>
+										</div>
+									</template>
+								</dom-if>
+
+
+								<dom-if if="[[!isOrganization]]">
+									<template>
+										<div class="row">
+											<div>
+												Seller Organization (Partner)
+											</div>
+											<div>
+												<dom-if if="[[order.SellerOrganization]]">
+													<template>
+														<b><span class="copy-tap" on-tap="_copyTap" copy-content$="[[order.SellerOrganization.OrganizationID]]">[[order.SellerOrganization.Name]]</span></b>
+														<a href$="[[_urlViewOrganization(order.SellerOrganization.OrganizationID)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a> 
+														<dom-if if="[[order.SellerOrganization.ConnectedStripeAccountID]]">
+															<template>
+																<br />Stripe #: <span class="copy-tap" on-tap="_copyTap">[[order.SellerOrganization.ConnectedStripeAccountID]]</span>
+																<a href$="[[_urlStripeConnected(order.SellerOrganization.ConnectedStripeAccountID)]]" target="_blank">
+																	<iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon></a>
+																<br />
+															</template>
+														</dom-if>
+													</template>
+												</dom-if>
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												Factory Invoice Organization
+											</div>
+											<div>
+												<dom-if if="[[order.FactoryInvoiceOrganization]]">
+													<template>
+														<b><span class="copy-tap" on-tap="_copyTap" copy-content$="[[order.FactoryInvoiceOrganization.OrganizationID]]">[[order.FactoryInvoiceOrganization.Name]]</span></b>
+														<a href$="[[_urlViewOrganization(order.FactoryInvoiceOrganization.OrganizationID)]]"><iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon></a> 
+													</template>
+												</dom-if>
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												Buyer Organization
+											</div>
+											<div>
+												<dom-if if="[[order.BuyerOrganization]]">
+													<template>
+														<b><span class="copy-tap" on-tap="_copyTap" copy-content$="[[order.BuyerOrganization.OrganizationID]]">[[order.BuyerOrganization.Name]]</span></b> 
+														<a href$="[[_urlViewOrganization(order.BuyerOrganization.OrganizationID)]]">
+															<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+														</a> 
+													</template>
+												</dom-if>
+											</div>
+										</div>
+
+										<div class="row">
+											<div>
+												Host Organization
+											</div>
+											<div>
+												<dom-if if="[[order.HostOrganization]]">
+													<template>
+														<b class="copy-tap" on-tap="_copyTap" copy-content$="[[order.HostOrganization.OrganizationID]]">[[order.HostOrganization.Name]]</b> 
+														<a href$="[[_urlViewOrganization(order.HostOrganization.OrganizationID)]]">
+															<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+														</a> 
+													</template>
+												</dom-if>
+											</div>
+										</div>
+									</template>
+								</dom-if>										
+
+
+
+								<!-- ship  -->
+								<div class="row">
+									<div>
+										Shipping Address Is Company
+									</div>
+									<div>
+										<span highlighted$="[[order.IsCompany]]">
+											[[order.IsCompany]]
+										</span>
+									</div>
+								</div>
+	
+								<div class="row">
+									<div>
+										Shipping Address Is Residential
+									</div>
+									<div>
+										<span highlighted$="[[order.IsResidential]]">
+											[[order.IsResidential]]
+										</span>
+									</div>
+								</div>
+	
+	
+								<div class="row">
+									<div>
+										Was Ignored Shipping Address Suggestion
+									</div>
+									<div>
+										<span highlighted$="[[order.IgnoreSuggestionValidation]]">
+											[[order.IgnoreSuggestionValidation]]
+										</span>
+									</div>
+								</div>
+	
+								<div class="row" hidden$="[[!order.DeliveryDetailsOnly]]">
+									<div>
+										[[localize('order-title-deliverydetails')]]
+									</div>
+									<div>
+										[[order.DeliveryDetails]]
+									</div>
+								</div>
+	
+								<div class$="[[_classBool(order.ShipmentMethod.notverified, 'row error', 'row', 'row')]]"
+									title$="[[_classBool(order.ShipmentMethod.notverified, 'Not Verified')]]">
+									<div>
+										Shipment Method
+									</div>
+									<div>
+										[[_formatShipment(order.ShipmentMethod)]]
+										<p highlighted hidden$="[[!order.ShipmentMethod.notverified]]">
+											Shipping Address was not verified
+										</p>
+	
+									</div>
+								</div>
+
+
+
+								<!-- IDs -->
+								<div class="row">
+									<div>
+										Group Shipping ID
+									</div>
+									<div>
+										<dom-if if="[[_asBool(order.GroupShippingID)]]">
+											<template>
+												<span class="order-id copy-tap" on-tap="_copyTap">[[order.GroupShippingID]]</span>
+												<dom-if if="[[!isOrganization]]">
+													<template>
+														<a href="[[_urlViewGroupShipping(order.GroupShippingID)]]">
+															<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+														</a>
+													</template>
+												</dom-if>
+											</template>
+										</dom-if>
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										Store IDs
+									</div>
+									<div>
+										<dom-repeat items="[[order.StoreIDs]]" as="storei">
+											<template>
+												<span class="order-id copy-tap" on-tap="_copyTap">[[storei]]</span><dom-if if="[[_notLast(order.StoreIDs, index)]]"><template>,</template></dom-if>
+											</template>
+										</dom-repeat>
+									</div>
+								</div>
+
+								<div class="row">
+									<div>
+										Product IDs
+									</div>
+									<div>
+										<dom-repeat items="[[order.ProductIDs]]" as="producti">
+											<template>
+												<span class="order-id copy-tap" on-tap="_copyTap">[[producti]]</span><dom-if if="[[_notLast(order.ProductIDs, index)]]"><template>,</template></dom-if>
+											</template>
+										</dom-repeat>
+									</div>
+								</div>								
+
+							</div>
+
+							<div class="total-items">
+								<dom-repeat items="[[_computeTotalsVisible(order.Totals)]]" as="totali">
+									<template>
+										<div class$="total-row {{totali.class}}">
+											<div>[[totali.title]]</div>
+											<div>[[_formatTotalsItem(totali.id, totali.amount, order.Currency)]]</div>
+										</div>
+									</template>
+								</dom-repeat>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+
+
+				<!-- order.Metadata -->
+				<div class="order-metadata">
+					<h4>
+						Metadata
+					</h4>
+
+					<json-viewer 
+						json="[[order.Metadata]]">
+					</json-viewer>
+					<!-- no items -->
+					<dom-if if="[[!_asBool(order.Metadata)]]">
+						<template>
+							<div class="noitems">
+								No Metadata
+							</div>
+						</template>
+					</dom-if>
+					
+				</div>
+
+				
+				<div class="order-shipment">
+					<h4>
+						Shipping Hubs
+						<dom-if if="[[_yesItems(order.ShippingHubs, order.ShippingHubs.*)]]">
+							<template>
+							([[order.ShippingHubs.length]])
+							</template>
+						</dom-if>
+					
+						<dom-if if="[[!isOrganization]]">
+							<template>
+								<paper-button class="order-recalc-shiprates-btn"
+											disabled$="[[_dis_recalcShiprates(loadingAny, order.CantSwitchShippingHubs)]]"
+											raised
+											on-tap="recalcShiprateOrderTap">
+									Request Shipping Rates
+								</paper-button>
+								<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+							</template>
+						</dom-if>
+					</h4>
+	
+					<dom-if if="[[order.notvalid.ShippingHubs]]">
+						<template>
+							<div class="notvalid alert">
+								<pre>
+									[[order.notvalid.ShippingHubs]]
+								</pre>
+							</div>
+						</template>
+					</dom-if>
+	
+	
+					<div scrollable-x>
+						<div class="table">
+							<div class="header">
+								<div>
+									Manufacturer ID
+								</div>
+								<div>
+									Manufacturer Name
+								</div>
+								<div>
+									Shipping Hub / Method
+								</div>
+							</div>
+						
+							<dom-repeat items="[[order.ShippingHubs]]" as="shubi">
+								<template>
+									<div class="row vcenter">
+										<div>
+											<span class="copy-tap" on-tap="_copyTap">[[shubi.ManufacturerID]]</span>
+											<dom-if if="[[!isOrganization]]">
+												<template>
+													<a href="[[_urlViewManufacturer(shubi.ManufacturerID)]]">
+														<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+													</a>
+												</template>
+											</dom-if>
+										</div>
+										<div>
+											[[shubi.ManufacturerName]]
+										</div>
+										<div>
+											<div class="selection">
+												<tmladmin-ui-dropdown-menu 
+													vertical-align="top" 
+													horizontal-align="left"
+													id-property="ID"
+													title-property="Name"
+													label="Shipping Hub / Method"
+													disabled$="[[loading]]" 
+													value="{{shubi.ShippingHub}}"
+													on-change="shippingHubChanged"
+													value-list="[[_shippingHubsWithPrices(shubi.ShippingHubs)]]"
+													error-message="[[order.CantSwitchShippingHubs]]"
+													invalid="[[_asBool(order.CantSwitchShippingHubs)]]">
+												</tmladmin-ui-dropdown-menu>
+											</div>
+										</div>
+									</div>
+								</template>
+							</dom-repeat>
+						</div>
+					</div>
+					<!-- no items -->
+					<dom-if if="[[!LenMore(order.ShippingHubs)]]">
+						<template>
+							<div class="noitems">
+								[[localize('admin-list-noitems')]]
+							</div>
+						</template>
+					</dom-if>
+
+
+					<!-- Order Shipment Containers -->
+					<h4>
+						Order Shipment Containers
+						<paper-button class="order-more-details-btn" disabled$="[[loadingAny]]" hidden$="[[!order.IsMore]]" raised on-tap="moreDetailTap">
+							Load More ...
+						</paper-button>
+					</h4>
+					<div class="table">
+						<div class="header">
+							<div>
+								Container
+							</div>
+							<div>
+								Serial Container Code
+							</div>
+							<div>
+								Track Number
+							</div>
+						</div>
+
+						<dom-repeat items="[[order.Containers]]" as="conti">
+							<template>
+								<div class="row">
+									<div>
+										<span class="copy-tap" on-tap="_copyTap">[[conti.ContainerID]]</span>
+										<dom-if if="[[!isOrganization]]">
+											<template>
+												<a hidden$="[[!_asBool(conti.ContainerID)]]" href="[[_urlViewShippingContainer(conti.ContainerID)]]">
+													<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+												</a>
+											</template>
+										</dom-if>
+										<dom-if if="[[isOrganization]]">
+											<template>
+												<a hidden$="[[!_asBool(conti.ContainerID)]]" href="[[_urlViewWorkstationHub(conti.ContainerID)]]" target="_blank">
+													<iron-icon icon="admin-icons:open-in-new" class="open-in-new"></iron-icon>
+												</a>
+											</template>
+										</dom-if>
+									</div>
+									<div>
+										[[conti.ContainerReferenceNumber]]
+									</div>
+									<div>
+										[[conti.TrackNumber]]
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+						
+						<dom-if if="[[!LenMore(order.Containers)]]">
+							<template>
+								<div class="noitems">
+									[[localize('admin-list-noitems')]]
+								</div>
+							</template>
+						</dom-if>
+					</div>
+
+					<!-- Order Shipment Packages -->
+					<h4>
+						Order Shipment Packages
+						<paper-button class="order-more-details-btn" disabled$="[[loadingAny]]" hidden$="[[!order.IsMore]]" raised on-tap="moreDetailTap">
+							Load More ...
+						</paper-button>
+					</h4>
+					<div class="table">
+						<div class="header">
+							<div>
+								Package
+							</div>
+							<div>
+								Track Number
+							</div>
+						</div>
+
+						<dom-repeat items="[[order.Packages]]" as="packagei">
+							<template>
+								<div class="row">
+									<div>
+										<span class="copy-tap" on-tap="_copyTap">[[packagei.PackageID]]</span>
+										<!-- <a hidden$="[[!_asBool(packagei.ContainerID)]]" href="[[_urlViewShippingPackage(packagei.ContainerID)]]">
+											<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+										</a> -->
+									</div>
+									<div>
+										[[packagei.TrackNumber]]
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+
+						<dom-if if="[[!LenMore(order.Packages)]]">
+							<template>
+								<div class="noitems">
+									[[localize('admin-list-noitems')]]
+								</div>
+							</template>
+						</dom-if>
+					</div>
+
+
+					<!-- Order Shipment Tracking -->
+					<h4>
+						Order Shipment Tracking
+					</h4>
+					<div class="table">
+						<div class="header">
+							<div>
+								Carrier
+							</div>
+							<div>
+								Track Number
+							</div>
+							<div>
+								Place
+							</div>
+							<div>
+								# Products
+							</div>
+							<div>
+								Hidden For Consumer
+							</div>
+							<div>
+								Carreir Website
+							</div>
+						</div>
+
+						<dom-repeat items="[[order.Tracking]]" as="tracki">
+							<template>
+								<div class="row">
+									<div>
+										[[tracki.Carrier]]
+									</div>
+									<div>
+										<span class="copy-tap" on-tap="_copyTap">[[tracki.TrackingNumber]]</span>
+									</div>
+									<div>
+										[[tracki.Place]]
+									</div>
+									<div>
+										[[tracki.ShippedCount]]
+									</div>
+									<div>
+										<span highlighted$="[[tracki.HiddenForConsumer]]">
+											[[tracki.HiddenForConsumer]]
+										</span>
+									</div>
+									<div>
+										<span hidden$="[[isCarreirWebsite(tracki)]]">NA</span>
+										<paper-button raised on-tap="onTrackRow" hidden$="[[!isCarreirWebsite(tracki)]]">
+											<span style="white-space: nowrap;">
+												[[tracki.Carrier]] Tracking
+												<iron-icon icon="admin-icons:launch" class="open-in-new"></iron-icon>
+											</span>
+										</paper-button>
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+
+						<dom-if if="[[!LenMore(order.Tracking)]]">
+							<template>
+								<div class="noitems">
+									[[localize('admin-list-noitems')]]
+								</div>
+							</template>
+						</dom-if>
+					</div>
+
+				</div>
+
+				
+
+				<div class="order-email resend">
+					<h4>
+						Customer Emails
+					</h4>
+
+					<div class="buttons gap">
+						<paper-button 
+							class="order-email-placed-btn" 
+							disabled$="[[loadingAny]]" 
+							hidden$="[[hideSaveBtn(order)]]" 
+							raised
+							on-tap="sendEmailOrderPlacedTap">
+							<iron-icon icon="admin-icons:mail" alt="mail"></iron-icon>
+							&nbsp;
+							Order Placed - Send Email
+						</paper-button>
+						<paper-spinner-lite class="thick"></paper-spinner-lite>
+					</div>
+				</div>
+
+				<div class="order-email models">
+					<h4>
+						Customer Emails Models
+					</h4>
+
+					<div class="buttons gap">
+						<div class="selection">	
+							<tmladmin-ui-dropdown-menu 
+								vertical-align="top" 
+								horizontal-align="left"
+								class="order-showemailmodel-sel" 
+								label="Customer Order Email Type"
+								disabled$="[[loading]]" 
+								value="{{order.OrderEmailType}}"
+								value-list="[[order.OrderEmailTypes]]"
+								error-message="[[order.notvalid.OrderEmailType]]"
+								invalid="[[_asBool(order.notvalid.OrderEmailType)]]">
+							</tmladmin-ui-dropdown-menu>
+
+							
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+
+							<paper-button class="order-showemailmodel-btn" 
+								disabled$="[[loadingAny]]" 
+								raised on-tap="showEmailModelTap"
+								disabled$="[[disableStatusSelection(loading)]]">
+								Show Email Model (SENDGRID)
+							</paper-button>
+						</div>
+					</div>
+					
+				</div>
+
+
+				
+
+				<!-- Tasks -->
+				<tmladmin-ui-task-list 
+					class="order-tasks"
+					title="Tasks"
+					tasks="[[order.Tasks]]">
+				</tmladmin-ui-task-list>
+				
+
+				<!-- History -->
+				<tmladmin-ui-changes-history 
+					class="order-history"
+					title="Order History"
+					items="[[order.History]]">
+				</tmladmin-ui-changes-history>
+			</div>
+		
+			<div class="order-items" id="order-items">
+				<h4>
+					Order Items
+					- Number Of Styles: <span class="count">[[order.NumberOfStyles]]</span>
+					/ Line Items: <span class="count">[[order.items.length]]</span>
+					/ Qty: <span class="count">[[order.QuantityOfItems]]</span>
+
+
+					<paper-button class="order-addtocart-btn"
+						disabled$="[[loadingAny]]"
+						raised
+						on-tap="addOrderToCartTap">
+						<iron-icon icon="admin-icons:undefined"></iron-icon>
+						Order Add to Cart
+						<iron-icon icon="admin-icons:undefined"></iron-icon>
+					</paper-button>
+
+					<dom-if if="[[isProductConfigurationReplace]]">
+						<template>
+							<paper-button 
+								class="order-use-own-pcid-btn"
+								disabled$="[[loadingAny]]" 
+								raised
+								on-tap="_useOwnPCIDTap">
+								<iron-icon icon="admin-icons:assignment-return"></iron-icon>
+								&nbsp;
+								Put Recent Product Configuration For All
+							</paper-button>
+						</template>
+					</dom-if>
+				</h4>
+
+				<iron-list items="[[order.items]]" as="itemi" scroll-target="[[scrollTarget]]" default-physical-count="40" suppress-focus>
+					<template>
+						<tmladmin-ui-order-item 
+							entry="[[itemi]]" 
+							index="[[index]]"
+							action-disabled="[[loadingAny]]" 
+							user-info="[[userInfo]]"
+							is-admin-console
+							is-addtocart
+							is-organization="[[isOrganization]]">
+						</tmladmin-ui-order-item>
+					</template>
+				</iron-list>
+			</div>
+		
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+<tmladmin-ui-dialog id="dialogdetails" disabled$="[[dialogdetails.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+		<paper-icon-button 
+			class="close-dialog-small-btn" 
+			icon="admin-icons:close"
+			dialog-dismiss>
+		</paper-icon-button>		
+		<div class="dialog-loading-container">
+			<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogdetails.loading]]"
+				hidden$="[[!dialogdetails.loading]]">
+			</paper-progress>
+		</div>
+		<div class="dialog-title">
+			<h3 style="margin-right: auto;">[[dialogdetails.title]]</h3>
+
+			<paper-icon-button slot="suffix" class="copy-json-btn" style="margin: -7px 12px;"
+				aria-label="copy-json-btn"
+				icon="icons:content-copy"
+				on-tap="copyJsonDetailsTap">
+			</paper-icon-button>
+			<paper-toggle-button checked="{{viewasjson}}">JSON Viewer</paper-toggle-button>
+		</div>
+	</div>
+
+	<div slot="body">
+		<div class="details-cell white">
+			<pre hidden$="[[viewasjson]]">[[dialogdetails.Details]]</pre>
+			<json-viewer hidden$="[[!viewasjson]]" json="[[dialogdetails.Details]]"></json-viewer>
+		</div>
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>
+			Close
+		</paper-button>
+	</div>
+</tmladmin-ui-dialog>
+
+
+
+<tmladmin-ui-dialog id="dialogqaimgs" disabled$="[[dialogqaimgs.loading]]" scroll-target="[[scrollTarget]]">
+	<div slot="header">
+	  <paper-icon-button 
+		class="close-dialog-small-btn" 
+		icon="admin-icons:close"
+		dialog-dismiss>
+	  </paper-icon-button>
+  
+	  <div class="dialog-loading-container">
+		<paper-progress indeterminate class="dialog-loading" disabled$="[[!dialogqaimgs.loading]]"
+		  hidden$="[[!dialogqaimgs.loading]]">
+		</paper-progress>
+	  </div>
+  
+	  <h2>
+		[[dialogqaimgs.title]]
+	  </h2>
+	</div>
+  
+	<div slot="body">
+		<dom-repeat items="[[dialogqaimgs.QaPicturies]]" as="qaimgi">
+			<template>
+				<img 
+					draggable="false" 
+					unselectable="on" 
+					tabindex="-1" 
+					alt="[[index]]" 
+					style="opacity: 1; transition: opacity 0.5s ease 0s, transform 0.5s ease 0s;" 
+					src="[[qaimgi]]">
+			</template>
+		</dom-repeat>
+	</div>
+  
+	<div slot="footer">
+	  <paper-button dialog-dismiss autofocus>
+		[[localize('admin-dlg-close')]]
+	  </paper-button>
+	</div>
+</tmladmin-ui-dialog>
+
+
+
+
+<paper-dialog id="dialogsync" class="dialog" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>
+		Sync Payment History #[[dialogsync.orderid]]
+	</h2>
+	<paper-dialog-scrollable>
+		<p>
+			Sync is going to be processed ...are you sure?
+		</p>
+		<div>
+			<paper-checkbox checked="{{dialogsync.auditfix}}">Audit Force Fix</paper-checkbox>
+		</div>
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm autofocus class="order-sync-btn" on-tap="syncOrderCofirmTap">Sync</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogrefund" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Full Refund of Order #[[order.id]]</h2>
+	<paper-dialog-scrollable>
+		Full refund is going to be processed ...are you sure?
+
+		<paper-textarea label="Refund reason" value="{{dialogcancel_reason}}"></paper-textarea>
+
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm autofocus class="order-refund-btn" on-tap="refundOrderConfirm">Full Refund</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Confirm to Save</h2>
+	<paper-dialog-scrollable>
+		Order #: [[order.id]] details is going to be saved...are you sure?
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="saveDetailConfirmTap">Save Details</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogreinitiate" class="small-with-icon" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Reinitiate Order</h2>
+	<paper-dialog-scrollable style="min-height: 240px;">
+		<iron-icon class="warning" icon="admin-av:slow-motion-video" showen$=""></iron-icon>
+		<paper-checkbox 
+			class="hide-on-print"
+			checked="{{dialogreinitiate.IsUnderstand}}">
+			I understand what I do...
+		</paper-checkbox>
+		<p>
+			You about to Reinitiate order 
+			(it can be run if there is no ProductionOrder ONLY)
+			...are you sure?
+		</p>
+		<br />
+		<br />
+		<paper-textarea 
+			style="margin: 16px;"
+			label="Reason" 
+			value="{{dialogreinitiate.reason}}"
+			on-value-changed="onInputChanged" 
+			name="dialogreinitiate.Reason"
+			error-message="[[dialogreinitiate.notvalid.Reason]]"
+			invalid="[[_asBool(dialogreinitiate.notvalid.Reason)]]">
+		</paper-textarea>
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="reinitiateOrderConfirmTap" disabled$="[[!dialogreinitiate.IsUnderstand]]">Reinitiate</paper-button>
+	</div>
+</paper-dialog>
+
+
+<paper-dialog id="dialogcancel" class="small-with-icon"  proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>
+		[[localize('order-button-cancel', 'oid', order.id)]]
+	</h2>
+	<paper-dialog-scrollable style="min-height: 240px;">
+		<iron-icon class="error" icon="admin-icons:delete-forever" showen$=""></iron-icon>
+		<p>
+			You about to CANCEL the order ... are you sure?
+		</p>
+		<br />
+		<br />
+		<paper-checkbox checked="{{dontSendEmail}}" title="Dont's send customer notification email" style="margin: 16px 0px;">
+			Don't send customer notification email
+		</paper-checkbox>
+		<br />
+		<br />
+		<paper-textarea label="Reason" value="{{dialogcancel_reason}}"></paper-textarea>
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm on-tap="cancelOrderConfirm">Cancel Order</paper-button>
+		<dom-if if="[[order.CancelableAndRefundable]]">
+			<template>
+				<paper-button dialog-confirm autofocus on-tap="cancelOrderRefundConfirm">Cancel And Refund</paper-button>
+			</template>
+		</dom-if>
+	</div>
+</paper-dialog>

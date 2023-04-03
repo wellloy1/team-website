@@ -1,0 +1,474 @@
+<div class="maindiv">
+	<div>
+		<paper-progress 
+			id="progress" 
+			indeterminate 
+			class="" 
+			disabled$="[[!loading]]">
+		</paper-progress>
+
+
+		<div class="order">
+			<div class="order-header">
+				<h3>
+					<span class="hidden" showen$="[[hasUnsavedChanges]]">
+						<iron-icon icon="admin-icons:warning" class="warning"></iron-icon> [Unsaved Changes]
+					</span>
+
+					<paper-icon-button 
+						class="refresh-btn" 
+						icon="admin-icons:refresh"
+						title="Refresh" 
+						on-tap="_reloadTap">
+					</paper-icon-button>
+
+					Product View #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.ViewID]]</span>
+					- SKU #: 
+					<span class="copy-tap" on-tap="_copyTap">[[order.SKU]]</span>
+					<span hidden$="[[!order.ProductID]]">- Product ID #: 
+						<span class="copy-tap" on-tap="_copyTap">[[order.ProductID]]</span>
+					</span>
+					<a href="[[_urlViewProduct(order.ProductID)]]" hidden$="[[!order.ProductID]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+					| Product Manufacturer #:
+					<span class="copy-tap" on-tap="_copyTap">[[order.ProductManufacturerID]]</span>
+					<a href="[[_urlViewProductManufacturer(order.ProductManufacturerID)]]">
+						<iron-icon icon="admin-icons:open-in-new" class="open-in-here"></iron-icon>
+					</a>
+				</h3>
+
+				<div class="buttons">
+					<paper-button 
+						class="order-save-view-btn" 
+						disabled$="[[loading]]" 
+						hidden$="[[hideSaveBtn(order)]]" 
+						raised
+						on-tap="saveProductViewTap">
+						Save View
+					</paper-button>
+				
+					<paper-button 
+						class="order-clone-btn hidden" 
+						disabled$="[[loading]]" 
+						showen-flex$="[[!hideCloneBtn(order)]]" 
+						raised
+						on-tap="cloneViewTap">
+						Clone View
+					</paper-button>
+				</div>
+				
+				<div class="order-inputs details-section">
+					<h4>
+						Details:
+					</h4>
+
+					<!-- <paper-input 
+						label="Type" 
+						type="string" 
+						value="{{order.Type}}"
+						name="Type"
+						on-value-changed="onInputChanged"
+						error-message="[[order.notvalid.Type]]" 
+						invalid="[[_asBool(order.notvalid.Type)]]">
+					</paper-input> -->
+
+					<paper-checkbox 
+						checked="{{order.CalculateCameraDistance}}"
+						title="Auto Calculate Camera Distance">
+						Auto Calculate Camera Distance
+					</paper-checkbox>
+
+					<paper-checkbox 
+						checked="{{order.SkipUvSpaceCheck}}"
+						title="Skip UV-space check, to allow older products...">
+						Skip UV-Space Check
+					</paper-checkbox>
+					
+					
+					<div class="small-inputs">
+						<paper-input 
+							label="Product Manufacturer ID" 
+							type="string" 
+							name="ProductManufacturerID"
+							value="{{order.ProductManufacturerID}}"
+							on-value-changed="onInputChanged" 
+							error-message="[[order.notvalid.ProductManufacturerID]]"
+							invalid="[[_asBool(order.notvalid.ProductManufacturerID)]]">
+						</paper-input>
+
+						<paper-input 
+							label="SKU (readonly)" 
+							type="string" 
+							readonly
+							value="[[order.SKU]]"
+							name="SKU"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.SKU]]" 
+							invalid="[[_asBool(order.notvalid.SKU)]]">
+						</paper-input>
+
+						<paper-input 
+							label="Type (readonly)" 
+							type="string" 
+							readonly
+							value="[[order.Type]]"
+							name="Type"
+							on-value-changed="onInputChanged"
+							error-message="[[order.notvalid.Type]]" 
+							invalid="[[_asBool(order.notvalid.Type)]]">
+						</paper-input>
+
+						<paper-input 
+							class="small-inputs-mock" 
+							label="..." 
+							type="string" 
+							disabled>
+						</paper-input>
+					</div>
+
+					<div scrollable-x>
+					<div class="table">
+						<div class="header">
+							<div>
+							</div>
+							<div>
+							</div>
+						</div>
+					
+						<!-- <div class="row vcenter">
+							<div class="w10 right">
+								<label id="labelFabricThikness">FabricThikness:</label>
+							</div>
+							<div>
+								<paper-radio-group aria-labelledby="labelFabricThikness" selected="{{order.FabricThikness}}" name="FabricThikness"
+									on-value-changed="onInputChanged" error-message="[[order.notvalid.FabricThikness]]"
+									invalid="[[_asBool(order.notvalid.FabricThikness)]]">
+									<dom-repeat items="[[order.PossibleFabricThikness]]" as="fthiknessi">
+										<template>
+											<paper-radio-button name="[[fthiknessi]]" label="[[fthiknessi]]">[[fthiknessi]]</paper-radio-button>
+										</template>
+									</dom-repeat>
+								</paper-radio-group>
+							</div>
+						</div> -->
+
+						<div class="row vcenter">
+							<div class="w10 right">
+								<label id="labelSideName">SideName:</label>
+							</div>
+							<div>
+								<paper-radio-group aria-labelledby="labelSideName" selected="{{order.SideName}}" name="SideName"
+									on-value-changed="onInputChanged" error-message="[[order.notvalid.SideName]]"
+									invalid="[[_asBool(order.notvalid.SideName)]]">
+									<dom-repeat items="[[order.PossibleSideNames]]" as="sidenamei">
+										<template>
+											<paper-radio-button name="[[sidenamei]]" label="[[sidenamei]]">[[sidenamei]]</paper-radio-button>
+										</template>
+									</dom-repeat>
+								</paper-radio-group>
+							</div>
+						</div>
+					</div>
+					</div>
+				
+				</div>
+			</div>
+
+
+
+			<dom-if if="[[_asBool(order.Sources)]]">
+				<template>
+					<div class="layouts-list">
+						<h4>Sources:</h4>
+						<dom-if if="[[order.notvalid.Sources]]">
+							<template>
+								<div class="notvalid alert">
+									<pre>
+										[[order.notvalid.Sources]]
+									</pre>
+								</div>
+							</template>
+						</dom-if>
+
+						<div style="margin-bottom: 20px">
+							<paper-button class="add-new-source-btn" disabled$="[[_dis_addnewsource(order.ViewID, order.ProductManufacturerID, loading)]]" raised
+								on-tap="addNewSourceTap">
+								Add New Source
+							</paper-button>
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+						</div>
+			
+						<vaadin-grid id="grid_Sources" hidden$="[[!LenMore(order.Sources)]]" aria-label="Sources"
+							theme="no-border column-borders wrap-cell-content row-stripes compact" items="[[order.Sources]]"
+							active-item="{{activeItem}}" cell-class-name-generator="[[gridCellClassNameGenerator]]"
+							column-reordering-allowed height-by-rows>
+			
+							<vaadin-grid-column width="50px" flex-grow="0" resizable="true" id="#" frozen>
+								<template class="header">#</template>
+								<template>
+									<span has-errors$="[[item.notvalid.N]]" title$="[[item.notvalid.N]]">[[_formatN(index, item)]]</span>
+								</template>
+							</vaadin-grid-column>
+			
+							<vaadin-grid-column width="100px" resizable="true" id="Size">
+								<template class="header">
+									Size
+								</template>
+								<template>
+									<span has-errors$="[[_asBool(item.notvalid.Size)]]" title$="[[_formatSize(item.notvalid.Size)]]">[[_formatSize(item.Size)]]</span>
+								</template>
+							</vaadin-grid-column>
+			
+							<vaadin-grid-column width="120px" resizable="true" id="CameraFile">
+								<template class="header">
+									Camera File
+								</template>
+								<template>
+									<span has-errors$="[[item.notvalid.CameraFile]]" title$="[[item.notvalid.CameraFile]]">[[item.CameraFile]]</span>
+								</template>
+							</vaadin-grid-column>
+			
+							<vaadin-grid-column width="120px" resizable="true" id="MaterialsFile">
+								<template class="header">
+									Materials File
+								</template>
+								<template>
+									<span has-errors$="[[item.notvalid.MaterialsFile]]" title$="[[item.notvalid.MaterialsFile]]">
+										<pre>[[item.MaterialsFile]]</pre>
+									</span>
+								</template>
+							</vaadin-grid-column>
+			
+							<!-- <vaadin-grid-column width="120px" resizable="true" id="BackgroundSourceName">
+								<template class="header">
+									BackgroundSourceName
+								</template>
+								<template>
+									<span has-errors$="[[item.notvalid.BackgroundSourceName]]" title$="[[item.notvalid.BackgroundSourceName]]">[[item.BackgroundSourceName]]</span>
+								</template>
+							</vaadin-grid-column>
+			
+							<vaadin-grid-column width="120px" resizable="true" id="ClipSourceName">
+								<template class="header">
+									ClipSourceName
+								</template>
+								<template>
+									<span has-errors$="[[item.notvalid.ClipSourceName]]" title$="[[item.notvalid.ClipSourceName]]">[[item.ClipSourceName]]</span>
+								</template>
+							</vaadin-grid-column> -->
+			
+							<vaadin-grid-column width="220px" resizable="true" id="MeshSourceName">
+								<template class="header">
+									Mesh Source Name
+								</template>
+								<template>
+									<span class="has-error-with-dialog" has-errors$="[[item.notvalid.MeshSourceName]]" title$="[[item.notvalid.MeshSourceName]]">[[item.MeshSourceName]]</span>
+								</template>
+							</vaadin-grid-column>
+			
+							<vaadin-grid-column width="340px" flex-grow="0" resizable="true" id="_buttons2">
+								<template class="header"></template>
+								<template>
+									<div class="buttons unset">
+										<paper-button raised on-tap="cloneSourceTap" class="clone-btn" disabled$="[[loading]]">Clone</paper-button>
+										<paper-button raised on-tap="editSourceTap" class="edit-btn" disabled$="[[loading]]">Edit</paper-button>
+										<paper-button raised on-tap="deleteSourceTap" class="delete-btn" disabled$="[[loading]]">Delete</paper-button>
+									</div>
+								</template>
+							</vaadin-grid-column>
+			
+						</vaadin-grid>
+					</div>
+				</template>
+			</dom-if>
+
+			<div class="order-items" id="order-items">
+				<h4 class="horiz-container gap">
+					<span>Product Views</span>
+					<paper-checkbox 
+						checked="{{order.IsProductConfigurationCheckerboard}}">
+						Checkerboard
+					</paper-checkbox>
+					<paper-checkbox 
+						checked="{{order.IsProductConfigurationTexts}}">
+						Texts
+					</paper-checkbox>
+				</h4>
+
+				<dom-if if="[[_pcWhite(order.IsProductConfigurationCheckerboard, order.IsProductConfigurationTexts)]]">
+					<template>
+						<tmladmin-ui-product-item 
+							entry="[[order.ProductConfiguration]]" 
+							action-disabled="[[loading]]" 
+							visible="[[visible]]"
+							scroll-target="[[scrollTarget]]"
+							lazy-observe="[[lazyObserve]]">
+						</tmladmin-ui-product-item>
+					</template>
+				</dom-if>
+
+				<dom-if if="[[_pcCheckerboard(order.IsProductConfigurationCheckerboard, order.IsProductConfigurationTexts)]]">
+					<template>
+						<tmladmin-ui-product-item 
+							entry="[[order.ProductConfigurationCheckerboard]]" 
+							action-disabled="[[loading]]" 
+							visible="[[visible]]"
+							scroll-target="[[scrollTarget]]"
+							lazy-observe="[[lazyObserve]]">
+						</tmladmin-ui-product-item>
+					</template>
+				</dom-if>
+
+				<dom-if if="[[_pcTexts(order.IsProductConfigurationCheckerboard, order.IsProductConfigurationTexts)]]">
+					<template>
+						<tmladmin-ui-product-item 
+							entry="[[order.ProductConfigurationTexts]]" 
+							action-disabled="[[loading]]" 
+							visible="[[visible]]"
+							scroll-target="[[scrollTarget]]"
+							lazy-observe="[[lazyObserve]]">
+						</tmladmin-ui-product-item>
+					</template>
+				</dom-if>
+
+				<dom-if if="[[_pcCheckerboardTexts(order.IsProductConfigurationCheckerboard, order.IsProductConfigurationTexts)]]">
+					<template>
+						<tmladmin-ui-product-item 
+							entry="[[order.ProductConfigurationCheckerboardTexts]]" 
+							action-disabled="[[loading]]" 
+							visible="[[visible]]"
+							scroll-target="[[scrollTarget]]"
+							lazy-observe="[[lazyObserve]]">
+						</tmladmin-ui-product-item>
+					</template>
+				</dom-if>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+<paper-dialog id="dialogsave" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>Confirm Product View to Save</h2>
+	<paper-dialog-scrollable>
+		Product View #: [[order.ViewID]] is going to be saved...are you sure?
+		<!-- <paper-textarea label="Refund reason" value="{{dialogcancel_reason}}"></paper-textarea> -->
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>Close</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="saveProductConfirm">Save Product View</paper-button>
+	</div>
+</paper-dialog>
+
+
+<tmladmin-ui-dialog id="dialog_source" class="dialog_source" scroll-target="[[scrollTarget]]" on-tmladmin-ui-dialog-closed="onCloseEditSourceDialog">
+	<div slot="header">
+		<paper-icon-button 
+			class="close-dialog-small-btn" 
+			icon="admin-icons:close"
+			dialog-dismiss>
+		</paper-icon-button>
+		<h2>
+			[[editTitle]]
+		</h2>
+	</div>
+
+	<div slot="body">
+		<tmladmin-ui-dropdown-menu 
+			vertical-align="top" 
+			horizontal-align="left"
+			id-property="Code"
+			title-property="Name"
+			label="Size"
+			disabled$="[[loading]]" 
+			value="{{editSource.Size}}"
+			value-list="[[_sizes(order.Sizes, editSource.Size)]]"
+			error-message="[[editSource.notvalid.Size]]"
+			invalid="[[_asBool(editSource.notvalid.Size)]]">
+		</tmladmin-ui-dropdown-menu>
+
+
+		<paper-textarea label="Camera File" value="{{editSource.CameraFile}}" name="CameraFile"
+			on-value-changed="onInputChanged" error-message="[[editSource.notvalid.CameraFile]]"
+			invalid="[[_asBool(editSource.notvalid.CameraFile)]]">
+		</paper-textarea>
+		<paper-checkbox checked="{{editSource.CameraFileAll}}" title="Use CameraFile for all sources" hidden$="[[!editType]]">
+			Use CameraFile for all sources
+		</paper-checkbox>
+
+		<paper-textarea label="Materials File" value="{{editSource.MaterialsFile}}" name="MaterialsFile"
+			on-value-changed="onInputChanged" error-message="[[editSource.notvalid.MaterialsFile]]"
+			invalid="[[_asBool(editSource.notvalid.MaterialsFile)]]">
+		</paper-textarea>
+
+		
+		<!-- <paper-input label="Background Source Name" type="string" value="{{editSource.BackgroundSourceName::input}}" name="editSource.BackgroundSourceName"
+			on-value-changed="onInputChanged" error-message="[[editSource.notvalid.BackgroundSourceName]]"
+			invalid="[[_asBool(editSource.notvalid.BackgroundSourceName)]]">
+		</paper-input>
+
+		<paper-input label="Clip Source Name" type="string" value="{{editSource.ClipSourceName::input}}"  name="editSource.ClipSourceName" 
+			on-value-changed="onInputChanged" error-message="[[editSource.notvalid.ClipSourceName]]"
+			invalid="[[_asBool(editSource.notvalid.ClipSourceName)]]">
+		</paper-input> -->
+
+		<paper-input label="Mesh Source Name" type="string" value="{{editSource.MeshSourceName::input}}"
+			name="editSource.MeshSourceName" on-value-changed="onInputChanged"
+			error-message="[[editSource.notvalid.MeshSourceName]]" invalid="[[_asBool(editSource.notvalid.MeshSourceName)]]">
+		</paper-input>
+		
+
+		<paper-input label="Shadows Source Name" type="string" value="{{editSource.ShadowsSourceName::input}}"
+			name="editSource.ShadowsSourceName" 
+			on-value-changed="onInputChanged" 
+			error-message="[[editSource.notvalid.ShadowsSourceName]]"
+			invalid="[[_asBool(editSource.notvalid.ShadowsSourceName)]]">
+		</paper-input>
+		<paper-input label="Normals Source Name" type="string" value="{{editSource.NormalsSourceName::input}}"
+			name="editSource.NormalsSourceName" 
+			on-value-changed="onInputChanged" 
+			error-message="[[editSource.notvalid.NormalsSourceName]]"
+			invalid="[[_asBool(editSource.notvalid.NormalsSourceName)]]">
+		</paper-input>
+		<paper-input label="Thickness Source Name" type="string" value="{{editSource.ThicknessSourceName::input}}"
+			name="editSource.ThicknessSourceName" 
+			on-value-changed="onInputChanged"
+			error-message="[[editSource.notvalid.ThicknessSourceName]]" 
+			invalid="[[_asBool(editSource.notvalid.ThicknessSourceName)]]">
+		</paper-input>
+		<paper-input label="Transparency Source Name" type="string" value="{{editSource.TransparencySourceName::input}}"
+			name="editSource.TransparencySourceName" 
+			on-value-changed="onInputChanged"
+			error-message="[[editSource.notvalid.TransparencySourceName]]"
+			invalid="[[_asBool(editSource.notvalid.TransparencySourceName)]]">
+		</paper-input>
+
+	</div>
+
+	<div slot="footer">
+		<paper-button dialog-dismiss autofocus>Close</paper-button>
+		<paper-button dialog-confirm on-tap="saveSource">[[editBtn]]</paper-button>
+	</div>
+</tmladmin-ui-dialog>
+
+
+<!-- 
+<paper-dialog id="dialogzoom" class="dialog-wide dialogzoom" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h4>MeshSourceSvg</h4>
+	<paper-dialog-scrollable>
+		<teamatical-ui-image-svg svg-src="[[zoomimgi]]"></teamatical-ui-image-svg>
+	</paper-dialog-scrollable>
+
+	<div class="buttons">
+		<paper-button dialog-confirm autofocus>OK</paper-button>
+		<paper-button dialog-dismiss on-tap="onDownloadTap">DOWNLOAD</paper-button>
+	</div>
+</paper-dialog> -->
+
+

@@ -1,0 +1,313 @@
+<script>
+    var Teamatical;
+    (function (Teamatical)
+    {
+        'use strict';
+
+        function detectBrowser()
+        {
+            //falling Edge - "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36 Edge/15.15063"
+            var uagent = navigator.userAgent.toLowerCase();
+            var match = '';
+
+            _browser.chrome = /webkit/.test(uagent) && /chrome/.test(uagent) &&
+                !/edge/.test(uagent);
+
+            _browser.firefox = /mozilla/.test(uagent) && /firefox/.test(uagent);
+
+            _browser.msie = /msie/.test(uagent) || /trident/.test(uagent) ||
+                /edge/.test(uagent);
+
+            _browser.edge = /edgios/.test(uagent) || /edge/.test(uagent);
+
+            _browser.safari = /safari/.test(uagent) && /applewebkit/.test(uagent) &&
+                !/chrome/.test(uagent);
+
+            _browser.opr = /mozilla/.test(uagent) && /applewebkit/.test(uagent) &&
+                /chrome/.test(uagent) && /safari/.test(uagent) &&
+                /opr/.test(uagent);
+
+            _browser.iPhone = /iphone/.test(uagent);
+
+            _browser.mobile = /mobile/.test(uagent);
+
+            _browser.version = '';
+
+            for (var x in _browser)
+            {
+                if (_browser[x])
+                {
+
+                    match = uagent.match(
+                        new RegExp("(" + (x === "msie" ? "msie|edge" : x) + ")( |\/)([0-9]+)")
+                    );
+
+                    if (match)
+                    {
+                        _browser.version = match[3];
+                    } else
+                    {
+                        match = uagent.match(new RegExp("rv:([0-9]+)"));
+                        _browser.version = match ? match[1] : "";
+                    }
+                    break;
+                }
+            }
+
+            try
+            {
+                _browser.version = parseInt(_browser.version)
+            }
+            catch (ex)
+            {
+
+            }
+
+            _browser.opera = _browser.opr;
+            delete _browser.opr;
+
+            return _browser
+        }
+        function _webp_test(callback, feature)
+        {
+            // some small (2x1 px) test images for each feature
+            var images = {
+                basic: "data:image/webp;base64,UklGRjIAAABXRUJQVlA4ICYAAACyAgCdASoCAAEALmk0mk0iIiIiIgBoSygABc6zbAAA/v56QAAAAA==",
+                // lossless: "data:image/webp;base64,UklGRh4AAABXRUJQVlA4TBEAAAAvAQAAAAfQ//73v/+BiOh/AAA=",
+                // 'data:image/webp;base64,UklGRi4AAABXRUJQVlA4TCEAAAAvAUAAEB8wA' + 'iMwAgSSNtse/cXjxyCCmrYNWPwmHRH9jwMA',
+            };
+
+            var webP = new Image();
+            webP.src = images[feature || "basic"]
+            webP.onload = webP.onerror = function ()
+            {
+                if (callback)
+                {
+                    callback(webP.width === 2 && webP.height === 1)
+                }
+            }
+        }
+        var addScript = Teamatical.addScript = function (path, retry)
+        {
+            var tryi = 0;
+            var script = document.createElement("script");
+            script.src = Teamatical.BuildPath + path;
+            if (Teamatical.BuildEnv == 'Development') { console.log('script load: ' + script.src); }
+            // if (async) { script.setAttribute("async", "true") }
+
+            if (retry)
+            {
+                script.onerror = function (e)
+                {
+                    document.head.removeChild(script);
+                    setTimeout(function() {
+                        script = document.createElement("script");
+                        script.src = Teamatical.BuildPath + path;
+                        tryi++;
+                        if (Teamatical.BuildEnv == 'Development') { console.log('script load retry ' + tryi + ': ' + script.src); }
+                        document.head.appendChild(script);
+                    }, 3000)
+                }
+            }
+            
+            // NOTE: this is required to ensure the polyfills are loaded before
+            // *native* html imports load on older Chrome versions. This *is* CSP
+            // compliant since CSP rules must have allowed this script to run.
+            // In all other cases, this can be async.
+            if (document.readyState === 'loading' && ('import' in document.createElement('link')))
+            {
+                document.write(script.outerHTML);
+            }
+            else
+            {
+                document.head.appendChild(script);
+            }
+        }
+        // function addHtml(path, async)
+        // {
+        //     var link = document.createElement("link");
+        //     link.rel = 'import';
+        //     link.href = Teamatical.BuildPath + path;
+        //     // console.log('link load: ' + link.href);
+        //     if (async) { link.setAttribute("async", "true") }
+        //     document.head.appendChild(link);
+        // }
+
+        var _browser = {};
+        Teamatical._browser = detectBrowser()
+        _webp_test(function(e) { Teamatical._browser.webp = e })
+
+        Teamatical._browser.allowLazyload = !(Teamatical._browser.msie && Teamatical._browser.version <= 11)
+        Teamatical._browser.allowPayRequest = !(Teamatical._browser.msie && Teamatical._browser.version < 15)
+        // console.log(_browser)
+
+
+        //due bugs in MS Edge 15 and Safari
+        // if ((_browser.msie && _browser.version == 15)
+        //     || (_browser.safari)
+        //     // || (_browser.safari && _browser.version < 604)
+        //     // || (_browser.safari && _browser.version < 601)
+        //     )
+        // {
+        //     console.warn('customElements.forcePolyfill')
+        //     //TODO: force all polyfills turn on for Edge 15, fix an app-header ->>>> https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/11495448/; test: https://codepen.io/brianmtreese/pen/aWmROR;
+        //     // if (!window.customElements) window.customElements = {};
+        //     // window.customElements.forcePolyfill = true;
+        //     // window['ShadyCSS'] = { shimcssproperties: true };
+        //     window['ShadyDOM'] = { force: true };
+        // }
+
+      
+
+
+
+        // Fix for IE7 and lower 
+        if (!document.querySelectorAll)
+        {
+            document.querySelectorAll = function (selectors)
+            {
+                var style = document.createElement('style'), elements = [], element;
+                document.documentElement.firstChild.appendChild(style);
+                document._qsa = [];
+
+                style.styleSheet.cssText = selectors + '{x-qsa:expression(document._qsa && document._qsa.push(this))}';
+                window.scrollBy(0, 0);
+                style.parentNode.removeChild(style);
+
+                while (document._qsa.length)
+                {
+                    element = document._qsa.shift();
+                    element.style.removeAttribute('x-qsa');
+                    elements.push(element);
+                }
+                document._qsa = null;
+                return elements;
+            };
+        }
+
+        // Fix for IE7 and lower 
+        if (!document.querySelector)
+        {
+            document.querySelector = function (selectors)
+            {
+                var elements = document.querySelectorAll(selectors);
+                return (elements.length) ? elements[0] : null;
+            };
+        }
+
+        // for IE11
+        Array.prototype.find = Array.prototype.find || function (callback)
+        {
+            if (this === null)
+            {
+                throw new TypeError('Array.prototype.find called on null or undefined');
+            } else if (typeof callback !== 'function')
+            {
+                throw new TypeError('callback must be a function');
+            }
+            var list = Object(this);
+            // Makes sures is always has an positive integer as length.
+            var length = list.length >>> 0;
+            var thisArg = arguments[1];
+            for (var i = 0; i < length; i++)
+            {
+                var element = list[i];
+                if (callback.call(thisArg, element, i, list))
+                {
+                    return element;
+                }
+            }
+        }
+
+        // for IE11
+        Number.prototype.isInteger = Number.prototype.isInteger || function (value)
+        {
+            return typeof value === "number" &&
+                isFinite(value) &&
+                Math.floor(value) === value;
+        }
+
+        // for IE11
+        if (!Element.prototype.matches)
+        {
+            Element.prototype.matches = Element.prototype.matchesSelector ||
+                Element.prototype.webkitMatchesSelector ||
+                Element.prototype.mozMatchesSelector ||
+                Element.prototype.msMatchesSelector;
+        }
+
+        if (!String.prototype.trim)
+        {
+            (function ()
+            {
+                // cut off BOM & non-breakable space
+                String.prototype.trim = function ()
+                {
+                    return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+                };
+            })();
+        }
+
+        //Object.clone & Object.values & Object.entries
+        Object.clone = function (objA)
+        {
+            return Object.assign({}, objA)
+        }
+
+        var ownKeys = function() {
+            if (typeof Reflect === 'object' && typeof Reflect.ownKeys === 'function')
+            {
+                return Reflect.ownKeys;
+            } 
+            else if (typeof Object.getOwnPropertySymbols === 'function')
+            {
+                return function Reflect_ownKeys(o)
+                {
+                    return (
+                        Object.getOwnPropertyNames(o).concat(Object.getOwnPropertySymbols(o))
+                    );
+                }
+            } 
+            else
+            {
+                return Object.getOwnPropertyNames;
+            }
+        }()
+        var reduce = Function.bind.call(Function.call, Array.prototype.reduce);
+        var isEnumerable = Function.bind.call(Function.call, Object.prototype.propertyIsEnumerable);
+        var concat = Function.bind.call(Function.call, Array.prototype.concat);
+        if (!Object.values)
+        {
+            Object.values = function values(O)
+            {
+                return reduce(ownKeys(O), function (v, k) { return concat(v, typeof k === 'string' && isEnumerable(O, k) ? [O[k]] : []) }, [])
+            }
+        }
+        if (!Object.entries)
+        {
+            Object.entries = function entries(O)
+            {
+                return reduce(ownKeys(O), function (e, k) { return concat(e, typeof k === 'string' && isEnumerable(O, k) ? [[k, O[k]]] : []) }, [])
+            }
+        }
+
+
+        // Load and register pre-caching Service Worker
+        if ('serviceWorker' in navigator) 
+        {
+            window.addEventListener('load', function () 
+            {
+                // console.log(window.Polymer.rootPath)
+                navigator.serviceWorker.register(window.Polymer.rootPath == '/' ? 'service-worker.js' : 'service-worker-admin.js',
+                    {
+                        scope: window.Polymer.rootPath,
+                    })
+            })
+        }
+
+        function checkes6() { "use strict"; if ("undefined" == typeof Symbol) return !1; try { eval("class Foo {}"), eval("var bar = (x) => x+1") } catch (e) { return !1 } return !0 }
+        var es6 = checkes6();
+        var p = Teamatical.scriptPath = es6 || Teamatical.BuildEnv == 'Development' ? "" : "";
+        var evilishere = Teamatical._browser.evilishere = !("MutationObserver" in window) || (Teamatical._browser.msie && Teamatical._browser.version <= 11) || !es6
+    })(Teamatical || (Teamatical = {}))
+</script>

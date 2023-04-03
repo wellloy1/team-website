@@ -1,0 +1,325 @@
+<teamatical-user-bot-data 
+	id="user-bot-data"
+	bot="roll-inspection"
+	query-params="{{queryParams}}"
+	user-info="{{userInfo}}"
+	visible="[[visible]]"
+	website-url="[[websiteUrl]]">
+</teamatical-user-bot-data>
+
+
+<paper-dialog id="dialogconfirm-replaceroll" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<h2>[[localize('admin-ws-roll-inspection-dlg-title')]]</h2>
+	<paper-dialog-scrollable>
+		[[localize('admin-ws-roll-inspection-dlg-msg')]]
+	</paper-dialog-scrollable>
+	<div class="buttons">
+		<paper-button dialog-dismiss>[[localize('admin-dlg-close')]]</paper-button>
+		<paper-button dialog-confirm autofocus on-tap="replacerollConfirmTap">[[localize('admin-ws-roll-inspection-replaceroll-btn')]]
+		</paper-button>
+	</div>
+</paper-dialog>
+
+<paper-dialog id="dialogzoom" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<paper-dialog-scrollable>
+		<dom-if if="[[zoomimgi.ImageUrl]]">
+			<template>
+				<teamatical-ui-image 
+					style="width: 576px; height: 768px;" 
+					src="[[zoomimgi.ImageUrl]]"
+					alt="[[zoomimgi.PartName]]" 
+					lazy-load 
+					lazy-observe=[[lazyObserve]]>
+				</teamatical-ui-image>
+			</template>
+		</dom-if>
+
+		<dom-if if="[[zoomimgi.ImageSvg]]">
+			<template>
+				<teamatical-ui-image-svg 
+					style="width: 576px; height: 768px;"
+					svg-src="[[zoomimgi.ImageSvg]]"
+					alt="[[zoomimgi.PartName]]">
+				</teamatical-ui-image-svg>
+			</template>
+		</dom-if>
+	</paper-dialog-scrollable>
+</paper-dialog>
+<paper-dialog id="dialogzoomback" proceed no-overlap dynamic-align vertical-align="middle" horizontal-align="center">
+	<paper-dialog-scrollable>
+		<teamatical-ui-image style="width: 576px; height: 768px;" src="[[zoomimgi.ImageUrlBack]]"
+			alt="[[zoomimgi.PartName]]" lazy-load lazy-observe=[[lazyObserve]]>
+		</teamatical-ui-image>
+	</paper-dialog-scrollable>
+</paper-dialog>
+
+
+<div class="maindiv horiz">
+	<div class="order-container sticky">
+		
+		<div class="order">
+
+			<!-- Replacements -->
+			<div class="order-replacements" hidden$="[[!order]]">
+				<div class="sticky-container">
+					<h2>
+						<paper-icon-button class="refresh-btn" icon="admin-icons:refresh" title="[[localize('admin-ws-refresh')]]" on-tap="_reloadTap" disabled="[[loadingAny]]">
+						</paper-icon-button>
+				
+						<iron-icon class="teamatical-logo-ws" icon="teamatical:logo" alt="teamatical:logo"></iron-icon> :
+
+						[[localize('admin-ws-roll-inspection-title')]]
+					</h2>
+
+					<paper-progress 
+						id="progress" 
+						indeterminate 
+						class="" 
+						disabled$="[[!loadingAny]]">
+					</paper-progress>
+				</div>
+				
+
+				<div class="main">
+					<div class="horiz">
+						<paper-input id="newbarcode" label="[[localize('admin-ws-roll-inspection-barcode-label')]]" class="roll-input" type="string" disabled="[[loadingAny]]"
+							on-keydown="_barcodeEnter" on-value-changed="_barcodeChanged">
+							<paper-spinner-lite slot="prefix" class="thick"></paper-spinner-lite>
+							<paper-icon-button slot="suffix" class="add-btn" icon="admin-icons:add-circle-outline" on-tap="_barcodeTap">
+							</paper-icon-button>
+						</paper-input>
+
+						<div class="spinner finish-roll">
+							<paper-button class="finish-roll-btn" raised disabled="[[disabledFinishRoll]]" on-tap="_onFinishRollTap">
+								[[localize('admin-ws-roll-inspection-btn-finish-roll')]]
+							</paper-button>
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+						</div>
+					</div>
+
+					<dom-if if="[[order.IsDuplicate]]">
+						<template>
+							<h3 class="invalid">
+								[[localize('admin-ws-roll-inspection-item-duplicate')]]
+							</h3>
+						</template>
+					</dom-if>
+
+					<dom-if if="[[order.Invalid]]">
+						<template>
+							<h3 class="invalid">
+								[[localize('admin-ws-roll-inspection-barcode-invalid')]]
+							</h3>
+						</template>
+					</dom-if>
+
+					<div class="replacements-stats hidden" showen-inline$="[[_asBool(order.Processed)]]">
+						<!-- <ul>
+							<li hidden$="[[!_asBool(order.TotalCommited)]]">
+								[[localize('admin-ws-roll-inspection-stats-totalcommitted')]]
+								[[order.TotalCommited]]
+							</li>
+							<li hidden$="[[!_asBool(order.Committed)]]">
+								[[localize('admin-ws-roll-inspection-stats-commited')]]
+								[[order.Committed]]
+							</li>
+						</ul> -->
+						<p>
+							[[localize('admin-ws-roll-inspection-stats-processed')]]
+							[[order.Processed]]
+						</p>
+					</div> 
+
+					<!-- <div class="order-buttons">
+						<div class="spinner">
+							<paper-button class="order-commit-btn" raised disabled="[[disabledCommit]]" on-tap="_onCommitTap">
+								[[localize('admin-ws-roll-inspection-btn-commit')]]
+							</paper-button>
+							<paper-spinner-lite class="thick"></paper-spinner-lite>
+						</div>
+					</div>-->
+					
+
+					<div scrollable-x>
+					<div class="table width100">
+						<div class="header">
+							<div>
+								[[localize('admin-ws-roll-inspection-item-batchid')]]
+							</div>
+							<!-- <div>
+								[[localize('admin-ws-roll-inspection-item-rollbarcode')]]
+							</div> -->
+							<div>
+								<!--  -->
+							</div>
+							<!-- <div>
+								[[localize('admin-ws-roll-inspection-item-barcode')]]
+							</div> -->
+							<div>
+								[[localize('admin-ws-roll-inspection-item-partname')]]
+							</div>
+							<div>
+								[[localize('admin-ws-roll-inspection-item-picture')]]
+							</div>
+							<!-- <div class="centered">
+								[[localize('admin-ws-replacements-item-count')]]
+							</div> -->
+							<div>
+								<!--  -->
+							</div>
+							<div>
+								<!--  -->
+							</div>
+						</div>
+					
+						<dom-repeat items="[[order.Replacements]]" as="repli">
+							<template>
+								<div 
+									class="row vcenter" 
+									removed$="[[repli.removing]]" 
+									is-disabled$="[[repli.Disabled]]" 
+									is-bounding$="[[repli.Bounding]]">
+									<div>
+										[[repli.BatchID]]
+										<span class="hidden" showen$="[[repli.Sandbox]]">
+											<iron-icon icon="admin-icons:warning" class="warning" title="[[localize('admin-ws-test-item')]]"></iron-icon>
+											<!-- [[localize('admin-ws-test-item')]] -->
+										</span>
+									</div>
+									<!-- <div>
+										<p>
+											<span class="pdf-barcode">*[[repli.RollBarcode]]*</span><br />
+											[[repli.RollBarcode]]
+										</p>
+									</div> -->
+									<div>
+										<div class="spinner">
+											<paper-button 
+												class="order-replaceroll-btn" 
+												raised
+												on-tap="_onReplaceRollTap"
+												hidden$="[[repli.DisableFullRollReplacement]]"
+												disabled="[[_disabledReplaceRoll(loadingAny, repli.Disabled)]]">
+												[[localize('admin-ws-qa-btn-replaceroll')]]
+											</paper-button>
+										</div>
+									</div>
+									<!-- <div>
+										<p>
+											<span class="pdf-barcode">*[[repli.Barcode]]*</span><br />
+											[[repli.Barcode]]
+										</p>
+									</div> -->
+									<div>
+										[[repli.PartName]]
+									</div>
+									<div class="centered">
+										<dom-if if="[[repli.ImageUrl]]">
+											<template>
+												<teamatical-ui-image 
+													src="[[repli.ImageUrl]]" 
+													alt="[[repli.PartName]]" 
+													class="clickable"
+													on-tap="onProductPartImageTap"
+													lazy-load
+													lazy-observe=[[lazyObserve]] 
+													title$="[[repli.PartName]]">
+												</teamatical-ui-image>
+
+												<dom-if if="[[_asBool(repli.ImageUrlBack)]]">
+													<template>
+														<teamatical-ui-image 
+															class="clickable back"
+															on-tap="onProductPartImageBackTap"
+															src="[[repli.ImageUrlBack]]" 
+															alt="[[repli.PartName]] Sendwich Back" 
+															lazy-load 
+															lazy-observe=[[lazyObserve]] 
+															title$="[[repli.PartName]] Sendwich Back">
+														</teamatical-ui-image>
+													</template>
+												</dom-if>
+											</template>
+										</dom-if>
+
+										<dom-if if="[[repli.ImageSvg]]">
+											<template>
+												<teamatical-ui-image-svg 
+													class="repl-image-svg clickable"
+													on-tap="onProductPartImageTap"
+													svg-src="[[repli.ImageSvg]]">
+												</teamatical-ui-image-svg>
+											</template>
+										</dom-if>
+										<paper-spinner-lite slot="prefix" class="thick" active="[[repli.loadingAny]]"
+											hidden$="[[!repli.loadingAny]]"></paper-spinner-lite>
+										<dom-if if="[[repli.Invalid]]">
+											<template>
+												<h3>
+													[[localize('admin-ws-roll-inspection-item-invalid')]]
+												</h3>
+											</template>
+										</dom-if>
+									</div>
+
+									<!-- <div class="centered">
+										[[_formatCount(repli.Count)]]
+									</div> -->
+
+									<div>
+										<span highlighted hidden$="[[!repli.IsFullRollReplacement]]">
+											[[localize('admin-ws-replacements-item-IsFullRollReplacement')]]
+										</span>
+										<span highlighted hidden$="[[!repli.IsDuplicate]]">
+											[[localize('admin-ws-replacements-item-duplicate')]]
+										</span>
+										<span highlighted hidden$="[[!repli.Disabled]]">
+											[[localize('admin-ws-replacements-item-processed')]]
+										</span>
+										<span highlighted hidden$="[[!repli.UnfrozenPDF]]">
+											[[localize('admin-ws-replacements-item-locked')]]
+										</span>
+										<span highlighted hidden$="[[!repli.Bounding]]">
+											[[localize('admin-ws-replacements-item-bounding')]]
+										</span>
+									</div>
+
+									<div>
+										<paper-icon-button slot="suffix" class="remove-btn" icon="admin-icons:close"
+											disabled="[[loadingAny]]"
+											on-tap="_removeRepTap">
+										</paper-icon-button>
+									</div>
+								</div>
+							</template>
+						</dom-repeat>
+						<dom-if if="[[!LenMore(order.Replacements)]]">
+							<template>
+								<div class="noitems">
+									no items
+								</div>
+							</template>
+						</dom-if>
+					</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<teamatical-ui-scanner-printer-settings 
+	id="scanner-printer-settings"
+	storage-name="roll-inspection"
+	website-url="[[websiteUrl]]"
+	sticker-printer
+	barcode-scanner
+	loading="{{loadingWS}}"
+	hidden$="[[tabletMode]]"
+	visible="[[_scannerUIVisible(visible, tabletMode)]]">
+</teamatical-ui-scanner-printer-settings>
+
+<teamatical-ui-locale-switcher 
+	class="hide-on-print">
+</teamatical-ui-locale-switcher>

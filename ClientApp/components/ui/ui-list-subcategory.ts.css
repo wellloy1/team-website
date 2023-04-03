@@ -1,0 +1,35 @@
+:host {
+    display: block;
+
+    border-top: 3px solid var(--divider-color);
+
+    margin: 24px 0px 0px 0px;
+}
+
+@media (max-width: 767px) {
+    :host {
+        padding-left: 0px;
+        margin: 8px 0px 0px 0px;
+    }
+}
+
+.panel-styled {
+    --paper-expansion-panel-header: {
+        margin: 2px 0px 0px 0px;
+        font-size: var(--app-font-size);
+        font-weight: bold;
+        text-transform: uppercase;
+    };
+    --paper-expansion-panel-header-text: {
+        padding-left: 8px;
+    };
+    --paper-expansion-panel-summary: {
+        color: black;
+        font-size: var(--app-font-size);
+    };
+    --paper-expansion-panel-content: {
+        color: black;
+        padding: 0 0px;
+    };
+}
+
